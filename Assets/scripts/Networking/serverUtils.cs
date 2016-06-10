@@ -1,0 +1,361 @@
+﻿using UnityEngine;
+using System.Collections;
+
+namespace Meg.Networking
+{
+    public class serverUtils : MonoBehaviour
+    {
+        public static float GetServerData(string valueName)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            float rValue = 0f;
+            if (serverObject != null)
+            {
+                switch (valueName)
+                {
+                    case "depth":
+                        rValue = serverObject.GetComponent<serverData>().depth;
+                        break;
+                    case "pressure":
+                        rValue = serverObject.GetComponent<serverData>().pressure;
+                        break;
+                    case "heading":
+                        rValue = serverObject.GetComponent<serverData>().heading;
+                        break;
+                    case "pitchAngle":
+                        rValue = serverObject.GetComponent<serverData>().pitchAngle;
+                        break;
+                    case "yawAngle":
+                        rValue = serverObject.GetComponent<serverData>().yawAngle;
+                        break;
+                    case "rollAngle":
+                        rValue = serverObject.GetComponent<serverData>().rollAngle;
+                        break;
+                    case "velocity":
+                        rValue = serverObject.GetComponent<serverData>().velocity;
+                        break;
+                    case "floorDistance":
+                        rValue = serverObject.GetComponent<serverData>().floorDistance;
+                        break;
+                    case "Co2":
+                        rValue = serverObject.GetComponent<serverData>().Co2;
+                        break;
+                    case "waterTemp":
+                        rValue = serverObject.GetComponent<serverData>().waterTemp;
+                        break;
+                    case "b1":
+                        rValue = serverObject.GetComponent<serverData>().batteries[0];
+                        break;
+                    case "b2":
+                        rValue = serverObject.GetComponent<serverData>().batteries[1];
+                        break;
+                    case "b3":
+                        rValue = serverObject.GetComponent<serverData>().batteries[2];
+                        break;
+                    case "b4":
+                        rValue = serverObject.GetComponent<serverData>().batteries[3];
+                        break;
+                    case "b5":
+                        rValue = serverObject.GetComponent<serverData>().batteries[4];
+                        break;
+                    case "b6":
+                        rValue = serverObject.GetComponent<serverData>().batteries[5];
+                        break;
+                    case "b7":
+                        rValue = serverObject.GetComponent<serverData>().batteries[6];
+                        break;
+                    case "o1":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[0];
+                        break;
+                    case "o2":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[1];
+                        break;
+                    case "o3":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[2];
+                        break;
+                    case "o4":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[3];
+                        break;
+                    case "o5":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[4];
+                        break;
+                    case "o6":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[5];
+                        break;
+                    case "o7":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[6];
+                        break;
+                    case "oxygen":
+                        rValue = serverObject.GetComponent<serverData>().oxygen;
+                        break;
+                    case "battery":
+                        rValue = serverObject.GetComponent<serverData>().battery;
+                        break;
+                    case "error_bilgeLeak":
+                        rValue = serverObject.GetComponent<errorData>().error_bilgeLeak;
+                        break;
+                    case "error_batteryLeak":
+                        rValue = serverObject.GetComponent<errorData>().error_batteryLeak;
+                        break;
+                    case "error_electricLeak":
+                        rValue = serverObject.GetComponent<errorData>().error_electricLeak;
+                        break;
+                    case "error_oxygenExt":
+                        rValue = serverObject.GetComponent<errorData>().error_oxygenExt;
+                        break;
+                    case "error_vhf":
+                        rValue = serverObject.GetComponent<errorData>().error_vhf;
+                        break;
+                    case "error_forwardSonar":
+                        rValue = serverObject.GetComponent<errorData>().error_forwardSonar;
+                        break;
+                    case "error_depthSonar":
+                        rValue = serverObject.GetComponent<errorData>().error_depthSonar;
+                        break;
+                    case "error_doppler":
+                        rValue = serverObject.GetComponent<errorData>().error_doppler;
+                        break;
+                    case "error_gps":
+                        rValue = serverObject.GetComponent<errorData>().error_gps;
+                        break;
+                    case "error_cpu":
+                        rValue = serverObject.GetComponent<errorData>().error_cpu;
+                        break;
+                    case "error_vidhd":
+                        rValue = serverObject.GetComponent<errorData>().error_vidhd;
+                        break;
+                    case "error_datahd":
+                        rValue = serverObject.GetComponent<errorData>().error_datahd;
+                        break;
+                    case "error_tow":
+                        rValue = serverObject.GetComponent<errorData>().error_tow;
+                        break;
+                    case "error_radar":
+                        rValue = serverObject.GetComponent<errorData>().error_radar;
+                        break;
+                    case "error_sternLights":
+                        rValue = serverObject.GetComponent<errorData>().error_sternLights;
+                        break;
+                    case "error_bowLights":
+                        rValue = serverObject.GetComponent<errorData>().error_bowLights;
+                        break;
+                    case "error_portLights":
+                        rValue = serverObject.GetComponent<errorData>().error_portLights;
+                        break;
+                    case "error_bowThruster":
+                        rValue = serverObject.GetComponent<errorData>().error_bowThruster;
+                        break;
+                    case "error_hyrdaulicRes":
+                        rValue = serverObject.GetComponent<errorData>().error_hyrdaulicRes;
+                        break;
+                    case "error_starboardLights":
+                        rValue = serverObject.GetComponent<errorData>().error_starboardLights;
+                        break;
+                    case "error_runningLights":
+                        rValue = serverObject.GetComponent<errorData>().error_runningLights;
+                        break;
+                    case "error_ballastTank":
+                        rValue = serverObject.GetComponent<errorData>().error_ballastTank;
+                        break;
+                    case "error_hydraulicPump":
+                        rValue = serverObject.GetComponent<errorData>().error_hydraulicPump;
+                        break;
+                    case "error_oxygenPump":
+                        rValue = serverObject.GetComponent<errorData>().error_oxygenPump;
+                        break;
+                    case "inputXaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis;
+                        break;
+                    case "inputYaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis;
+                        break;
+                    case "inputZaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputZaxis;
+                        break;
+                    case "inputXaxis2":
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis2;
+                        break;
+                    case "inputYaxis2":
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis2;
+                        break;
+                    case "verticalVelocity":
+                        rValue = serverObject.GetComponent<serverData>().verticalVelocity;
+                        break;
+                    case "horizontalVelocity":
+                        rValue = serverObject.GetComponent<serverData>().horizontalVelocity;
+                        break;
+                    case "dueTimeHours":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeHours;
+                        break;
+                    case "dueTimeMins":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeMins;
+                        break;
+                    case "dueTimeSecs":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeSecs;
+                        break;
+                    default:
+                        rValue = 50;
+                        break;
+                }
+            }
+            return rValue;
+        }
+
+        public static string GetServerDataAsText(string valueName)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            string rValue = "no value";
+            if (serverObject != null)
+            {
+                switch (valueName)
+                {
+                    case "depth":
+                        int dInt = (int)serverObject.GetComponent<serverData>().depth;
+                        rValue = dInt.ToString();
+                        break;
+                    case "pressure":
+                        rValue = serverObject.GetComponent<serverData>().pressure.ToString();
+                        break;
+                    case "heading":
+                        rValue = (serverObject.GetComponent<serverData>().heading.ToString("n1") + "°");
+                        break;
+                    case "pitchAngle":
+                        rValue = (serverObject.GetComponent<serverData>().pitchAngle.ToString("n1") + "°");
+                        break;
+                    case "yawAngle":
+                        rValue = (serverObject.GetComponent<serverData>().yawAngle.ToString("n1") + "°");
+                        break;
+                    case "rollAngle":
+                        rValue = (serverObject.GetComponent<serverData>().rollAngle.ToString("n1") + "°");
+                        break;
+                    case "velocity":
+                        rValue = serverObject.GetComponent<serverData>().velocity.ToString("n1");
+                        break;
+                    case "floorDistance":
+                        int flInt = (int)serverObject.GetComponent<serverData>().floorDistance;
+                        rValue = flInt.ToString();
+                        break;
+                    case "Co2":
+                        rValue = serverObject.GetComponent<serverData>().Co2.ToString();
+                        break;
+                    case "waterTemp":
+                        rValue = serverObject.GetComponent<serverData>().waterTemp.ToString();
+                        break;
+                    case "b1":
+                        rValue = serverObject.GetComponent<serverData>().batteries[0].ToString("n1");
+                        break;
+                    case "b2":
+                        rValue = serverObject.GetComponent<serverData>().batteries[1].ToString("n1");
+                        break;
+                    case "b3":
+                        rValue = serverObject.GetComponent<serverData>().batteries[2].ToString("n1");
+                        break;
+                    case "b4":
+                        rValue = serverObject.GetComponent<serverData>().batteries[3].ToString("n1");
+                        break;
+                    case "b5":
+                        rValue = serverObject.GetComponent<serverData>().batteries[4].ToString("n1");
+                        break;
+                    case "b6":
+                        rValue = serverObject.GetComponent<serverData>().batteries[5].ToString("n1");
+                        break;
+                    case "b7":
+                        rValue = serverObject.GetComponent<serverData>().batteries[6].ToString("n1");
+                        break;
+                    case "o1":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[0].ToString("n1");
+                        break;
+                    case "o2":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[1].ToString("n1");
+                        break;
+                    case "o3":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[2].ToString("n1");
+                        break;
+                    case "o4":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[3].ToString("n1");
+                        break;
+                    case "o5":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[4].ToString("n1");
+                        break;
+                    case "o6":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[5].ToString("n1");
+                        break;
+                    case "o7":
+                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[6].ToString("n1");
+                        break;
+                    case "oxygen":
+                        rValue = (serverObject.GetComponent<serverData>().oxygen.ToString("n1") + "%");
+                        break;
+                    case "battery":
+                        rValue = (serverObject.GetComponent<serverData>().battery.ToString("n1") + "%");
+                        break;
+                    case "pilot":
+                        rValue = serverObject.GetComponent<serverData>().pilot;
+                        break;
+                    case "verticalVelocity":
+                        rValue = serverObject.GetComponent<serverData>().verticalVelocity.ToString("n1");
+                        break;
+                    case "horizontalVelocity":
+                        rValue = serverObject.GetComponent<serverData>().horizontalVelocity.ToString("n1");
+                        break;
+                    case "dueTimeHours":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeHours.ToString();
+                        break;
+                    case "dueTimeMins":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeMins.ToString();
+                        break;
+                    case "dueTimeSecs":
+                        rValue = serverObject.GetComponent<serverData>().dueTimeSecs.ToString();
+                        break;
+                    case "inputXaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis.ToString("n1"); ;
+                        break;
+                    case "inputYaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis.ToString("n1"); ;
+                        break;
+                    case "inputZaxis":
+                        rValue = serverObject.GetComponent<serverData>().inputZaxis.ToString("n1"); ;
+                        break;
+                    case "inputXaxis2":
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis2.ToString("n1"); ;
+                        break;
+                    case "inputYaxis2":
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1"); ;
+                        break;
+                    default:
+                        rValue = "no value";
+                        break;
+                }
+            }
+            return rValue;
+        }
+
+        public static void SetServerBool(string boolName, bool value)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().OnChangeBool(boolName, value);
+        }
+
+        public static void SetServerData(string valueName, float value)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().OnValueChanged(valueName, value);
+        }
+
+        public static void SetBatteryData(int bank, float value)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().OnBatterySliderChanged(bank, value);
+        }
+
+        public static void SetOxygenData(int bank, float value)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().OnOxygenSliderChanged(bank, value);
+        }
+    }
+}

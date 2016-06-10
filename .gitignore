@@ -14,6 +14,18 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# Unity meta files
+*.meta
+
+# Ignore folders
+Temp/
+Builds/
+Library/
+SourceArt/
+Assets/Reporter/
+Assets/SVG/
+Assets/SVG Importer/
+
 # Windows shortcuts
 *.lnk
 
