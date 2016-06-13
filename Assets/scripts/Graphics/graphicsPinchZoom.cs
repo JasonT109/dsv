@@ -179,6 +179,56 @@ public class graphicsPinchZoom : MonoBehaviour {
                 //apply the new offset
                 children[i].localPosition = new Vector3(Mathf.Clamp(newPos.x, -imageSize.x, imageSize.x), Mathf.Clamp(newPos.y, -imageSize.x, imageSize.x), children[i].localPosition.z);
 
+                //0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
+                int mapIconDirection = 0;
+
+                //check to see if child is at edge of the map
+                if (children[i].localPosition.x == -imageSize.x && children[i].localPosition.y == -imageSize.y)
+                {
+                    mapIconDirection = 8;
+                }
+                else if (children[i].localPosition.x == -imageSize.x && children[i].localPosition.y == imageSize.y)
+                {
+                    mapIconDirection = 2;
+                }
+                else if (children[i].localPosition.x == -imageSize.x)
+                {
+                    mapIconDirection = 1;
+                }
+
+                if (children[i].localPosition.x == imageSize.x && children[i].localPosition.y == -imageSize.y)
+                {
+                    mapIconDirection = 6;
+                }
+                else if (children[i].localPosition.x == imageSize.x && children[i].localPosition.y == imageSize.y)
+                {
+                    mapIconDirection = 4;
+                }
+                else if (children[i].localPosition.x == imageSize.x)
+                {
+                    mapIconDirection = 5;
+                }
+
+                if (children[i].localPosition.y == imageSize.y && children[i].localPosition.x != imageSize.x && children[i].localPosition.x != -imageSize.x)
+                {
+                    mapIconDirection = 3;
+                }
+                if (children[i].localPosition.y == -imageSize.y && children[i].localPosition.x != imageSize.x && children[i].localPosition.x != -imageSize.x)
+                {
+                    mapIconDirection = 7;
+                }
+
+                //set the orientation of the child to indicate the direction
+                if (mapIconDirection != 0)
+                {
+                    children[i].GetComponent<graphicsMapIcon>().atBounds = true;
+                    children[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+                }
+                else
+                {
+                    children[i].GetComponent<graphicsMapIcon>().atBounds = false;
+                    children[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+                }
             }
         }
     }
