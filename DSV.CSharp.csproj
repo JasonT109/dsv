@@ -311,6 +311,7 @@
     <Compile Include="Assets\scripts\Graphics\graphicsDestroyOnCollide.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsLightFlicker.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsNoiseAnimator.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsPinchZoom.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPlayMovie.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPropRotate.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsSlicedMesh.cs" />
