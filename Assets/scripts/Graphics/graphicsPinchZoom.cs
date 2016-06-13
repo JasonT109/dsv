@@ -8,6 +8,8 @@ public class graphicsPinchZoom : MonoBehaviour {
 
     public float scrollSpeed = 1.0f;
     public Transform[] children;
+    public Vector2[] childPos;
+    public Vector2 imageSize = new Vector2(10,10);
 
     private float scaleDelta = 1f;
     private bool pressed = false;
@@ -30,7 +32,6 @@ public class graphicsPinchZoom : MonoBehaviour {
         GetComponent<ReleaseGesture>().Released -= releaseHandler;
         GetComponent<TransformGesture>().Transformed -= transformHandler;
     }
-
 
     private void pressedHandler(object sender, EventArgs e)
     {
@@ -97,9 +98,11 @@ public class graphicsPinchZoom : MonoBehaviour {
 
         int childCount = transform.childCount;
         children = new Transform[childCount];
+        childPos = new Vector2[childCount];
         for (int i = 0; i < childCount; i++)
         {
             children[i] = gameObject.transform.GetChild(i);
+            childPos[i] = new Vector2(children[i].localPosition.x, children[i].localPosition.y);
         }
 	}
 	
@@ -145,14 +148,37 @@ public class graphicsPinchZoom : MonoBehaviour {
             //transform any children
             for (int i = 0; i < children.Length; i++)
             {
-                //new child position
-                Vector2 newPos = new Vector2(children[i].localPosition.x, children[i].localPosition.y);
+                //position is inverse scale + offset
+                scaleFactor = m.GetTextureScale("_MainTex");
 
-                //lerp it the same as our uvs
-                newPos = Vector2.Lerp(newPos, newPos + touchDelta, (Time.deltaTime * scrollSpeed) * tilingFactor.x);
+                //get the inverse scale
+                scaleFactor = new Vector2(1 / scaleFactor.x, 1 / scaleFactor.y);
 
-                //apply the new position
-                children[i].localPosition = new Vector3(newPos.x, newPos.y, children[i].localPosition.z );
+                //get childs original position
+                Vector2 newPos = childPos[i];
+
+                //convert it to UV space //= (X-A)/(B-A) * (D-C) + C
+                newPos.x = (newPos.x - -imageSize.x) / (imageSize.x - -imageSize.x);
+                newPos.y = (newPos.y - -imageSize.y) / (imageSize.y - -imageSize.y);
+
+                //scale the UV position
+                newPos.x *= scaleFactor.x;
+                newPos.y *= scaleFactor.y;
+
+                //get the offset
+                Vector2 offset = m.GetTextureOffset("_MainTex");
+
+                //subtract the offset
+                newPos.x -= offset.x * scaleFactor.x;
+                newPos.y -= offset.y * scaleFactor.y;
+
+                //convert back to object space
+                newPos.x = (newPos.x - 0) / (1 - 0) * (imageSize.x - -imageSize.x) + -imageSize.x;
+                newPos.y = (newPos.y - 0) / (1 - 0) * (imageSize.y - -imageSize.y) + -imageSize.y;
+
+                //apply the new offset
+                children[i].localPosition = new Vector3(Mathf.Clamp(newPos.x, -imageSize.x, imageSize.x), Mathf.Clamp(newPos.y, -imageSize.x, imageSize.x), children[i].localPosition.z);
+
             }
         }
     }
