@@ -113,12 +113,12 @@ public class graphicsPinchZoom : MonoBehaviour {
             //create new offset for texture co-ords
             Vector2 newOffset = m.GetTextureOffset("_MainTex");
 
+            //get difference from this touch position and last
+            Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
+
             //only get scroll input if have a valid delta and we are not scrolling
             if (previousHit.Point != Vector3.zero && !multiTouch)
             {
-                //get difference from this touch position and last
-                Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
-
                 //create lerp between current offset and new offset
                 newOffset = Vector2.Lerp(newOffset, newOffset + touchDelta, (Time.deltaTime * scrollSpeed) * tilingFactor.x);
             }
@@ -143,7 +143,17 @@ public class graphicsPinchZoom : MonoBehaviour {
             previousHit = currentHit;
 
             //transform any children
+            for (int i = 0; i < children.Length; i++)
+            {
+                //new child position
+                Vector2 newPos = new Vector2(children[i].localPosition.x, children[i].localPosition.y);
 
+                //lerp it the same as our uvs
+                newPos = Vector2.Lerp(newPos, newPos + touchDelta, (Time.deltaTime * scrollSpeed) * tilingFactor.x);
+
+                //apply the new position
+                children[i].localPosition = new Vector3(newPos.x, newPos.y, children[i].localPosition.z );
+            }
         }
     }
 }
