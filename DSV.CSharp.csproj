@@ -325,7 +325,9 @@
     <Compile Include="Assets\scripts\Networking\batteryData.cs" />
     <Compile Include="Assets\scripts\Networking\clientCalcValues.cs" />
     <Compile Include="Assets\scripts\Networking\connectNetwork.cs" />
+    <Compile Include="Assets\scripts\Networking\crewData.cs" />
     <Compile Include="Assets\scripts\Networking\debugChangeValue.cs" />
+    <Compile Include="Assets\scripts\Networking\debugCrewVitals.cs" />
     <Compile Include="Assets\scripts\Networking\debugObject.cs" />
     <Compile Include="Assets\scripts\Networking\debugShipVitals.cs" />
     <Compile Include="Assets\scripts\Networking\errorData.cs" />

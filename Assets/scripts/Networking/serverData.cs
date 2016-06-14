@@ -310,6 +310,42 @@ public class serverData : NetworkBehaviour
                 velocity = newValue;
                 rb.velocity = transform.forward * newValue;
                 break;
+            case "crewHeartRate1":
+                gameObject.GetComponent<crewData>().crewHeartRate1 = newValue;
+                break;
+            case "crewHeartRate2":
+                gameObject.GetComponent<crewData>().crewHeartRate2 = newValue;
+                break;
+            case "crewHeartRate3":
+                gameObject.GetComponent<crewData>().crewHeartRate3 = newValue;
+                break;
+            case "crewHeartRate4":
+                gameObject.GetComponent<crewData>().crewHeartRate4 = newValue;
+                break;
+            case "crewHeartRate5":
+                gameObject.GetComponent<crewData>().crewHeartRate5 = newValue;
+                break;
+            case "crewHeartRate6":
+                gameObject.GetComponent<crewData>().crewHeartRate6 = newValue;
+                break;
+            case "crewBodyTemp1":
+                gameObject.GetComponent<crewData>().crewBodyTemp1 = newValue;
+                break;
+            case "crewBodyTemp2":
+                gameObject.GetComponent<crewData>().crewBodyTemp2 = newValue;
+                break;
+            case "crewBodyTemp3":
+                gameObject.GetComponent<crewData>().crewBodyTemp3 = newValue;
+                break;
+            case "crewBodyTemp4":
+                gameObject.GetComponent<crewData>().crewBodyTemp4 = newValue;
+                break;
+            case "crewBodyTemp5":
+                gameObject.GetComponent<crewData>().crewBodyTemp5 = newValue;
+                break;
+            case "crewBodyTemp6":
+                gameObject.GetComponent<crewData>().crewBodyTemp6 = newValue;
+                break;
         }
     }
 

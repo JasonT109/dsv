@@ -193,6 +193,42 @@ namespace Meg.Networking
                     case "dueTimeSecs":
                         rValue = serverObject.GetComponent<serverData>().dueTimeSecs;
                         break;
+                    case "crewHeartRate1":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1;
+                        break;
+                    case "crewHeartRate2":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2;
+                        break;
+                    case "crewHeartRate3":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3;
+                        break;
+                    case "crewHeartRate4":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4;
+                        break;
+                    case "crewHeartRate5":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5;
+                        break;
+                    case "crewHeartRate6":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6;
+                        break;
+                    case "crewBodyTemp1":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1;
+                        break;
+                    case "crewBodyTemp2":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2;
+                        break;
+                    case "crewBodyTemp3":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3;
+                        break;
+                    case "crewBodyTemp4":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4;
+                        break;
+                    case "crewBodyTemp5":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5;
+                        break;
+                    case "crewBodyTemp6":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6;
+                        break;
                     default:
                         rValue = 50;
                         break;
@@ -321,6 +357,42 @@ namespace Meg.Networking
                         break;
                     case "inputYaxis2":
                         rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate1":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate2":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate3":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate4":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate5":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5.ToString("n1"); ;
+                        break;
+                    case "crewHeartRate6":
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp1":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp2":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp3":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp4":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp5":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5.ToString("n1"); ;
+                        break;
+                    case "crewBodyTemp6":
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6.ToString("n1"); ;
                         break;
                     default:
                         rValue = "no value";
