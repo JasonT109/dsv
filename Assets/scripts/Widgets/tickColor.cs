@@ -72,10 +72,12 @@ public class tickColor : MonoBehaviour {
             if (colorIndex >= dScript.colorGradient.Length - 1)
             {
                 m.color = Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex - 1], colorLerpValue);
+                m.SetColor("_TintColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex - 1], colorLerpValue));
             }
             else
             {
                 m.color = Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex + 1], colorLerpValue);
+                m.SetColor("_TintColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex + 1], colorLerpValue));
             }
         }
     }

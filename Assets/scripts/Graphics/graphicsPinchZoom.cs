@@ -10,6 +10,7 @@ public class graphicsPinchZoom : MonoBehaviour {
     public Transform[] children;
     public Vector2[] childPos;
     public Vector2 imageSize = new Vector2(10,10);
+    public bool deactivateChildrenOnScroll = true;
 
     private float scaleDelta = 1f;
     private bool pressed = false;
@@ -38,10 +39,6 @@ public class graphicsPinchZoom : MonoBehaviour {
         var gesture = sender as PressGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
-
-        //currentHit = hit;
-
-        //pressed = true;
     }
 
     private void transformHandler(object sender, EventArgs e)
@@ -73,6 +70,18 @@ public class graphicsPinchZoom : MonoBehaviour {
         {
             scaleDelta = 1f;
             multiTouch = false;
+        }
+
+        if (deactivateChildrenOnScroll)
+        {
+            //set all children buttons to in active
+            foreach (GameObject b in gameObject.GetComponent<buttonGroup>().buttons)
+            {
+                if (b.GetComponent<buttonControl>().active)
+                {
+                    b.GetComponent<buttonControl>().toggleButton(b);
+                }
+            }
         }
     }
 
