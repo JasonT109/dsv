@@ -2,14 +2,16 @@
 using UnityEngine.Networking;
 using System.Collections;
 using Meg.Graphics;
+using Meg.Networking;
 
 public class graphicsColourPalette : NetworkBehaviour
 {
     public megColorTheme theme;
     public GameObject colourThemeHolder;
+    public int vesselId = 1;
 
     [Command]
-    void CmdUpdateTheme(megColorTheme t)
+    void CmdUpdateTheme(megColorTheme t, int id)
     {
         //make these colour values the currently used values
         //colourThemeHolder.GetComponent<graphicsColourHolder>().theme = t;
@@ -17,6 +19,7 @@ public class graphicsColourPalette : NetworkBehaviour
         colourThemeHolder.GetComponent<graphicsColourHolder>().keyColor = t.keyColor;
         colourThemeHolder.GetComponent<graphicsColourHolder>().backgroundColor = t.backgroundColor;
         colourThemeHolder.GetComponent<graphicsColourHolder>().highlightColor = t.highlightColor;
+        serverUtils.SetPlayerVessel(id);
     }
 
     void Update()
@@ -35,7 +38,7 @@ public class graphicsColourPalette : NetworkBehaviour
         {
             if (buttonScript.active)
             {
-                CmdUpdateTheme(theme);
+                CmdUpdateTheme(theme, vesselId);
             }
         }
     }

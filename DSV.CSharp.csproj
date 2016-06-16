@@ -337,6 +337,7 @@
     <Compile Include="Assets\scripts\Graphics\graphicsPinchZoom.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPlayMovie.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPropRotate.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsRotateObject.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsSlicedMesh.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsSonarBehaviour.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsSonarObject.cs" />
@@ -352,6 +353,7 @@
     <Compile Include="Assets\scripts\Networking\debugCrewVitals.cs" />
     <Compile Include="Assets\scripts\Networking\debugObject.cs" />
     <Compile Include="Assets\scripts\Networking\debugShipVitals.cs" />
+    <Compile Include="Assets\scripts\Networking\debugVessels.cs" />
     <Compile Include="Assets\scripts\Networking\errorData.cs" />
     <Compile Include="Assets\scripts\Networking\oxygenData.cs" />
     <Compile Include="Assets\scripts\Networking\serverData.cs" />
@@ -381,6 +383,7 @@
     <Compile Include="Assets\scripts\Widgets\widgetDataLog.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetDiveAngle.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetHeadingDial.cs" />
+    <Compile Include="Assets\scripts\Widgets\widgetThrusterControl.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetTransition.cs" />
   </ItemGroup>
   <ItemGroup>

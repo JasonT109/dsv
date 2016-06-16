@@ -346,7 +346,45 @@ public class serverData : NetworkBehaviour
             case "crewBodyTemp6":
                 gameObject.GetComponent<crewData>().crewBodyTemp6 = newValue;
                 break;
+            case "posX":
+                Debug.Log("Setting new x position");
+                transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
+                break;
+            case "posY":
+                transform.position = new Vector3(transform.position.x, newValue, transform.position.z);
+                break;
+            case "posZ":
+                transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
+                break;
         }
+    }
+
+    public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
+    {
+        switch (vessel)
+        {
+            case 0:
+                gameObject.GetComponent<crewData>().vessel1Pos = pos;
+                gameObject.GetComponent<crewData>().vessel1Velocity = vesselVelocity;
+                break;
+            case 1:
+                gameObject.GetComponent<crewData>().vessel2Pos = pos;
+                gameObject.GetComponent<crewData>().vessel2Velocity = vesselVelocity;
+                break;
+            case 2:
+                gameObject.GetComponent<crewData>().vessel3Pos = pos;
+                gameObject.GetComponent<crewData>().vessel3Velocity = vesselVelocity;
+                break;
+            case 3:
+                gameObject.GetComponent<crewData>().vessel4Pos = pos;
+                gameObject.GetComponent<crewData>().vessel4Velocity = vesselVelocity;
+                break;
+        }
+    }
+
+    public void SetPlayerVessel(int vessel)
+    {
+        gameObject.GetComponent<crewData>().playerVessel = vessel;
     }
 
     public void OnChangeBool(string boolName, bool newValue)

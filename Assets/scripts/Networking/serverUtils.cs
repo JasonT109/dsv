@@ -16,6 +16,12 @@ namespace Meg.Networking
                     case "depth":
                         rValue = serverObject.GetComponent<serverData>().depth;
                         break;
+                    case "xPos":
+                        rValue = serverObject.transform.position.x;
+                        break;
+                    case "zPos":
+                        rValue = serverObject.transform.position.z;
+                        break;
                     case "pressure":
                         rValue = serverObject.GetComponent<serverData>().pressure;
                         break;
@@ -229,6 +235,54 @@ namespace Meg.Networking
                     case "crewBodyTemp6":
                         rValue = serverObject.GetComponent<crewData>().crewBodyTemp6;
                         break;
+                    case "v1posX":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.x;
+                        break;
+                    case "v1posY":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.y;
+                        break;
+                    case "v1posZ":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.z;
+                        break;
+                    case "v2posX":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.x;
+                        break;
+                    case "v2posY":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.y;
+                        break;
+                    case "v2posZ":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.z;
+                        break;
+                    case "v3posX":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.x;
+                        break;
+                    case "v3posY":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.y;
+                        break;
+                    case "v3posZ":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.z;
+                        break;
+                    case "v4posX":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.x;
+                        break;
+                    case "v4posY":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.y;
+                        break;
+                    case "v4posZ":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.z;
+                        break;
+                    case "v1velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Velocity;
+                        break;
+                    case "v2velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Velocity;
+                        break;
+                    case "v3velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Velocity;
+                        break;
+                    case "v4velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Velocity;
+                        break;
                     default:
                         rValue = 50;
                         break;
@@ -344,55 +398,79 @@ namespace Meg.Networking
                         rValue = serverObject.GetComponent<serverData>().dueTimeSecs.ToString();
                         break;
                     case "inputXaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis.ToString("n1");
                         break;
                     case "inputYaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis.ToString("n1");
                         break;
                     case "inputZaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputZaxis.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<serverData>().inputZaxis.ToString("n1");
                         break;
                     case "inputXaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis2.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<serverData>().inputXaxis2.ToString("n1");
                         break;
                     case "inputYaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1");
                         break;
                     case "crewHeartRate1":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1");
                         break;
                     case "crewHeartRate2":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2.ToString("n1");
                         break;
                     case "crewHeartRate3":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3.ToString("n1");
                         break;
                     case "crewHeartRate4":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4.ToString("n1");
                         break;
                     case "crewHeartRate5":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5.ToString("n1");
                         break;
                     case "crewHeartRate6":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6.ToString("n1");
                         break;
                     case "crewBodyTemp1":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1.ToString("n1");
                         break;
                     case "crewBodyTemp2":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2.ToString("n1");
                         break;
                     case "crewBodyTemp3":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3.ToString("n1");
                         break;
                     case "crewBodyTemp4":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4.ToString("n1");
                         break;
                     case "crewBodyTemp5":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5.ToString("n1");
                         break;
                     case "crewBodyTemp6":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6.ToString("n1"); ;
+                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6.ToString("n1");
+                        break;
+                    case "v1depth":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.z.ToString("n0");
+                        break;
+                    case "v2depth":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.z.ToString("n0");
+                        break;
+                    case "v3depth":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.z.ToString("n0");
+                        break;
+                    case "v4depth":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.z.ToString("n0");
+                        break;
+                    case "v1velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel1Velocity.ToString("n1");
+                        break;
+                    case "v2velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel2Velocity.ToString("n1");
+                        break;
+                    case "v3velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel3Velocity.ToString("n1");
+                        break;
+                    case "v4velocity":
+                        rValue = serverObject.GetComponent<crewData>().vessel4Velocity.ToString("n1");
                         break;
                     default:
                         rValue = "no value";
@@ -428,6 +506,28 @@ namespace Meg.Networking
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
             serverObject.GetComponent<serverData>().OnOxygenSliderChanged(bank, value);
+        }
+
+        public static void SetVesselData(int vessel, Vector3 pos, float vesselVelocity)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
+        }
+
+        public static void SetPlayerVessel(int vessel)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<serverData>().SetPlayerVessel(vessel);
+        }
+
+
+        public static int GetPlayerVessel()
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            return serverObject.GetComponent<crewData>().playerVessel;
         }
     }
 }
