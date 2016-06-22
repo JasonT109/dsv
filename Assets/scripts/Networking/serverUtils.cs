@@ -199,6 +199,15 @@ namespace Meg.Networking
                     case "dueTimeSecs":
                         rValue = serverObject.GetComponent<serverData>().dueTimeSecs;
                         break;
+                    case "diveTimeHours":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeHours;
+                        break;
+                    case "diveTimeMins":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeMins;
+                        break;
+                    case "diveTimeSecs":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeSecs;
+                        break;
                     case "crewHeartRate1":
                         rValue = serverObject.GetComponent<crewData>().crewHeartRate1;
                         break;
@@ -396,6 +405,15 @@ namespace Meg.Networking
                         break;
                     case "dueTimeSecs":
                         rValue = serverObject.GetComponent<serverData>().dueTimeSecs.ToString();
+                        break;
+                    case "diveTimeHours":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeHours.ToString();
+                        break;
+                    case "diveTimeMins":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeMins.ToString();
+                        break;
+                    case "diveTimeSecs":
+                        rValue = serverObject.GetComponent<serverData>().diveTimeSecs.ToString();
                         break;
                     case "inputXaxis":
                         rValue = serverObject.GetComponent<serverData>().inputXaxis.ToString("n1");

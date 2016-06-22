@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>5.3.2f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -110,7 +108,6 @@
     <Compile Include="Assets\Reporter\ReporterMessageReceiver.cs" />
     <Compile Include="Assets\Reporter\Test\Rotate.cs" />
     <Compile Include="Assets\Reporter\Test\TestReporter.cs" />
-    <Compile Include="Assets\scripts\Graphics\graphicsEasing.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Clipper\SVGClipPath.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Clipper\clipper.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Core\Animation\SVGFrameAnimator.cs" />
@@ -334,6 +331,8 @@
     <Compile Include="Assets\scripts\Graphics\graphicsColourPalette.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsConstrain.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsDestroyOnCollide.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsDisplaySettings.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsEasing.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsLightFlicker.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsMapIcon.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsNoiseAnimator.cs" />

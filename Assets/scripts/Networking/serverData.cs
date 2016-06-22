@@ -51,6 +51,12 @@ public class serverData : NetworkBehaviour
     public float horizontalVelocity;
     [SyncVar]
     public float floorDistance;
+    [SyncVar]
+    public float diveTimeHours;
+    [SyncVar]
+    public float diveTimeMins;
+    [SyncVar]
+    public float diveTimeSecs;
     #endregion
     #region PublicVars
 
@@ -149,18 +155,24 @@ public class serverData : NetworkBehaviour
                 break;
             case "dueTimeHours":
                 dueTimeHours = newValue;
-                //updateTimer = true;
-                StartCoroutine(wait(0.1f));
+                diveTimeHours = newValue;
                 break;
             case "dueTimeMins":
                 dueTimeMins = newValue;
-                //updateTimer = true;
-                StartCoroutine(wait(0.1f));
+                diveTimeMins = newValue;
                 break;
             case "dueTimeSecs":
                 dueTimeSecs = newValue;
-                //updateTimer = true;
-                StartCoroutine(wait(0.1f));
+                diveTimeSecs = newValue;
+                break;
+            case "diveTimeHours":
+                diveTimeHours = newValue;
+                break;
+            case "diveTimeMins":
+                diveTimeMins = newValue;
+                break;
+            case "diveTimeSecs":
+                diveTimeSecs = newValue;
                 break;
             case "waterTemp":
                 waterTemp = newValue;
@@ -522,8 +534,10 @@ public class serverData : NetworkBehaviour
         battery = GetBatteryTotal();
         oxygen = GetOxygenTotal();
         dueTimeSecs -= Time.deltaTime;
+        diveTimeSecs += Time.deltaTime;
         verticalVelocity = rb.velocity.y;
         horizontalVelocity = rb.velocity.x;
+        floorDistance = 10994 - depth;
         if (dueTimeSecs < 0)
         {
             dueTimeSecs = 59.0f + dueTimeSecs;
@@ -533,6 +547,17 @@ public class serverData : NetworkBehaviour
         {
             dueTimeMins = 59.0f;
             dueTimeHours -= 1.0f;
+        }
+
+        if (diveTimeSecs >= 60)
+        {
+            diveTimeSecs = 0f;
+            diveTimeMins += 1.0f;
+        }
+        if (diveTimeMins >= 60)
+        {
+            diveTimeMins = 0f;
+            diveTimeHours += 1.0f;
         }
     }
 

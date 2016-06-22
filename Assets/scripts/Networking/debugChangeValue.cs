@@ -59,9 +59,19 @@ public class debugChangeValue : NetworkBehaviour {
                     float valueFloat1 = float.Parse(valueString1);
                     float valueFloat2 = float.Parse(valueString2);
                     float valueFloat3 = float.Parse(valueString3);
-                    serverUtils.SetServerData("dueTimeHours", valueFloat1);
-                    serverUtils.SetServerData("dueTimeMins", valueFloat2);
-                    serverUtils.SetServerData("dueTimeSecs", valueFloat3);
+                    if (b.GetComponent<buttonControl>().serverName == "ETA")
+                    {
+                        serverUtils.SetServerData("dueTimeHours", valueFloat1);
+                        serverUtils.SetServerData("dueTimeMins", valueFloat2);
+                        serverUtils.SetServerData("dueTimeSecs", valueFloat3);
+                    }
+                    if (b.GetComponent<buttonControl>().serverName == "diveTime")
+                    {
+                        serverUtils.SetServerData("diveTimeHours", valueFloat1);
+                        serverUtils.SetServerData("diveTimeMins", valueFloat2);
+                        serverUtils.SetServerData("diveTimeSecs", valueFloat3);
+                    }
+
                 }
                 else if (b.GetComponent<buttonControl>().serverType == "float")
                 {
@@ -174,9 +184,9 @@ public class debugChangeValue : NetworkBehaviour {
         if (tempVals.Length > 1)
         {
             int tempInt1 = int.Parse(tempVals[0]);
-            int tempInt2 = int.Parse(tempVals[1]);
+            //int tempInt2 = int.Parse(tempVals[1]);
             string v1 = tempInt1.ToString("D3");
-            string v2 = tempInt2.ToString();
+            string v2 = tempVals[1];
             text10k.text = v1.Substring(0, 1);
             text1k.text = v1.Substring(1, 1);
             text100.text = v1.Substring(2, 1);
@@ -221,12 +231,14 @@ public class debugChangeValue : NetworkBehaviour {
                         int tempInt3 = (int)serverUtils.GetServerData("dueTimeSecs");
                         parseAsTime(tempInt1, tempInt2, tempInt3);
                         break;
-                    case "battery":
-                        string tempVal = serverUtils.GetServerData("battery").ToString();
-                        parseAsFloat(tempVal);
+                    case "diveTime":
+                        int tempIntDive1 = (int)serverUtils.GetServerData("diveTimeHours");
+                        int tempIntDive2 = (int)serverUtils.GetServerData("diveTimeMins");
+                        int tempIntDive3 = (int)serverUtils.GetServerData("diveTimeSecs");
+                        parseAsTime(tempIntDive1, tempIntDive2, tempIntDive3);
                         break;
                     case "Co2":
-                        tempVal = serverUtils.GetServerData("Co2").ToString();
+                        string tempVal = serverUtils.GetServerData("Co2").ToString();
                         parseAsFloat(tempVal);
                         break;
                     case "waterTemp":

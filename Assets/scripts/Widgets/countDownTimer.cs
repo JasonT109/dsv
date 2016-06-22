@@ -1,38 +1,43 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Meg.Networking;
 
 public class countDownTimer : MonoBehaviour {
 
     public TextMesh cText;
-    public GameObject sData;
-    public float dueTimeHours = 1;
-    public float dueTimeMins = 1;
-    public float dueTimeSecs = 1;
-	
+    public float hours = 1;
+    public float mins = 1;
+    public float seconds = 1;
+    public bool diveTime = true;
     void Start ()
     {
-        sData = GameObject.FindWithTag("ServerData");
-        if (sData)
+        if (diveTime)
         {
-            dueTimeHours = serverUtils.GetServerData("dueTimeHours");
-            dueTimeMins = serverUtils.GetServerData("dueTimeMins");
-            dueTimeSecs = serverUtils.GetServerData("dueTimeSecs");
+            hours = serverUtils.GetServerData("diveTimeHours");
+            mins = serverUtils.GetServerData("diveTimeMins");
+            seconds = serverUtils.GetServerData("diveTimeSecs");
+        }
+        else
+        {
+            hours = serverUtils.GetServerData("dueTimeHours");
+            mins = serverUtils.GetServerData("dueTimeMins");
+            seconds = serverUtils.GetServerData("dueTimeSecs");
         }
     }
 
 	void Update ()
     {
-        if (sData != null)
+        if (diveTime)
         {
-            dueTimeHours = serverUtils.GetServerData("dueTimeHours");
-            dueTimeMins = serverUtils.GetServerData("dueTimeMins");
-            dueTimeSecs = serverUtils.GetServerData("dueTimeSecs");
+            hours = serverUtils.GetServerData("diveTimeHours");
+            mins = serverUtils.GetServerData("diveTimeMins");
+            seconds = serverUtils.GetServerData("diveTimeSecs");
         }
         else
         {
-            sData = GameObject.FindWithTag("ServerData");
+            hours = serverUtils.GetServerData("dueTimeHours");
+            mins = serverUtils.GetServerData("dueTimeMins");
+            seconds = serverUtils.GetServerData("dueTimeSecs");
         }
-        cText.text = (Mathf.Floor(dueTimeHours).ToString() + "h " + Mathf.Floor(dueTimeMins).ToString() + "m " + Mathf.Floor(dueTimeSecs).ToString() + "s");
+        cText.text = (Mathf.Floor(hours).ToString() + "h " + Mathf.Floor(mins).ToString() + "m " + Mathf.Floor(seconds).ToString() + "s");
     }
 }
