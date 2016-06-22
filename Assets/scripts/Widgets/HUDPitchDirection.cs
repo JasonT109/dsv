@@ -7,6 +7,9 @@ public class HUDPitchDirection : MonoBehaviour {
     //public GameObject inputs;
     public bool yaw = false;
     public bool pitch = false;
+    public bool thrustVectorL = false;
+    public bool thrustVectorR = false;
+    public GameObject thrusterControl;
     public float visibleRange = 90;
     public float visibleTicks;
     public GameObject mainTick;
@@ -131,6 +134,15 @@ public class HUDPitchDirection : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate ()
     {
+        if (thrustVectorL && thrusterControl)
+        {
+            heading = Mathf.Lerp(heading, thrusterControl.GetComponent<widgetThrusterControl>().thrusterVectorAngleL * 0.0085f, Time.deltaTime * 2.0f);
+        }
+        if (thrustVectorR && thrusterControl)
+        {
+            heading = Mathf.Lerp(heading, thrusterControl.GetComponent<widgetThrusterControl>().thrusterVectorAngleR * 0.0085f, Time.deltaTime * 2.0f);
+        }
+
         if (yaw)
         {
             heading = serverUtils.GetServerData("heading"); 
@@ -151,10 +163,11 @@ public class HUDPitchDirection : MonoBehaviour {
                 prevHeading = heading;
             }
             mainTicks[i].transform.Translate(((prevHeading - heading) * degreeDistance) * 10, 0, 0, Space.Self);
+            TextMesh t = mainTicks[i].GetComponentInChildren<TextMesh>();
             if (mainTicks[i].transform.localPosition.x < (startPoint - endTolerance))
             {
                 mainTicks[i].transform.localPosition = new Vector3(mainTicks[i].transform.localPosition.x + (endPoint - startPoint), 0, 0);
-                TextMesh t = mainTicks[i].GetComponentInChildren<TextMesh>();
+                
                 if (t)
                 {
                     int index = System.Array.IndexOf(tickNames, t.text);
@@ -164,13 +177,11 @@ public class HUDPitchDirection : MonoBehaviour {
                         newIndex += tickNames.Length;
                     }
                     t.text = tickNames[newIndex];
-                            
                 }
             }
             if (mainTicks[i].transform.localPosition.x > (endPoint + endTolerance))
             {
                 mainTicks[i].transform.localPosition = new Vector3(mainTicks[i].transform.localPosition.x - (endPoint - startPoint), 0, 0);
-                TextMesh t = mainTicks[i].GetComponentInChildren<TextMesh>();
                 if (t)
                 {
                     int index = System.Array.IndexOf(tickNames, t.text);
@@ -180,6 +191,31 @@ public class HUDPitchDirection : MonoBehaviour {
                         newIndex -= tickNames.Length;
                     }
                     t.text = tickNames[newIndex];
+                }
+            }
+            if (t)
+            {
+                //fade to the text as it approaches the edge
+                float diff = startPoint * 0.5f;
+                
+                if (mainTicks[i].transform.localPosition.x < diff)
+                {
+                    float pos = mainTicks[i].transform.localPosition.x - diff;
+                    float lerpValue = pos / diff;
+                    Color newColor = new Color(1f, 1f, 1f, Mathf.Lerp(0.5f, 0, lerpValue));
+                    t.GetComponent<Renderer>().material.color = newColor;
+                }
+                else if (mainTicks[i].transform.localPosition.x > -diff)
+                {   
+                    float pos = mainTicks[i].transform.localPosition.x + diff;
+                    float lerpValue = 1 - (pos / -diff);
+                    Color newColor = new Color(1f, 1f, 1f, Mathf.Lerp(0, 0.5f, lerpValue));
+                    t.GetComponent<Renderer>().material.color = newColor;
+                }
+                else
+                {
+                    Color newColor = new Color(1f, 1f, 1f, 0.5f);
+                    t.GetComponent<Renderer>().material.color = newColor;
                 }
             }
         }

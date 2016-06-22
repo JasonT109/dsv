@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>5.3.2f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -108,6 +110,7 @@
     <Compile Include="Assets\Reporter\ReporterMessageReceiver.cs" />
     <Compile Include="Assets\Reporter\Test\Rotate.cs" />
     <Compile Include="Assets\Reporter\Test\TestReporter.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsEasing.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Clipper\SVGClipPath.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Clipper\clipper.cs" />
     <Compile Include="Assets\SVG Importer\Plugins\Core\Animation\SVGFrameAnimator.cs" />
@@ -379,6 +382,7 @@
     <Compile Include="Assets\scripts\Widgets\temperature.cs" />
     <Compile Include="Assets\scripts\Widgets\tickColor.cs" />
     <Compile Include="Assets\scripts\Widgets\valueFromButtonGroup.cs" />
+    <Compile Include="Assets\scripts\Widgets\widget3DMap.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetBatteryPreset.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetDataLog.cs" />
     <Compile Include="Assets\scripts\Widgets\widgetDiveAngle.cs" />
@@ -632,6 +636,7 @@
     <None Include="Assets\Shaders\bitangents.shader" />
     <None Include="Assets\Shaders\depthToColor.shader" />
     <None Include="Assets\Shaders\echo.shader" />
+    <None Include="Assets\Shaders\mapTerrain.shader" />
     <None Include="Assets\Shaders\meg.shader" />
     <None Include="Assets\Shaders\mulitplyNoise.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

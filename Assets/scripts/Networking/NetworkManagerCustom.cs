@@ -125,7 +125,6 @@ public class NetworkManagerCustom : MonoBehaviour
                     Debug.Log("Starting server");
                     canChangeValue = false;
                     manager.StartHost();
-                    //NetworkManager.singleton.ServerChangeScene("screen_01");
                     StartCoroutine(Wait(1.0f));
                 }
             }
