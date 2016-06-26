@@ -335,6 +335,7 @@
     <Compile Include="Assets\scripts\Graphics\graphicsEasing.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsLightFlicker.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsMapIcon.cs" />
+    <Compile Include="Assets\scripts\Graphics\graphicsMaths.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsNoiseAnimator.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPinchZoom.cs" />
     <Compile Include="Assets\scripts\Graphics\graphicsPlayMovie.cs" />
@@ -364,6 +365,7 @@
     <Compile Include="Assets\scripts\Networking\textValueFromDepth.cs" />
     <Compile Include="Assets\scripts\Networking\textValueFromServer.cs" />
     <Compile Include="Assets\scripts\Widgets\HUDPitchDirection.cs" />
+    <Compile Include="Assets\scripts\Widgets\NavSubPin.cs" />
     <Compile Include="Assets\scripts\Widgets\artificialHorizon.cs" />
     <Compile Include="Assets\scripts\Widgets\buttonControl.cs" />
     <Compile Include="Assets\scripts\Widgets\buttonGroup.cs" />
@@ -636,6 +638,7 @@
     <None Include="Assets\Shaders\depthToColor.shader" />
     <None Include="Assets\Shaders\echo.shader" />
     <None Include="Assets\Shaders\mapTerrain.shader" />
+    <None Include="Assets\Shaders\mapTerrain2.shader" />
     <None Include="Assets\Shaders\meg.shader" />
     <None Include="Assets\Shaders\mulitplyNoise.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

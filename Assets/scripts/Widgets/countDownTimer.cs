@@ -38,6 +38,7 @@ public class countDownTimer : MonoBehaviour {
             mins = serverUtils.GetServerData("dueTimeMins");
             seconds = serverUtils.GetServerData("dueTimeSecs");
         }
-        cText.text = (Mathf.Floor(hours).ToString() + "h " + Mathf.Floor(mins).ToString() + "m " + Mathf.Floor(seconds).ToString() + "s");
+        string fmt = "00";
+        cText.text = (Mathf.Floor(hours).ToString(fmt) + ":" + Mathf.Floor(mins).ToString(fmt) + ":" + Mathf.Floor(seconds).ToString(fmt));
     }
 }

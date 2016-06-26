@@ -23,8 +23,9 @@ public class widget3DMap : MonoBehaviour {
     public float rotateSpeed = 0.2f;
     public float scaleSpeed = 0.2f;
 
+    public float scaleAmount;
     public float maxScroll;
-    private float scaleDelta;
+    public float scaleDelta;
     private Vector3 posDelta;
     private float rotDelta;
     private TouchHit currentHit;
@@ -33,6 +34,13 @@ public class widget3DMap : MonoBehaviour {
     private bool multiTouch = false;
     
     public Vector4 matPosScale;
+
+    float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
+    {
+        float ts = (t /= d) * t;
+        float tc = ts * t;
+        return (b + c * (1.4025f * tc * ts + -6.7075f * ts * ts + +12.21f * tc + -10.805f * ts + 4.9f * t));
+    }
 
     private void OnEnable()
     {
@@ -120,40 +128,38 @@ public class widget3DMap : MonoBehaviour {
 
         if (pressed)
         {
-            matPosScale = mapMaterial.GetVector("_PosScale");
+            //matPosScale = mapMaterial.GetVector("_PosScale");
 
             //get difference from this touch position and last
             Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
 
-            float rotateAmount = 1f;
-            rotateAmount /= rotDelta;
-
-            //apply the rotation
-            mapCameraRoot.transform.Rotate(0, rotDelta * rotateSpeed, 0);
-
-            //scale amount
-            float scaleAmount = 1f;
-            scaleAmount = scaleDelta * (Time.deltaTime * scaleSpeed);
-
-            //divide scale amount by the current delta
-            if (scaleDelta < 1)
+            //scale or rotate the camera
+            if (multiTouch)
             {
-                scaleAmount = -scaleAmount;
-                zoom += scaleAmount;
-                zoom = Mathf.Clamp(zoom, 0, 1);
+                float rotateAmount = 1f;
+                rotateAmount /= rotDelta;
+
+                //apply the rotation
+                mapCameraRoot.transform.Rotate(0, rotDelta * rotateSpeed, 0);
+
+                //scale amount is -1 to 1
+                scaleAmount = graphicsMaths.remapValue(scaleDelta, 0.5f, 1.5f, -1f, 1f);
+
+                //add the scale amount to current camera position value
+                camZ += scaleAmount * scaleSpeed;
+
+                //camZ = (zoom * (camMaxZ - camMinZ)) + camMinZ;
+
+                //add this to the camera pos z
+                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, Time.deltaTime));
+
+                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
+
+                //set the FOV
+                float currentFOV = zoom * ((camMaxFOV - camMinFOV) + camMinFOV);
+                currentFOV = Mathf.Clamp(currentFOV, camMinFOV, camMaxFOV);
+                mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
             }
-
-            if (scaleDelta > 1)
-            {
-                zoom += scaleAmount;
-                zoom = Mathf.Clamp(zoom, 0, 1);
-            }
-
-            camZ = (zoom * (camMaxZ - camMinZ)) + camMinZ;
-
-            //add this to the camera pos z
-            mapCamera.transform.localPosition = new Vector3(0, 0, camZ);
-            //mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMinZ, camMaxZ));
 
             //inverse scale the local position constraints so we can't scroll when zoomed out
             maxScroll = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ) * (rootMaxX - -rootMaxX) + -rootMaxX;
@@ -165,35 +171,22 @@ public class widget3DMap : MonoBehaviour {
                 //create a local space transform that we can transpose
                 Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * scrollSpeed), 0, touchDelta.y * (Time.deltaTime * scrollSpeed));
 
+                //transpose to world space
                 worldPos = mapCameraRoot.transform.TransformPoint(worldPos);
 
+                //subtract the root position
                 worldPos -= mapCameraRoot.transform.position;
 
+                //add the new value to root position
                 mapCameraRoot.transform.localPosition += new Vector3( worldPos.x, mapCameraRoot.transform.localPosition.y, worldPos.z);
+
+                //clamp the translation
                 mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -maxScroll, maxScroll), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -maxScroll, maxScroll));
+
+                //clamp the translation so we can't pan off the map
+                //mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -(rootMaxX * (1 - zoom)), rootMaxX * (1 - zoom)), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -(rootMaxZ * (1 - zoom)), rootMaxZ * (1 - zoom)));
             }
             previousHit = currentHit;
         }
-
-        //invert zoom and apply to map clipping UV
-        matPosScale.z = ((1 - graphicsEasing.EaseOut(zoom, EasingType.Quadratic)) * (mapMaxScale - mapMinScale)) + mapMinScale;
-        //matPosScale.w = matPosScale.z;
-
-        //set the clipping UV position
-        matPosScale.x = -((mapCameraRoot.transform.localPosition.z - -rootMaxX) / (rootMaxX - -rootMaxX) * (mapMaxOffset - -mapMaxOffset) + -mapMaxOffset) * (1 - zoom);
-        matPosScale.y = -((mapCameraRoot.transform.localPosition.x - -rootMaxX) / (rootMaxX - -rootMaxX) * (mapMaxOffset - -mapMaxOffset) + -mapMaxOffset) * (1 - zoom);
-
-        //set material data
-        mapMaterial.SetVector("_PosScale", matPosScale);
-
-        //clamp the translation so we can't pan off the map
-        mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -(rootMaxX * (1 - zoom)), rootMaxX * (1 - zoom)), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -(rootMaxZ * (1 - zoom)), rootMaxZ * (1 - zoom)));
-
-        //set the FOV
-        float currentFOV = zoom * ((camMaxFOV - camMinFOV) + camMinFOV);
-        currentFOV = Mathf.Clamp(currentFOV, camMinFOV, camMaxFOV);
-        mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
-
-        Debug.Log("Zoom level = " + zoom + " Map scale = " + matPosScale.z + " Camera position: " + camZ + " FOV = " + currentFOV);
     }
 }

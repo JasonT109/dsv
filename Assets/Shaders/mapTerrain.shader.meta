@@ -1,10 +1,10 @@
 fileFormatVersion: 2
 guid: 39fcc31416fca9d499dde4088398c7fb
-timeCreated: 1466555565
+timeCreated: 1466721899
 licenseType: Free
 ShaderImporter:
   defaultTextures:
-  - _ClippingMask: {fileID: 2800000, guid: a254b760159c3be40823a7958ffb7e7b, type: 3}
+  - _MapEdgeAlpha: {fileID: 2800000, guid: 6bf88b1e1947c3b428e685b1e43ebc13, type: 3}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

@@ -360,6 +360,7 @@
     <None Include="Assets\Shaders\depthToColor.shader" />
     <None Include="Assets\Shaders\echo.shader" />
     <None Include="Assets\Shaders\mapTerrain.shader" />
+    <None Include="Assets\Shaders\mapTerrain2.shader" />
     <None Include="Assets\Shaders\meg.shader" />
     <None Include="Assets\Shaders\mulitplyNoise.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />

@@ -26,14 +26,25 @@ public class graphicsSonarObject : NetworkBehaviour
     //destroy after last way point?
     public bool destroyOnLastPoint = false;
 
-    public Vector3 angle;
-    public Vector3 nextWayPoint;
-    private bool goNext = true;
+    //used to force the bend animation to blend in more
+    public float bendBoost = 10f;
+
+    //used to control blend speed of bend animations
+    public float bendBlendSpeed = 0.5f;
+
+    //next way point number
     public int wayPointNumber = 0;
+
+    private Vector3 angle;
+    private Vector3 nextWayPoint;
+    private bool goNext = true;
     private Vector3 originalPos;
     private Rigidbody rb;
     private Animator animator;
-    public Vector3 localVelocity;
+    private Vector3 localVelocity;
+    private float blendValueC = 0f;
+    private float blendValueL = 0f;
+    private float blendValueR = 0f;
     
     void Start ()
     {
@@ -57,7 +68,6 @@ public class graphicsSonarObject : NetworkBehaviour
             return;
         if (wayPoints.Length > 0)
         {
-            //Debug.Log("Moving");
             //if close enough to way point move to next one
             if (Vector3.Distance(transform.position, wayPoints[wayPointNumber]) < closeDistance)
             {
@@ -83,33 +93,38 @@ public class graphicsSonarObject : NetworkBehaviour
             Vector3 directionVector = (wayPoints[wayPointNumber] - transform.position).normalized;
             angle = new Vector3(0, 0, Vector3.Angle(transform.forward, directionVector));
             angle.z = angle.z / 180;
-            //boost this a bit so we get more bend
-            angle.z *= 2.5f;
 
+            //boost this a bit so we get more bend
+            angle.z *= bendBoost;
+
+            //get local velocity from rigid body
             localVelocity = transform.InverseTransformDirection(rb.velocity);
 
             if (localVelocity.x < 0)
             {
-                turnLeftBlend = 0;
-                turnRightBlend = Mathf.Lerp(turnRightBlend, angle.z, Time.deltaTime);
-                swimBlend = Mathf.Lerp(swimBlend, 1 - angle.z, Time.deltaTime);
+                blendValueL = 0;
+                blendValueR = angle.z;
+                blendValueC = 1 - angle.z;
 
             }
             else if (localVelocity.x > 0)
             {
-                turnRightBlend = 0;
-                turnLeftBlend = Mathf.Lerp(turnLeftBlend, angle.z, Time.deltaTime);
-                swimBlend = Mathf.Lerp(swimBlend, 1 - angle.z, Time.deltaTime);
+                blendValueL = angle.z;
+                blendValueR = 0;
+                blendValueC = 1 - angle.z;
             }
             else
             {
-                swimBlend = Mathf.Lerp(swimBlend, 0, Time.deltaTime);
-                turnLeftBlend = Mathf.Lerp(turnLeftBlend, 0, Time.deltaTime);
-                turnRightBlend = Mathf.Lerp(turnRightBlend, 0, Time.deltaTime);
+                blendValueL = 0;
+                blendValueR = 0;
+                blendValueC = 0;
             }
 
+            turnRightBlend = Mathf.Lerp(turnRightBlend, blendValueR, Time.deltaTime * bendBlendSpeed);
+            turnLeftBlend = Mathf.Lerp(turnLeftBlend, blendValueL, Time.deltaTime * bendBlendSpeed);
+            swimBlend = Mathf.Lerp(swimBlend, blendValueC, Time.deltaTime * bendBlendSpeed);
+
             //move to waypoint in sequence
-            //transform.position = Vector3.Lerp(transform.position, wayPoints[wayPointNumber], Time.deltaTime * speed);
             rb.AddForce(transform.forward * speed, ForceMode.Impulse);
 
             //xz plane only movement

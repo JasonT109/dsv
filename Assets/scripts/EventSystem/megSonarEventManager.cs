@@ -10,6 +10,7 @@
 
         public megEventSonar[] sonarEvents;
         public float sonarZOffset = 76.6f;
+        public float sonarYOffset = -8.0f;
         public GameObject waypointVisual;
         public float visualXOffset = 36.295f;
         public float visualYOffset = 21.69f;
@@ -68,7 +69,7 @@
             for (int i = 0; i < m.waypoints.Length; i++)
             {
                 //add sonar offset position to waypoints
-                wps[i] = new Vector3(m.waypoints[i].x, m.waypoints[i].y, m.waypoints[i].z + sonarZOffset);
+                wps[i] = new Vector3(m.waypoints[i].x, m.waypoints[i].y + sonarYOffset, m.waypoints[i].z + sonarZOffset);
 
                 //convert waypoints from local space to world space
                 wps[i] = dsvObject.transform.TransformPoint(wps[i]);
