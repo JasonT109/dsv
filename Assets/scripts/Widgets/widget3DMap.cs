@@ -8,6 +8,7 @@ using Meg.Maths;
 public class widget3DMap : MonoBehaviour {
 
     public GameObject mapCameraRoot;
+    public GameObject mapCameraPitch;
     public GameObject mapCamera;
     public Material mapMaterial;
     public float rootMaxX = 225f;
@@ -22,16 +23,18 @@ public class widget3DMap : MonoBehaviour {
     public float scrollSpeed = 1.0f;
     public float rotateSpeed = 0.2f;
     public float scaleSpeed = 0.2f;
-
+    public GameObject viewAngleSlider;
     public float scaleAmount;
     public float maxScroll;
     public float scaleDelta;
+    public bool deactivateChildrenOnScroll = true;
     private Vector3 posDelta;
     private float rotDelta;
     private TouchHit currentHit;
     private TouchHit previousHit;
     private bool pressed = false;
     private bool multiTouch = false;
+    private float rotateAmount = 0f;
     
     public Vector4 matPosScale;
 
@@ -78,7 +81,7 @@ public class widget3DMap : MonoBehaviour {
         //set the current hit data so we can read the position the touch is at
         currentHit = hit;
 
-        //set pressed to true so the update will transform the texture co-ords
+        //set pressed to true so the update will transform the map
         pressed = true;
 
         //if we have more than one touch
@@ -96,6 +99,18 @@ public class widget3DMap : MonoBehaviour {
             rotDelta = 0f;
             multiTouch = false;
         }
+
+        if (deactivateChildrenOnScroll)
+        {
+            //set all children buttons to in active
+            foreach (GameObject b in gameObject.GetComponentInChildren<buttonGroup>().buttons)
+            {
+                if (b.GetComponent<buttonControl>().active)
+                {
+                    b.GetComponent<buttonControl>().toggleButton(b);
+                }
+            }
+        }
     }
 
     private void releaseHandler(object sender, EventArgs e)
@@ -107,10 +122,10 @@ public class widget3DMap : MonoBehaviour {
         //reset previous hit
         previousHit = new TouchHit();
         scaleDelta = 1f;
+        rotateAmount = 0f;
 
-        //stop the update loop from transforming the texture
+        //stop the update loop from transforming the map
         pressed = false;
-
     }
 
     // Use this for initialization
@@ -122,36 +137,37 @@ public class widget3DMap : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        //get the view angle slider value
+        float viewAngle = viewAngleSlider.GetComponent<sliderWidget>().returnValue;
+
+        mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
+
         //get current zoom level from camera
         float zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         float camZ = mapCamera.transform.localPosition.z;
 
+        //scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
+        float zoomeSpeedMultiplier = graphicsMaths.remapValue(zoom, 0f, 1f, 0.1f, 1f);
+
         if (pressed)
         {
-            //matPosScale = mapMaterial.GetVector("_PosScale");
-
-            //get difference from this touch position and last
-            Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
-
             //scale or rotate the camera
             if (multiTouch)
             {
-                float rotateAmount = 1f;
-                rotateAmount /= rotDelta;
+                //slowly increase the rotate amount so we don't get jittery rotations when fingers are close together
+                rotateAmount = Mathf.Lerp(rotateAmount, rotDelta, Time.deltaTime * rotateSpeed);
 
                 //apply the rotation
-                mapCameraRoot.transform.Rotate(0, rotDelta * rotateSpeed, 0);
+                mapCameraRoot.transform.Rotate(0, rotateAmount, 0);
 
                 //scale amount is -1 to 1
                 scaleAmount = graphicsMaths.remapValue(scaleDelta, 0.5f, 1.5f, -1f, 1f);
 
                 //add the scale amount to current camera position value
-                camZ += scaleAmount * scaleSpeed;
-
-                //camZ = (zoom * (camMaxZ - camMinZ)) + camMinZ;
+                camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
 
                 //add this to the camera pos z
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, Time.deltaTime));
+                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, Time.deltaTime * 0.2f));
 
                 mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
 
@@ -166,10 +182,20 @@ public class widget3DMap : MonoBehaviour {
             maxScroll = Mathf.Abs(maxScroll);
 
             //pan the camera
-            if (previousHit.Point != Vector3.zero && !multiTouch)
+            if (!multiTouch)
             {
+                //if we've not yet touched the screen the delta can't be reliably calculated
+                if (previousHit.Point == Vector3.zero)
+                {
+                    previousHit = currentHit;
+                    return;
+                }
+
+                //get difference from this touch position and last
+                Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
+
                 //create a local space transform that we can transpose
-                Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * scrollSpeed), 0, touchDelta.y * (Time.deltaTime * scrollSpeed));
+                Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), 0, touchDelta.y * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)));
 
                 //transpose to world space
                 worldPos = mapCameraRoot.transform.TransformPoint(worldPos);
@@ -183,10 +209,9 @@ public class widget3DMap : MonoBehaviour {
                 //clamp the translation
                 mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -maxScroll, maxScroll), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -maxScroll, maxScroll));
 
-                //clamp the translation so we can't pan off the map
-                //mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -(rootMaxX * (1 - zoom)), rootMaxX * (1 - zoom)), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -(rootMaxZ * (1 - zoom)), rootMaxZ * (1 - zoom)));
-            }
-            previousHit = currentHit;
+                //set previous hit point so we can reference it next frame to calculate the delta
+                previousHit = currentHit;
+            } 
         }
     }
 }

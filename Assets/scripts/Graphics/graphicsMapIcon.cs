@@ -6,16 +6,19 @@ public class graphicsMapIcon : MonoBehaviour {
     public GameObject button;
     public GameObject directionMarker;
     public int direction; //0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
+    public bool useAnchor = true;
     public bool atBounds = false;
     public TextMesh label;
+    public Vector3 lowerLeftPos = new Vector3(0.62f, 0.13f, 0.4f);
+    public Vector3 leftPos = new Vector3(0.62f, 0.13f, 0.4f);
+    public Vector3 upperLeftPos = new Vector3(0.18f, -0.07f, 0.4f);
+    public Vector3 upPos = new Vector3(0.18f, -0.07f, 0.4f);
+    public Vector3 upperRightPos = new Vector3(0.095f, 0.41f, 0.4f);
+    public Vector3 rightPos = new Vector3(0.22f, 0.53f, 0.4f);
+    public Vector3 lowerRightPos = new Vector3(0.22f, 0.53f, 0.4f);
+    public Vector3 lowPos = new Vector3(0.62f, 0.13f, 0.4f);
 
-	// Use this for initialization
-	void Start ()
-    {
-	
-	}
-	
-	// Update is called once per frame
+
 	void Update ()
     {
 	    if (atBounds)
@@ -28,56 +31,83 @@ public class graphicsMapIcon : MonoBehaviour {
                 case 0:
                     //0 no direction
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, -180);
-                    label.anchor = TextAnchor.LowerLeft;
-                    label.transform.localPosition = new Vector3(0.62f, 0.13f, 0.4f);
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.MiddleLeft;
+                    }
+                    label.transform.localPosition = leftPos;
                     break;
                 case 1:
                     //1 left
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, -180);
-                    label.anchor = TextAnchor.LowerLeft;
-                    label.transform.localPosition = new Vector3(0.62f, 0.13f, 0.4f);
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.MiddleLeft;
+                    }
+                    label.transform.localPosition = leftPos;
                     break;
                 case 2:
                     //2 upleft
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, -135);
-                    label.anchor = TextAnchor.UpperLeft;
-                    label.transform.localPosition = new Vector3(0.18f, -0.07f, 0.4f);
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.UpperLeft;
+                    }
+                    label.transform.localPosition = upperLeftPos;
                     break;
                 case 3:
                     //3 up
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, -90);
-                    label.transform.localPosition = new Vector3(0.18f, -0.07f, 0.4f);
-                    label.anchor = TextAnchor.UpperLeft;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.UpperLeft;
+                    }
+                    label.transform.localPosition = upPos;
                     break;
                 case 4:
                     //4 up right
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, -45);
-                    label.transform.localPosition = new Vector3(0.095f, 0.41f, 0.4f);
-                    label.anchor = TextAnchor.UpperRight;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.UpperRight;
+                    }
+                    label.transform.localPosition = upperRightPos;
                     break;
                 case 5:
                     //5 right
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, 0);
-                    label.transform.localPosition = new Vector3(0.22f, 0.53f, 0.4f);
-                    label.anchor = TextAnchor.LowerRight;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.MiddleRight;
+                    }
+                    label.transform.localPosition = rightPos;
                     break;
                 case 6:
                     //6 down right
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, 45);
-                    label.transform.localPosition = new Vector3(0.22f, 0.53f, 0.4f);
-                    label.anchor = TextAnchor.LowerRight;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.LowerRight;
+                    }
+                    label.transform.localPosition = lowerRightPos;
                     break;
                 case 7:
                     //7 down
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, 90);
-                    label.transform.localPosition = new Vector3(0.62f, 0.13f, 0.4f);
-                    label.anchor = TextAnchor.LowerLeft;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.LowerLeft;
+                    }
+                    label.transform.localPosition = lowPos;
                     break;
                 case 8:
                     //8 down left
                     directionMarker.transform.rotation = Quaternion.Euler(0, 180, 135);
-                    label.transform.localPosition = new Vector3(0.62f, 0.13f, 0.4f);
-                    label.anchor = TextAnchor.LowerLeft;
+                    if (useAnchor)
+                    {
+                        label.anchor = TextAnchor.LowerLeft;
+                    }
+                    label.transform.localPosition = lowerLeftPos;
                     break;
             }
         }
