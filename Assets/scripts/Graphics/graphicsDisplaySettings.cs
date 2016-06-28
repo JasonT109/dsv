@@ -13,6 +13,7 @@ public class graphicsDisplaySettings : MonoBehaviour {
     public float offset_21x9l_X = -41.1f;
     public float offset_21x9c_X = 0f;
     public float offset_21x9r_X = 41.1f;
+    public float leftLargePanelXOffset = -83.6f;
     public GameObject mainPanel;
     public GameObject panelLeftSmall;
     public GameObject panelRightSmall;
@@ -61,6 +62,7 @@ public class graphicsDisplaySettings : MonoBehaviour {
             panelRightSmall.SetActive(false);
             panelLeftLarge.SetActive(true);
             panelRightLarge.SetActive(false);
-        }
+            panelLeftLarge.transform.localPosition = new Vector3(leftLargePanelXOffset, panelLeftLarge.transform.localPosition.y, panelLeftLarge.transform.localPosition.z);
+}
     }
 }
