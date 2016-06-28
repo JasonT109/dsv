@@ -18,14 +18,15 @@ public class CustomLiveFeedManager : MonoBehaviour
 	{
 		//uncomment to have cameras setup and begin playing on start
 		//this sets the first camera to slot 1, second to slot 2 etc...
-		//for (int i = 0; i < _liveCameras.Length; ++i) 
-		//{
-		//	_liveCameras [i]._desiredDeviceIndex = ConvertDeviceSlotToIndex(i);
-		//	_liveCameras [i]._desiredModeIndex = defaultModeIndex;s
-		//	_liveCameras [i]._deviceSelection = AVProLiveCamera.SelectDeviceBy.Index;
-		//	_liveCameras [i]._modeSelection = AVProLiveCamera.SelectModeBy.Index;
-		//	_liveCameras [i].Begin ();
-		//}
+        /*
+		for (int i = 0; i < _liveCameras.Length; ++i) 
+		{
+			_liveCameras [i]._desiredDeviceIndex = ConvertDeviceSlotToIndex(i);
+			_liveCameras [i]._desiredModeIndex = defaultModeIndex;
+			_liveCameras [i]._deviceSelection = AVProLiveCamera.SelectDeviceBy.Index;
+			_liveCameras [i]._modeSelection = AVProLiveCamera.SelectModeBy.Index;
+			_liveCameras [i].Begin ();
+		}*/
 	}
 
 	// Update is called once per frame
@@ -40,7 +41,7 @@ public class CustomLiveFeedManager : MonoBehaviour
 		_liveCameras [CurrentCamera]._desiredDeviceIndex = ConvertDeviceSlotToIndex(_Slot);
 		_liveCameras [CurrentCamera]._deviceSelection = AVProLiveCamera.SelectDeviceBy.Index;
 		//uncomment if this is intended to take effect during this function call
-		//_liveCameras [CurrentCamera].Begin ();
+		_liveCameras [CurrentCamera].Begin ();
 	}
 
 	public void SetCamera(int _Index)
@@ -53,7 +54,7 @@ public class CustomLiveFeedManager : MonoBehaviour
 		_liveCameras [CurrentCamera]._desiredModeIndex = _Index;
 		_liveCameras [CurrentCamera]._modeSelection = AVProLiveCamera.SelectModeBy.Index;
 		//uncomment if this is intended to take effect during this function call
-		//_liveCameras [CurrentCamera].Begin ();
+		_liveCameras [CurrentCamera].Begin ();
 	}
 
 	public void Begin()
