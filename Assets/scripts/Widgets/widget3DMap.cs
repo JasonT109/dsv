@@ -28,15 +28,13 @@ public class widget3DMap : MonoBehaviour {
     public float maxScroll;
     public float scaleDelta;
     public bool deactivateChildrenOnScroll = true;
-    private Vector3 posDelta;
+    private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
     private TouchHit previousHit;
     private bool pressed = false;
     private bool multiTouch = false;
     private float rotateAmount = 0f;
-    
-    public Vector4 matPosScale;
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
@@ -89,8 +87,7 @@ public class widget3DMap : MonoBehaviour {
         {
             multiTouch = true;
             //get scale of gesture
-            scaleDelta = gesture.DeltaScale;
-            posDelta = gesture.DeltaPosition;
+            scaleDelta = Mathf.Clamp( gesture.DeltaScale, 0.9f, 1.1f );
             rotDelta = gesture.DeltaRotation;
         }
         else
@@ -143,7 +140,7 @@ public class widget3DMap : MonoBehaviour {
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
 
         //get current zoom level from camera
-        float zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
+        zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         float camZ = mapCamera.transform.localPosition.z;
 
         //scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
@@ -203,11 +200,15 @@ public class widget3DMap : MonoBehaviour {
                 //subtract the root position
                 worldPos -= mapCameraRoot.transform.position;
 
+                Vector3 rootPos = mapCameraRoot.transform.localPosition;
+
                 //add the new value to root position
-                mapCameraRoot.transform.localPosition += new Vector3( worldPos.x, mapCameraRoot.transform.localPosition.y, worldPos.z);
+                rootPos += new Vector3( worldPos.x, mapCameraRoot.transform.localPosition.y, worldPos.z);
 
                 //clamp the translation
-                mapCameraRoot.transform.localPosition = new Vector3(Mathf.Clamp(mapCameraRoot.transform.localPosition.x, -maxScroll, maxScroll), mapCameraRoot.transform.localPosition.y, Mathf.Clamp(mapCameraRoot.transform.localPosition.z, -maxScroll, maxScroll));
+                //rootPos = new Vector3(Mathf.Clamp(rootPos.x, -maxScroll, maxScroll), rootPos.y, Mathf.Clamp(rootPos.z, -maxScroll, maxScroll));
+
+                mapCameraRoot.transform.localPosition = Vector3.Lerp(mapCameraRoot.transform.localPosition, rootPos, Time.deltaTime);
 
                 //set previous hit point so we can reference it next frame to calculate the delta
                 previousHit = currentHit;

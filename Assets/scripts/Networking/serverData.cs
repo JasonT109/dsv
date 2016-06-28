@@ -359,7 +359,6 @@ public class serverData : NetworkBehaviour
                 gameObject.GetComponent<crewData>().crewBodyTemp6 = newValue;
                 break;
             case "posX":
-                Debug.Log("Setting new x position");
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
                 break;
             case "posY":

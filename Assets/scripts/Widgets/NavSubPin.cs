@@ -1,22 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Maths;
 
 public class NavSubPin : MonoBehaviour 
 {
     crewData VesselData;
-    public GameObject Vessel1;
-    public GameObject Vessel2;
-    public GameObject Vessel3;
-    public GameObject Vessel4;
     public float seaFloor = 10994f;
     public Camera mapCamera;
     public float MapSize;
     public Vector2 imageSize = new Vector2(5, 5);
+    public GameObject mapRoot;
     public GameObject ServerData;
-
-    private Vector3[] vesselMapSource = new Vector3[4];
+    public GameObject[] vesselHeightIndicators = new GameObject[4];
     public GameObject[] vesselButtons = new GameObject[4];
     public GameObject[] vessels = new GameObject[4];
+    public float[] distance = new float[4];
+    public float distanceScale = 0.01f;
+    private Vector3[] vesselMapSource = new Vector3[4];
+    public GameObject mapWidget;
+    public float lineXOffset = -0.1f;
 
     // Use this for initialization
     void Start () 
@@ -57,10 +59,34 @@ public class NavSubPin : MonoBehaviour
             }
 
             //get position in map space
-            vesselMapSource[i] = ConvertToMapSpace(vessels[i]);
+            vesselMapSource[i] = ConvertToMapSpace(vessels[i].transform.position);
 
             //set the position
             vesselButtons[i].transform.localPosition = vesselMapSource[i];
+
+            //hit position obtained from ray cast
+            Vector3 hitPos = new Vector3(0, 0, 0);
+
+            //cast a ray down to the terrain from the original position
+            RaycastHit hit;
+
+            if (Physics.Raycast(vessels[i].transform.position, -Vector3.up, out hit))
+            {
+                distance[i] = hit.distance;
+                hitPos = hit.point;
+            }
+
+            if (distance[i] != 0)
+            {
+                //set the position of the height indicators to be at ground level
+                vesselHeightIndicators[i].transform.localPosition = ConvertToMapSpace(hitPos);
+
+                //set the x position to be exactly the same as button plus offset
+                vesselHeightIndicators[i].transform.localPosition = new Vector3(vesselButtons[i].transform.localPosition.x + lineXOffset, vesselHeightIndicators[i].transform.localPosition.y, vesselHeightIndicators[i].transform.localPosition.z);
+            }
+
+            //set the height of the mesh to distance
+            vesselHeightIndicators[i].GetComponent<graphicsSlicedMesh>().Height = vesselButtons[i].transform.localPosition.y - vesselHeightIndicators[i].transform.localPosition.y;
 
             //check to see if child is at edge of the map
             if (vesselButtons[i].transform.localPosition.x == -imageSize.x && vesselButtons[i].transform.localPosition.y == -imageSize.y)
@@ -112,14 +138,13 @@ public class NavSubPin : MonoBehaviour
         }
     }
 
-    Vector2 ConvertToMapSpace(GameObject _Vessel)
+    Vector2 ConvertToMapSpace(Vector3 _Vessel)
     {
         Vector2 TempMapPos;
 
-        Vector3 c = mapCamera.WorldToViewportPoint(_Vessel.transform.position);
+        Vector3 c = mapCamera.WorldToViewportPoint(_Vessel);
         TempMapPos.x = Mathf.Clamp((c.x * 10.0f) - 5.0f, -imageSize.x, imageSize.x);
         TempMapPos.y = Mathf.Clamp((c.y * 10.0f) - 5.0f, -imageSize.y, imageSize.y);
-
         return TempMapPos;
     }
 
@@ -130,7 +155,7 @@ public class NavSubPin : MonoBehaviour
         //"normalise" the coordinate system used in the crew data map
         //hardcoded with the size of the crew map size
         TempVessel.x = (_Vessel.x + 5.0f) / 10.0f;
-        TempVessel.y = (seaFloor - _Vessel.z) / 1000.0f;
+        TempVessel.y = ((seaFloor - _Vessel.z) / 1000.0f) * 2.0f;
         TempVessel.z = (_Vessel.y + 5.0f) / 10.0f;
 
         //convert the normalised coordinates to map to the nav map
