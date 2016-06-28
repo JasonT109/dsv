@@ -9,7 +9,7 @@ public class CustomLiveFeedManager : MonoBehaviour
 	public int defaultDeviceIndex = 8;
 	public int defaultModeIndex = 31;
 
-	int CurrentCamera = 0;
+	public int CurrentCamera = 0;
 
 	public AVProLiveCameraManager _liveCameraManager;
 
