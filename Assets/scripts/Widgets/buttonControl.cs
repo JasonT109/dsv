@@ -8,6 +8,8 @@ using Meg.Networking;
 public class buttonControl : MonoBehaviour
 {
     public Color[] colorTheme;
+    public bool gliderButton = false;
+    public GameObject gliderButtonOnMesh;
     public bool pressed = false;
     public bool active = false;
     public bool disabled = false;
@@ -175,6 +177,18 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (gliderButton)
+        {
+            if (pressed || active)
+            {
+                gliderButtonOnMesh.SetActive(true);
+            }
+            else
+            {
+                gliderButtonOnMesh.SetActive(false);
+            }
+        }
+
         if (colourThemeObj == null)
         {
             colourThemeObj = GameObject.FindWithTag("Inputs");

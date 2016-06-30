@@ -92,11 +92,17 @@ public class gameInputs : NetworkBehaviour
         {
             if (focused)
             {
+                if(status)
+                {
                 status.GetComponent<TextMesh>().text = "Strong";
+                }
             }
             else
             {
+                if (status)
+                {
                 status.GetComponent<TextMesh>().text = "Weak";
+                }
             }
         }
         else
