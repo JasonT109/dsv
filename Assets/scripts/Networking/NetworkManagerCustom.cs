@@ -171,4 +171,27 @@ public class NetworkManagerCustom : MonoBehaviour
         }
 
     }
+
+    public void StartClient()
+    {
+        if(canChangeValue)
+        {
+            Debug.Log("Starting client");
+            canChangeValue = false;
+            manager.StartClient();
+            //StartCoroutine(Wait(1.0f));
+        }
+    }
+
+    public void StartServer()
+    {
+        
+        if(canChangeValue)
+        {
+            Debug.Log("Starting Server");
+            canChangeValue = false;
+            manager.StartHost();
+            //StartCoroutine(Wait(1.0f));
+        }
+    }
 }
