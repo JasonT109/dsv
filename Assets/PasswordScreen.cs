@@ -15,7 +15,8 @@ public class PasswordScreen : MonoBehaviour
     public Text HostIP;
     public Text HostIPTextPlaceholder;
 
-    public NetworkManagerCustom CustomNetMan;
+    //public NetworkManagerCustom CustomNetMan;
+    NetworkManagerCustom CustomNetMan;
 
     public GameObject ZhangLogo;
     public GameObject StartButtonObj;
@@ -24,12 +25,18 @@ public class PasswordScreen : MonoBehaviour
 
     public bool IsPasswordCorrect = false;
 
+
 	// Use this for initialization
 	void Start () 
     {
+        CustomNetMan = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerCustom>();
+
         ToggleClient();
         HostIP.text = Network.player.ipAddress;
         HostIPTextPlaceholder.text = Network.player.ipAddress;
+
+        CustomNetMan.connectionInfo = Network.player.ipAddress;
+        CustomNetMan.connectionList[0] = Network.player.ipAddress;
 
         if(IsPasswordCorrect)
         {
@@ -73,7 +80,10 @@ public class PasswordScreen : MonoBehaviour
         if(_PasswordInput == Password)
         {
             IsPasswordCorrect = true;
-            ZhangLogo.SetActive(true);
+            if(ZhangLogo)
+            {
+                ZhangLogo.SetActive(true);
+            }
             StartButtonObj.SetActive(true);
         }
         else

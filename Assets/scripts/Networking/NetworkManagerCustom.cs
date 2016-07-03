@@ -112,21 +112,21 @@ public class NetworkManagerCustom : MonoBehaviour
         {
             if (!NetworkClient.active && !NetworkServer.active && manager.matchMaker == null)
             {
-                connectionText.text = "Disconnected";
-                if (cb.active && canChangeValue)
-                {
-                    Debug.Log("Starting client");
-                    canChangeValue = false;
-                    manager.StartClient();
-                    StartCoroutine(Wait(1.0f));
-                }
-                if (sb.active && canChangeValue)
-                {
-                    Debug.Log("Starting server");
-                    canChangeValue = false;
-                    manager.StartHost();
-                    StartCoroutine(Wait(1.0f));
-                }
+                //connectionText.text = "Disconnected";
+               if (cb.active && canChangeValue)
+               {
+                   Debug.Log("Starting client");
+                   canChangeValue = false;
+                   manager.StartClient();
+                   StartCoroutine(Wait(1.0f));
+               }
+               if (sb.active && canChangeValue)
+               {
+                   Debug.Log("Starting server");
+                   canChangeValue = false;
+                   manager.StartHost();
+                   StartCoroutine(Wait(1.0f));
+               }
             }
             if (NetworkServer.active && NetworkServer.localClientActive)
             {
@@ -174,6 +174,9 @@ public class NetworkManagerCustom : MonoBehaviour
 
     public void StartClient()
     {
+        Debug.Log("Starting client");
+        canChangeValue = false;
+        manager.StartClient();
         if(canChangeValue)
         {
             Debug.Log("Starting client");
@@ -185,6 +188,15 @@ public class NetworkManagerCustom : MonoBehaviour
 
     public void StartServer()
     {
+
+        if (NetworkServer.active && NetworkServer.localClientActive)
+        {
+            g = GameObject.FindWithTag("ServerData");
+            if (g == null)
+            {
+                Spawn();
+            }
+        }
         
         if(canChangeValue)
         {
