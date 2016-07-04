@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 563743f7bdc993e429df26490e131ec8
+timeCreated: 1467610008
+licenseType: Free
+NativeFormatImporter:
+  userData: <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 29.9999 255.2471"><defs><style>.cls-1{fill:url(#linear-gradient);}.cls-2{fill:#282829;}</style><linearGradient
+    id="linear-gradient" x1="14.9999" y1="251.7471" x2="14.9999" y2="3.5" gradientUnits="userSpaceOnUse"><stop
+    offset="0" stop-color="#36280a"/><stop offset="1" stop-color="#ffd95f"/></linearGradient></defs><title>GL_button_fill_mesh</title><g
+    id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1"
+    d="M15,251.7471a11.5133,11.5133,0,0,1-11.5-11.5V3.5h23V240.2471A11.5133,11.5133,0,0,1,15,251.7471Z"/><path
+    class="cls-2" d="M23,7V240.2471a8,8,0,0,1-16,0V7H23m7-7H0V240.2471a15,15,0,1,0,30,0V0Z"/></g></g></svg>
+  assetBundleName: 
+  assetBundleVariant: 
