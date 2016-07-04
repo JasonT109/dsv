@@ -9,6 +9,7 @@
     {
 
         public megEventSonar[] sonarEvents;
+        //public float sonarXOffset = 10.0f;
         public float sonarZOffset = 76.6f;
         public float sonarYOffset = -8.0f;
         public GameObject waypointVisual;
@@ -21,6 +22,9 @@
         public GameObject recordButton;
         public GameObject customButtonGroup;
         private buttonControl[] customButtons;
+
+        //use this as an anchor for the shark. In this case it's set as the Sonar's camera
+        public GameObject Anchor;
 
         private bool canPress = true;
         private Vector3[] wps;
@@ -70,9 +74,22 @@
             {
                 //add sonar offset position to waypoints
                 wps[i] = new Vector3(m.waypoints[i].x, m.waypoints[i].y + sonarYOffset, m.waypoints[i].z + sonarZOffset);
+                //wps[i] = new Vector3(m.waypoints[i].x, 10.0f, m.waypoints[i].z + sonarZOffset);
+
+                //float x = ((Anchor.transform.position.x + 40f)/80f) * 400f - 200f;
+                //float z = ((Anchor.transform.position.z + 40f)/80f) * 140f - 70f;
+
+                float x = (wps[i].x + 40)/80;
+                float z = (wps[i].z + -60)/30;
+
+                x = x * 400 - 200;
+                z = z * 140 - 70;
 
                 //convert waypoints from local space to world space
-                wps[i] = dsvObject.transform.TransformPoint(wps[i]);
+                //wps[i] = dsvObject.transform.TransformPoint(wps[i]);
+                //wps[i] = new Vector3(dsvObject.transform.TransformPoint(wps[i]).x, Anchor.transform.position.y + sonarYOffset -30.0f, dsvObject.transform.TransformPoint(wps[i]).z);
+                //wps[i] = new Vector3(dsvObject.transform.TransformPoint(wps[i]).x, Anchor.transform.position.y + sonarYOffset -30.0f, dsvObject.transform.TransformPoint(wps[i]).z);
+                wps[i] = new Vector3(Anchor.transform.position.x + (x/4f), Anchor.transform.position.y + sonarYOffset -30.0f, Anchor.transform.position.z + (z/4f));
             }
 
             //spawn the main sonar object
