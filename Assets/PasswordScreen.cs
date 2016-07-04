@@ -22,6 +22,7 @@ public class PasswordScreen : MonoBehaviour
     public GameObject StartButtonObj;
 
     public string Password = "EnglishBreakfast";
+    public string Password2 = "EarlGrey";
 
     public bool IsPasswordCorrect = false;
 
@@ -78,6 +79,15 @@ public class PasswordScreen : MonoBehaviour
     public void PasswordInputChanged(string _PasswordInput)
     {
         if(_PasswordInput == Password)
+        {
+            IsPasswordCorrect = true;
+            if(ZhangLogo)
+            {
+                ZhangLogo.SetActive(true);
+            }
+            StartButtonObj.SetActive(true);
+        }
+        else if(_PasswordInput == Password2)
         {
             IsPasswordCorrect = true;
             if(ZhangLogo)
