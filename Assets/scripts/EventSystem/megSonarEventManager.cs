@@ -76,50 +76,27 @@
                 wps[i] = new Vector3(m.waypoints[i].x, m.waypoints[i].y + sonarYOffset, m.waypoints[i].z + sonarZOffset);
                 //wps[i] = new Vector3(m.waypoints[i].x, 10.0f, m.waypoints[i].z + sonarZOffset);
 
-                //rotate based on sonar anchor's angle
-                //Vector2 P1;
-                //P1.x = x;
-                //P1.y = z;
-                //
-                //Vector2 P2;
-                //P2.x = Anchor.transform.position.x + (x/4f);
-                //P2.y = Anchor.transform.position.z + (z/4f);
-                //
-                //Vector2 P3 = rotateAboutPoint2D(P1,P2, Anchor.transform.rotation.eulerAngles.y);
-
-                //float x = ((Anchor.transform.position.x + 40f)/80f) * 400f - 200f;
-                //float z = ((Anchor.transform.position.z + 40f)/80f) * 140f - 70f;
-
                 //normalise waypoint data
                 float x = (wps[i].x + 40)/80;
                 float z = (wps[i].z + -60)/30;
 
                 //convert to sonarscale
-                //x = x * 400 - 200;
-                //z = z * 140 - 70;
-
                 x = x * 110f - 55f;
                 z = z * 35f - 27.5f;
 
-                Vector2 PreRotate = new Vector2(dsvObject.transform.position.x + x, dsvObject.transform.position.z + z + 83f);
+                //Vector2 PreRotate = new Vector2(dsvObject.transform.position.x + x, dsvObject.transform.position.z + z + 83f);
 
-                Vector2 PostRotate = rotateAboutPoint2D(PreRotate, new Vector2(dsvObject.transform.position.x, dsvObject.transform.position.z), -(dsvObject.transform.rotation.eulerAngles.y * 0.0174533f));
+                //Vector2 PostRotate = rotateAboutPoint2D(PreRotate, new Vector2(dsvObject.transform.position.x, dsvObject.transform.position.z), -(dsvObject.transform.rotation.eulerAngles.y * 0.0174533f));
 
-                wps[i] = new Vector3(PostRotate.x, Anchor.transform.position.y + sonarYOffset -30.0f, PostRotate.y);
+                //wps[i] = new Vector3(PostRotate.x, Anchor.transform.position.y + sonarYOffset -30.0f, PostRotate.y);
+
+
+                wps[i] = new Vector3(Anchor.transform.TransformPoint(wps[i]).x, Anchor.transform.position.y + sonarYOffset, Anchor.transform.TransformPoint(wps[i]).z);
 
 
                 //convert waypoints from local space to world space
                 //wps[i] = dsvObject.transform.TransformPoint(wps[i]);
-                //wps[i] = new Vector3(dsvObject.transform.TransformPoint(wps[i]).x, Anchor.transform.position.y + sonarYOffset -30.0f, dsvObject.transform.TransformPoint(wps[i]).z);
-                //wps[i] = new Vector3(dsvObject.transform.TransformPoint(wps[i]).x, Anchor.transform.position.y + sonarYOffset -30.0f, dsvObject.transform.TransformPoint(wps[i]).z);
-
-                //wps[i] = new Vector3(Anchor.transform.localPosition.x + (x/4f), Anchor.transform.position.y + sonarYOffset -30.0f, Anchor.transform.localPosition.z + (z/4f));
-
-               // wps[i] = new Vector3(dsvObject.transform.TransformPoint(wps[i]).x, 
-               //     Anchor.transform.position.y + sonarYOffset -30.0f, 
-               //     dsvObject.transform.TransformPoint(wps[i]).z - 35f * (Mathf.Sin(dsvObject.transform.rotation.eulerAngles.x * 0.0174533f)));
-
-                //wps[i] = new Vector3(P3.x, Anchor.transform.position.y + sonarYOffset -30.0f, P3.y);
+         
             }
 
             //spawn the main sonar object
