@@ -151,4 +151,152 @@ public class ModeTranslator : MonoBehaviour
 		}
 
 	}
+
+    public string TranslateFromIndexSmall(int _Index)
+    {
+        switch(_Index)
+        {
+            case 0:
+                {
+                    return("720x486 @29.97fps [YUV_10BPP_V210]");
+                }
+            case 1:
+                {
+                    return("720x486 @29.97fps [YUV_UYVY]");
+                }
+            case 2:
+                {
+                    return("720x576 @25.00fps [YUV_10BPP_V210]");
+                }
+            case 3:
+                {
+                    return("720x576 @25.00fps [YUV_UYVY]");
+                }
+            case 4:
+                {
+                    return("1280x720 @50.00fps [RGB_10BPP]");
+                }
+            case 5:
+                {
+                    return("1280x720 @50.00fps [YUV_10BPP_V210]");
+                }
+            case 6:
+                {
+                    return("1280x720 @50.00fps [YUV_UYVY_HDYC]");
+                }
+            case 7:
+                {
+                    return("1280x720 @59.94fps [RGB_10BPP]");
+                }
+            case 8:
+                {
+                    return("1280x720 @59.94fps [YUV_10BPP_V210]");
+                }
+            case 9:
+                {
+                    return("1280x720 @59.94fps [YUV_UYVY_HDYC]");
+                }
+            case 10:
+                {
+                    return("1280x720 @60.00fps [RGB_10BPP]");
+                }
+            case 11:
+                {
+                    return("1280x720 @60.00fps [YUV_10BPP_V210]");
+                }
+            case 12:
+                {
+                    return("1280x720 @60.00fps [YUV_UYVY_HDYC]");
+                }
+            case 13:
+                {
+                    return("1920x1080 @23.98fps [RGB_10BPP]");
+                }
+            case 14:
+                {
+                    return("1920x1080 @23.98fps [YUV_10BPP_V210]");
+                }
+            case 15:
+                {
+                    return("1920x1080 @23.98fps [YUV_UYVY_HDYC]");
+                }
+            case 16:
+                {
+                    return("1920x1080 @24.00fps [RGB_10BPP]");
+                }
+            case 17:
+                {
+                    return("1920x1080 @24.00fps [YUV_10BPP_V210]");
+                }
+            case 18:
+                {
+                    return("1920x1080 @24.00fps [YUV_UYVY_HDYC]");
+                }
+            case 19:
+                {
+                    return("1920x1080 @25.00fps [RGB_10BPP]");
+                }
+            case 20:
+                {
+                    return("1920x1080 @25.00fps [YUV_10BPP_V210]");
+                }
+            case 21:
+                {
+                    return("1920x1080 @25.00fps [YUV_UYVY_HDYC]");
+                }
+            case 22:
+                {
+                    return("1920x1080 @29.97fps [RGB_10BPP]");
+                }
+            case 23:
+                {
+                    return("1920x1080 @29.97fps [YUV_10BPP_V210]");
+                }
+            case 24:
+                {
+                    return("1920x1080 @29.97fps [YUV_UYVY_HDYC]");
+                }
+            case 25:
+                {
+                    return("1920x1080 @30.00fps [RGB_10BPP]");
+                }
+            case 26:
+                {
+                    return("1920x1080 @30.00fps [YUV_10BPP_V210]");
+                }
+            case 27:
+                {
+                    return("1920x1080 @30.00fps [YUV_UYVY_HDYC]");
+                }
+            case 28:
+                {
+                    return("1920x1080 @50.00fps [YUV_10BPP_V210]");
+                }
+            case 29:
+                {
+                    return("1920x1080 @50.00fps [YUV_UYVY_HDYC]");
+                }
+            case 30:
+                {
+                    return("1920x1080 @59.94fps [YUV_10BPP_V210]");
+                }
+            case 31:
+                {
+                    return("1920x1080 @59.94fps [YUV_UYVY_HDYC]");
+                }
+            case 32:
+                {
+                    return("1920x1080 @60.00fps [YUV_10BPP_V210]");
+                }
+            case 33:
+                {
+                    return("1920x1080 @60.00fps [YUV_UYVY_HDYC]");
+                }
+            default:
+                {
+                    return("Mode not recognised");
+                }
+
+        }
+    }
 }
