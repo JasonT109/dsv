@@ -28,7 +28,7 @@ public class DecklinkModeSetter : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if(LeftButton.GetComponent<buttonControl>().pressed)
+        if(LeftButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
             if(canChangeValue)
             {
@@ -44,7 +44,7 @@ public class DecklinkModeSetter : MonoBehaviour
                 StartCoroutine(Wait(0.2f));
             }
         }
-        else if(RightButton.GetComponent<buttonControl>().pressed)
+        else if(RightButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
             if(canChangeValue)
             {
