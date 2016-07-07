@@ -115,14 +115,14 @@ public class NetworkManagerCustom : MonoBehaviour
                 //connectionText.text = "Disconnected";
                if (cb.active && canChangeValue)
                {
-                   Debug.Log("Starting client");
+                   //Debug.Log("Starting client");
                    canChangeValue = false;
                    manager.StartClient();
                    StartCoroutine(Wait(1.0f));
                }
                if (sb.active && canChangeValue)
                {
-                   Debug.Log("Starting server");
+                   //Debug.Log("Starting server");
                    canChangeValue = false;
                    manager.StartHost();
                    StartCoroutine(Wait(1.0f));

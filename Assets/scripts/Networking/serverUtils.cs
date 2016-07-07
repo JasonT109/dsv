@@ -481,6 +481,9 @@ namespace Meg.Networking
                     case "v4depth":
                         rValue = serverObject.GetComponent<mapData>().vessel4Pos.z.ToString("n0");
                         break;
+                    case "meg1Pos":
+                        rValue = serverObject.GetComponent<mapData>().meg1Pos.z.ToString("n0");
+                        break;
                     case "v1velocity":
                         rValue = serverObject.GetComponent<mapData>().vessel1Velocity.ToString("n1");
                         break;
@@ -492,6 +495,9 @@ namespace Meg.Networking
                         break;
                     case "v4velocity":
                         rValue = serverObject.GetComponent<mapData>().vessel4Velocity.ToString("n1");
+                        break;
+                    case "meg1Velocity":
+                        rValue = serverObject.GetComponent<mapData>().meg1Velocity.ToString("n1");
                         break;
                     case "mapEventName":
                         rValue = serverObject.GetComponent<mapData>().mapEventName;
