@@ -292,6 +292,9 @@ namespace Meg.Networking
                     case "v4velocity":
                         rValue = serverObject.GetComponent<crewData>().vessel4Velocity;
                         break;
+                    case "initiateMapEvent":
+                        rValue = serverObject.GetComponent<mapData>().initiateMapEvent;
+                        break;
                     default:
                         rValue = 50;
                         break;
@@ -489,6 +492,9 @@ namespace Meg.Networking
                         break;
                     case "v4velocity":
                         rValue = serverObject.GetComponent<crewData>().vessel4Velocity.ToString("n1");
+                        break;
+                    case "mapEventName":
+                        rValue = serverObject.GetComponent<mapData>().mapEventName;
                         break;
                     default:
                         rValue = "no value";

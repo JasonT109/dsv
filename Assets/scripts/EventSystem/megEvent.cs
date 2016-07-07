@@ -33,4 +33,17 @@ namespace Meg.EventSystem
         public Vector3[] waypoints;
         public bool destroyOnEnd;
     }
+
+    [System.Serializable]
+    public class megEventMapCamera
+    {
+        public string eventName;
+        public GameObject trigger;
+        public Vector3 toPosition;
+        public Vector3 toOrientation;
+        public float toZoom;
+        public GameObject toObject;
+        public bool goToObject;
+        public float completeTime;
+    }
 }

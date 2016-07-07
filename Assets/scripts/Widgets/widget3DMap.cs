@@ -35,6 +35,7 @@ public class widget3DMap : MonoBehaviour {
     private bool pressed = false;
     private bool multiTouch = false;
     private float rotateAmount = 0f;
+    private TiltShift tilt;
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
@@ -125,15 +126,8 @@ public class widget3DMap : MonoBehaviour {
         pressed = false;
     }
 
-    // Use this for initialization
-    void Start()
+    void UpdateMap()
     {
-        Terrain.activeTerrain.materialTemplate = mapMaterial;
-    }
-
-	// Update is called once per frame
-	void Update () {
-
         //get the view angle slider value
         float viewAngle = viewAngleSlider.GetComponent<sliderWidget>().returnValue;
 
@@ -142,6 +136,11 @@ public class widget3DMap : MonoBehaviour {
         //get current zoom level from camera
         zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         float camZ = mapCamera.transform.localPosition.z;
+
+        if (tilt)
+        {
+            tilt.focalPoint = Math.Abs(camZ);
+        }
 
         //scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
         float zoomeSpeedMultiplier = graphicsMaths.remapValue(zoom, 0f, 1f, 0.1f, 1f);
@@ -191,8 +190,14 @@ public class widget3DMap : MonoBehaviour {
                 //get difference from this touch position and last
                 Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
 
+                //z translate is normalised view angle * touchDelta.y
+                float zTrans = graphicsMaths.remapValue(viewAngle, viewAngleSlider.GetComponent<sliderWidget>().minValue, viewAngleSlider.GetComponent<sliderWidget>().maxValue, 0, 1) * touchDelta.y;
+
+                //y translate is 1 - normalised view angle * touchDelta.y
+                float yTrans = (1 - graphicsMaths.remapValue(viewAngle, viewAngleSlider.GetComponent<sliderWidget>().minValue, viewAngleSlider.GetComponent<sliderWidget>().maxValue, 0, 1)) * touchDelta.y;
+
                 //create a local space transform that we can transpose
-                Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), 0, touchDelta.y * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)));
+                Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), yTrans * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), zTrans * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)));
 
                 //transpose to world space
                 worldPos = mapCameraRoot.transform.TransformPoint(worldPos);
@@ -203,7 +208,7 @@ public class widget3DMap : MonoBehaviour {
                 Vector3 rootPos = mapCameraRoot.transform.localPosition;
 
                 //add the new value to root position
-                rootPos += new Vector3( worldPos.x, mapCameraRoot.transform.localPosition.y, worldPos.z);
+                rootPos += new Vector3(worldPos.x, worldPos.y, worldPos.z);
 
                 //clamp the translation
                 //rootPos = new Vector3(Mathf.Clamp(rootPos.x, -maxScroll, maxScroll), rootPos.y, Mathf.Clamp(rootPos.z, -maxScroll, maxScroll));
@@ -212,7 +217,20 @@ public class widget3DMap : MonoBehaviour {
 
                 //set previous hit point so we can reference it next frame to calculate the delta
                 previousHit = currentHit;
-            } 
+            }
         }
+    }
+
+    void Start()
+    {
+        Terrain.activeTerrain.materialTemplate = mapMaterial;
+        Terrain.activeTerrain.basemapDistance = 10000;
+        tilt = mapCamera.GetComponent<TiltShift>();
+        UpdateMap();
+    }
+
+	void Update ()
+    {
+        UpdateMap();
     }
 }

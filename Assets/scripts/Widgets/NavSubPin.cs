@@ -82,11 +82,15 @@ public class NavSubPin : MonoBehaviour
                 vesselHeightIndicators[i].transform.localPosition = ConvertToMapSpace(hitPos);
 
                 //set the x position to be exactly the same as button plus offset
-                vesselHeightIndicators[i].transform.localPosition = new Vector3(vesselButtons[i].transform.localPosition.x + lineXOffset, vesselHeightIndicators[i].transform.localPosition.y, vesselHeightIndicators[i].transform.localPosition.z);
+                vesselHeightIndicators[i].transform.localPosition = new Vector3(vesselButtons[i].transform.localPosition.x + lineXOffset, vesselHeightIndicators[i].transform.localPosition.y, vesselHeightIndicators[i].transform.localPosition.z + 1);
             }
 
             //set the height of the mesh to distance
-            vesselHeightIndicators[i].GetComponent<graphicsSlicedMesh>().Height = vesselButtons[i].transform.localPosition.y - vesselHeightIndicators[i].transform.localPosition.y;
+            float vesselHeight = vesselButtons[i].transform.localPosition.y - vesselHeightIndicators[i].transform.localPosition.y;
+            vesselHeightIndicators[i].GetComponent<graphicsSlicedMesh>().Height = vesselHeight;
+
+            //set the vertical tiling to 4x height
+            vesselHeightIndicators[i].GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
 
             //check to see if child is at edge of the map
             if (vesselButtons[i].transform.localPosition.x == -imageSize.x && vesselButtons[i].transform.localPosition.y == -imageSize.y)
