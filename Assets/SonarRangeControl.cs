@@ -24,6 +24,9 @@ public class SonarRangeControl : MonoBehaviour
 	// Use this for initialization
 	void Start () 
     {
+        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
+        Range = Root.GetComponent<SonarData>().SonarRange;
+
         UpdateValues();
 	}
 	
@@ -68,6 +71,10 @@ public class SonarRangeControl : MonoBehaviour
         FullRangeR.text = "" + Range;
 
         RangeValObj.text = "" + Range;
+
+        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
+        Root.GetComponent<SonarData>().SonarRange = Range;
+
     }
 
     IEnumerator Wait(float waitTime)
