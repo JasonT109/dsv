@@ -45,6 +45,8 @@ public class graphicsSonarObject : NetworkBehaviour
     private float blendValueC = 0f;
     private float blendValueL = 0f;
     private float blendValueR = 0f;
+
+    GameObject DataRoot;
     
     void Start ()
     {
@@ -56,10 +58,27 @@ public class graphicsSonarObject : NetworkBehaviour
             transform.position = wayPoints[0];
             wayPointNumber = 1;
         }
+
+        DataRoot = GameObject.FindGameObjectWithTag("ServerData");
 	}
+
+    void Awake()
+    {
+        DataRoot = GameObject.FindGameObjectWithTag("ServerData");
+        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().getScale(), 
+                    DataRoot.GetComponent<SonarData>().getScale(), 
+                    DataRoot.GetComponent<SonarData>().getScale());
+    }
 
 	void Update ()
     {
+        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().getScale(), 
+            DataRoot.GetComponent<SonarData>().getScale(), 
+            DataRoot.GetComponent<SonarData>().getScale());
+
+        turnSpeed = DataRoot.GetComponent<SonarData>().getScaleTurnSpeed();
+        speed = DataRoot.GetComponent<SonarData>().getScaleSpeed();
+
         animator.SetFloat("swim", swimBlend);
         animator.SetFloat("turnright", turnRightBlend);
         animator.SetFloat("turnleft", turnLeftBlend);
