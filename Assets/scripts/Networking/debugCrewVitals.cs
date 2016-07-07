@@ -11,7 +11,6 @@ public class debugCrewVitals : MonoBehaviour
     public TextMesh bodyTempText;
     public bool[] buttonStates;
     public bool[] prevStates;
-    private bool canCheck = true;
     public bool statesChanged = false;
 
     void ChangeValue(string slider, float value)

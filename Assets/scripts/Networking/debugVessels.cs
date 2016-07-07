@@ -14,6 +14,9 @@ public class debugVessels : MonoBehaviour
     public GameObject velocitySlider;
     public GameObject depthText;
     public GameObject velocityText;
+    public GameObject activeButton;
+    public GameObject holdingButton;
+    public GameObject vectorButton;
     public string[] markerNames;
     public float updateTick = 0.4f;
     private float nextUpdateTime = 0.0f;

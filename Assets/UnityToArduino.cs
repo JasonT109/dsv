@@ -7,7 +7,7 @@ public class UnityToArduino : MonoBehaviour
 {
     private SerialPort port;
     public serverData Server;
-    public crewData Crew;
+    public mapData Crew;
     public string COMPort = "COM6";
 
     // initialization

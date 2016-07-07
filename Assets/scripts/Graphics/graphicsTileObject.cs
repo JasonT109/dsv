@@ -8,7 +8,6 @@ public class graphicsTileObject : MonoBehaviour
     public float distanceSnap = 100f;
     public GameObject followObject;
     public bool constrainYTranslate = true;
-    private float d;
     private Vector3 prevPos = new Vector3(0, 0, 1);
     public Vector3 travelDirection = new Vector3(0, 0, 1);
     public float x = 0f;
@@ -26,7 +25,6 @@ public class graphicsTileObject : MonoBehaviour
     {
         if (followObject && canUpdate)
         {
-            d = Vector3.Distance(followObject.transform.position, transform.position);
             xDistance = Vector3.Distance(new Vector3(followObject.transform.position.x, 0, 0), new Vector3(transform.position.x, 0, 0));
             zDistance = Vector3.Distance(new Vector3(0, 0, followObject.transform.position.z), new Vector3(0, 0, transform.position.z));
             travelDirection = (followObject.transform.position - prevPos);

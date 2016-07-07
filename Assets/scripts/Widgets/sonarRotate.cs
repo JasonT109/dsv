@@ -1,25 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class sonarRotate : MonoBehaviour {
-
+public class sonarRotate : MonoBehaviour
+{
     public float speed = 1.0f;
     public float rotateSpeed = 1.0f;
     public Color color1;
     public Color color2;
     public GameObject beam;
     public GameObject[] directionTicks;
-
-    private Renderer r;
     private Material dm;
 
-    // Use this for initialization
-    void Start () {
-        r = beam.GetComponent<Renderer>();
-    }
-	
-	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 
         if (directionTicks.Length > 0)
         {

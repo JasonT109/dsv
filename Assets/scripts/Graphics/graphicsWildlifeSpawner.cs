@@ -40,7 +40,7 @@ public class graphicsWildlifeSpawner : MonoBehaviour {
                 {
                     spawnPos.z = transform.position.z + minSpawnDistance;
                 }
-                GameObject c = (GameObject)Instantiate(creature, spawnPos, Quaternion.identity);
+                Instantiate(creature, spawnPos, Quaternion.identity);
                 //NetworkServer.Spawn(c);
             }
         }

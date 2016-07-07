@@ -375,27 +375,27 @@ public class serverData : NetworkBehaviour
         switch (vessel)
         {
             case 0:
-                gameObject.GetComponent<crewData>().vessel1Pos = pos;
-                gameObject.GetComponent<crewData>().vessel1Velocity = vesselVelocity;
+                gameObject.GetComponent<mapData>().vessel1Pos = pos;
+                gameObject.GetComponent<mapData>().vessel1Velocity = vesselVelocity;
                 break;
             case 1:
-                gameObject.GetComponent<crewData>().vessel2Pos = pos;
-                gameObject.GetComponent<crewData>().vessel2Velocity = vesselVelocity;
+                gameObject.GetComponent<mapData>().vessel2Pos = pos;
+                gameObject.GetComponent<mapData>().vessel2Velocity = vesselVelocity;
                 break;
             case 2:
-                gameObject.GetComponent<crewData>().vessel3Pos = pos;
-                gameObject.GetComponent<crewData>().vessel3Velocity = vesselVelocity;
+                gameObject.GetComponent<mapData>().vessel3Pos = pos;
+                gameObject.GetComponent<mapData>().vessel3Velocity = vesselVelocity;
                 break;
             case 3:
-                gameObject.GetComponent<crewData>().vessel4Pos = pos;
-                gameObject.GetComponent<crewData>().vessel4Velocity = vesselVelocity;
+                gameObject.GetComponent<mapData>().vessel4Pos = pos;
+                gameObject.GetComponent<mapData>().vessel4Velocity = vesselVelocity;
                 break;
         }
     }
 
     public void SetPlayerVessel(int vessel)
     {
-        gameObject.GetComponent<crewData>().playerVessel = vessel;
+        gameObject.GetComponent<mapData>().playerVessel = vessel;
     }
 
     public void OnChangeBool(string boolName, bool newValue)

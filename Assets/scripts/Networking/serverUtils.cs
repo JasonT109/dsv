@@ -245,52 +245,52 @@ namespace Meg.Networking
                         rValue = serverObject.GetComponent<crewData>().crewBodyTemp6;
                         break;
                     case "v1posX":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.x;
+                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.x;
                         break;
                     case "v1posY":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.y;
+                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.y;
                         break;
                     case "v1posZ":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.z;
+                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.z;
                         break;
                     case "v2posX":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.x;
+                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.x;
                         break;
                     case "v2posY":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.y;
+                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.y;
                         break;
                     case "v2posZ":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.z;
+                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.z;
                         break;
                     case "v3posX":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.x;
+                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.x;
                         break;
                     case "v3posY":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.y;
+                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.y;
                         break;
                     case "v3posZ":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.z;
+                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.z;
                         break;
                     case "v4posX":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.x;
+                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.x;
                         break;
                     case "v4posY":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.y;
+                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.y;
                         break;
                     case "v4posZ":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.z;
+                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.z;
                         break;
                     case "v1velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Velocity;
+                        rValue = serverObject.GetComponent<mapData>().vessel1Velocity;
                         break;
                     case "v2velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Velocity;
+                        rValue = serverObject.GetComponent<mapData>().vessel2Velocity;
                         break;
                     case "v3velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Velocity;
+                        rValue = serverObject.GetComponent<mapData>().vessel3Velocity;
                         break;
                     case "v4velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Velocity;
+                        rValue = serverObject.GetComponent<mapData>().vessel4Velocity;
                         break;
                     case "initiateMapEvent":
                         rValue = serverObject.GetComponent<mapData>().initiateMapEvent;
@@ -470,28 +470,28 @@ namespace Meg.Networking
                         rValue = serverObject.GetComponent<crewData>().crewBodyTemp6.ToString("n1");
                         break;
                     case "v1depth":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Pos.z.ToString("n0");
+                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.z.ToString("n0");
                         break;
                     case "v2depth":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Pos.z.ToString("n0");
+                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.z.ToString("n0");
                         break;
                     case "v3depth":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Pos.z.ToString("n0");
+                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.z.ToString("n0");
                         break;
                     case "v4depth":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Pos.z.ToString("n0");
+                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.z.ToString("n0");
                         break;
                     case "v1velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel1Velocity.ToString("n1");
+                        rValue = serverObject.GetComponent<mapData>().vessel1Velocity.ToString("n1");
                         break;
                     case "v2velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel2Velocity.ToString("n1");
+                        rValue = serverObject.GetComponent<mapData>().vessel2Velocity.ToString("n1");
                         break;
                     case "v3velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel3Velocity.ToString("n1");
+                        rValue = serverObject.GetComponent<mapData>().vessel3Velocity.ToString("n1");
                         break;
                     case "v4velocity":
-                        rValue = serverObject.GetComponent<crewData>().vessel4Velocity.ToString("n1");
+                        rValue = serverObject.GetComponent<mapData>().vessel4Velocity.ToString("n1");
                         break;
                     case "mapEventName":
                         rValue = serverObject.GetComponent<mapData>().mapEventName;
@@ -551,7 +551,7 @@ namespace Meg.Networking
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
-            return serverObject.GetComponent<crewData>().playerVessel;
+            return serverObject.GetComponent<mapData>().playerVessel;
         }
     }
 }

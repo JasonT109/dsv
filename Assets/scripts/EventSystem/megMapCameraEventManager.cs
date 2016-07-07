@@ -25,7 +25,6 @@ public class megMapCameraEventManager : MonoBehaviour
     private float initialOrientationX;
     private float initialOrientationY;
     private float initialZoom;
-    private float initialSliderPos;
     private float sliderMinValue;
     private float sliderMaxValue;
 
@@ -59,7 +58,6 @@ public class megMapCameraEventManager : MonoBehaviour
                 initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
                 initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
                 initialZoom = mapCameraObject.transform.localPosition.z;
-                initialSliderPos = mapPitchSliderButton.transform.localPosition.x;
             }
         }
     }
@@ -98,7 +96,6 @@ public class megMapCameraEventManager : MonoBehaviour
                     initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
                     initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
                     initialZoom = mapCameraObject.transform.localPosition.z;
-                    initialSliderPos = mapPitchSliderButton.transform.localPosition.x;
                 }
             }
         }

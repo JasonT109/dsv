@@ -22,7 +22,6 @@ public class gameInputs : NetworkBehaviour
     public bool pilot = false;
     public bool focused = false;
     public GameObject status;
-    private float updateTime = 0.02f;
     private bool canSendData = true;
     public float x1;
     public float y1;

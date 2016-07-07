@@ -22,7 +22,6 @@ public class graphicsPinchZoom : MonoBehaviour {
     private Renderer r;
     private Material m;
     private bool multiTouch = false;
-    private bool updatePositions = false;
 
     Vector2 tilingFactor;
     Vector2 newOffset;

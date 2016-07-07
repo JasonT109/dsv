@@ -4,26 +4,27 @@ using Meg.Maths;
 
 public class NavSubPin : MonoBehaviour 
 {
-    crewData VesselData;
+    mapData VesselData;
     public float seaFloor = 10994f;
+    public float heightMul = 2.0f;
     public Camera mapCamera;
     public float MapSize;
     public Vector2 imageSize = new Vector2(5, 5);
     public GameObject mapRoot;
     public GameObject ServerData;
-    public GameObject[] vesselHeightIndicators = new GameObject[4];
-    public GameObject[] vesselButtons = new GameObject[4];
-    public GameObject[] vessels = new GameObject[4];
-    public float[] distance = new float[4];
+    public GameObject[] vesselHeightIndicators = new GameObject[5];
+    public GameObject[] vesselButtons = new GameObject[5];
+    public GameObject[] vessels = new GameObject[5];
+    public float[] distance = new float[5];
     public float distanceScale = 0.01f;
-    private Vector3[] vesselMapSource = new Vector3[4];
+    private Vector3[] vesselMapSource = new Vector3[5];
     public GameObject mapWidget;
     public float lineXOffset = -0.1f;
 
     // Use this for initialization
     void Start () 
     {
-        VesselData = ServerData.GetComponent<crewData>();
+        VesselData = ServerData.GetComponent<mapData>();
 	}
 	
 	// Update is called once per frame
@@ -54,6 +55,10 @@ public class NavSubPin : MonoBehaviour
                     break;
                 case 3:
                     Vessel = VesselData.vessel4Pos;
+                    vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
+                    break;
+                case 4:
+                    Vessel = VesselData.meg1Pos;
                     vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
                     break;
             }
@@ -159,7 +164,7 @@ public class NavSubPin : MonoBehaviour
         //"normalise" the coordinate system used in the crew data map
         //hardcoded with the size of the crew map size
         TempVessel.x = (_Vessel.x + 5.0f) / 10.0f;
-        TempVessel.y = ((seaFloor - _Vessel.z) / 1000.0f) * 2.0f;
+        TempVessel.y = ((seaFloor - _Vessel.z) / 1000.0f) * heightMul;
         TempVessel.z = (_Vessel.y + 5.0f) / 10.0f;
 
         //convert the normalised coordinates to map to the nav map
