@@ -223,6 +223,12 @@ public class widget3DMap : MonoBehaviour {
 
     void Start()
     {
+        StartCoroutine(wait(0f));
+    }
+
+    IEnumerator wait(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
         Terrain.activeTerrain.materialTemplate = mapMaterial;
         Terrain.activeTerrain.basemapDistance = 10000;
         tilt = mapCamera.GetComponent<TiltShift>();

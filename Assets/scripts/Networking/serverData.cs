@@ -390,6 +390,10 @@ public class serverData : NetworkBehaviour
                 gameObject.GetComponent<mapData>().vessel4Pos = pos;
                 gameObject.GetComponent<mapData>().vessel4Velocity = vesselVelocity;
                 break;
+            case 4:
+                gameObject.GetComponent<mapData>().meg1Pos = pos;
+                gameObject.GetComponent<mapData>().meg1Velocity = vesselVelocity;
+                break;
         }
     }
 
@@ -397,6 +401,29 @@ public class serverData : NetworkBehaviour
     {
         gameObject.GetComponent<mapData>().playerVessel = vessel;
     }
+
+    public void SetPlayerVisibility(int vessel, bool state)
+    {
+        switch (vessel)
+        {
+            case 1:
+                gameObject.GetComponent<mapData>().vessel1Vis = state;
+                break;
+            case 2:
+                gameObject.GetComponent<mapData>().vessel2Vis = state;
+                break;
+            case 3:
+                gameObject.GetComponent<mapData>().vessel3Vis = state;
+                break;
+            case 4:
+                gameObject.GetComponent<mapData>().vessel4Vis = state;
+                break;
+            case 5:
+                gameObject.GetComponent<mapData>().meg1Vis = state;
+                break;
+        }
+    }
+
 
     public void OnChangeBool(string boolName, bool newValue)
     {

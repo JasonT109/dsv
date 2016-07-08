@@ -31,6 +31,16 @@ public class mapData : NetworkBehaviour
     public float vessel4Velocity;
     [SyncVar]
     public float meg1Velocity;
+    [SyncVar]
+    public bool vessel1Vis = true;
+    [SyncVar]
+    public bool vessel2Vis = true;
+    [SyncVar]
+    public bool vessel3Vis = true;
+    [SyncVar]
+    public bool vessel4Vis = true;
+    [SyncVar]
+    public bool meg1Vis = true;
 
     void Update()
     {

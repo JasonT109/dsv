@@ -115,6 +115,23 @@ public class graphicsMapIcon : MonoBehaviour {
         {
             button.GetComponent<Renderer>().enabled = true;
             directionMarker.GetComponent<Renderer>().enabled = false;
+
+            if (transform.localPosition.x > 0)
+            {
+                if (useAnchor)
+                {
+                    label.anchor = TextAnchor.MiddleRight;
+                }
+                label.transform.localPosition = rightPos;
+            }
+            else
+            {
+                if (useAnchor)
+                {
+                    label.anchor = TextAnchor.MiddleLeft;
+                }
+                label.transform.localPosition = leftPos;
+            }
         }
 	}
 }

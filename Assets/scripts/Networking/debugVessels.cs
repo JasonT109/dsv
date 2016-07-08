@@ -32,8 +32,6 @@ public class debugVessels : MonoBehaviour
     private float vv;
     private bool canUpdate = true;
 
-
-
     private void OnEnable()
     {
         GetComponent<PressGesture>().Pressed += pressedHandler;
@@ -62,8 +60,8 @@ public class debugVessels : MonoBehaviour
         //convert to local space
         Vector3 localPos = gameObject.transform.InverseTransformPoint(hit.Point);
 
-        Debug.Log("Player vessel: " + serverUtils.GetPlayerVessel());
-        Debug.Log("Active vessel: " + (activeVessel + 1));
+        //Debug.Log("Player vessel: " + serverUtils.GetPlayerVessel());
+        //Debug.Log("Active vessel: " + (activeVessel + 1));
 
         //set position of the active vessel
         if (activeVessel + 1 == serverUtils.GetPlayerVessel())
@@ -138,6 +136,12 @@ public class debugVessels : MonoBehaviour
                 vz = serverUtils.GetServerData("v4posZ");
                 vv = serverUtils.GetServerData("v4velocity");
                 break;
+            case 4:
+                vx = serverUtils.GetServerData("meg1posX");
+                vy = serverUtils.GetServerData("meg1posY");
+                vz = serverUtils.GetServerData("meg1posZ");
+                vv = serverUtils.GetServerData("meg1velocity");
+                break;
         }
     }
 
@@ -202,24 +206,35 @@ public class debugVessels : MonoBehaviour
                             velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v1velocity"));
                             depthText.GetComponent<textValueFromServer>().linkDataString = "v1depth";
                             velocityText.GetComponent<textValueFromServer>().linkDataString = "v1velocity";
+                            activeButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(i);
                             break;
                         case 1:
                             depthSlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v2posZ"));
                             velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v2velocity"));
                             depthText.GetComponent<textValueFromServer>().linkDataString = "v2depth";
                             velocityText.GetComponent<textValueFromServer>().linkDataString = "v2velocity";
+                            activeButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(i);
                             break;
                         case 2:
                             depthSlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v3posZ"));
                             velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v3velocity"));
                             depthText.GetComponent<textValueFromServer>().linkDataString = "v3depth";
                             velocityText.GetComponent<textValueFromServer>().linkDataString = "v3velocity";
+                            activeButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(i);
                             break;
                         case 3:
                             depthSlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v4posZ"));
                             velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("v4velocity"));
                             depthText.GetComponent<textValueFromServer>().linkDataString = "v4depth";
                             velocityText.GetComponent<textValueFromServer>().linkDataString = "v4velocity";
+                            activeButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(i);
+                            break;
+                        case 4:
+                            depthSlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("meg1posZ"));
+                            velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(serverUtils.GetServerData("meg1velocity"));
+                            depthText.GetComponent<textValueFromServer>().linkDataString = "meg1depth";
+                            velocityText.GetComponent<textValueFromServer>().linkDataString = "meg1velocity";
+                            activeButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(i);
                             break;
                     }
                 }
@@ -236,6 +251,11 @@ public class debugVessels : MonoBehaviour
         {
             ActiveVesselData(activeVessel);
             ChangeValue(activeVessel, new Vector3(vx, vy, vz), velocitySlider.GetComponentInChildren<sliderWidget>().returnValue);
+        }
+
+        if (canUpdate)
+        {
+            serverUtils.SetVesselVis(activeVessel, activeButton.GetComponent<buttonControl>().active);
         }
     }
 }
