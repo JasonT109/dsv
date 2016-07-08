@@ -4,6 +4,7 @@ using UnityEngine;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.Networking;
+using Meg.Graphics;
 
 public class buttonControl : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class buttonControl : MonoBehaviour
     public string serverName = "depth";
     public string serverType = "int";
 
+    private megColorTheme colorScheme;
     private Renderer r;
     private Material m;
     private float timeIndex = 0.0f;
@@ -169,6 +171,9 @@ public class buttonControl : MonoBehaviour
 
     public void updateColor()
     {
+        colorScheme = serverUtils.GetColorTheme();
+        colorTheme[1] = colorScheme.keyColor;
+
         if (active && !warning && !pressed)
         {
             m.color = colorTheme[1];
@@ -189,15 +194,7 @@ public class buttonControl : MonoBehaviour
             }
         }
 
-        if (colourThemeObj == null)
-        {
-            colourThemeObj = GameObject.FindWithTag("Inputs");
-        }
-        else
-        {
-            colorTheme[1] = colourThemeObj.GetComponent<graphicsColourHolder>().theme.keyColor;
-            updateColor();
-        }
+        updateColor();
 
         if (autoWarning)
         {

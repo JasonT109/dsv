@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Graphics;
 
 namespace Meg.Networking
 {
@@ -561,7 +562,7 @@ namespace Meg.Networking
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
-            Debug.Log("Setting player vessel to: " + vessel);
+            //Debug.Log("Setting player vessel to: " + vessel);
             serverObject.GetComponent<serverData>().SetPlayerVessel(vessel);
         }
 
@@ -606,5 +607,30 @@ namespace Meg.Networking
 
             serverObject.GetComponent<serverData>().SetPlayerVisibility(vessel, state);
         }
+
+        public static void SetColorTheme(megColorTheme theme)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            serverObject.GetComponent<graphicsColourHolder>().themeName = theme.name;
+            serverObject.GetComponent<graphicsColourHolder>().backgroundColor = theme.backgroundColor;
+            serverObject.GetComponent<graphicsColourHolder>().highlightColor = theme.highlightColor;
+            serverObject.GetComponent<graphicsColourHolder>().keyColor = theme.keyColor;
+        }
+
+        public static megColorTheme GetColorTheme()
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            megColorTheme theme = new megColorTheme();
+
+            if (serverObject)
+            {
+                theme = serverObject.GetComponent<graphicsColourHolder>().theme;
+            }
+
+            return theme;
+        }
+
     }
 }

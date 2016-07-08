@@ -10,18 +10,6 @@ public class graphicsColourPalette : NetworkBehaviour
     public GameObject colourThemeHolder;
     public int vesselId = 1;
 
-    [Command]
-    void CmdUpdateTheme(megColorTheme t, int id)
-    {
-        //make these colour values the currently used values
-        //colourThemeHolder.GetComponent<graphicsColourHolder>().theme = t;
-        colourThemeHolder.GetComponent<graphicsColourHolder>().themeName = t.name;
-        colourThemeHolder.GetComponent<graphicsColourHolder>().keyColor = t.keyColor;
-        colourThemeHolder.GetComponent<graphicsColourHolder>().backgroundColor = t.backgroundColor;
-        colourThemeHolder.GetComponent<graphicsColourHolder>().highlightColor = t.highlightColor;
-        serverUtils.SetPlayerVessel(id);
-    }
-
     void setColorTheme()
     {
         //get the button script this is attached to
@@ -30,23 +18,14 @@ public class graphicsColourPalette : NetworkBehaviour
         {
             if (buttonScript.active)
             {
-                CmdUpdateTheme(theme, vesselId);
+                serverUtils.SetPlayerVessel(vesselId);
+                serverUtils.SetColorTheme(theme);
             }
         }
     }
 
     void Update()
     {
-        if (!isServer)
-            return;
-
-        if (colourThemeHolder == null)
-        {
-            colourThemeHolder = GameObject.FindWithTag("Inputs");
-        }
-        else
-        {
-            setColorTheme();
-        }
+        setColorTheme();
     }
 }

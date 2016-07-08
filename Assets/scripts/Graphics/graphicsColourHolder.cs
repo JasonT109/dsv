@@ -15,6 +15,12 @@ public class graphicsColourHolder : NetworkBehaviour
     [SyncVar]
     public Color highlightColor;
 
+    void Start()
+    {
+        theme = new megColorTheme();
+        theme.name = "Default";
+    }
+
     void Update()
     {
         theme.name = themeName;
