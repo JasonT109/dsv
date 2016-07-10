@@ -69,8 +69,8 @@ public class SubControl : MonoBehaviour
         {
             //apply the input forces
             rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-            rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
-            rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+            //rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
+            rb.AddTorque(YawExtract * (yawSpeed * inputXaxis));
 
 
             //this.transform.Rotate(0, 0, (rollSpeed * inputXaxis)/10f);
@@ -104,7 +104,7 @@ public class SubControl : MonoBehaviour
                 
             if(currentThrust < MaxSpeed && currentThrust > MinSpeed)
             {
-                currentThrust += inputZaxis * (Acceleration / thrust);
+                currentThrust = inputZaxis * (Acceleration * thrust);
             }
             
             if(currentThrust > MaxSpeed)
