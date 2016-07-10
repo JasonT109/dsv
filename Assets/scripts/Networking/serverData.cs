@@ -589,26 +589,28 @@ public class serverData : NetworkBehaviour
 
     void FixedUpdate()
     {
-        if (!disableInput)
-        {
-            //apply the input forces
-            currentThrust = Mathf.Lerp(currentThrust, (thrust * inputZaxis), Time.deltaTime * 0.1f);
-            rb.AddForce(transform.forward * currentThrust);
-            rb.AddRelativeTorque(-Vector3.right * (pitchSpeed * inputYaxis));
-            rb.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
-        }
+        this.GetComponent<SubControl>().SubController();
 
-        //calculate bank
-        float amountToBank = rb.angularVelocity.y * bankAmount;
-        bank = Mathf.Lerp(bank, amountToBank, rollSpeed);
-        rotation = transform.rotation.eulerAngles;
-        rotation *= Mathf.Deg2Rad;
-        rotation.z = 0f;
-        rotation += bankAxis * bank;
-        rotation *= Mathf.Rad2Deg;
-
-        //apply the bank
-        transform.rotation = Quaternion.Euler(rotation);
+        //if (!disableInput)
+        //{
+        //    //apply the input forces
+        //    currentThrust = Mathf.Lerp(currentThrust, (thrust * inputZaxis), Time.deltaTime * 0.1f);
+        //    rb.AddForce(transform.forward * currentThrust);
+        //    rb.AddRelativeTorque(-Vector3.right * (pitchSpeed * inputYaxis));
+        //    rb.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
+        //}
+        //
+        ////calculate bank
+        //float amountToBank = rb.angularVelocity.y * bankAmount;
+        //bank = Mathf.Lerp(bank, amountToBank, rollSpeed);
+        //rotation = transform.rotation.eulerAngles;
+        //rotation *= Mathf.Deg2Rad;
+        //rotation.z = 0f;
+        //rotation += bankAxis * bank;
+        //rotation *= Mathf.Rad2Deg;
+        //
+        ////apply the bank
+        //transform.rotation = Quaternion.Euler(rotation);
 
         //server only
         if (!isServer)
