@@ -21,6 +21,7 @@ public class SubControl : MonoBehaviour
     public bool disableInput = false;
     private Vector3 rotation;
     public float currentThrust = 0.0f;
+    public float currentDiveThrust = 0.0f;
 
     private float thrust = 25.258f;
     public float Acceleration = 1.0f;
@@ -67,41 +68,20 @@ public class SubControl : MonoBehaviour
 
         if (!disableInput)
         {
-            //apply the input forces
+            //this.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z);
+
+            //apply the orientation forces
             rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-            //rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
-            rb.AddTorque(YawExtract * (yawSpeed * inputXaxis));
+            rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
+            rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
 
-
-            //this.transform.Rotate(0, 0, (rollSpeed * inputXaxis)/10f);
-
+            //adjust mix for pitch when doing a banking turn
+            rb.AddRelativeTorque(PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
 
            
-            //if(currentThrust > 0 && rb.velocity.magnitude < MaxSpeed)
-            //{
-            //    currentThrust += inputZaxis * (Acceleration / 20.0f);
-            //}
 
-            //if(currentThrust < 0 && -(rb.velocity.magnitude) > MinSpeed)
-            //{
-            //    currentThrust += inputZaxis * (Acceleration / 20.0f);
-            //}
 
-            //if(currentThrust > 0 && rb.velocity.magnitude > MaxSpeed)
-            //{
-            //    //currentThrust = 0.0f;
-            //}
-
-            //if(currentThrust < 0 && -(rb.velocity.magnitude) < MinSpeed)
-            //{
-            //    currentThrust = 0.0f;
-            //}
-
-            //if(rb.velocity.magnitude < MaxSpeed)
-            //{
-            //    currentThrust += inputZaxis * (Acceleration / 1.0f);
-            //}
-                
+            //apply the thrust forces    
             if(currentThrust < MaxSpeed && currentThrust > MinSpeed)
             {
                 currentThrust = inputZaxis * (Acceleration * thrust);
@@ -118,6 +98,25 @@ public class SubControl : MonoBehaviour
             }
 
             rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
+
+
+            //apply the dive forces    
+            //if(currentDiveThrust < MaxSpeed && currentDiveThrust > MinSpeed)
+            //{
+            //    currentDiveThrust = inputYaxis2 * (Acceleration * thrust);
+            //}
+            //
+            //if(currentDiveThrust > MaxSpeed)
+            //{
+            //    currentDiveThrust = MaxSpeed - 0.01f;
+            //}
+            //
+            //if(currentDiveThrust < MinSpeed)
+            //{
+            //    currentDiveThrust = MinSpeed + 0.01f;
+            //}
+            //
+            //rb.AddRelativeForce(0, currentDiveThrust * thrust * Time.deltaTime, 0);
 
         }
 

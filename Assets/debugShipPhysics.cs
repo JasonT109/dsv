@@ -87,7 +87,7 @@ public class debugShipPhysics : MonoBehaviour
         //if(JoystickVertical.valueChanged)
         {
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
-            //Root.GetComponent<SubControl>().inputXaxis = JoystickVertical.returnValue;
+            Root.GetComponent<SubControl>().inputYaxis2 = JoystickVertical.returnValue;
         }
     }
 

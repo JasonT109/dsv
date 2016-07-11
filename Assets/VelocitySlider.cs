@@ -19,6 +19,7 @@ public class VelocitySlider : MonoBehaviour
             this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F1");
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
             Root.GetComponent<SubControl>().MaxSpeed = Slider.returnValue;
+            Root.GetComponent<SubControl>().MinSpeed = -(Slider.returnValue/2f);
         }
 	}
 }
