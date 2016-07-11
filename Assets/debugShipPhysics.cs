@@ -6,6 +6,8 @@ public class debugShipPhysics : MonoBehaviour
     public GameObject StabiliseRoll;
     public GameObject FullStabilisation;
 
+    public GameObject JoyStickSwitcher;
+
     public GameObject JoystickOverride;
 
     public sliderWidget JoystickX;
@@ -56,6 +58,25 @@ public class debugShipPhysics : MonoBehaviour
             {
                 Root.GetComponent<SubControl>().IsPitchAlsoStabalised = false;
             }
+        }
+
+        if(JoyStickSwitcher.GetComponent<buttonControl>().active)
+        {
+            GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
+            if(Root)
+            {
+                Root.GetComponent<serverData>().IsJoystickSwapped = true;
+                JoyStickSwitcher.GetComponent<buttonControl>().warning = true;
+            }
+        }
+        else
+        {
+            GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
+            if(Root)
+            {
+                Root.GetComponent<serverData>().IsJoystickSwapped = false;
+                JoyStickSwitcher.GetComponent<buttonControl>().warning = false;
+            } 
         }
 
         if(OverrideLogic())

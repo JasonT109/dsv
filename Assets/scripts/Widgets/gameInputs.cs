@@ -81,11 +81,34 @@ public class gameInputs : NetworkBehaviour
         if (!localPlayerAuthority)
             return;
 
-        z1 = Input.GetAxis("Throttle");
-        x1 = Input.GetAxis("Horizontal");
-        y1 = Input.GetAxis("Vertical");
-        x2 = Input.GetAxis("X2");
-        y2 = Input.GetAxis("Y2");
+        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
+        if(Root)
+        {
+            if(Root.GetComponent<serverData>().IsJoystickSwapped == false)
+            {
+                z1 = Input.GetAxis("Throttle");
+                x1 = Input.GetAxis("Horizontal");
+                y1 = Input.GetAxis("Vertical");
+                x2 = Input.GetAxis("X2");
+                y2 = Input.GetAxis("Y2");
+            }
+            else
+            {
+                z1 = -(Input.GetAxis("Throttle2"));
+                x1 = Input.GetAxis("Horizontal2");
+                y1 = Input.GetAxis("Vertical2");
+                x2 = Input.GetAxis("X2");
+                y2 = Input.GetAxis("Y2");
+            }
+        }
+        else
+        {
+            z1 = Input.GetAxis("Throttle");
+            x1 = Input.GetAxis("Horizontal");
+            y1 = Input.GetAxis("Vertical");
+            x2 = Input.GetAxis("X2");
+            y2 = Input.GetAxis("Y2");
+        }
 
         if (sData != null)
         {

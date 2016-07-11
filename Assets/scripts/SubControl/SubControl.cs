@@ -36,6 +36,8 @@ public class SubControl : MonoBehaviour
     public bool IsPitchAlsoStabalised;
     public bool JoystickOverride;
 
+    public bool IsJoystickSwapped = false;
+
     private float bankAmount = 1.0f;
     private Vector3 bankAxis = new Vector3(0F, 0F, -1F);
     private float rollResult;
@@ -152,6 +154,25 @@ public class SubControl : MonoBehaviour
             inputZaxis = Data.inputZaxis;
             inputXaxis2 = Data.inputXaxis2;
             inputYaxis2 = Data.inputYaxis2;
+
+            //if(!IsJoystickSwapped)
+            //{
+            //    inputXaxis = Data.inputXaxis;
+            //    inputYaxis = Data.inputYaxis;
+            //    inputZaxis = Data.inputZaxis;
+            //    inputXaxis2 = Data.inputXaxis2;
+            //    inputYaxis2 = Data.inputYaxis2;
+            //}
+            //else
+            //{
+            //    inputXaxis = Data.inputXaxis2;
+            //    inputYaxis = Data.inputYaxis2;
+            //
+            //    inputZaxis = Data.inputYaxis;
+            //
+            //    inputXaxis2 = Data.inputXaxis;
+            //    inputYaxis2 = Data.inputYaxis;
+            //}
         }
 
         disableInput = Data.disableInput;

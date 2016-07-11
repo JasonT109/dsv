@@ -16,6 +16,8 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float inputYaxis2;
     [SyncVar]
+    public bool IsJoystickSwapped;
+    [SyncVar]
     public float depth;
     [SyncVar]
     public float pressure;
