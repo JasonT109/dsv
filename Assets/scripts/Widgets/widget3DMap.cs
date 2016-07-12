@@ -35,7 +35,7 @@ public class widget3DMap : MonoBehaviour {
     private bool pressed = false;
     private bool multiTouch = false;
     private float rotateAmount = 0f;
-    private TiltShift tilt;
+    public TiltShift tilt;
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
