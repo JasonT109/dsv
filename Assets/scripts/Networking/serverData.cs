@@ -376,28 +376,35 @@ public class serverData : NetworkBehaviour
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
     {
-        switch (vessel)
+        if (vessel == gameObject.GetComponent<mapData>().playerVessel)
         {
-            case 0:
-                gameObject.GetComponent<mapData>().vessel1Pos = pos;
-                gameObject.GetComponent<mapData>().vessel1Velocity = vesselVelocity;
-                break;
-            case 1:
-                gameObject.GetComponent<mapData>().vessel2Pos = pos;
-                gameObject.GetComponent<mapData>().vessel2Velocity = vesselVelocity;
-                break;
-            case 2:
-                gameObject.GetComponent<mapData>().vessel3Pos = pos;
-                gameObject.GetComponent<mapData>().vessel3Velocity = vesselVelocity;
-                break;
-            case 3:
-                gameObject.GetComponent<mapData>().vessel4Pos = pos;
-                gameObject.GetComponent<mapData>().vessel4Velocity = vesselVelocity;
-                break;
-            case 4:
-                gameObject.GetComponent<mapData>().meg1Pos = pos;
-                gameObject.GetComponent<mapData>().meg1Velocity = vesselVelocity;
-                break;
+            gameObject.transform.position = pos;
+        }
+        else
+        {
+            switch (vessel)
+            {
+                case 0:
+                    gameObject.GetComponent<mapData>().vessel1Pos = pos;
+                    gameObject.GetComponent<mapData>().vessel1Velocity = vesselVelocity;
+                    break;
+                case 1:
+                    gameObject.GetComponent<mapData>().vessel2Pos = pos;
+                    gameObject.GetComponent<mapData>().vessel2Velocity = vesselVelocity;
+                    break;
+                case 2:
+                    gameObject.GetComponent<mapData>().vessel3Pos = pos;
+                    gameObject.GetComponent<mapData>().vessel3Velocity = vesselVelocity;
+                    break;
+                case 3:
+                    gameObject.GetComponent<mapData>().vessel4Pos = pos;
+                    gameObject.GetComponent<mapData>().vessel4Velocity = vesselVelocity;
+                    break;
+                case 4:
+                    gameObject.GetComponent<mapData>().meg1Pos = pos;
+                    gameObject.GetComponent<mapData>().meg1Velocity = vesselVelocity;
+                    break;
+            }
         }
     }
 

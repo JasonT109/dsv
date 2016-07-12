@@ -565,6 +565,49 @@ namespace Meg.Networking
             serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
 
+        public static float[] GetVesselData(int vessel)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            float[] vesselData = new float[4];
+
+            switch (vessel)
+            {
+                case 1:
+                    vesselData[0] = serverObject.GetComponent<mapData>().vessel1Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().vessel1Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().vessel1Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().vessel1Velocity;
+                    break;
+                case 2:
+                    vesselData[0] = serverObject.GetComponent<mapData>().vessel2Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().vessel2Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().vessel2Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().vessel2Velocity;
+                    break;
+                case 3:
+                    vesselData[0] = serverObject.GetComponent<mapData>().vessel3Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().vessel3Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().vessel3Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().vessel3Velocity;
+                    break;
+                case 4:
+                    vesselData[0] = serverObject.GetComponent<mapData>().vessel4Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().vessel4Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().vessel4Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().vessel4Velocity;
+                    break;
+                case 5:
+                    vesselData[0] = serverObject.GetComponent<mapData>().meg1Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().meg1Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().meg1Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().meg1Velocity;
+                    break;
+            }
+
+            return vesselData;
+        }
+
         public static void SetPlayerVessel(int vessel)
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");

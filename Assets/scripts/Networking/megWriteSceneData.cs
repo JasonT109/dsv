@@ -11,14 +11,13 @@ public class megWriteSceneData : MonoBehaviour
     public string fileName = "arsenal_01_01_03_UTC";
     public GameObject saveButton;
     public GameObject saveText;
-    public GameObject ovewriteDialog;
-    public GameObject confirmButton;
-    public GameObject cancelButton;
 
     public TextMesh vesselName;
     public TextMesh sceneNumber;
     public TextMesh shotNumber;
     public TextMesh takeNumber;
+
+    public GameObject readFilesObject;
 
     private bool canPress = true;
 
@@ -69,8 +68,28 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("crewBodyTemp4", serverUtils.GetServerData("crewBodyTemp4"));
         j.AddField("crewBodyTemp5", serverUtils.GetServerData("crewBodyTemp5"));
         j.AddField("crewBodyTemp6", serverUtils.GetServerData("crewBodyTemp6"));
+        j.AddField("vessel1Data", addVessel(1));
+        j.AddField("vessel2Data", addVessel(2));
+        j.AddField("vessel3Data", addVessel(3));
+        j.AddField("vessel4Data", addVessel(4));
+        j.AddField("vessel5Data", addVessel(5));
 
-        jsonData.megSaveJSONData(saveFile, j);
+        jsonData.megSaveJSONData(filePath + "Scene_" + sceneNumber.text + @"\", saveFile, j);
+
+        readFilesObject.GetComponent<megGetSceneDataFiles>().getFiles();
+    }
+
+    JSONObject addVessel(int id)
+    {
+        //map data - vessels stored in arrays of position x,y,z and velocity
+        JSONObject vesselData = new JSONObject(JSONObject.Type.ARRAY);
+        float[] vesselinfo = serverUtils.GetVesselData(id);
+        vesselData.Add(vesselinfo[0]);
+        vesselData.Add(vesselinfo[1]);
+        vesselData.Add(vesselinfo[2]);
+        vesselData.Add(vesselinfo[3]);
+
+        return vesselData;
     }
 
     IEnumerator wait(float waitTime)
@@ -90,7 +109,7 @@ public class megWriteSceneData : MonoBehaviour
             canPress = false;
             StartCoroutine(wait(0.2f));
 
-            saveFile(filePath + fileName);
+            saveFile(fileName);
         }
     }
 }

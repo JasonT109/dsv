@@ -14,18 +14,26 @@ public class megGetSceneDataFiles : MonoBehaviour {
     public TextMesh fileStatus;
     public GameObject loadButton;
     private bool canPress = true;
+    public TextMesh folderNameText;
 
     public void getFiles()
     {
-        DirectoryInfo info = new DirectoryInfo(filePath);
-        FileInfo[] fileInfo = info.GetFiles();
-        dataFiles = new string[fileInfo.Length];
-        for (int i = 0; i < fileInfo.Length; i++)
+        DirectoryInfo info = new DirectoryInfo(filePath + "Scene_" + folderNameText.text);
+        if (info.Exists)
         {
-            //get the files as a string
-            dataFiles[i] = fileInfo[i].ToString();
+            FileInfo[] fileInfo = info.GetFiles();
+            dataFiles = new string[fileInfo.Length];
+            for (int i = 0; i < fileInfo.Length; i++)
+            {
+                //get the files as a string
+                dataFiles[i] = fileInfo[i].ToString();
+            }
+            spawnContents();
         }
-        spawnContents();
+        else
+        {
+            removeItems();
+        }
     }
 
     public void setFileToLoad(GameObject button)
@@ -34,8 +42,26 @@ public class megGetSceneDataFiles : MonoBehaviour {
         fileStatus.text = fileToLoad;
     }
 
+    void removeItems()
+    {
+        //get contents and delete all except the first one
+        int numChildren = gameObject.transform.childCount;
+        if (numChildren > 1)
+        {
+            for (int i = 1; i < numChildren; i++)
+            {
+                Destroy(gameObject.transform.GetChild(i).gameObject);
+            }
+        }
+        GameObject firstChild = gameObject.transform.GetChild(0).gameObject;
+        firstChild.GetComponentInChildren<Text>().text = "No items to display";
+        fileToLoad = "";
+    }
+
     void spawnContents()
     {
+        removeItems();
+
         int textVerticalPosition = 0;
 
         for (int i = 0; i < dataFiles.Length; i++)
@@ -56,6 +82,12 @@ public class megGetSceneDataFiles : MonoBehaviour {
                 textVerticalPosition -= textVerticalOffset;
             }
         }
+
+        //set rect height
+        RectTransform thisRect = gameObject.GetComponent<RectTransform>();
+
+        thisRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, dataFiles.Length * textVerticalOffset);
+
     }
 
     IEnumerator wait(float waitTime)

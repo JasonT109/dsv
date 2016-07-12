@@ -7,12 +7,17 @@
 
     public class jsonData : MonoBehaviour
     {
-        private static void exportData(string filePath, string data)
+        private static void exportData(string filePath, string fileName, string data)
         {
-            if (!File.Exists(filePath))
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            if (!File.Exists(filePath + fileName))
             {
                 // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filePath))
+                using (StreamWriter sw = File.CreateText(filePath + fileName))
                 {
                     sw.WriteLine(data);
                 }
@@ -21,7 +26,7 @@
             {
                 //confirm overwrite
                 // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filePath))
+                using (StreamWriter sw = File.CreateText(filePath + fileName))
                 {
                     sw.WriteLine(data);
                 }
@@ -41,36 +46,50 @@
                         importData(j);
                         break;
                     case JSONObject.Type.ARRAY:
-                        //do something else with this
-                        Debug.Log("Key name: " + key + " array");
+                        //decide what to do with this data
+                        switch (key)
+                        {
+                            case "vessel1Data":
+                                Debug.Log("Setting vessel 1 to: " + new Vector3(j.list[0].n, j.list[1].n, j.list[2].n));
+                                serverUtils.SetVesselData(1, new Vector3(j.list[0].n, j.list[1].n, j.list[2].n), j.list[3].n);
+                                break;
+                            case "vessel2Data":
+                                serverUtils.SetVesselData(2, new Vector3(j.list[0].n, j.list[1].n, j.list[2].n), j.list[3].n);
+                                break;
+                            case "vessel3Data":
+                                serverUtils.SetVesselData(3, new Vector3(j.list[0].n, j.list[1].n, j.list[2].n), j.list[3].n);
+                                break;
+                            case "vessel4Data":
+                                serverUtils.SetVesselData(4, new Vector3(j.list[0].n, j.list[1].n, j.list[2].n), j.list[3].n);
+                                break;
+                            case "vessel5Data":
+                                serverUtils.SetVesselData(5, new Vector3(j.list[0].n, j.list[1].n, j.list[2].n), j.list[3].n);
+                                break;
+                        }
                         break;
                     case JSONObject.Type.STRING:
-                        Debug.Log("Key name: " + key + " String value: " + j.str);
                         //set server string
                         break;
                     case JSONObject.Type.NUMBER:
-                        Debug.Log("Key name: " + key + " Float value: " + j.n);
                         //set server float
                         serverUtils.SetServerData(key, j.n);
                         break;
                     case JSONObject.Type.BOOL:
-                        Debug.Log("Key name: " + key + " Bool value: " + j.b);
                         //set server bool
                         break;
                     case JSONObject.Type.NULL:
-                        Debug.Log("Key name: " + key + " is NULL.");
                         break;
                 }
             }
         }
 
-        public static void megSaveJSONData(string path, JSONObject saveData)
+        public static void megSaveJSONData(string path, string fileName, JSONObject saveData)
         {
             string saveText = saveData.Print();
             saveText = saveText.Replace("{", "{ " + System.Environment.NewLine);
             saveText = saveText.Replace(",", "," + System.Environment.NewLine);
             saveText = saveText.Replace("}", System.Environment.NewLine + "}");
-            exportData(path, saveText);
+            exportData(path, fileName, saveText);
             //Debug.Log(saveText);
         }
 
