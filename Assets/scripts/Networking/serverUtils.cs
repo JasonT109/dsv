@@ -527,7 +527,14 @@ namespace Meg.Networking
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
-            serverObject.GetComponent<serverData>().OnChangeBool(boolName, value);
+            if (serverObject == null)
+            {
+                Debug.Log("Server object missing");
+            }
+            else
+            {
+                serverObject.GetComponent<serverData>().OnChangeBool(boolName, value);
+            }
         }
 
         public static void SetServerData(string valueName, float value)

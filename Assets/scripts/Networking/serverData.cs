@@ -143,6 +143,8 @@ public class serverData : NetworkBehaviour
 
     public void OnValueChanged(string valueName, float newValue)
     {
+        //Debug.Log("Setting server data: " + valueName + " to: " + newValue);
+
         switch (valueName)
         {
             case "depth":

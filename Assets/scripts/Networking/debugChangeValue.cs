@@ -22,7 +22,9 @@ public class debugChangeValue : NetworkBehaviour {
 
     public GameObject[] buttons;
     public GameObject[] subSystemButtons;
+    public GameObject batteryObject;
     public GameObject[] batterySliders;
+    public GameObject oxygenObject;
     public GameObject[] oxygenSliders;
     public float[] sliderValues = new float[7];
 
@@ -103,12 +105,13 @@ public class debugChangeValue : NetworkBehaviour {
         serverUtils.SetOxygenData(bank, value);
     }
 
-    // Use this for initialization
-    void Start () {
-
+    void Start ()
+    {
         //get game objects
         debugObject = GameObject.FindWithTag("Debug");
         subSystemDebug = GameObject.FindWithTag("SubSystemDebug");
+        batteryObject = debugObject.GetComponent<debugObject>().batteryGroup;
+        oxygenObject = debugObject.GetComponent<debugObject>().oxygenGroup;
 
         //get components
         valueUp10k = debugObject.GetComponent<debugObject>().valueUp10k;
@@ -134,8 +137,14 @@ public class debugChangeValue : NetworkBehaviour {
         //get button and slider group objects
         buttons = debugObject.GetComponent<buttonGroup>().buttons;
         subSystemButtons = subSystemDebug.GetComponent<buttonGroup>().buttons;
-        batterySliders = subSystemDebug.GetComponent<sliderGroup>().batterySliders;
-        oxygenSliders = subSystemDebug.GetComponent<sliderGroup>().oxygenSliders;
+        if (batteryObject != null)
+        {
+            batterySliders = batteryObject.GetComponent<sliderGroup>().sliders;
+        }
+        if (oxygenObject != null)
+        {
+            oxygenSliders = oxygenObject.GetComponent<sliderGroup>().sliders;
+        }
 
         //get initial button states, we can check to see if this changes in update loop
         previousStates = new bool[debugObject.GetComponent<buttonGroup>().buttons.Length];
@@ -322,8 +331,8 @@ public class debugChangeValue : NetworkBehaviour {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
         if (debugObject == null)
         {

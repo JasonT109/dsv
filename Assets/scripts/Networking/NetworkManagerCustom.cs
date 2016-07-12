@@ -51,6 +51,8 @@ public class NetworkManagerCustom : MonoBehaviour
             sb = serverButton.GetComponent<buttonControl>();
             cb = clientButton.GetComponent<buttonControl>();
             connectionText.text = "Disconnected";
+            cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
+            cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
         }
     }
 
@@ -66,6 +68,8 @@ public class NetworkManagerCustom : MonoBehaviour
                 connectionText = debugObj.GetComponent<debugObject>().connectionText;
                 numConsText = debugObj.GetComponent<debugObject>().numConsText;
                 ip = debugObj.GetComponent<debugObject>().ipText;
+                cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
+                cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
                 cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
                 cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
             }

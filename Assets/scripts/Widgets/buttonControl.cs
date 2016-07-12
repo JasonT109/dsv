@@ -33,6 +33,8 @@ public class buttonControl : MonoBehaviour
     private Material m;
     private float timeIndex = 0.0f;
     private GameObject colourThemeObj;
+    private float pressDelay = 0.1f;
+    private bool canPress = true;
 
     void Start()
     {
@@ -92,8 +94,10 @@ public class buttonControl : MonoBehaviour
         gesture.GetTargetHitResult(out hit);
 
         //Debug.Log("Pressed this object: " + gameObject);
-        if (!disabled)
+        if (!disabled && canPress)
         {
+            canPress = false;
+            StartCoroutine(waitRelease(pressDelay));
             pressed = true;
             m.color = colorTheme[4];
         }
@@ -257,6 +261,11 @@ public class buttonControl : MonoBehaviour
         Destroy(g);
     }
 
+    IEnumerator waitRelease(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        canPress = true;
+    }
 
     IEnumerator waitPress(float waitTime)
     {

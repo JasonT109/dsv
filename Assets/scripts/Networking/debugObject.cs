@@ -32,4 +32,7 @@ public class debugObject : MonoBehaviour {
     public GameObject ipDownButton;
     public TextMesh ipText;
 
+    public GameObject oxygenGroup;
+    public GameObject batteryGroup;
+
 }

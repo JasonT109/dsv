@@ -34,7 +34,7 @@ public class graphicsBackColor : MonoBehaviour
     {
         if (colourThemeObj == null)
         {
-            colourThemeObj = GameObject.FindWithTag("Inputs");
+            colourThemeObj = GameObject.FindWithTag("ServerData");
         }
         else
         {

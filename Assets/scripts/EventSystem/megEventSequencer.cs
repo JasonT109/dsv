@@ -11,10 +11,12 @@ public class megEventSequencer : MonoBehaviour {
     private float[] eventObjectTimers;
     private float[] initParams;
     private float[] initialValues; //used for when we need to lerp over time
+    private GameObject serverObject;
 
     // Use this for initialization
     void Start ()
     {
+        serverObject = GameObject.FindWithTag("ServerData");
         megEventList = new megEventObject[megEvents.eventObjects.Length];
         initParams = new float[megEvents.eventObjects.Length];
         eventObjectTimers = new float[megEvents.eventObjects.Length];
@@ -60,14 +62,15 @@ public class megEventSequencer : MonoBehaviour {
                         if (megEventList[i].physicsEvent)
                         {
                             Debug.Log("Physics event.");
-                            gameObject.GetComponent<serverData>().RpcImpact(megEventList[i].physicsDirection * megEventList[i].phyicsMagnitude);
+                            serverObject.GetComponent<serverData>().RpcImpact(megEventList[i].physicsDirection * megEventList[i].phyicsMagnitude);
                             megEventList[i].completed = true;
                         }
                         else
                         {
                             //set serverParam
                             //Debug.Log("Triggering event now!");
-                            gameObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, megEventList[i].serverValue);
+                            //serverObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, megEventList[i].serverValue);
+                            serverUtils.SetServerData(megEventList[i].serverParam, megEventList[i].serverValue);
                             //set to complete
                             megEventList[i].completed = true;
                         }
@@ -88,7 +91,8 @@ public class megEventSequencer : MonoBehaviour {
                         initialValue = Mathf.Lerp(initialValues[i], megEventList[i].serverValue, eventObjectTimers[i] / megEventList[i].completeTime);
 
                         //set the value on the server
-                        gameObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, initialValue);
+                        //serverObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, initialValue);
+                        serverUtils.SetServerData(megEventList[i].serverParam, initialValue);
 
                         //set to complete when completeTime is up
                         if (megEventList[i].completeTime + megEventList[i].triggerTime < megEvents.eventTime)
@@ -107,7 +111,7 @@ public class megEventSequencer : MonoBehaviour {
             for (int i = 0; i < megEventList.Length; i++)
             {
                 //reset the parameter we changed
-                gameObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, initParams[i]);
+                serverObject.GetComponent<serverData>().OnValueChanged(megEventList[i].serverParam, initParams[i]);
 
                 //set running false
                 megEventList[i].running = false;
