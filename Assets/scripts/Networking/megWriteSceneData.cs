@@ -81,9 +81,19 @@ public class megWriteSceneData : MonoBehaviour
 
     JSONObject addVessel(int id)
     {
-        //map data - vessels stored in arrays of position x,y,z and velocity
+        string[] temp1= new string[4];
+        //get vessels map space position
+        //vessels stored in arrays of x,z,depth and velocity
         JSONObject vesselData = new JSONObject(JSONObject.Type.ARRAY);
         float[] vesselinfo = serverUtils.GetVesselData(id);
+
+        //convert to 2 decimal places
+        for (int i = 0; i < vesselinfo.Length; i++)
+        {
+            temp1[i] = vesselinfo[i].ToString("n2");
+            vesselinfo[i] = float.Parse(temp1[i]);
+        }
+
         vesselData.Add(vesselinfo[0]);
         vesselData.Add(vesselinfo[1]);
         vesselData.Add(vesselinfo[2]);

@@ -376,9 +376,10 @@ public class serverData : NetworkBehaviour
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
     {
-        if (vessel == gameObject.GetComponent<mapData>().playerVessel)
+        if (vessel + 1 == gameObject.GetComponent<mapData>().playerVessel)
         {
-            gameObject.transform.position = pos;
+            //convert from map space to world space
+            gameObject.transform.position = new Vector3(pos.x * 1000, -pos.z, pos.y * 1000);
         }
         else
         {

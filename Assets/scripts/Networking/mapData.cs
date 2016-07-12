@@ -46,7 +46,7 @@ public class mapData : NetworkBehaviour
     {
         if (playerVessel != 0)
         {
-            //set the relevant vessels data to match the server object -  SWAP Y and Z for the map
+            //Set the relevant vessels data to match the server objects world position. Map space is 0.001 x world space. Also SWAP Y and Z for map space.
             switch (playerVessel)
             {
                 case 1:

@@ -567,6 +567,8 @@ namespace Meg.Networking
 
         public static float[] GetVesselData(int vessel)
         {
+            //get vessels map space position
+
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
             float[] vesselData = new float[4];
