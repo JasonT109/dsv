@@ -5,6 +5,8 @@ using Meg.Networking;
 
 public class NavSubPin : MonoBehaviour 
 {
+    public const int NumVessels = 6;
+
     mapData VesselData;
     public float seaFloor = 10994f;
     public float heightMul = 2.0f;
@@ -13,12 +15,12 @@ public class NavSubPin : MonoBehaviour
     public Vector2 imageSize = new Vector2(5, 5);
     public GameObject mapRoot;
     public GameObject ServerData;
-    public GameObject[] vesselHeightIndicators = new GameObject[5];
-    public GameObject[] vesselButtons = new GameObject[5];
-    public GameObject[] vessels = new GameObject[5];
-    public float[] distance = new float[5];
+    public GameObject[] vesselHeightIndicators = new GameObject[NumVessels];
+    public GameObject[] vesselButtons = new GameObject[NumVessels];
+    public GameObject[] vessels = new GameObject[NumVessels];
+    public float[] distance = new float[NumVessels];
     public float distanceScale = 0.01f;
-    private Vector3[] vesselMapSource = new Vector3[5];
+    private Vector3[] vesselMapSource = new Vector3[NumVessels];
     public GameObject mapWidget;
     public float lineXOffset = -0.1f;
     RaycastHit hit;
@@ -68,6 +70,10 @@ public class NavSubPin : MonoBehaviour
                         break;
                     case 4:
                         Vessel = VesselData.meg1Pos;
+                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
+                        break;
+                    case 5:
+                        Vessel = VesselData.intercept1Pos;
                         vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
                         break;
                 }
