@@ -34,9 +34,6 @@ public class vesselIntercept : vesselMovement
     // Members
     // ------------------------------------------------------------
 
-    /** Current time to intercept (seconds). */
-    private float _timeLeft;
-
     /** Currently reported velocity. */
     private float _speed;
 
@@ -58,7 +55,6 @@ public class vesselIntercept : vesselMovement
     public void SetTimeToIntercept(float value)
     {
         TimeToIntercept = value;
-        _timeLeft = value;
         _speed = 0;
         _speedSmoothingVelocity = 0;
     }
@@ -98,16 +94,16 @@ public class vesselIntercept : vesselMovement
     protected override void UpdateMovement()
     {
         // Update interception time.
-        _timeLeft = Mathf.Max(0, _timeLeft - Time.deltaTime);
+        TimeToIntercept = Mathf.Max(0, TimeToIntercept - Time.deltaTime);
 
         // Update due time to match interception time.
-        var ts = System.TimeSpan.FromSeconds(_timeLeft);
+        var ts = System.TimeSpan.FromSeconds(TimeToIntercept);
         serverUtils.SetServerData("dueTimeHours", ts.Hours);
         serverUtils.SetServerData("dueTimeMins", ts.Minutes);
         serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
 
         // Determine if we've intercepted the target.
-        if (_timeLeft <= 0)
+        if (TimeToIntercept <= 0)
             return;
 
         // Get the vessel's current state.
@@ -130,7 +126,7 @@ public class vesselIntercept : vesselMovement
         var direction = delta.normalized;
 
         // Compute speed required to reach target at correct time.
-        float requiredSpeed = Mathf.Clamp(distance / _timeLeft, 0, ActualTopSpeed);
+        float requiredSpeed = Mathf.Clamp(distance / TimeToIntercept, 0, ActualTopSpeed);
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
@@ -141,7 +137,7 @@ public class vesselIntercept : vesselMovement
         // Clamp reported velocity to the vessel's rated top-speed.
         // Add in some random noise when intercepting to make the speed look nice.
         var targetSpeed = Mathf.Clamp(requiredSpeed, 0, RatedTopSpeed);
-        if (_timeLeft <= SpeedSmoothTime)
+        if (TimeToIntercept <= SpeedSmoothTime)
             targetSpeed = 0;
         else
             targetSpeed = Mathf.Max(0, targetSpeed + Random.Range(-SpeedRandomness, SpeedRandomness));

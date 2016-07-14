@@ -83,6 +83,10 @@ public class debugVessels : MonoBehaviour
 
     private void releaseHandler(object sender, EventArgs e)
     {
+        // Don't allow changes to map while simulating.
+        if (serverUtils.GetVesselMovements().IsActive())
+            return;
+
         var gesture = sender as ReleaseGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
@@ -402,12 +406,16 @@ public class debugVessels : MonoBehaviour
 
         // Update interception countdown.
         timeToIntercept.SetActive(intercept != null);
-        if (intercept && updateValues)
+        if (intercept && (updateValues || intercept.Active))
         {
             var ts = TimeSpan.FromSeconds(intercept.TimeToIntercept);
             timeToInterceptHours.currentNumber = ts.Hours;
             timeToInterceptMins.currentNumber = ts.Minutes;
             timeToInterceptSeconds.currentNumber = ts.Seconds;
+        }
+        else if (intercept && !intercept.Active)
+        {
+            UpdateTimeToInterceptFromUi();
         }
 
         // Update the depth slider value.
