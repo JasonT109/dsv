@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.IO;
@@ -73,19 +73,21 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("vessel3Data", addVessel(3));
         j.AddField("vessel4Data", addVessel(4));
         j.AddField("vessel5Data", addVessel(5));
+        j.AddField("vessel6Data", addVessel(6));
+        j.AddField("vesselMovements", serverUtils.GetVesselMovements().Save());
 
         jsonData.megSaveJSONData(filePath + "Scene_" + sceneNumber.text + @"\", saveFile, j);
 
         readFilesObject.GetComponent<megGetSceneDataFiles>().getFiles();
     }
 
-    JSONObject addVessel(int id)
+    JSONObject addVessel(int vessel)
     {
         string[] temp1= new string[4];
         //get vessels map space position
         //vessels stored in arrays of x,z,depth and velocity
         JSONObject vesselData = new JSONObject(JSONObject.Type.ARRAY);
-        float[] vesselinfo = serverUtils.GetVesselData(id);
+        float[] vesselinfo = serverUtils.GetVesselData(vessel);
 
         //convert to 2 decimal places
         for (int i = 0; i < vesselinfo.Length; i++)
@@ -98,6 +100,7 @@ public class megWriteSceneData : MonoBehaviour
         vesselData.Add(vesselinfo[1]);
         vesselData.Add(vesselinfo[2]);
         vesselData.Add(vesselinfo[3]);
+        vesselData.Add(serverUtils.GetVesselVis(vessel));
 
         return vesselData;
     }

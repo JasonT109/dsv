@@ -10,12 +10,12 @@ public abstract class vesselMovement : MonoBehaviour
     // Properties
     // ------------------------------------------------------------
 
-    /** Index of the vessel within map data. */
-    public int Vessel;
-
     /** The map that this vessel moves within. */
     public mapData MapData
     { get; private set; }
+
+    /** Index of the vessel within map data. */
+    public int Vessel;
 
     /** Whether interception is active. */
     public bool Active;
@@ -41,14 +41,39 @@ public abstract class vesselMovement : MonoBehaviour
     }
 
 
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save movement state to JSON. */
+    public virtual JSONObject Save()
+    {
+        var json = new JSONObject();
+        json.AddField("Vessel", Vessel);
+        json.AddField("Active", Active);
+        json.AddField("Type", GetSaveKey());
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public virtual void Load(JSONObject json, mapData mapData)
+    {
+        json.GetField(ref Vessel, "Vessel");
+        json.GetField(ref Active, "Active");
+        Configure(mapData, Vessel, Active);
+    }
+
+
     // Protected Methods
     // ------------------------------------------------------------
+
+    /** Return the movement save type. */
+    protected abstract string GetSaveKey();
 
     /** Update the vessel's movement. */
     protected abstract void UpdateMovement();
 
     /** Configure the vessel's movement. */
-    protected void Configure(mapData data, int vessel, bool active)
+    public virtual void Configure(mapData data, int vessel, bool active)
     {
         var parent = data.transform;
         transform.position = parent.position;

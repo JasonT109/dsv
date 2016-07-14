@@ -24,18 +24,37 @@ public class vesselSetVector : vesselMovement
     { get { return Quaternion.Euler(0, 0, -Heading) * Quaternion.Euler(DiveAngle, 0, 0) * Vector3.up; } }
 
 
-    // Public Methods
+    // Load / Save
     // ------------------------------------------------------------
 
-    /** Configure the vessel movement. */
-    public void Configure(mapData data, int vessel, bool active)
+    /** Save movement state to JSON. */
+    public override JSONObject Save()
     {
-        base.Configure(data, vessel, active);
-	}
+        var json = base.Save();
+        json.AddField("Heading", Heading);
+        json.AddField("DiveAngle", DiveAngle);
+        json.AddField("Speed", Speed);
+
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public override void Load(JSONObject json, mapData mapData)
+    {
+        base.Load(json, mapData);
+
+        json.GetField(ref Heading, "Heading");
+        json.GetField(ref DiveAngle, "DiveAngle");
+        json.GetField(ref Speed, "Speed");
+    }
 
 
     // Protected Methods
     // ------------------------------------------------------------
+
+    /** Return the movement save type. */
+    protected override string GetSaveKey()
+    { return "SetVector"; }
 
     /** Update the vessel's current state. */
     protected override void UpdateMovement()
@@ -55,7 +74,5 @@ public class vesselSetVector : vesselMovement
         // Update the vessel's current state.
         SetVesselState(position + delta, Direction * Speed, Speed);
     }
-
-
 
 }

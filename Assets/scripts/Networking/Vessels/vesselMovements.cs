@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 /** 
  * Manages the movements of non-player vessels.
@@ -29,6 +30,10 @@ public class vesselMovements : MonoBehaviour
     /** Prefab that is used when putting vessels on an interception course. */
     public vesselIntercept InterceptPrefab;
 
+    /** Whether movement simulation is active. */
+    public bool Active
+    { get; private set; }
+
 
     // Members
     // ------------------------------------------------------------
@@ -50,26 +55,26 @@ public class vesselMovements : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Place the given vessel into a holding pattern. */
-    public void SetHoldingPattern(int vessel, bool active)
+    public void SetHoldingPattern(int vessel)
     {
         var holdingPattern = Instantiate(HoldingPatternPrefab);
-        holdingPattern.Configure(MapData, vessel, active);
+        holdingPattern.Configure(MapData, vessel, Active);
         SetVesselMovement(vessel, holdingPattern);
     }
 
     /** Place the given vessel on a set vector course. */
-    public void SetVector(int vessel, bool active)
+    public void SetVector(int vessel)
     {
         var setVector = Instantiate(SetVectorPrefab);
-        setVector.Configure(MapData, vessel, active);
+        setVector.Configure(MapData, vessel, Active);
         SetVesselMovement(vessel, setVector);
     }
 
     /** Place the given vessel on an interception course. */
-    public void SetIntercept(int vessel, bool active, float timeToIntercept)
+    public void SetIntercept(int vessel)
     {
         var intercept = Instantiate(InterceptPrefab);
-        intercept.Configure(MapData, vessel, active, timeToIntercept);
+        intercept.Configure(MapData, vessel, Active);
         SetVesselMovement(vessel, intercept);
     }
 
@@ -77,30 +82,6 @@ public class vesselMovements : MonoBehaviour
     public void SetNone(int vessel)
     {
         RemoveVesselMovement(vessel);
-    }
-
-    /** Determines whether the vessel is in a holding pattern. */
-    public bool IsHoldingPattern(int vessel)
-    {
-        return GetVesselMovement(vessel) is vesselHoldingPattern;
-    }
-
-    /** Determines whether the vessel is on a set vector course. */
-    public bool IsSetVector(int vessel)
-    {
-        return GetVesselMovement(vessel) is vesselSetVector;
-    }
-
-    /** Determines whether the vessel is on an interception course. */
-    public bool IsIntercept(int vessel)
-    {
-        return GetVesselMovement(vessel) is vesselIntercept;
-    }
-
-    /** Determines whether the vessel has any current movement plan. */
-    public bool IsMoving(int vessel)
-    {
-        return GetVesselMovement(vessel) != null;
     }
 
     /** Return the vessel's current movement mode (if any). */
@@ -114,8 +95,55 @@ public class vesselMovements : MonoBehaviour
     /** Set all movements to active or inactive. */
     public void SetActive(bool value)
     {
+        Active = value;
         foreach (var movement in current.Values)
             movement.Active = value;
+    }
+
+    /** Whether movement simulation is active. */
+    public bool IsActive()
+    {
+        return Active;
+    }
+
+    /** Save movement state to JSON. */
+    public JSONObject Save()
+    {
+        var json = new JSONObject();
+        json.AddField("Active", Active);
+
+        var movementsJson = new JSONObject(JSONObject.Type.ARRAY);
+        var sorted = current.Values.OrderBy(x => x.Vessel);
+        foreach (var movement in sorted)
+            movementsJson.Add(movement.Save());
+
+        json.AddField("Movements", movementsJson);
+
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public void Load(JSONObject json)
+    {
+        // Clear out any existing movements.
+        Clear();
+
+        // Load in movements from data.
+        JSONObject movementsJson = json.GetField("Movements");
+        for (var i = 0; i < movementsJson.Count; i++)
+        {
+            var movementJson = movementsJson[i];
+            string type = null;
+            movementJson.GetField(ref type, "Type");
+            var movement = CreateVesselMovement(type);
+            movement.Load(movementJson, MapData);
+            SetVesselMovement(movement.Vessel, movement);
+        }
+
+        // Load simulation active state.
+        bool active = true;
+        json.GetField(ref active, "Active");
+        SetActive(active);
     }
 
 
@@ -137,6 +165,31 @@ public class vesselMovements : MonoBehaviour
 
         Destroy(current[vessel].gameObject);
         current.Remove(vessel);
+    }
+
+    /** Remove all vessel movements. */
+    private void Clear()
+    {
+        foreach (var movement in current.Values)
+            Destroy(movement.gameObject);
+
+        current.Clear();
+    }
+
+    /** Create a movement given a type code. */
+    private vesselMovement CreateVesselMovement(string type)
+    {
+        switch (type)
+        {
+            case "Holding":
+                return Instantiate(HoldingPatternPrefab);
+            case "Intercept":
+                return Instantiate(InterceptPrefab);
+            case "SetVector":
+                return Instantiate(SetVectorPrefab);
+            default:
+                return null;
+        }
     }
 
 }

@@ -32,9 +32,48 @@ public class vesselHoldingPattern : vesselMovement
     private float _startTime;
 
 
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Configure the vessel movement. */
+    public override void Configure(mapData data, int vessel, bool active)
+    {
+        base.Configure(data, vessel, active);
+        _startTime = Time.time;
+    }
+
+
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save movement state to JSON. */
+    public override JSONObject Save()
+    {
+        var json = base.Save();
+        json.AddField("Period", Period);
+        json.AddField("DepthFraction", DepthFraction);
+        json.AddField("Speed", Speed);
+
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public override void Load(JSONObject json, mapData mapData)
+    {
+        base.Load(json, mapData);
+
+        json.GetField(ref Period, "Period");
+        json.GetField(ref DepthFraction, "DepthFraction");
+        json.GetField(ref Speed, "Speed");
+    }
+
 
     // Protected Methods
     // ------------------------------------------------------------
+
+    /** Return the movement save type. */
+    protected override string GetSaveKey()
+    { return "Holding"; }
 
     /** Update the vessel's current state. */
     protected override void UpdateMovement()
@@ -61,19 +100,6 @@ public class vesselHoldingPattern : vesselMovement
 
         // Update the vessel's current state.
         SetVesselState(position + delta, direction * Speed, Speed);
-    }
-
-
-    // Public Methods
-    // ------------------------------------------------------------
-
-    /** Configure the vessel movement. */
-    public void Configure(mapData data, int vessel, bool active, float period = 60, float depthFraction = 0.1f)
-    {
-        base.Configure(data, vessel, active);
-        _startTime = Time.time;
-        Period = period;
-        DepthFraction = depthFraction;
     }
 
 }

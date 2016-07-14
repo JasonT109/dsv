@@ -1,4 +1,4 @@
-﻿namespace Meg.JSON
+namespace Meg.JSON
 {
     using UnityEngine;
     using System.Collections;
@@ -43,42 +43,36 @@
                 switch (j.type)
                 {
                     case JSONObject.Type.OBJECT:
-                        importData(j);
+                        switch (key)
+                        {
+                            case "vesselMovements":
+                                serverUtils.GetVesselMovements().Load(j);
+                                break;
+                            default:
+                                importData(j);
+                                break;
+                        }
                         break;
                     case JSONObject.Type.ARRAY:
-                        //decide what to do with this data
-                        Vector3 pos = new Vector3();
                         switch (key)
                         {
                             case "vessel1Data":
-                                pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
-                                //Debug.Log("Setting " + key + " to: " + pos + " velocity: " + j.list[3].n);
-                                //Debug.Log(j.Print());                                
-                                serverUtils.SetVesselData(0, pos, j.list[3].n);
+                                importVesselData(1, j);
                                 break;
                             case "vessel2Data":
-                                pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
-                                //Debug.Log("Setting " + key + " to: " + pos + " velocity: " + j.list[3].n);
-                                //Debug.Log(j.Print());
-                                serverUtils.SetVesselData(1, pos, j.list[3].n);
+                                importVesselData(2, j);
                                 break;
                             case "vessel3Data":
-                                pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
-                                //Debug.Log("Setting " + key + " to: " + pos + " velocity: " + j.list[3].n);
-                                //Debug.Log(j.Print());
-                                serverUtils.SetVesselData(2, pos, j.list[3].n);
+                                importVesselData(3, j);
                                 break;
                             case "vessel4Data":
-                                pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
-                                //Debug.Log("Setting " + key + " to: " + pos + " velocity: " + j.list[3].n);
-                                //Debug.Log(j.Print());
-                                serverUtils.SetVesselData(3, pos, j.list[3].n);
+                                importVesselData(4, j);
                                 break;
                             case "vessel5Data":
-                                pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
-                                //Debug.Log("Setting " + key + " to: " + pos + " velocity: " + j.list[3].n);
-                                //Debug.Log(j.Print());
-                                serverUtils.SetVesselData(4, pos, j.list[3].n);
+                                importVesselData(5, j);
+                                break;
+                            case "vessel6Data":
+                                importVesselData(6, j);
                                 break;
                         }
                         break;
@@ -98,32 +92,27 @@
             }
         }
 
+        /** Import vessel state from JSON. */
+        private static void importVesselData(int vessel, JSONObject j)
+        {
+            var pos = new Vector3(j.list[0].n, j.list[1].n, j.list[2].n);
+            serverUtils.SetVesselData(vessel, pos, j.list[3].n);
+
+            if (j.list.Count > 4)
+                serverUtils.SetVesselVis(vessel, j.list[4].b);
+        }
+
         public static void megSaveJSONData(string path, string fileName, JSONObject saveData)
         {
-            string saveText = saveData.Print();
-            saveText = saveText.Replace("{", "{ " + System.Environment.NewLine);
-            saveText = saveText.Replace(",", "," + System.Environment.NewLine);
-            saveText = saveText.Replace("}", System.Environment.NewLine + "}");
+            // Convert JSON object to string, with pretty-printing.
+            string saveText = saveData.Print(true);
             exportData(path, fileName, saveText);
-            //Debug.Log(saveText);
         }
 
         public static void megLoadJSONData(string path)
         {
-            string encodedString = "";
-            JSONObject j;
-
-            // Open the file to read from. 
-            using (StreamReader sr = File.OpenText(path))
-            {
-                string s = "";
-                while ((s = sr.ReadLine()) != null)
-                {
-                    encodedString += s;
-                }
-            }
-
-            j = new JSONObject(encodedString);
+            string encodedString = File.ReadAllText(path);
+            JSONObject j = new JSONObject(encodedString);
             importData(j);
         }
     }

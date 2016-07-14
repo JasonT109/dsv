@@ -9,20 +9,24 @@ public class debugVessels : MonoBehaviour
 {
     public buttonGroup vesselButtonGroup;
     public buttonGroup movementButtonGroup;
+
     public GameObject marker;
     public GameObject mapObject;
+
     public GameObject depthSlider;
     public GameObject velocitySlider;
     public GameObject headingSlider;
     public GameObject diveAngleSlider;
+
     public GameObject depthText;
     public GameObject velocityText;
     public GameObject headingText;
     public GameObject diveAngleText;
-    public GameObject visibleButton;
-    public GameObject holdingButton;
-    public GameObject vectorButton;
-    public GameObject interceptButton;
+
+    public buttonControl visibleButton;
+    public buttonControl holdingButton;
+    public buttonControl vectorButton;
+    public buttonControl interceptButton;
     public buttonControl activeButton;
 
     public GameObject timeToIntercept;
@@ -57,12 +61,16 @@ public class debugVessels : MonoBehaviour
         GetComponent<ReleaseGesture>().Released += releaseHandler;
         timeToInterceptSetButton.onPressed += OnSetTimeToInterceptPressed;
         activeButton.onReleased += OnActiveButtonReleased;
+        visibleButton.onReleased += OnVisibleButtonReleased;
     }
 
     private void OnDisable()
     {
         GetComponent<PressGesture>().Pressed -= pressedHandler;
         GetComponent<ReleaseGesture>().Released -= releaseHandler;
+        timeToInterceptSetButton.onPressed -= OnSetTimeToInterceptPressed;
+        activeButton.onReleased -= OnActiveButtonReleased;
+        visibleButton.onReleased -= OnVisibleButtonReleased;
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -222,19 +230,16 @@ public class debugVessels : MonoBehaviour
             StartCoroutine(wait(0.1f));
         }
 
-        if (canUpdate)
-            serverUtils.SetVesselVis(activeVessel, visibleButton.GetComponent<buttonControl>().active);
-
         if (movementButtonGroup.changed)
         {
             movementButtonGroup.changed = false;
             var simulating = activeButton.active;
-            if (holdingButton.GetComponent<buttonControl>().active)
-                serverUtils.GetVesselMovements().SetHoldingPattern(activeVessel, simulating);
-            else if (vectorButton.GetComponent<buttonControl>().active)
-                serverUtils.GetVesselMovements().SetVector(activeVessel, simulating);
-            else if (interceptButton.GetComponent<buttonControl>().active)
-                serverUtils.GetVesselMovements().SetIntercept(activeVessel, simulating, 60);
+            if (holdingButton.active)
+                serverUtils.GetVesselMovements().SetHoldingPattern(activeVessel);
+            else if (vectorButton.active)
+                serverUtils.GetVesselMovements().SetVector(activeVessel);
+            else if (interceptButton.active)
+                serverUtils.GetVesselMovements().SetIntercept(activeVessel);
             else
                 serverUtils.GetVesselMovements().SetNone(activeVessel);
 
@@ -312,7 +317,7 @@ public class debugVessels : MonoBehaviour
         ActiveVesselData(activeVessel);
 
         // Show whether vessel is visible.
-        visibleButton.GetComponent<buttonControl>().active = serverUtils.GetVesselVis(activeVessel);
+        visibleButton.active = serverUtils.GetVesselVis(activeVessel);
 
         // Determine if the vessel has a current movement plan.
         var movement = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel);
@@ -321,10 +326,13 @@ public class debugVessels : MonoBehaviour
         var intercept = movement as vesselIntercept;
 
         // Update movement buttons to reflect current state.
-        holdingButton.GetComponent<buttonControl>().active = holding != null;
-        vectorButton.GetComponent<buttonControl>().active = setVector != null;
-        interceptButton.GetComponent<buttonControl>().active = intercept != null;
-        interceptButton.SetActive(activeVessel != vesselIntercept.InterceptVessel);
+        holdingButton.active = holding != null;
+        vectorButton.active = setVector != null;
+        interceptButton.active = intercept != null;
+        interceptButton.gameObject.SetActive(activeVessel != vesselIntercept.InterceptVessel);
+
+        // Update simulation active button state.
+        activeButton.active = serverUtils.GetVesselMovements().IsActive();
 
         // Update velocity slider.
         velocitySlider.SetActive(holding || setVector);
@@ -333,14 +341,14 @@ public class debugVessels : MonoBehaviour
             if (updateValues)
                 velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(holding.Speed);
 
-            velocityText.GetComponent<TextMesh>().text = holding.Speed.ToString("n1");
+            velocityText.GetComponent<TextMesh>().text = holding.Speed.ToString("n") + " m/s";
         }
         else if (setVector)
         {
             if (updateValues)
                 velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(setVector.Speed);
 
-            velocityText.GetComponent<TextMesh>().text = setVector.Speed.ToString("n1");
+            velocityText.GetComponent<TextMesh>().text = setVector.Speed.ToString("n") + " m/s";
         }
 
         // Update heading slider.
@@ -413,6 +421,11 @@ public class debugVessels : MonoBehaviour
             return;
 
         UpdateTimeToInterceptFromUi();
+    }
+
+    void OnVisibleButtonReleased()
+    {
+        serverUtils.SetVesselVis(activeVessel, visibleButton.active);
     }
 
     void OnActiveButtonReleased()

@@ -17,9 +17,6 @@ public class vesselIntercept : vesselMovement
     /** The actual top speed of this vessel (m/s).  Will never move vessel's actual position faster than this. */
     public const float ActualTopSpeed = 500;
 
-    /** Distance at which interception is considered complete. */
-    public const float InterceptAchievedDistance = 10;
-
     /** Smoothing time for reported velocity. */
     public const float SpeedSmoothTime = 2;
 
@@ -51,10 +48,10 @@ public class vesselIntercept : vesselMovement
     // ------------------------------------------------------------
 
     /** Configure the vessel movement. */
-    public void Configure(mapData data, int vessel, bool active, float timeTointercept)
+    public override void Configure(mapData data, int vessel, bool active)
     {
         base.Configure(data, vessel, active);
-        SetTimeToIntercept(timeTointercept);
+        SetTimeToIntercept(TimeToIntercept);
     }
 
     /** Set the vessel's time to intercept. */
@@ -67,14 +64,51 @@ public class vesselIntercept : vesselMovement
     }
 
 
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save movement state to JSON. */
+    public override JSONObject Save()
+    {
+        var json = base.Save();
+        json.AddField("TimeToIntercept", TimeToIntercept);
+
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public override void Load(JSONObject json, mapData mapData)
+    {
+        base.Load(json, mapData);
+
+        float tti = 0;
+        json.GetField(ref tti, "TimeToIntercept");
+        SetTimeToIntercept(tti);
+    }
+
+
     // Protected Methods
     // ------------------------------------------------------------
+
+    /** Return the movement save type. */
+    protected override string GetSaveKey()
+    { return "Intercept"; }
 
     /** Update the vessel's current state. */
     protected override void UpdateMovement()
     {
         // Update interception time.
         _timeLeft = Mathf.Max(0, _timeLeft - Time.deltaTime);
+
+        // Update due time to match interception time.
+        var ts = System.TimeSpan.FromSeconds(_timeLeft);
+        serverUtils.SetServerData("dueTimeHours", ts.Hours);
+        serverUtils.SetServerData("dueTimeMins", ts.Minutes);
+        serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
+
+        // Determine if we've intercepted the target.
+        if (_timeLeft <= 0)
+            return;
 
         // Get the vessel's current state.
         Vector3 position;
@@ -95,15 +129,8 @@ public class vesselIntercept : vesselMovement
         // Convert delta into a direction.
         var direction = delta.normalized;
 
-        // Determine if we've intercepted the target.
-        var intercepted = _timeLeft <= 0 || distance < InterceptAchievedDistance;
-
         // Compute speed required to reach target at correct time.
-        float requiredSpeed = 0;
-        if (intercepted)
-            requiredSpeed = 0;
-        else
-            requiredSpeed = Mathf.Clamp(distance / _timeLeft, 0, ActualTopSpeed);
+        float requiredSpeed = Mathf.Clamp(distance / _timeLeft, 0, ActualTopSpeed);
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
@@ -124,12 +151,6 @@ public class vesselIntercept : vesselMovement
 
         // Update the vessel's current state.
         SetVesselState(position + dp, direction * requiredSpeed, _speed);
-
-        // Update due time to match interception time.
-        var ts = System.TimeSpan.FromSeconds(_timeLeft);
-        serverUtils.SetServerData("dueTimeHours", ts.Hours);
-        serverUtils.SetServerData("dueTimeMins", ts.Minutes);
-        serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
     }
 
 }
