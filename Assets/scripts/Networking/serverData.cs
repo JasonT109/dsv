@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 
@@ -376,36 +376,14 @@ public class serverData : NetworkBehaviour
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
     {
-        if (vessel + 1 == gameObject.GetComponent<mapData>().playerVessel)
+        if (vessel == gameObject.GetComponent<mapData>().playerVessel)
         {
             //convert from map space to world space
             gameObject.transform.position = new Vector3(pos.x * 1000, -pos.z, pos.y * 1000);
         }
         else
         {
-            switch (vessel)
-            {
-                case 0:
-                    gameObject.GetComponent<mapData>().vessel1Pos = pos;
-                    gameObject.GetComponent<mapData>().vessel1Velocity = vesselVelocity;
-                    break;
-                case 1:
-                    gameObject.GetComponent<mapData>().vessel2Pos = pos;
-                    gameObject.GetComponent<mapData>().vessel2Velocity = vesselVelocity;
-                    break;
-                case 2:
-                    gameObject.GetComponent<mapData>().vessel3Pos = pos;
-                    gameObject.GetComponent<mapData>().vessel3Velocity = vesselVelocity;
-                    break;
-                case 3:
-                    gameObject.GetComponent<mapData>().vessel4Pos = pos;
-                    gameObject.GetComponent<mapData>().vessel4Velocity = vesselVelocity;
-                    break;
-                case 4:
-                    gameObject.GetComponent<mapData>().meg1Pos = pos;
-                    gameObject.GetComponent<mapData>().meg1Velocity = vesselVelocity;
-                    break;
-            }
+            gameObject.GetComponent<mapData>().SetVesselState(vessel, pos, vesselVelocity);
         }
     }
 
@@ -433,9 +411,18 @@ public class serverData : NetworkBehaviour
             case 5:
                 gameObject.GetComponent<mapData>().meg1Vis = state;
                 break;
+            case 6:
+                gameObject.GetComponent<mapData>().intercept1Vis = state;
+                break;
         }
     }
 
+    public void SetPlayerVesselState(Vector3 position, Vector3 velocity)
+    {
+        transform.position = position;
+        rb.position = position;
+        rb.velocity = velocity;
+    }
 
     public void OnChangeBool(string boolName, bool newValue)
     {

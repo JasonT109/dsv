@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using TouchScript.Gestures;
@@ -27,6 +27,11 @@ public class buttonControl : MonoBehaviour
     public bool autoWarningGreaterThan = false;
     public string serverName = "depth";
     public string serverType = "int";
+
+    public delegate void buttonEventHandler();
+
+    public event buttonEventHandler onPressed;
+    public event buttonEventHandler onReleased;
 
     private megColorTheme colorScheme;
     private Renderer r;
@@ -100,6 +105,9 @@ public class buttonControl : MonoBehaviour
             StartCoroutine(waitRelease(pressDelay));
             pressed = true;
             m.color = colorTheme[4];
+
+            if (onPressed != null)
+                onPressed();
         }
     }
 
@@ -129,6 +137,9 @@ public class buttonControl : MonoBehaviour
             {
                 toggleButton(gameObject);
             }
+
+            if (onReleased != null)
+                onReleased();
         }
     }
 

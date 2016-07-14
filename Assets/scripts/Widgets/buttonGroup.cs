@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class buttonGroup : MonoBehaviour {
@@ -16,5 +16,14 @@ public class buttonGroup : MonoBehaviour {
             bScript.toggleButton(b);
             Resources.UnloadUnusedAssets();
         }
+    }
+
+    public bool anyButtonActive()
+    {
+        foreach (var button in buttons)
+            if (button.active)
+                return true;
+
+        return false;
     }
 }

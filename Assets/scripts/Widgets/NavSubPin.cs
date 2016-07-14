@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Maths;
 using Meg.Networking;
@@ -36,7 +36,7 @@ public class NavSubPin : MonoBehaviour
         for (int i = 0; i < vesselButtons.Length; i++)
         {
             //check that we are enabled
-            if (serverUtils.GetVesselVis(i))
+            if (serverUtils.GetVesselVis(i + 1))
             {
                 vesselButtons[i].SetActive(true);
                 vesselHeightIndicators[i].SetActive(true);

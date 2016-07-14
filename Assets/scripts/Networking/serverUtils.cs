@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Graphics;
 
@@ -6,6 +6,12 @@ namespace Meg.Networking
 {
     public class serverUtils : MonoBehaviour
     {
+        public static bool IsReady()
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            return serverObject != null;
+        }
+
         public static float GetServerData(string valueName)
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
@@ -290,6 +296,15 @@ namespace Meg.Networking
                     case "meg1posZ":
                         rValue = serverObject.GetComponent<mapData>().meg1Pos.z;
                         break;
+                    case "intercept1posX":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.x;
+                        break;
+                    case "intercept1posY":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.y;
+                        break;
+                    case "intercept1posZ":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.z;
+                        break;
                     case "v1velocity":
                         rValue = serverObject.GetComponent<mapData>().vessel1Velocity;
                         break;
@@ -304,6 +319,9 @@ namespace Meg.Networking
                         break;
                     case "meg1velocity":
                         rValue = serverObject.GetComponent<mapData>().meg1Velocity;
+                        break;
+                    case "intercept1velocity":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Velocity;
                         break;
                     case "initiateMapEvent":
                         rValue = serverObject.GetComponent<mapData>().initiateMapEvent;
@@ -497,6 +515,9 @@ namespace Meg.Networking
                     case "meg1depth":
                         rValue = serverObject.GetComponent<mapData>().meg1Pos.z.ToString("n0");
                         break;
+                    case "intercept1depth":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.z.ToString("n0");
+                        break;
                     case "v1velocity":
                         rValue = serverObject.GetComponent<mapData>().vessel1Velocity.ToString("n1");
                         break;
@@ -511,6 +532,9 @@ namespace Meg.Networking
                         break;
                     case "meg1velocity":
                         rValue = serverObject.GetComponent<mapData>().meg1Velocity.ToString("n1");
+                        break;
+                    case "intercept1velocity":
+                        rValue = serverObject.GetComponent<mapData>().intercept1Velocity.ToString("n1");
                         break;
                     case "mapEventName":
                         rValue = serverObject.GetComponent<mapData>().mapEventName;
@@ -565,6 +589,13 @@ namespace Meg.Networking
             serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
 
+        public static void GetVesselData(int vessel, out Vector3 position, out float velocity)
+        {
+            var data = GetVesselData(vessel);
+            position = new Vector3(data[0], data[1], data[2]);
+            velocity = data[3];
+        }
+
         public static float[] GetVesselData(int vessel)
         {
             //get vessels map space position
@@ -605,9 +636,21 @@ namespace Meg.Networking
                     vesselData[2] = serverObject.GetComponent<mapData>().meg1Pos.z;
                     vesselData[3] = serverObject.GetComponent<mapData>().meg1Velocity;
                     break;
+                case 6:
+                    vesselData[0] = serverObject.GetComponent<mapData>().intercept1Pos.x;
+                    vesselData[1] = serverObject.GetComponent<mapData>().intercept1Pos.y;
+                    vesselData[2] = serverObject.GetComponent<mapData>().intercept1Pos.z;
+                    vesselData[3] = serverObject.GetComponent<mapData>().intercept1Velocity;
+                    break;
             }
 
             return vesselData;
+        }
+
+        public static vesselMovements GetVesselMovements()
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            return serverObject.GetComponent<vesselMovements>();
         }
 
         public static void SetPlayerVessel(int vessel)
@@ -623,6 +666,13 @@ namespace Meg.Networking
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
             return serverObject.GetComponent<mapData>().playerVessel;
+        }
+
+        public static void SetPlayerVesselState(Vector3 position, Vector3 velocity)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            if (serverObject != null)
+                serverObject.GetComponent<serverData>().SetPlayerVesselState(position, velocity);
         }
 
         public static bool GetVesselVis(int vessel)
@@ -647,6 +697,9 @@ namespace Meg.Networking
                     break;
                 case 5:
                     vesselVis = serverObject.GetComponent<mapData>().meg1Vis;
+                    break;
+                case 6:
+                    vesselVis = serverObject.GetComponent<mapData>().intercept1Vis;
                     break;
             }
 
