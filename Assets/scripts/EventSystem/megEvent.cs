@@ -45,5 +45,6 @@ namespace Meg.EventSystem
         public GameObject toObject;
         public bool goToObject;
         public float completeTime;
+        public bool goToPlayerVessel;
     }
 }

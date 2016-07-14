@@ -157,7 +157,7 @@ public class NavSubPin : MonoBehaviour
         }
     }
 
-    Vector2 ConvertToMapSpace(Vector3 _Vessel)
+    public Vector2 ConvertToMapSpace(Vector3 _Vessel)
     {
         Vector2 TempMapPos;
 
