@@ -39,6 +39,7 @@ public class debugVessels : MonoBehaviour
     public float updateTick = 0.4f;
 
     public Color defaultMarkerColor;
+    public Color defaultMarkerTextColor;
     public Color activeMarkerColor;
 
     private float nextUpdateTime = 0.0f;
@@ -134,6 +135,8 @@ public class debugVessels : MonoBehaviour
             ActiveVesselData(GetVesselForMarker(i));
             markers[i].transform.localPosition = new Vector3(vx, vy, -2f);
             markers[i].GetComponent<MeshRenderer>().material.color = GetColorForMarker(i);
+            TextMesh t = markers[i].GetComponentInChildren<TextMesh>();
+            t.GetComponent<Renderer>().material.color = GetTextColorForMarker(i);
         }
     }
 
@@ -151,6 +154,24 @@ public class debugVessels : MonoBehaviour
 
         if (!serverUtils.GetVesselVis(GetVesselForMarker(markerNumber)))
             color *= 0.25f;
+
+        return color;
+    }
+
+    Color GetTextColorForMarker(int markerNumber)
+    {
+        int playerMarker = GetMarkerForVessel(serverUtils.GetPlayerVessel());
+        int activeMarker = GetMarkerForVessel(activeVessel);
+        var playerColor = serverUtils.GetColorTheme().highlightColor;
+        var isPlayer = markerNumber == playerMarker;
+        var isActive = markerNumber == activeMarker;
+
+        var color = isPlayer ? playerColor : defaultMarkerTextColor;
+        if (isActive)
+            color = Color.Lerp(color, activeMarkerColor, 0.5f);
+
+        if (!serverUtils.GetVesselVis(GetVesselForMarker(markerNumber)))
+            color.a = 0.5f;
 
         return color;
     }
