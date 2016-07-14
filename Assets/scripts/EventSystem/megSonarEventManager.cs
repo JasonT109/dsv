@@ -118,6 +118,11 @@
             //get our sub so we know where to spawn the sonar object
             dsvObject = GameObject.FindWithTag("ServerData");
 
+            if (!Anchor)
+            {
+                Anchor = GameObject.FindWithTag("SonarRoot");
+            }
+
             //register the prefab so it can be spawned
             ClientScene.RegisterPrefab(sonarObject);
         }

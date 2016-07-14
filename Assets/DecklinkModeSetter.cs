@@ -41,7 +41,7 @@ public class DecklinkModeSetter : MonoBehaviour
                 canChangeValue = false;
                 ModeDef.text = Translator.TranslateFromIndexSmall(iModeVal);
                 cameraManager.GetComponent<CustomLiveFeedManager>().SetMode(iModeVal);
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
         else if(RightButton.GetComponent<buttonControl>().pressed && canChangeValue)
@@ -57,7 +57,7 @@ public class DecklinkModeSetter : MonoBehaviour
                 canChangeValue = false;
                 ModeDef.text = Translator.TranslateFromIndexSmall(iModeVal);
                 cameraManager.GetComponent<CustomLiveFeedManager>().SetMode(iModeVal);
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
         //else

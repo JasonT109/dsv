@@ -15,7 +15,8 @@ public class megMapCameraEventManager : MonoBehaviour
     public GameObject mapCameraPitch;
     public GameObject mapCameraObject;
     public GameObject mapPitchSliderButton;
-
+    public GameObject[] vessels;
+    public GameObject navPinManager;
     public float runTime;
     public bool running;
     public float completePercentage;
@@ -27,7 +28,7 @@ public class megMapCameraEventManager : MonoBehaviour
     private float initialZoom;
     private float sliderMinValue;
     private float sliderMaxValue;
-
+    
 
     void Start()
     {
@@ -96,6 +97,35 @@ public class megMapCameraEventManager : MonoBehaviour
                     initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
                     initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
                     initialZoom = mapCameraObject.transform.localPosition.z;
+
+                    //if to object get that position in map space
+                    if (runningEvent.goToObject)
+                    {
+                        runningEvent.toPosition = runningEvent.toObject.transform.localPosition;
+                        runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                        runningEvent.toZoom = initialZoom;
+                    }
+
+                    if (runningEvent.goToPlayerVessel)
+                    {
+                        switch (serverUtils.GetPlayerVessel())
+                        {
+                            case 1:
+                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[0].transform.localPosition);
+                                break;
+                            case 2:
+                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[1].transform.localPosition);
+                                break;
+                            case 3:
+                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[2].transform.localPosition);
+                                break;
+                            case 4:
+                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[3].transform.localPosition);
+                                break;
+                        }
+                        runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                        runningEvent.toZoom = initialZoom;
+                    }
                 }
             }
         }
