@@ -387,6 +387,11 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    public void SetPlayerWorldVelocity(Vector3 velocity)
+    {
+        GetComponent<SubControl>().SetWorldVelocity(velocity);
+    }
+
     public void SetPlayerVessel(int vessel)
     {
         gameObject.GetComponent<mapData>().playerVessel = vessel;
@@ -415,13 +420,6 @@ public class serverData : NetworkBehaviour
                 gameObject.GetComponent<mapData>().intercept1Vis = state;
                 break;
         }
-    }
-
-    public void SetPlayerVesselState(Vector3 position, Vector3 velocity)
-    {
-        transform.position = position;
-        rb.position = position;
-        rb.velocity = velocity;
     }
 
     public void OnChangeBool(string boolName, bool newValue)

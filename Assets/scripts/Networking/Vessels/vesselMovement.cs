@@ -69,10 +69,11 @@ public abstract class vesselMovement : MonoBehaviour
     {
         serverUtils.SetVesselData(Vessel, position, reportedSpeed);
 
-        // If we're controlling the player vessel, update its state directly.
-        // TODO: Make sure the player vessel orients correctly in this case.
-        // if (Vessel == MapData.playerVessel)
-        //    serverUtils.SetPlayerVesselState(position, velocity);
+        // If we're controlling the player vessel, update its world velocity.
+        // Supplied velocity uses map axes, so translate it into world space.
+        var worldVelocity = new Vector3(velocity.x, -velocity.z, velocity.y);
+        if (Vessel == MapData.playerVessel)
+            serverUtils.SetPlayerWorldVelocity(worldVelocity);
     }
 
     /** Returns the vessel's state (position + velocity). */

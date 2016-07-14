@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class SubControl : MonoBehaviour 
@@ -58,8 +58,19 @@ public class SubControl : MonoBehaviour
 
         JoystickOverride = false;
 	}
-	
-	// Update is called once per frame
+
+    // Snap the sub to a given worldspace velocity vector.
+    public void SetWorldVelocity(Vector3 velocity)
+    {
+        // Apply velocity immediately to the sub.
+        rb.velocity = velocity;
+
+        // Force sub to look in the direction of travel.
+        // TODO: Should this be smoothed out somehow?
+        transform.LookAt(rb.position + velocity);
+    }
+
+    // Update is called once per frame
     public void SubController()
     {
         UpdateData();

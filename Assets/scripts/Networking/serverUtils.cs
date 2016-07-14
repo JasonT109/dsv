@@ -668,11 +668,11 @@ namespace Meg.Networking
             return serverObject.GetComponent<mapData>().playerVessel;
         }
 
-        public static void SetPlayerVesselState(Vector3 position, Vector3 velocity)
+        public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
             if (serverObject != null)
-                serverObject.GetComponent<serverData>().SetPlayerVesselState(position, velocity);
+                serverObject.GetComponent<serverData>().SetPlayerWorldVelocity(velocity);
         }
 
         public static bool GetVesselVis(int vessel)
