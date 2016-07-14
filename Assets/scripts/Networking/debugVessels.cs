@@ -285,7 +285,11 @@ public class debugVessels : MonoBehaviour
     void UpdateDepthFromUi()
     {
         ActiveVesselData(activeVessel);
-        ChangeValue(activeVessel, new Vector3(vx, vy, depthSlider.GetComponentInChildren<sliderWidget>().returnValue), vv);
+
+        var depth = depthSlider.GetComponentInChildren<sliderWidget>().returnValue;
+        depth = Mathf.RoundToInt(depth / 5) * 5;
+
+        ChangeValue(activeVessel, new Vector3(vx, vy, depth), vv);
     }
 
     void UpdateSpeedFromUi()
@@ -293,10 +297,14 @@ public class debugVessels : MonoBehaviour
         var movement = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel);
         var setVector = movement as vesselSetVector;
         var holding = movement as vesselHoldingPattern;
+
+        var speed = velocitySlider.GetComponentInChildren<sliderWidget>().returnValue;
+        speed = Mathf.RoundToInt(speed);
+
         if (setVector)
-            setVector.Speed = velocitySlider.GetComponentInChildren<sliderWidget>().returnValue;
+            setVector.Speed = speed;
         else if (holding)
-            holding.Speed = velocitySlider.GetComponentInChildren<sliderWidget>().returnValue;
+            holding.Speed = speed;
     }
 
     void UpdateHeadingFromUi()
