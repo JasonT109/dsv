@@ -119,8 +119,8 @@ public class debugVesselMarker : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
-        _interceptLine = VectorLine.SetLine(InterceptLineColor, Vector2.zero, Vector2.zero);
-        _headingLine = VectorLine.SetLine(Color.white, Vector2.zero, Vector2.zero);
+        _interceptLine = VectorLine.SetLine(InterceptLineColor, new Vector2[2]);
+        _headingLine = new VectorLine("Heading", new List<Vector2>(6), 1, LineType.Discrete);
     }
 
     /** Disabling. */
@@ -156,10 +156,18 @@ public class debugVesselMarker : MonoBehaviour
         if (heading.magnitude > VelocityLineMaxLength)
             heading = heading.normalized * VelocityLineMaxLength;
 
+        Vector2 headingEnd = markerPosition + heading;
+        Vector2 perp = new Vector2(-heading.y, heading.x).normalized;
+        Vector2 back = -heading.normalized;
+
         _headingLine.color = markerColor;
         _headingLine.active = velocity.magnitude > 0;
         _headingLine.points2[0] = markerPosition;
-        _headingLine.points2[1] = markerPosition + heading;
+        _headingLine.points2[1] = headingEnd;
+        _headingLine.points2[2] = headingEnd;
+        _headingLine.points2[3] = headingEnd + back * 10 + perp * 5;
+        _headingLine.points2[4] = headingEnd;
+        _headingLine.points2[5] = headingEnd + back * 10 - perp * 5;
         _headingLine.Draw();
 
         // Update trail (if moving).
@@ -188,6 +196,17 @@ public class debugVesselMarker : MonoBehaviour
 
         if (_trailLine != null)
             _trailLine.Draw();
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Reset this marker. */
+    public void Reset()
+    {
+        // Clear the marker trail.
+        _trailLine.points2.Clear();
     }
 
 

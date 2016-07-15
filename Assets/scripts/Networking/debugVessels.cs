@@ -116,6 +116,9 @@ public class debugVessels : MonoBehaviour
 
         // Re-activate the vessel in order to update interface.
         ActivateVessel(activeVessel);
+
+        // Reset marker trail.
+        markers[activeVessel - 1].Reset();
     }
 
     IEnumerator wait(float waitTime)
