@@ -22,7 +22,7 @@ public abstract class vesselMovement : MonoBehaviour
 
     /** Vessel's current velocity. */
     public Vector3 Velocity
-    { get; private set; }
+        { get; private set; }
 
 
     // Unity Methods
@@ -43,8 +43,7 @@ public abstract class vesselMovement : MonoBehaviour
         Velocity = Vector3.zero;
 
         // Update the vessel's movement.
-        if (Active)
-            UpdateMovement();
+        UpdateMovement();
     }
 
 
@@ -100,6 +99,9 @@ public abstract class vesselMovement : MonoBehaviour
     protected void SetVesselState(Vector3 position, Vector3 velocity, float reportedSpeed)
     {
         Velocity = velocity;
+
+        if (!Active)
+            return;
 
         serverUtils.SetVesselData(Vessel, position, reportedSpeed);
 

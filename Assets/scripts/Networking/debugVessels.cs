@@ -31,6 +31,7 @@ public class debugVessels : MonoBehaviour
     public buttonControl vectorButton;
     public buttonControl interceptButton;
     public buttonControl activeButton;
+    public buttonControl autoSpeedButton;
 
     public GameObject timeToIntercept;
     public widgetSetTextValue timeToInterceptHours;
@@ -41,7 +42,6 @@ public class debugVessels : MonoBehaviour
     public string[] markerNames;
     public float updateTick = 0.4f;
 
-    private float nextUpdateTime = 0.0f;
     private buttonControl[] buttonControls;
     private bool[] buttonStates;
     private bool[] prevStates;
@@ -65,6 +65,7 @@ public class debugVessels : MonoBehaviour
         timeToInterceptSetButton.onPressed += OnSetTimeToInterceptPressed;
         activeButton.onReleased += OnActiveButtonReleased;
         visibleButton.onReleased += OnVisibleButtonReleased;
+        autoSpeedButton.onReleased += OnAutoSpeedButtonReleased;
 
         if (serverUtils.IsReady())
             UpdateUiState();
@@ -77,6 +78,7 @@ public class debugVessels : MonoBehaviour
         timeToInterceptSetButton.onPressed -= OnSetTimeToInterceptPressed;
         activeButton.onReleased -= OnActiveButtonReleased;
         visibleButton.onReleased -= OnVisibleButtonReleased;
+        autoSpeedButton.onReleased -= OnAutoSpeedButtonReleased;
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -130,7 +132,6 @@ public class debugVessels : MonoBehaviour
     private void Start()
     {
         activeVessel = 1;
-        nextUpdateTime = Time.time + updateTick;
         buttonControls = new buttonControl[vesselButtonGroup.buttons.Length];
         buttonStates = new bool[buttonControls.Length];
         prevStates = new bool[buttonControls.Length];
@@ -164,11 +165,7 @@ public class debugVessels : MonoBehaviour
             initialized = true;
         }
 
-        if (Time.time > nextUpdateTime)
-        {
-            nextUpdateTime = Time.time + updateTick;
-            UpdateVesselMarkers();
-        }
+        UpdateVesselMarkers();
 
 	    for (int i = 0; i < buttonStates.Length; i++)
         {
@@ -254,6 +251,7 @@ public class debugVessels : MonoBehaviour
         var movement = Movements.GetVesselMovement(activeVessel);
         var setVector = movement as vesselSetVector;
         var holding = movement as vesselHoldingPattern;
+        var intercept = movement as vesselIntercept;
 
         var speed = velocitySlider.GetComponentInChildren<sliderWidget>().returnValue;
         speed = Mathf.RoundToInt(speed);
@@ -262,6 +260,8 @@ public class debugVessels : MonoBehaviour
             setVector.Speed = speed;
         else if (holding)
             holding.Speed = speed;
+        else if (intercept && !intercept.AutoSpeed)
+            intercept.Speed = speed;
     }
 
     void UpdateHeadingFromUi()
@@ -317,21 +317,30 @@ public class debugVessels : MonoBehaviour
         activeButton.active = Movements.IsActive();
 
         // Update velocity slider.
-        velocitySlider.SetActive(holding || setVector);
+        velocitySlider.SetActive(holding || setVector || intercept);
         if (holding)
         {
+            SetVelocityText(holding.Speed);
             if (updateValues)
                 velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(holding.Speed);
-
-            velocityText.GetComponent<TextMesh>().text = holding.Speed.ToString("n") + " m/s";
         }
         else if (setVector)
         {
+            SetVelocityText(setVector.Speed);
             if (updateValues)
                 velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(setVector.Speed);
-
-            velocityText.GetComponent<TextMesh>().text = setVector.Speed.ToString("n") + " m/s";
         }
+        else if (intercept)
+        {
+            SetVelocityText(intercept.Speed);
+            if (updateValues || intercept.AutoSpeed)
+                velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(intercept.Speed);
+        }
+
+        // Update auto-speed button.
+        autoSpeedButton.gameObject.SetActive(intercept);
+        if (intercept)
+            autoSpeedButton.active = intercept.AutoSpeed;
 
         // Update heading slider.
         headingSlider.SetActive(setVector != null);
@@ -398,15 +407,23 @@ public class debugVessels : MonoBehaviour
                     break;
             }
         }
-}
+    }
+
+    void SetVelocityText(float speed)
+    {
+        var kph = speed * Conversions.MetresPerSecondToKph;
+        var kts = speed * Conversions.MetresPerSecondToKnots;
+
+        velocityText.GetComponent<TextMesh>().text = speed.ToString("n1") + " m/s"
+            + " (" + kph.ToString("n0") + "kph"
+            + ", " + kts.ToString("n0") + "kts)";
+    }
 
     void OnSetTimeToInterceptPressed()
     {
         var intercept = Movements.GetVesselMovement(activeVessel) as vesselIntercept;
-        if (!intercept)
-            return;
-
-        UpdateTimeToInterceptFromUi();
+        if (intercept)
+            UpdateTimeToInterceptFromUi();
     }
 
     void OnVisibleButtonReleased()
@@ -417,6 +434,13 @@ public class debugVessels : MonoBehaviour
     void OnActiveButtonReleased()
     {
         Movements.SetActive(activeButton.active);
+    }
+
+    void OnAutoSpeedButtonReleased()
+    {
+        var intercept = Movements.GetVesselMovement(activeVessel) as vesselIntercept;
+        if (intercept)
+            intercept.AutoSpeed = autoSpeedButton.active;
     }
 
     void ChangeValue(int vessel, Vector3 pos, float velocity)

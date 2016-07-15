@@ -28,19 +28,8 @@ public class vesselHoldingPattern : vesselMovement
     // Members
     // ------------------------------------------------------------
 
-    /** Time at which holding pattern started. */
-    private float _startTime;
-
-
-    // Public Methods
-    // ------------------------------------------------------------
-
-    /** Configure the vessel movement. */
-    public override void Configure(mapData data, int vessel, bool active)
-    {
-        base.Configure(data, vessel, active);
-        _startTime = Time.time;
-    }
+    /** Simulation time. */
+    private float _time;
 
 
     // Load / Save
@@ -84,8 +73,7 @@ public class vesselHoldingPattern : vesselMovement
         GetVesselState(out position, out velocity);
 
         // Set vessel's direction based on time.
-        var t = Time.time - _startTime;
-        var f = t / Mathf.Max(Period, MinPeriod);
+        var f = _time / Mathf.Max(Period, MinPeriod);
         var dx = Mathf.Cos(f * (Mathf.PI * 2));
         var dy = Mathf.Sin(f * (Mathf.PI * 2));
         var dz = Mathf.Sin(f * (Mathf.PI * 2)) * DepthFraction;
@@ -100,6 +88,10 @@ public class vesselHoldingPattern : vesselMovement
 
         // Update the vessel's current state.
         SetVesselState(position + delta, direction * Speed, Speed);
+
+        // Update time.
+        if (Active)
+            _time += Time.deltaTime;
     }
 
 }

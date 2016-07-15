@@ -27,16 +27,20 @@ public class vesselIntercept : vesselMovement
     // Properties
     // ------------------------------------------------------------
 
+    /** Whether to automatically adjust speed to ensure correct arrival time. */
+    public bool AutoSpeed = true;
+
+    /** Speed of interception. */
+    public float Speed;
+
     /** Returns the current time to intercept. */
     private float TimeToIntercept
     { get { return serverUtils.GetVesselMovements().TimeToIntercept; } }
 
 
+
     // Members
     // ------------------------------------------------------------
-
-    /** Currently reported velocity. */
-    private float _speed;
 
     /** Smoothing for reported velocity. */
     private float _speedSmoothingVelocity;
@@ -49,8 +53,28 @@ public class vesselIntercept : vesselMovement
     public override void Configure(mapData data, int vessel, bool active)
     {
         base.Configure(data, vessel, active);
-        _speed = 0;
         _speedSmoothingVelocity = 0;
+    }
+
+
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save movement state to JSON. */
+    public override JSONObject Save()
+    {
+        var json = base.Save();
+        json.AddField("AutoSpeed", AutoSpeed);
+        json.AddField("Speed", Speed);
+        return json;
+    }
+
+    /** Load movement state from JSON. */
+    public override void Load(JSONObject json, mapData mapData)
+    {
+        base.Load(json, mapData);
+        json.GetField(ref AutoSpeed, "AutoSpeed");
+        json.GetField(ref Speed, "Speed");
     }
 
 
@@ -59,7 +83,7 @@ public class vesselIntercept : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-    { return "Intercept"; }
+        { return "Intercept"; }
 
     /** Update the vessel's current state. */
     protected override void UpdateMovement()
@@ -88,7 +112,9 @@ public class vesselIntercept : vesselMovement
         var direction = delta.normalized;
 
         // Compute speed required to reach target at correct time.
-        float requiredSpeed = Mathf.Clamp(distance / TimeToIntercept, 0, ActualTopSpeed);
+        float requiredSpeed = AutoSpeed 
+            ? Mathf.Clamp(distance / TimeToIntercept, 0, ActualTopSpeed)
+            : Speed;
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
@@ -98,17 +124,20 @@ public class vesselIntercept : vesselMovement
 
         // Clamp reported velocity to the vessel's rated top-speed.
         // Add in some random noise when intercepting to make the speed look nice.
-        var targetSpeed = Mathf.Clamp(requiredSpeed, 0, RatedTopSpeed);
+        var targetSpeed = requiredSpeed;
         if (TimeToIntercept <= SpeedSmoothTime)
             targetSpeed = 0;
-        else
+        else if (Active)
             targetSpeed = Mathf.Max(0, targetSpeed + Random.Range(-SpeedRandomness, SpeedRandomness));
 
         // Smooth reported velocity over time.
-        _speed = Mathf.SmoothDamp(_speed, targetSpeed, ref _speedSmoothingVelocity, SpeedSmoothTime);
+        if (Active)
+            Speed = Mathf.SmoothDamp(Speed, targetSpeed, ref _speedSmoothingVelocity, SpeedSmoothTime);
+        else
+            Speed = targetSpeed;
 
         // Update the vessel's current state.
-        SetVesselState(position + dp, direction * requiredSpeed, _speed);
+        SetVesselState(position + dp, direction * requiredSpeed, Mathf.Clamp(Speed, 0, RatedTopSpeed));
     }
 
 }

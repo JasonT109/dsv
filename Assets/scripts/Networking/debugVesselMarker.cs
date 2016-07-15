@@ -14,13 +14,13 @@ public class debugVesselMarker : MonoBehaviour
     private static Color Invisible = new Color(0, 0, 0, 0);
 
     /** Scaling factor for velocity line. */
-    private const float VelocityLineScale = 1;
+    private const float VelocityLineScale = 0.5f;
 
     /** Minimum velocity line length. */
     private const float VelocityLineMinLength = 10;
     
     /** Minimum velocity line length. */
-    private const float VelocityLineMaxLength = 50;
+    private const float VelocityLineMaxLength = 60;
 
     /** Interval between trail points. */
     private const float TrailInterval = 1.0f;
@@ -206,7 +206,8 @@ public class debugVesselMarker : MonoBehaviour
     public void Reset()
     {
         // Clear the marker trail.
-        _trailLine.points2.Clear();
+        if (_trailLine != null)
+            _trailLine.points2.Clear();
     }
 
 
