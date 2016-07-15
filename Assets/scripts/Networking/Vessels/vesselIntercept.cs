@@ -23,6 +23,12 @@ public class vesselIntercept : vesselMovement
     /** Magnitude of random noise to introduce to reported velocity. */
     public const float SpeedRandomness = 0.5f;
 
+    /** Distance at which interception is considered complete. */
+    public const float InterceptAchievedDistance = 10;
+
+    /** Extent to which target's velocity should be taken into account when predicting interception point. */
+    public const float InterceptPredictionFactor = 1.0f;
+
 
     // Properties
     // ------------------------------------------------------------
@@ -102,6 +108,16 @@ public class vesselIntercept : vesselMovement
         float interceptVelocity;
         serverUtils.GetVesselData(InterceptVessel, out interceptPosition, out interceptVelocity);
 
+        // Adjust intercept point according to target's velocity and time to intercept.
+        var movement = serverUtils.GetVesselMovements().GetVesselMovement(InterceptVessel);
+        if (movement)
+        {
+            var predicted = movement.Velocity * (TimeToIntercept * InterceptPredictionFactor);
+            predicted.x *= 0.001f;
+            predicted.y *= 0.001f;
+            interceptPosition += predicted;
+        }
+
         // Determine distance to target, taking map-space into account.
         var delta = (interceptPosition - position);
         delta.x *= 1000f;
@@ -112,13 +128,13 @@ public class vesselIntercept : vesselMovement
         var direction = delta.normalized;
 
         // Compute speed required to reach target at correct time.
-        float requiredSpeed = AutoSpeed 
+        var requiredSpeed = AutoSpeed 
             ? Mathf.Clamp(distance / TimeToIntercept, 0, ActualTopSpeed)
             : Speed;
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
-        Vector3 dp = direction * requiredSpeed * Time.deltaTime;
+        var dp = direction * requiredSpeed * Time.deltaTime;
         dp.x *= 0.001f;
         dp.y *= 0.001f;
 
@@ -127,11 +143,13 @@ public class vesselIntercept : vesselMovement
         var targetSpeed = requiredSpeed;
         if (TimeToIntercept <= SpeedSmoothTime)
             targetSpeed = 0;
+        else if (!AutoSpeed && distance <= InterceptAchievedDistance)
+            targetSpeed = 0;
         else if (Active)
             targetSpeed = Mathf.Max(0, targetSpeed + Random.Range(-SpeedRandomness, SpeedRandomness));
 
         // Smooth reported velocity over time.
-        if (Active)
+        if (Active && AutoSpeed)
             Speed = Mathf.SmoothDamp(Speed, targetSpeed, ref _speedSmoothingVelocity, SpeedSmoothTime);
         else
             Speed = targetSpeed;
