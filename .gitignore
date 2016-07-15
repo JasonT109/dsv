@@ -20,8 +20,11 @@ Builds/
 Library/
 SourceArt/
 Assets/Reporter/
+Assets/Reporter.meta
 Assets/SVG/
+Assets/SVG.meta
 Assets/SVG Importer/
+Assets/SVG Importer.meta
 
 # Windows shortcuts
 *.lnk
@@ -54,3 +57,12 @@ Assets/SVG Importer/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# User-specific files (Visual Studio)
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
