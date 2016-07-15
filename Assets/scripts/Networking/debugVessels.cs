@@ -1,16 +1,19 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+
 using Meg.Networking;
 using TouchScript.Hit;
 using TouchScript.Gestures;
 
 public class debugVessels : MonoBehaviour
 {
+    public debugVesselMarker MarkerPrefab;
+
     public buttonGroup vesselButtonGroup;
     public buttonGroup movementButtonGroup;
 
-    public GameObject marker;
     public GameObject mapObject;
 
     public GameObject depthSlider;
@@ -38,16 +41,12 @@ public class debugVessels : MonoBehaviour
     public string[] markerNames;
     public float updateTick = 0.4f;
 
-    public Color defaultMarkerColor;
-    public Color defaultMarkerTextColor;
-    public Color activeMarkerColor;
-
     private float nextUpdateTime = 0.0f;
     private buttonControl[] buttonControls;
     private bool[] buttonStates;
     private bool[] prevStates;
     private bool stateChanged;
-    private GameObject[] markers;
+    private debugVesselMarker[] markers;
     public int activeVessel = 1;
     private float vx;
     private float vy;
@@ -55,6 +54,9 @@ public class debugVessels : MonoBehaviour
     private float vv;
     private bool canUpdate = true;
     private bool initialized;
+
+    private vesselMovements Movements
+        { get { return serverUtils.GetVesselMovements(); } }
 
     private void OnEnable()
     {
@@ -87,7 +89,7 @@ public class debugVessels : MonoBehaviour
     private void releaseHandler(object sender, EventArgs e)
     {
         // Don't allow changes to map while simulating.
-        if (serverUtils.GetVesselMovements().IsActive())
+        if (Movements.IsActive())
             return;
 
         var gesture = sender as ReleaseGesture;
@@ -116,110 +118,41 @@ public class debugVessels : MonoBehaviour
         ActivateVessel(activeVessel);
     }
 
-    void SpawnShipMarkers(string markerId, Vector2 markerPos, int markerNumber)
-    {
-        //spawn a visual waypoint
-        GameObject wp = (GameObject)Instantiate(marker, new Vector3(0, 0, 0), Quaternion.identity);
-        TextMesh t = wp.GetComponentInChildren<TextMesh>();
-
-        //set the ID of the marker
-        t.text = markerId;
-
-        //parent to this object
-        wp.transform.parent = mapObject.transform;
-
-        //set the wp local position
-        wp.transform.localPosition = new Vector3(markerPos.x, markerPos.y, -2f);
-
-        //populate markers array
-        markers[markerNumber] = wp;
-    }
-
-    void UpdateShipMarkers()
-    {
-        for (int i = 0; i < markers.Length; i++)
-        {
-            ActiveVesselData(GetVesselForMarker(i));
-            markers[i].transform.localPosition = new Vector3(vx, vy, -2f);
-            markers[i].GetComponent<MeshRenderer>().material.color = GetColorForMarker(i);
-            TextMesh t = markers[i].GetComponentInChildren<TextMesh>();
-            t.GetComponent<Renderer>().material.color = GetTextColorForMarker(i);
-        }
-    }
-
-    Color GetColorForMarker(int markerNumber)
-    {
-        int playerMarker = GetMarkerForVessel(serverUtils.GetPlayerVessel());
-        int activeMarker = GetMarkerForVessel(activeVessel);
-        var playerColor = serverUtils.GetColorTheme().highlightColor;
-        var isPlayer = markerNumber == playerMarker;
-        var isActive = markerNumber == activeMarker;
-        var color = isPlayer ? playerColor : defaultMarkerColor;
-
-        if (isActive)
-            color = Color.Lerp(color, activeMarkerColor, 0.5f);
-
-        if (!serverUtils.GetVesselVis(GetVesselForMarker(markerNumber)))
-            color *= 0.25f;
-
-        return color;
-    }
-
-    Color GetTextColorForMarker(int markerNumber)
-    {
-        int playerMarker = GetMarkerForVessel(serverUtils.GetPlayerVessel());
-        int activeMarker = GetMarkerForVessel(activeVessel);
-        var playerColor = serverUtils.GetColorTheme().highlightColor;
-        var isPlayer = markerNumber == playerMarker;
-        var isActive = markerNumber == activeMarker;
-
-        var color = isPlayer ? playerColor : defaultMarkerTextColor;
-        if (isActive)
-            color = Color.Lerp(color, activeMarkerColor, 0.5f);
-
-        if (!serverUtils.GetVesselVis(GetVesselForMarker(markerNumber)))
-            color.a = 0.5f;
-
-        return color;
-    }
-
-    int GetMarkerForVessel(int vessel)
-    {
-        // Marker 0 is vessel 1, and so on.
-        return vessel - 1;
-    }
-
-    int GetVesselForMarker(int marker)
-    {
-        // Marker 0 is vessel 1, and so on.
-        return marker + 1;
-    }
-
     IEnumerator wait(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         canUpdate = true;
     }
 
-    void Start()
+    private void Start()
     {
         activeVessel = 1;
         nextUpdateTime = Time.time + updateTick;
         buttonControls = new buttonControl[vesselButtonGroup.buttons.Length];
         buttonStates = new bool[buttonControls.Length];
         prevStates = new bool[buttonControls.Length];
-        markers = new GameObject[buttonStates.Length];
+        markers = new debugVesselMarker[buttonStates.Length];
         for (int i = 0; i < vesselButtonGroup.buttons.Length; i++)
         {
             buttonControls[i] = vesselButtonGroup.buttons[i].GetComponent<buttonControl>();
             buttonStates[i] = buttonControls[i].active;
             prevStates[i] = buttonStates[i];
             ActiveVesselData(i + 1);
-            SpawnShipMarkers(markerNames[i], new Vector2(vx, vy), i);
+            CreateVesselMarker(markerNames[i], new Vector2(vx, vy), i);
         }
 	}
 
-	void Update()
+    private void CreateVesselMarker(string markerId, Vector2 markerPos, int markerNumber)
+    {
+        var marker = Instantiate(MarkerPrefab);
+        marker.Name = markerId;
+        marker.Vessel = markerNumber + 1;
+        marker.transform.parent = mapObject.transform;
+        marker.transform.localPosition = new Vector3(markerPos.x, markerPos.y, -2f);
+        markers[markerNumber] = marker;
+    }
+
+    void Update()
     {
         // Perform an initial UI update when the server is ready.
         if (!initialized && serverUtils.IsReady())
@@ -231,7 +164,7 @@ public class debugVessels : MonoBehaviour
         if (Time.time > nextUpdateTime)
         {
             nextUpdateTime = Time.time + updateTick;
-            UpdateShipMarkers();
+            UpdateVesselMarkers();
         }
 
 	    for (int i = 0; i < buttonStates.Length; i++)
@@ -262,13 +195,13 @@ public class debugVessels : MonoBehaviour
             movementButtonGroup.changed = false;
             var simulating = activeButton.active;
             if (holdingButton.active)
-                serverUtils.GetVesselMovements().SetHoldingPattern(activeVessel);
+                Movements.SetHoldingPattern(activeVessel);
             else if (vectorButton.active)
-                serverUtils.GetVesselMovements().SetVector(activeVessel);
+                Movements.SetVector(activeVessel);
             else if (interceptButton.active)
-                serverUtils.GetVesselMovements().SetIntercept(activeVessel);
+                Movements.SetIntercept(activeVessel);
             else
-                serverUtils.GetVesselMovements().SetNone(activeVessel);
+                Movements.SetNone(activeVessel);
 
             UpdateUiState();
         }
@@ -288,6 +221,21 @@ public class debugVessels : MonoBehaviour
         }
     }
 
+    void UpdateVesselMarkers()
+    {
+        var interceptMarker = markers[5];
+
+        for (int i = 0; i < markers.Length; i++)
+        {
+            var marker = markers[i];
+            var vessel = i + 1;
+            ActiveVesselData(vessel);
+            marker.transform.localPosition = new Vector3(vx, vy, -2f);
+            marker.Selected = (vessel == activeVessel);
+            marker.InterceptMarker = Movements.IsIntercepting(vessel) ? interceptMarker : null;
+        }
+    }
+
     void UpdateDepthFromUi()
     {
         ActiveVesselData(activeVessel);
@@ -300,7 +248,7 @@ public class debugVessels : MonoBehaviour
 
     void UpdateSpeedFromUi()
     {
-        var movement = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel);
+        var movement = Movements.GetVesselMovement(activeVessel);
         var setVector = movement as vesselSetVector;
         var holding = movement as vesselHoldingPattern;
 
@@ -315,14 +263,14 @@ public class debugVessels : MonoBehaviour
 
     void UpdateHeadingFromUi()
     {
-        var setVector = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel) as vesselSetVector;
+        var setVector = Movements.GetVesselMovement(activeVessel) as vesselSetVector;
         if (setVector)
             setVector.Heading = Mathf.RoundToInt(headingSlider.GetComponentInChildren<sliderWidget>().returnValue);
     }
 
     void UpdateAngleFromUi()
     {
-        var setVector = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel) as vesselSetVector;
+        var setVector = Movements.GetVesselMovement(activeVessel) as vesselSetVector;
         if (setVector)
             setVector.DiveAngle = Mathf.RoundToInt(diveAngleSlider.GetComponentInChildren<sliderWidget>().returnValue);
     }
@@ -334,7 +282,7 @@ public class debugVessels : MonoBehaviour
         var s = timeToInterceptSeconds.currentNumber;
         var ts = new TimeSpan(h, m, s);
 
-        serverUtils.GetVesselMovements().SetTimeToIntercept((float) ts.TotalSeconds);
+        Movements.SetTimeToIntercept((float) ts.TotalSeconds);
     }
 
     void ActivateVessel(int vessel)
@@ -351,7 +299,7 @@ public class debugVessels : MonoBehaviour
         visibleButton.active = serverUtils.GetVesselVis(activeVessel);
 
         // Determine if the vessel has a current movement plan.
-        var movement = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel);
+        var movement = Movements.GetVesselMovement(activeVessel);
         var holding = movement as vesselHoldingPattern;
         var setVector = movement as vesselSetVector;
         var intercept = movement as vesselIntercept;
@@ -363,7 +311,7 @@ public class debugVessels : MonoBehaviour
         interceptButton.gameObject.SetActive(activeVessel != vesselIntercept.InterceptVessel);
 
         // Update simulation active button state.
-        activeButton.active = serverUtils.GetVesselMovements().IsActive();
+        activeButton.active = Movements.IsActive();
 
         // Update velocity slider.
         velocitySlider.SetActive(holding || setVector);
@@ -406,7 +354,7 @@ public class debugVessels : MonoBehaviour
         timeToIntercept.SetActive(intercept != null);
         if (intercept && (updateValues || intercept.Active))
         {
-            var ts = TimeSpan.FromSeconds(serverUtils.GetVesselMovements().TimeToIntercept);
+            var ts = TimeSpan.FromSeconds(Movements.TimeToIntercept);
             timeToInterceptHours.currentNumber = ts.Hours;
             timeToInterceptMins.currentNumber = ts.Minutes;
             timeToInterceptSeconds.currentNumber = ts.Seconds;
@@ -451,7 +399,7 @@ public class debugVessels : MonoBehaviour
 
     void OnSetTimeToInterceptPressed()
     {
-        var intercept = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel) as vesselIntercept;
+        var intercept = Movements.GetVesselMovement(activeVessel) as vesselIntercept;
         if (!intercept)
             return;
 
@@ -465,7 +413,7 @@ public class debugVessels : MonoBehaviour
 
     void OnActiveButtonReleased()
     {
-        serverUtils.GetVesselMovements().SetActive(activeButton.active);
+        Movements.SetActive(activeButton.active);
     }
 
     void ChangeValue(int vessel, Vector3 pos, float velocity)

@@ -103,6 +103,18 @@ public class vesselMovements : MonoBehaviour
         RemoveVesselMovement(vessel);
     }
 
+    /** Returns whether a vessel is in a holding pattern. */
+    public bool IsHoldingPattern(int vessel)
+        { return GetVesselMovement(vessel) is vesselHoldingPattern; }
+
+    /** Returns whether a vessel is intercepting. */
+    public bool IsIntercepting(int vessel)
+    { return GetVesselMovement(vessel) is vesselIntercept; }
+
+    /** Returns whether a vessel is on a set vector course. */
+    public bool IsSetVector(int vessel)
+    { return GetVesselMovement(vessel) is vesselSetVector; }
+
     /** Return the vessel's current movement mode (if any). */
     public vesselMovement GetVesselMovement(int vessel)
     {

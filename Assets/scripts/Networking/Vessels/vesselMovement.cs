@@ -20,6 +20,10 @@ public abstract class vesselMovement : MonoBehaviour
     /** Whether interception is active. */
     public bool Active;
 
+    /** Vessel's current velocity. */
+    public Vector3 Velocity
+    { get; private set; }
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -35,6 +39,9 @@ public abstract class vesselMovement : MonoBehaviour
     /** Update the vessel movement module. */
     protected virtual void Update()
     {
+        // Reset velocity.
+        Velocity = Vector3.zero;
+
         // Update the vessel's movement.
         if (Active)
             UpdateMovement();
@@ -92,6 +99,8 @@ public abstract class vesselMovement : MonoBehaviour
     /** Sets the vessel's state (position + velocity). */
     protected void SetVesselState(Vector3 position, Vector3 velocity, float reportedSpeed)
     {
+        Velocity = velocity;
+
         serverUtils.SetVesselData(Vessel, position, reportedSpeed);
 
         // If we're controlling the player vessel, update its world velocity.
