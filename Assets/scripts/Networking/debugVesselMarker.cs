@@ -10,9 +10,6 @@ public class debugVesselMarker : MonoBehaviour
     // Constants
     // ------------------------------------------------------------
 
-    /** Invisible color. */
-    private static Color Invisible = new Color(0, 0, 0, 0);
-
     /** Scaling factor for velocity line. */
     private const float VelocityLineScale = 0.5f;
 

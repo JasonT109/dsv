@@ -193,7 +193,6 @@ public class debugVessels : MonoBehaviour
         if (movementButtonGroup.changed)
         {
             movementButtonGroup.changed = false;
-            var simulating = activeButton.active;
             if (holdingButton.active)
                 Movements.SetHoldingPattern(activeVessel);
             else if (vectorButton.active)
