@@ -111,6 +111,10 @@ public class vesselMovements : MonoBehaviour
     public bool IsIntercepting(int vessel)
     { return GetVesselMovement(vessel) is vesselIntercept; }
 
+    /** Returns whether any vessel is intercepting. */
+    public bool IsAnyIntercepting()
+    { return current.Values.Any(m => m is vesselIntercept); }
+
     /** Returns whether a vessel is on a set vector course. */
     public bool IsSetVector(int vessel)
     { return GetVesselMovement(vessel) is vesselSetVector; }
@@ -230,6 +234,13 @@ public class vesselMovements : MonoBehaviour
 
     /** Update vessel movements. */
     private void UpdateMovement()
+    {
+        if (IsAnyIntercepting())
+            UpdateTimeToIntercept();
+    }
+
+    /** Update vessel time to intercept. */
+    private void UpdateTimeToIntercept()
     {
         // Update interception time.
         TimeToIntercept = Mathf.Max(0, TimeToIntercept - Time.deltaTime);
