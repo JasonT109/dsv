@@ -23,12 +23,13 @@ public class vesselIntercept : vesselMovement
     /** Magnitude of random noise to introduce to reported velocity. */
     public const float SpeedRandomness = 0.5f;
 
-    
+
     // Properties
     // ------------------------------------------------------------
 
-    /** Initial time to intercept (seconds). */
-    public float TimeToIntercept = 60;
+    /** Returns the current time to intercept. */
+    private float TimeToIntercept
+    { get { return serverUtils.GetVesselMovements().TimeToIntercept; } }
 
 
     // Members
@@ -48,38 +49,8 @@ public class vesselIntercept : vesselMovement
     public override void Configure(mapData data, int vessel, bool active)
     {
         base.Configure(data, vessel, active);
-        SetTimeToIntercept(TimeToIntercept);
-    }
-
-    /** Set the vessel's time to intercept. */
-    public void SetTimeToIntercept(float value)
-    {
-        TimeToIntercept = value;
         _speed = 0;
         _speedSmoothingVelocity = 0;
-    }
-
-
-    // Load / Save
-    // ------------------------------------------------------------
-
-    /** Save movement state to JSON. */
-    public override JSONObject Save()
-    {
-        var json = base.Save();
-        json.AddField("TimeToIntercept", TimeToIntercept);
-
-        return json;
-    }
-
-    /** Load movement state from JSON. */
-    public override void Load(JSONObject json, mapData mapData)
-    {
-        base.Load(json, mapData);
-
-        float tti = 0;
-        json.GetField(ref tti, "TimeToIntercept");
-        SetTimeToIntercept(tti);
     }
 
 
@@ -93,15 +64,6 @@ public class vesselIntercept : vesselMovement
     /** Update the vessel's current state. */
     protected override void UpdateMovement()
     {
-        // Update interception time.
-        TimeToIntercept = Mathf.Max(0, TimeToIntercept - Time.deltaTime);
-
-        // Update due time to match interception time.
-        var ts = System.TimeSpan.FromSeconds(TimeToIntercept);
-        serverUtils.SetServerData("dueTimeHours", ts.Hours);
-        serverUtils.SetServerData("dueTimeMins", ts.Minutes);
-        serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
-
         // Determine if we've intercepted the target.
         if (TimeToIntercept <= 0)
             return;

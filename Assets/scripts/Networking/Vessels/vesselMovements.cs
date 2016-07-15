@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Meg.Networking;
 
 /** 
  * Manages the movements of non-player vessels.
@@ -34,6 +35,9 @@ public class vesselMovements : MonoBehaviour
     public bool Active
     { get; private set; }
 
+    /** Initial time to intercept (seconds). */
+    public float TimeToIntercept = 120;
+
 
     // Members
     // ------------------------------------------------------------
@@ -45,9 +49,18 @@ public class vesselMovements : MonoBehaviour
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Enabling. */
     void OnEnable()
     {
         MapData = GetComponent<mapData>();
+    }
+
+    /** Update the vessel movement module. */
+    protected virtual void Update()
+    {
+        // Update the vessel's movement.
+        if (Active)
+            UpdateMovement();
     }
 
 
@@ -76,6 +89,12 @@ public class vesselMovements : MonoBehaviour
         var intercept = Instantiate(InterceptPrefab);
         intercept.Configure(MapData, vessel, Active);
         SetVesselMovement(vessel, intercept);
+    }
+
+    /** Set the vessel's time to intercept. */
+    public void SetTimeToIntercept(float value)
+    {
+        TimeToIntercept = value;
     }
 
     /** Removes any active movement commands from the given vessel. */
@@ -111,6 +130,7 @@ public class vesselMovements : MonoBehaviour
     {
         var json = new JSONObject();
         json.AddField("Active", Active);
+        json.AddField("TimeToIntercept", TimeToIntercept);
 
         var movementsJson = new JSONObject(JSONObject.Type.ARRAY);
         var sorted = current.Values.OrderBy(x => x.Vessel);
@@ -144,6 +164,10 @@ public class vesselMovements : MonoBehaviour
         bool active = true;
         json.GetField(ref active, "Active");
         SetActive(active);
+
+        float tti = 0;
+        json.GetField(ref tti, "TimeToIntercept");
+        SetTimeToIntercept(tti);
     }
 
 
@@ -190,6 +214,19 @@ public class vesselMovements : MonoBehaviour
             default:
                 return null;
         }
+    }
+
+    /** Update vessel movements. */
+    private void UpdateMovement()
+    {
+        // Update interception time.
+        TimeToIntercept = Mathf.Max(0, TimeToIntercept - Time.deltaTime);
+
+        // Update due time to match interception time.
+        var ts = System.TimeSpan.FromSeconds(TimeToIntercept);
+        serverUtils.SetServerData("dueTimeHours", ts.Hours);
+        serverUtils.SetServerData("dueTimeMins", ts.Minutes);
+        serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
     }
 
 }

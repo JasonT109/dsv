@@ -63,6 +63,9 @@ public class debugVessels : MonoBehaviour
         timeToInterceptSetButton.onPressed += OnSetTimeToInterceptPressed;
         activeButton.onReleased += OnActiveButtonReleased;
         visibleButton.onReleased += OnVisibleButtonReleased;
+
+        if (serverUtils.IsReady())
+            UpdateUiState();
     }
 
     private void OnDisable()
@@ -198,7 +201,7 @@ public class debugVessels : MonoBehaviour
         canUpdate = true;
     }
 
-    void Start ()
+    void Start()
     {
         activeVessel = 1;
         nextUpdateTime = Time.time + updateTick;
@@ -215,9 +218,8 @@ public class debugVessels : MonoBehaviour
             SpawnShipMarkers(markerNames[i], new Vector2(vx, vy), i);
         }
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+	void Update()
     {
         // Perform an initial UI update when the server is ready.
         if (!initialized && serverUtils.IsReady())
@@ -327,16 +329,12 @@ public class debugVessels : MonoBehaviour
 
     void UpdateTimeToInterceptFromUi()
     {
-        var intercept = serverUtils.GetVesselMovements().GetVesselMovement(activeVessel) as vesselIntercept;
-        if (!intercept)
-            return;
-
         var h = timeToInterceptHours.currentNumber;
         var m = timeToInterceptMins.currentNumber;
         var s = timeToInterceptSeconds.currentNumber;
         var ts = new TimeSpan(h, m, s);
 
-        intercept.SetTimeToIntercept((float)ts.TotalSeconds);
+        serverUtils.GetVesselMovements().SetTimeToIntercept((float) ts.TotalSeconds);
     }
 
     void ActivateVessel(int vessel)
@@ -408,7 +406,7 @@ public class debugVessels : MonoBehaviour
         timeToIntercept.SetActive(intercept != null);
         if (intercept && (updateValues || intercept.Active))
         {
-            var ts = TimeSpan.FromSeconds(intercept.TimeToIntercept);
+            var ts = TimeSpan.FromSeconds(serverUtils.GetVesselMovements().TimeToIntercept);
             timeToInterceptHours.currentNumber = ts.Hours;
             timeToInterceptMins.currentNumber = ts.Minutes;
             timeToInterceptSeconds.currentNumber = ts.Seconds;
