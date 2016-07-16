@@ -30,6 +30,7 @@ public class debugVessels : MonoBehaviour
     public buttonControl holdingButton;
     public buttonControl vectorButton;
     public buttonControl interceptButton;
+    public buttonControl pursueButton;
     public buttonControl activeButton;
     public buttonControl autoSpeedButton;
 
@@ -38,6 +39,8 @@ public class debugVessels : MonoBehaviour
     public widgetSetTextValue timeToInterceptMins;
     public widgetSetTextValue timeToInterceptSeconds;
     public buttonControl timeToInterceptSetButton;
+
+    public buttonGroup targetVesselButtonGroup;
 
     public string[] markerNames;
     public float updateTick = 0.4f;
@@ -199,10 +202,18 @@ public class debugVessels : MonoBehaviour
                 Movements.SetVector(activeVessel);
             else if (interceptButton.active)
                 Movements.SetIntercept(activeVessel);
+            else if (pursueButton.active)
+                Movements.SetPursue(activeVessel);
             else
                 Movements.SetNone(activeVessel);
 
             UpdateUiState();
+        }
+
+        if (targetVesselButtonGroup.changed)
+        {
+            UpdateTargetVesselFromUi();
+            targetVesselButtonGroup.changed = false;
         }
 
         if (canUpdate)
@@ -251,6 +262,7 @@ public class debugVessels : MonoBehaviour
         var setVector = movement as vesselSetVector;
         var holding = movement as vesselHoldingPattern;
         var intercept = movement as vesselIntercept;
+        var pursue = movement as vesselPursue;
 
         var speed = velocitySlider.GetComponentInChildren<sliderWidget>().returnValue;
         speed = Mathf.RoundToInt(speed);
@@ -261,6 +273,8 @@ public class debugVessels : MonoBehaviour
             holding.Speed = speed;
         else if (intercept && !intercept.AutoSpeed)
             intercept.Speed = speed;
+        else if (pursue)
+            pursue.Speed = speed;
     }
 
     void UpdateHeadingFromUi()
@@ -275,6 +289,19 @@ public class debugVessels : MonoBehaviour
         var setVector = Movements.GetVesselMovement(activeVessel) as vesselSetVector;
         if (setVector)
             setVector.DiveAngle = Mathf.RoundToInt(diveAngleSlider.GetComponentInChildren<sliderWidget>().returnValue);
+    }
+
+    void UpdateTargetVesselFromUi()
+    {
+        var pursue = Movements.GetVesselMovement(activeVessel) as vesselPursue;
+        if (!pursue)
+            return;
+
+        var buttons = targetVesselButtonGroup.buttons;
+        var n = buttons.Length;
+        for (var i = 0; i < n; i++)
+            if (buttons[i].GetComponent<buttonControl>().active)
+                pursue.TargetVessel = i + 1;
     }
 
     void UpdateTimeToInterceptFromUi()
@@ -305,18 +332,20 @@ public class debugVessels : MonoBehaviour
         var holding = movement as vesselHoldingPattern;
         var setVector = movement as vesselSetVector;
         var intercept = movement as vesselIntercept;
+        var pursue = movement as vesselPursue;
 
         // Update movement buttons to reflect current state.
         holdingButton.active = holding != null;
         vectorButton.active = setVector != null;
         interceptButton.active = intercept != null;
         interceptButton.gameObject.SetActive(activeVessel != vesselIntercept.InterceptVessel);
-
+        pursueButton.active = pursue != null;
+        
         // Update simulation active button state.
         activeButton.active = Movements.IsActive();
 
         // Update velocity slider.
-        velocitySlider.SetActive(holding || setVector || intercept);
+        velocitySlider.SetActive(holding || setVector || pursue || intercept);
         if (holding)
         {
             SetVelocityText(holding.Speed);
@@ -334,6 +363,12 @@ public class debugVessels : MonoBehaviour
             SetVelocityText(intercept.Speed);
             if (updateValues || intercept.AutoSpeed)
                 velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(intercept.Speed);
+        }
+        else if (pursue)
+        {
+            SetVelocityText(pursue.Speed);
+            if (updateValues)
+                velocitySlider.GetComponentInChildren<sliderWidget>().SetValue(pursue.Speed);
         }
 
         // Update auto-speed button.
@@ -375,6 +410,11 @@ public class debugVessels : MonoBehaviour
             UpdateTimeToInterceptFromUi();
         }
 
+        // Update target vessel button group.
+        targetVesselButtonGroup.gameObject.SetActive(pursue != null);
+        if (pursue)
+            UpdateTargetVesselButtons();
+
         // Update the depth slider value.
         if (updateValues)
         {
@@ -406,6 +446,18 @@ public class debugVessels : MonoBehaviour
                     break;
             }
         }
+    }
+
+    void UpdateTargetVesselButtons()
+    {
+        var pursue = Movements.GetVesselMovement(activeVessel) as vesselPursue;
+        if (!pursue)
+            return;
+
+        var buttons = targetVesselButtonGroup.buttons;
+        var n = buttons.Length;
+        for (var i = 0; i < n; i++)
+            buttons[i].GetComponent<buttonControl>().active = pursue.TargetVessel == i + 1;
     }
 
     void SetVelocityText(float speed)

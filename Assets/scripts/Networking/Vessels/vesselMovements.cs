@@ -31,6 +31,9 @@ public class vesselMovements : MonoBehaviour
     /** Prefab that is used when putting vessels on an interception course. */
     public vesselIntercept InterceptPrefab;
 
+    /** Prefab that is used when putting vessels in pursuit of another vessel. */
+    public vesselPursue PursuePrefab;
+
     /** Whether movement simulation is active. */
     public bool Active
     { get; private set; }
@@ -43,7 +46,7 @@ public class vesselMovements : MonoBehaviour
     // ------------------------------------------------------------
 
     /** The set of current vessel movement modes. */
-    private Dictionary<int, vesselMovement> current = new Dictionary<int, vesselMovement>();
+    private readonly Dictionary<int, vesselMovement> _current = new Dictionary<int, vesselMovement>();
 
 
     // Unity Methods
@@ -91,6 +94,14 @@ public class vesselMovements : MonoBehaviour
         SetVesselMovement(vessel, intercept);
     }
 
+    /** Place the given vessel in pursuit mode. */
+    public void SetPursue(int vessel)
+    {
+        var pursue = Instantiate(PursuePrefab);
+        pursue.Configure(MapData, vessel, Active);
+        SetVesselMovement(vessel, pursue);
+    }
+
     /** Set the vessel's time to intercept. */
     public void SetTimeToIntercept(float value)
     {
@@ -113,17 +124,21 @@ public class vesselMovements : MonoBehaviour
 
     /** Returns whether any vessel is intercepting. */
     public bool IsAnyIntercepting()
-    { return current.Values.Any(m => m is vesselIntercept); }
+    { return _current.Values.Any(m => m is vesselIntercept); }
 
     /** Returns whether a vessel is on a set vector course. */
     public bool IsSetVector(int vessel)
     { return GetVesselMovement(vessel) is vesselSetVector; }
 
+    /** Returns whether a vessel is pursuing. */
+    public bool IsPursuing(int vessel)
+    { return GetVesselMovement(vessel) is vesselPursue; }
+
     /** Return the vessel's current movement mode (if any). */
     public vesselMovement GetVesselMovement(int vessel)
     {
-        vesselMovement movement = null;
-        current.TryGetValue(vessel, out movement);
+        vesselMovement movement;
+        _current.TryGetValue(vessel, out movement);
         return movement;
     }
 
@@ -131,7 +146,7 @@ public class vesselMovements : MonoBehaviour
     public void SetActive(bool value)
     {
         Active = value;
-        foreach (var movement in current.Values)
+        foreach (var movement in _current.Values)
             movement.Active = value;
     }
 
@@ -149,7 +164,7 @@ public class vesselMovements : MonoBehaviour
         json.AddField("TimeToIntercept", TimeToIntercept);
 
         var movementsJson = new JSONObject(JSONObject.Type.ARRAY);
-        var sorted = current.Values.OrderBy(x => x.Vessel);
+        var sorted = _current.Values.OrderBy(x => x.Vessel);
         foreach (var movement in sorted)
             movementsJson.Add(movement.Save());
 
@@ -194,26 +209,26 @@ public class vesselMovements : MonoBehaviour
     private void SetVesselMovement(int vessel, vesselMovement movement)
     {
         RemoveVesselMovement(vessel);
-        current[vessel] = movement;
+        _current[vessel] = movement;
     }
 
     /** Remove any current movement from a vessel. */
     private void RemoveVesselMovement(int vessel)
     {
-        if (!current.ContainsKey(vessel))
+        if (!_current.ContainsKey(vessel))
             return;
 
-        Destroy(current[vessel].gameObject);
-        current.Remove(vessel);
+        Destroy(_current[vessel].gameObject);
+        _current.Remove(vessel);
     }
 
     /** Remove all vessel movements. */
     private void Clear()
     {
-        foreach (var movement in current.Values)
+        foreach (var movement in _current.Values)
             Destroy(movement.gameObject);
 
-        current.Clear();
+        _current.Clear();
     }
 
     /** Create a movement given a type code. */
@@ -227,6 +242,8 @@ public class vesselMovements : MonoBehaviour
                 return Instantiate(InterceptPrefab);
             case "SetVector":
                 return Instantiate(SetVectorPrefab);
+            case "Pursue":
+                return Instantiate(PursuePrefab);
             default:
                 return null;
         }
