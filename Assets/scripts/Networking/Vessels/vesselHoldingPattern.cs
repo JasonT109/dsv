@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using UnityEngine.Networking;
 
 public class vesselHoldingPattern : vesselMovement
 {
@@ -16,12 +17,15 @@ public class vesselHoldingPattern : vesselMovement
     // ------------------------------------------------------------
 
     /** Period of the holding pattern, in seconds (how quickly vessel repeats the pattern). */
+    [SyncVar]
     public float Period = 60;
 
     /** Magnitude of depth change as a fraction. */
+    [SyncVar]
     public float DepthFraction = 0.1f;
 
     /** Speed that the vehicle should travel at. */
+    [SyncVar]
     public float Speed = 0;
 
 
@@ -56,15 +60,16 @@ public class vesselHoldingPattern : vesselMovement
         json.GetField(ref Speed, "Speed");
     }
 
+    /** Return the movement save type. */
+    protected override string GetSaveKey()
+        { return "Holding"; }
+
 
     // Protected Methods
     // ------------------------------------------------------------
 
-    /** Return the movement save type. */
-    protected override string GetSaveKey()
-    { return "Holding"; }
-
     /** Update the vessel's current state. */
+    [Server]
     protected override void UpdateMovement()
     {
         // Get the vessel's current state.
@@ -80,7 +85,7 @@ public class vesselHoldingPattern : vesselMovement
         var direction = new Vector3(dx, dy, dz).normalized;
 
         // Determine change in position based on direction and velocity.
-        Vector3 delta = direction * Speed * Time.deltaTime;
+        var delta = direction * Speed * Time.fixedDeltaTime;
 
         // Convert the change in position into map-space.
         delta.x *= 0.001f;
@@ -91,7 +96,7 @@ public class vesselHoldingPattern : vesselMovement
 
         // Update time.
         if (Active)
-            _time += Time.deltaTime;
+            _time += Time.fixedDeltaTime;
     }
 
 }

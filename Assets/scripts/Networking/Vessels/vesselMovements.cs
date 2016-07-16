@@ -2,13 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Meg.Networking;
+using UnityEngine.Networking;
 
 /** 
  * Manages the movements of non-player vessels.
  * Each vessel can have a single associated vesselMovement module.
  */
 
-public class vesselMovements : MonoBehaviour
+public class vesselMovements : NetworkBehaviour
 {
 
     // Components
@@ -22,6 +23,8 @@ public class vesselMovements : MonoBehaviour
     // Properties
     // ------------------------------------------------------------
 
+    [Header("Prefabs")]
+
     /** Prefab that is used when putting vessels into a holding pattern. */
     public vesselHoldingPattern HoldingPatternPrefab;
 
@@ -34,11 +37,18 @@ public class vesselMovements : MonoBehaviour
     /** Prefab that is used when putting vessels in pursuit of another vessel. */
     public vesselPursue PursuePrefab;
 
+
+    // Synchronization
+    // ------------------------------------------------------------
+
+    [Header("Synchronization")]
+
     /** Whether movement simulation is active. */
-    public bool Active
-    { get; private set; }
+    [SyncVar]
+    public bool Active;
 
     /** Initial time to intercept (seconds). */
+    [SyncVar]
     public float TimeToIntercept = 120;
 
 
@@ -59,59 +69,104 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Update the vessel movement module. */
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         // Update the vessel's movement.
-        if (Active)
+        if (Active && isServer)
             UpdateMovement();
     }
 
 
-    // Public Methods
+    // Server Methods
     // ------------------------------------------------------------
 
     /** Place the given vessel into a holding pattern. */
+    [Server]
     public void SetHoldingPattern(int vessel)
     {
-        var holdingPattern = Instantiate(HoldingPatternPrefab);
-        holdingPattern.Configure(MapData, vessel, Active);
+        if (IsHoldingPattern(vessel))
+            return;
+
+        var holdingPattern = CreateVesselMovement(HoldingPatternPrefab);
+        holdingPattern.Configure(vessel, Active);
         SetVesselMovement(vessel, holdingPattern);
     }
 
     /** Place the given vessel on a set vector course. */
+    [Server]
     public void SetVector(int vessel)
     {
-        var setVector = Instantiate(SetVectorPrefab);
-        setVector.Configure(MapData, vessel, Active);
+        if (IsSetVector(vessel))
+            return;
+
+        var setVector = CreateVesselMovement(SetVectorPrefab);
+        setVector.Configure(vessel, Active);
         SetVesselMovement(vessel, setVector);
     }
 
     /** Place the given vessel on an interception course. */
+    [Server]
     public void SetIntercept(int vessel)
     {
-        var intercept = Instantiate(InterceptPrefab);
-        intercept.Configure(MapData, vessel, Active);
+        if (IsIntercepting(vessel))
+            return;
+
+        var intercept = CreateVesselMovement(InterceptPrefab);
+        intercept.Configure(vessel, Active);
         SetVesselMovement(vessel, intercept);
     }
 
     /** Place the given vessel in pursuit mode. */
+    [Server]
     public void SetPursue(int vessel)
     {
-        var pursue = Instantiate(PursuePrefab);
-        pursue.Configure(MapData, vessel, Active);
+        if (IsPursuing(vessel))
+            return;
+
+        var pursue = CreateVesselMovement(PursuePrefab);
+        pursue.Configure(vessel, Active);
         SetVesselMovement(vessel, pursue);
     }
 
     /** Set the vessel's time to intercept. */
+    [Server]
     public void SetTimeToIntercept(float value)
     {
         TimeToIntercept = value;
     }
 
     /** Removes any active movement commands from the given vessel. */
+    [Server]
     public void SetNone(int vessel)
     {
         RemoveVesselMovement(vessel);
+    }
+
+    /** Set all movements to active or inactive. */
+    [Server]
+    public void SetActive(bool value)
+    {
+        Active = value;
+        foreach (var movement in _current.Values)
+            movement.Active = value;
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Register a new movement module. */
+    public void Register(vesselMovement movement)
+    {
+        if (!isServer)
+            _current[movement.Vessel] = movement;
+    }
+
+    /** Unregister a movement module. */
+    public void Unregister(vesselMovement movement)
+    {
+        if (!isServer)
+            _current.Remove(movement.Vessel);
     }
 
     /** Returns whether a vessel is in a holding pattern. */
@@ -142,21 +197,18 @@ public class vesselMovements : MonoBehaviour
         return movement;
     }
 
-    /** Set all movements to active or inactive. */
-    public void SetActive(bool value)
-    {
-        Active = value;
-        foreach (var movement in _current.Values)
-            movement.Active = value;
-    }
-
     /** Whether movement simulation is active. */
     public bool IsActive()
     {
         return Active;
     }
 
+
+    // Load / Save
+    // ------------------------------------------------------------
+
     /** Save movement state to JSON. */
+    [Server]
     public JSONObject Save()
     {
         var json = new JSONObject();
@@ -174,13 +226,14 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Load movement state from JSON. */
+    [Server]
     public void Load(JSONObject json)
     {
         // Clear out any existing movements.
         Clear();
 
         // Load in movements from data.
-        JSONObject movementsJson = json.GetField("Movements");
+        var movementsJson = json.GetField("Movements");
         for (var i = 0; i < movementsJson.Count; i++)
         {
             var movementJson = movementsJson[i];
@@ -192,7 +245,7 @@ public class vesselMovements : MonoBehaviour
         }
 
         // Load simulation active state.
-        bool active = true;
+        var active = true;
         json.GetField(ref active, "Active");
         SetActive(active);
 
@@ -206,6 +259,7 @@ public class vesselMovements : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Place a vessel into the given movement mode. */
+    [Server]
     private void SetVesselMovement(int vessel, vesselMovement movement)
     {
         RemoveVesselMovement(vessel);
@@ -213,6 +267,7 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Remove any current movement from a vessel. */
+    [Server]
     private void RemoveVesselMovement(int vessel)
     {
         if (!_current.ContainsKey(vessel))
@@ -223,6 +278,7 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Remove all vessel movements. */
+    [Server]
     private void Clear()
     {
         foreach (var movement in _current.Values)
@@ -232,24 +288,35 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Create a movement given a type code. */
+    [Server]
     private vesselMovement CreateVesselMovement(string type)
     {
         switch (type)
         {
             case "Holding":
-                return Instantiate(HoldingPatternPrefab);
+                return CreateVesselMovement(HoldingPatternPrefab);
             case "Intercept":
-                return Instantiate(InterceptPrefab);
+                return CreateVesselMovement(InterceptPrefab);
             case "SetVector":
-                return Instantiate(SetVectorPrefab);
+                return CreateVesselMovement(SetVectorPrefab);
             case "Pursue":
-                return Instantiate(PursuePrefab);
+                return CreateVesselMovement(PursuePrefab);
             default:
                 return null;
         }
     }
 
+    /** Create a movement module, given the appropriate prefab. */
+    [Server]
+    private vesselMovement CreateVesselMovement(vesselMovement prefab)
+    {
+        var movement = Instantiate(prefab);
+        NetworkServer.Spawn(movement.gameObject);
+        return movement;
+    }
+
     /** Update vessel movements. */
+    [Server]
     private void UpdateMovement()
     {
         if (IsAnyIntercepting())
@@ -257,6 +324,7 @@ public class vesselMovements : MonoBehaviour
     }
 
     /** Update vessel time to intercept. */
+    [Server]
     private void UpdateTimeToIntercept()
     {
         // Update interception time.

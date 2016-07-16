@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using UnityEngine.Networking;
 
 public class vesselPursue : vesselMovement
 {
@@ -15,14 +16,15 @@ public class vesselPursue : vesselMovement
     public const float InterceptAchievedDistance = 10;
 
 
-
     // Properties
     // ------------------------------------------------------------
 
     /** The vessel we're pursuing. */
+    [SyncVar]
     public int TargetVessel = 1;
 
     /** Speed of pursuit. */
+    [SyncVar]
     public float Speed;
 
 
@@ -48,7 +50,7 @@ public class vesselPursue : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-    { return "Pursue"; }
+        { return "Pursue"; }
 
 
     // Protected Methods
@@ -86,7 +88,7 @@ public class vesselPursue : vesselMovement
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
-        var dp = direction * Speed * Time.deltaTime;
+        var dp = direction * Speed * Time.fixedDeltaTime;
         dp.x *= 0.001f;
         dp.y *= 0.001f;
 

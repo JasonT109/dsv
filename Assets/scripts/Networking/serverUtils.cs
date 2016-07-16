@@ -650,7 +650,7 @@ namespace Meg.Networking
         public static vesselMovements GetVesselMovements()
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
-            return serverObject.GetComponent<vesselMovements>();
+            return serverObject ? serverObject.GetComponent<vesselMovements>() : null;
         }
 
         public static void SetPlayerVessel(int vessel)
@@ -658,7 +658,8 @@ namespace Meg.Networking
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
             //Debug.Log("Setting player vessel to: " + vessel);
-            serverObject.GetComponent<serverData>().SetPlayerVessel(vessel);
+            if (serverObject != null)
+                serverObject.GetComponent<serverData>().SetPlayerVessel(vessel);
         }
 
         public static int GetPlayerVessel()
@@ -678,6 +679,8 @@ namespace Meg.Networking
         public static bool GetVesselVis(int vessel)
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
+            if (serverObject == null)
+                return false;
 
             bool vesselVis = true;
 
@@ -716,6 +719,8 @@ namespace Meg.Networking
         public static void SetColorTheme(megColorTheme theme)
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
+            if (serverObject == null)
+                return;
 
             serverObject.GetComponent<graphicsColourHolder>().themeName = theme.name;
             serverObject.GetComponent<graphicsColourHolder>().backgroundColor = theme.backgroundColor;

@@ -1,44 +1,68 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using UnityEngine.Networking;
 
 /** Base class that moves a vessel over time. */
 
-public abstract class vesselMovement : MonoBehaviour
+public abstract class vesselMovement : NetworkBehaviour
 {
 
     // Properties
     // ------------------------------------------------------------
 
-    /** The map that this vessel moves within. */
-    public mapData MapData
-    { get; private set; }
+    [Header("Synchronization")]
 
     /** Index of the vessel within map data. */
+    [SyncVar]
     public int Vessel;
 
     /** Whether interception is active. */
+    [SyncVar]
     public bool Active;
 
     /** Vessel's current velocity. */
-    public Vector3 Velocity
-        { get; private set; }
+    [SyncVar]
+    public Vector3 Velocity;
+
+
+    // Computed Properties
+    // ------------------------------------------------------------
+
+    /** The vessel movement manager. */
+    public vesselMovements Movements
+        { get { return serverUtils.GetVesselMovements(); } }
+
+    /** The map that this vessel moves within. */
+    public mapData MapData
+        { get { return Movements.MapData; } }
 
 
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Called when movement is enabled. */
+    protected virtual void OnEnable()
+    {
+        if (Movements)
+            Movements.Register(this);
+    }
+
     /** Called when movement is disabled. */
     protected virtual void OnDisable()
     {
-        // Re-enable player input.
-        // if (Vessel == MapData.playerVessel)
-        //    serverUtils.SetServerBool("disableInput", false);
+        if (Movements)
+            Movements.Unregister(this);
     }
 
     /** Update the vessel movement module. */
+    [ServerCallback]
     protected virtual void Update()
     {
+        // Only run movement logic on the server.
+        if (!isServer)
+            return;
+
         // Reset velocity.
         Velocity = Vector3.zero;
 
@@ -65,37 +89,35 @@ public abstract class vesselMovement : MonoBehaviour
     {
         json.GetField(ref Vessel, "Vessel");
         json.GetField(ref Active, "Active");
-        Configure(mapData, Vessel, Active);
+        Configure(Vessel, Active);
     }
+
+    /** Return the movement save type. */
+    protected abstract string GetSaveKey();
 
 
     // Protected Methods
     // ------------------------------------------------------------
 
-    /** Return the movement save type. */
-    protected abstract string GetSaveKey();
-
     /** Update the vessel's movement. */
+    [Server]
     protected abstract void UpdateMovement();
 
     /** Configure the vessel's movement. */
-    public virtual void Configure(mapData data, int vessel, bool active)
+    [Server]
+    public virtual void Configure(int vessel, bool active)
     {
-        var parent = data.transform;
-        transform.position = parent.position;
-        transform.rotation = parent.rotation;
-        transform.parent = parent;
-
-        MapData = data;
         Vessel = vessel;
         Active = active;
 
-        // Disable player input if needed.
-        // if (Vessel == MapData.playerVessel)
-        //    serverUtils.SetServerBool("disableInput", true);
+        // var parent = MapData.transform;
+        // transform.position = parent.position;
+        // transform.rotation = parent.rotation;
+        // transform.parent = parent;
     }
 
     /** Sets the vessel's state (position + velocity). */
+    [Server]
     protected void SetVesselState(Vector3 position, Vector3 velocity, float reportedSpeed)
     {
         Velocity = velocity;

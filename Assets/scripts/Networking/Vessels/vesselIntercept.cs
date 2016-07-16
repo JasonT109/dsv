@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using UnityEngine.Networking;
 
 public class vesselIntercept : vesselMovement
 {
@@ -34,9 +35,11 @@ public class vesselIntercept : vesselMovement
     // ------------------------------------------------------------
 
     /** Whether to automatically adjust speed to ensure correct arrival time. */
+    [SyncVar]
     public bool AutoSpeed = true;
 
     /** Speed of interception. */
+    [SyncVar]
     public float Speed;
 
     /** Returns the current time to intercept. */
@@ -50,17 +53,6 @@ public class vesselIntercept : vesselMovement
 
     /** Smoothing for reported velocity. */
     private float _speedSmoothingVelocity;
-
-
-    // Public Methods
-    // ------------------------------------------------------------
-
-    /** Configure the vessel movement. */
-    public override void Configure(mapData data, int vessel, bool active)
-    {
-        base.Configure(data, vessel, active);
-        _speedSmoothingVelocity = 0;
-    }
 
 
     // Load / Save
@@ -83,15 +75,16 @@ public class vesselIntercept : vesselMovement
         json.GetField(ref Speed, "Speed");
     }
 
-
-    // Protected Methods
-    // ------------------------------------------------------------
-
     /** Return the movement save type. */
     protected override string GetSaveKey()
         { return "Intercept"; }
 
+
+    // Protected Methods
+    // ------------------------------------------------------------
+
     /** Update the vessel's current state. */
+    [Server]
     protected override void UpdateMovement()
     {
         // Determine if we've intercepted the target.
@@ -134,7 +127,7 @@ public class vesselIntercept : vesselMovement
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
-        var dp = direction * requiredSpeed * Time.deltaTime;
+        var dp = direction * requiredSpeed * Time.fixedDeltaTime;
         dp.x *= 0.001f;
         dp.y *= 0.001f;
 

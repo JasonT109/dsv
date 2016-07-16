@@ -300,8 +300,12 @@ public class debugVessels : MonoBehaviour
         var buttons = targetVesselButtonGroup.buttons;
         var n = buttons.Length;
         for (var i = 0; i < n; i++)
+        {
+            var vessel = i + 1;
             if (buttons[i].GetComponent<buttonControl>().active)
-                pursue.TargetVessel = i + 1;
+                if (vessel != activeVessel)
+                    pursue.TargetVessel = vessel;
+        }
     }
 
     void UpdateTimeToInterceptFromUi()
@@ -416,7 +420,7 @@ public class debugVessels : MonoBehaviour
             UpdateTargetVesselButtons();
 
         // Update the depth slider value.
-        if (updateValues)
+        if (updateValues || Movements.Active)
         {
             switch (activeVessel)
             {
