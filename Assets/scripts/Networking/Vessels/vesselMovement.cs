@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 /** Base class that moves a vessel over time. */
 
-public abstract class vesselMovement : NetworkBehaviour
+public abstract class vesselMovement : MonoBehaviour // NetworkBehaviour
 {
 
     // Properties
@@ -14,15 +14,15 @@ public abstract class vesselMovement : NetworkBehaviour
     [Header("Synchronization")]
 
     /** Index of the vessel within map data. */
-    [SyncVar]
+    // [SyncVar]
     public int Vessel;
 
     /** Whether interception is active. */
-    [SyncVar]
+    // [SyncVar]
     public bool Active;
 
     /** Vessel's current velocity. */
-    [SyncVar]
+    // [SyncVar]
     public Vector3 Velocity;
 
 
@@ -56,7 +56,7 @@ public abstract class vesselMovement : NetworkBehaviour
     }
 
     /** Update the vessel movement module. */
-    [ServerCallback]
+    // [ServerCallback]
     protected virtual void Update()
     {
         // Only run movement logic on the server.
@@ -99,12 +99,16 @@ public abstract class vesselMovement : NetworkBehaviour
     // Protected Methods
     // ------------------------------------------------------------
 
+    // TODO: Remove this when reinstating NetworkBehaviour.
+    protected bool isServer
+    { get { return true; } }
+
     /** Update the vessel's movement. */
-    [Server]
+    // [Server]
     protected abstract void UpdateMovement();
 
     /** Configure the vessel's movement. */
-    [Server]
+    // [Server]
     public virtual void Configure(int vessel, bool active)
     {
         Vessel = vessel;
@@ -117,7 +121,7 @@ public abstract class vesselMovement : NetworkBehaviour
     }
 
     /** Sets the vessel's state (position + velocity). */
-    [Server]
+    // [Server]
     protected void SetVesselState(Vector3 position, Vector3 velocity, float reportedSpeed)
     {
         Velocity = velocity;

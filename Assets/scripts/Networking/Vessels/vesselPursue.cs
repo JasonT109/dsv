@@ -20,11 +20,11 @@ public class vesselPursue : vesselMovement
     // ------------------------------------------------------------
 
     /** The vessel we're pursuing. */
-    [SyncVar]
+    // [SyncVar]
     public int TargetVessel = 1;
 
     /** Speed of pursuit. */
-    [SyncVar]
+    // [SyncVar]
     public float Speed;
 
 
@@ -57,6 +57,7 @@ public class vesselPursue : vesselMovement
     // ------------------------------------------------------------
 
     /** Update the vessel's current state. */
+    // [Server]
     protected override void UpdateMovement()
     {
         // Check if target vessel is valid.

@@ -311,7 +311,10 @@ public class vesselMovements : NetworkBehaviour
     private vesselMovement CreateVesselMovement(vesselMovement prefab)
     {
         var movement = Instantiate(prefab);
-        NetworkServer.Spawn(movement.gameObject);
+
+        // TODO: Reinstate when vesselMovement becomes a NetworkBehaviour.
+        // NetworkServer.Spawn(movement.gameObject);
+
         return movement;
     }
 
