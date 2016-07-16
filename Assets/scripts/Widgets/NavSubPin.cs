@@ -33,7 +33,7 @@ public class NavSubPin : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void LateUpdate () 
     {
         for (int i = 0; i < vesselButtons.Length; i++)
         {
