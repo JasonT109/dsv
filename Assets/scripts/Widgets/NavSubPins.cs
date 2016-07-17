@@ -39,7 +39,7 @@ public class NavSubPins : Singleton<NavSubPins>
             _pins[i].UpdatePin();
 
         for (var i = 0; i < _pins.Length; i++)
-            _pins[i].UpdateInterceptIndicator();
+            _pins[i].UpdateIndicators();
     }
 
     public NavSubPin GetVesselPin(int vessel)

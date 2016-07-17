@@ -604,6 +604,20 @@ namespace Meg.Networking
             SetVesselData(vessel, position, velocity);
         }
 
+        public static Vector3 GetVesselPosition(int vessel)
+        {
+            var data = GetVesselData(vessel);
+            return new Vector3(data[0], data[1], data[2]);
+        }
+
+        public static void SetVesselPosition(int vessel, Vector3 p)
+        {
+            Vector3 position;
+            float velocity;
+            GetVesselData(vessel, out position, out velocity);
+            SetVesselData(vessel, p, velocity);
+        }
+
         public static void GetVesselData(int vessel, out Vector3 position, out float velocity)
         {
             var data = GetVesselData(vessel);

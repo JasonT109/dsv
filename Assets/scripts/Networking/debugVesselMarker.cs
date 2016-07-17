@@ -96,7 +96,7 @@ public class debugVesselMarker : MonoBehaviour
     private VectorLine _trailLine;
 
     /** Trail colors. */
-    private List<Color32> _trailColors = new List<Color32>();
+    private readonly List<Color32> _trailColors = new List<Color32>();
 
     /** Timestamp for next trail point. */
     private float _nextTrailTime;

@@ -1,11 +1,28 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Meg.Networking;
 using Vectrosity;
 
 
 public class NavSubPin : MonoBehaviour
 {
+
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Intercept line width. */
+    private const float InterceptLineWidth = 3;
+
+    /** Interval between trail points. */
+    private const float TrailInterval = 1.0f;
+
+    /** Maximum length of trail. */
+    private const int TrailLength = 30;
+
+    /** Trail line width. */
+    private const float TrailLineWidth = 3;
+
 
     // Properties
     // ------------------------------------------------------------
@@ -51,6 +68,24 @@ public class NavSubPin : MonoBehaviour
     /** Interception line. */
     private VectorLine _interceptLine;
 
+    /** Trail line. */
+    private VectorLine _trailLine;
+
+    /** Trail colors. */
+    private readonly List<Color32> _trailColors = new List<Color32>();
+
+    /** Timestamp for next trail point. */
+    private float _nextTrailTime;
+
+    /** List of previous positions. */
+    private readonly  List<Vector3> _history = new List<Vector3>();
+
+    /** Last known movement mode for this pin. */
+    private vesselMovement _movement;
+
+    /** Vessel button control. */
+    private buttonControl _vesselButtonControl;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -59,19 +94,21 @@ public class NavSubPin : MonoBehaviour
     private void Start()
     {
         _manager = GetComponentInParent<NavSubPins>();
+        _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
     }
 
     /** Enabling. */
     private void OnEnable()
     {
         _interceptLine = VectorLine.SetLine(InterceptLineColor, new Vector3[2]);
-        _interceptLine.lineWidth = 2;
+        _interceptLine.lineWidth = InterceptLineWidth;
     }
 
     /** Disabling. */
     private void OnDisable()
     {
         VectorLine.Destroy(ref _interceptLine);
+        VectorLine.Destroy(ref _trailLine);
     }
 
 
@@ -125,27 +162,20 @@ public class NavSubPin : MonoBehaviour
         
     }
 
-    /** Update the interception indicator for this vessel (if intercepting). */
-    public void UpdateInterceptIndicator()
+    /** Update indicator lines for this vessel pin. */
+    public void UpdateIndicators()
     {
-        // Check if this vessel is performing an interception.
-        var intercept = serverUtils.GetVesselMovements().GetVesselMovement(VesselId) as vesselIntercept;
-        _interceptLine.active = intercept != null;
-        if (intercept == null)
-            return;
+        var movement = serverUtils.GetVesselMovements().GetVesselMovement(VesselId);
+        var intercept = movement as vesselIntercept;
 
-        // Locate interception pin.
-        var interceptPin = _manager.GetVesselPin(intercept.TargetVessel);
+        // Update the interception indicator (if any).
+        UpdateInterceptIndicator(intercept);
 
-        // Get interception locations.
-        var from = vesselButton.transform.position;
-        var to = interceptPin.vesselButton.transform.position;
+        // Update the trail indicator.
+        UpdateTrail(movement);
 
-        // Update interception indicator.
-        _interceptLine.points3[0] = new Vector3(from.x, from.y, from.z + 2);
-        _interceptLine.points3[1] = new Vector3(to.x, to.y, to.z + 2);
-        _interceptLine.Draw3D();
-
+        // Remember movement mode.
+        _movement = movement;
     }
 
 
@@ -193,5 +223,84 @@ public class NavSubPin : MonoBehaviour
     private Vector3 ConvertVesselCoords(Vector3 p)
         { return _manager.ConvertVesselCoords(p); }
 
+    /** Update the interception indicator for this vessel (if intercepting). */
+    private void UpdateInterceptIndicator(vesselIntercept intercept)
+    {
+        // Check if this vessel is performing an interception.
+        _interceptLine.active = intercept != null;
+        if (intercept == null)
+            return;
+
+        // Locate interception pin.
+        var interceptPin = _manager.GetVesselPin(intercept.TargetVessel);
+
+        // Get interception locations.
+        var from = vesselButton.transform.position;
+        var to = interceptPin.vesselButton.transform.position;
+
+        // Update interception indicator.
+        _interceptLine.points3[0] = new Vector3(from.x, from.y, from.z + 2);
+        _interceptLine.points3[1] = new Vector3(to.x, to.y, to.z + 2);
+        _interceptLine.Draw3D();
+    }
+
+    /** Update the trail indicator for this pin. */
+    private void UpdateTrail(vesselMovement movement)
+    {
+        // Clear history when movement changes.
+        if (movement != _movement)
+            _history.Clear();
+
+        // Update trail (if moving).
+        if (movement && Time.time > _nextTrailTime)
+        {
+            _nextTrailTime = Time.time + TrailInterval;
+            _history.Add(vesselModel.transform.position);
+            if (_history.Count > TrailLength)
+                _history.RemoveAt(0);
+        }
+
+        // Check if we need to update the trail.
+        if (_history.Count == 0)
+            return;
+
+        // Ensure there is a trail line.
+        if (_trailLine == null)
+            _trailLine = new VectorLine("Trail", new List<Vector3>(), 1, LineType.Continuous);
+
+        // Populate trail points for this frame.
+        _trailLine.points3.Clear();
+        for (var i = 0; i < _history.Count; i++)
+            _trailLine.points3.Add(GetTrailPoint(_history[i]));
+        _trailLine.points3.Add(GetTrailPoint(vesselModel.transform.position));
+
+        // Update trail colors;
+        Color32 c = _vesselButtonControl.colorTheme[3];
+        var nColors = _trailLine.points3.Count - 1;
+        _trailColors.Clear();
+        for (var i = 0; i < nColors; i++)
+        {
+            var a = (byte) ((i / (float) nColors) * c.a * 0.5f);
+            _trailColors.Add(new Color32(c.r, c.g, c.b, a));
+        }
+        _trailLine.SetColors(_trailColors);
+
+        // Draw trail.
+        _trailLine.lineWidth = TrailLineWidth;
+        _trailLine.Draw3D();
+    }
+
+    /** Convert a trail point into map screen space for this frame. */
+    private Vector3 GetTrailPoint(Vector3 p)
+    {
+        // Locate the point in current map screen space.
+        var space = vesselButton.transform.parent;
+        var point = space.TransformPoint(ConvertToMapSpace(p));
+
+        // Push point back in Z so it appears beneath other UI elements.
+        point.z += 5;
+
+        return point;
+    }
 
 }
