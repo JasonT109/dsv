@@ -12,6 +12,13 @@ using UnityEngine.Networking;
 public class vesselMovements : NetworkBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** The maximum number of vessels to consider. */
+    private const int MaxVessels = 10;
+
+
     // Components
     // ------------------------------------------------------------
 
@@ -56,16 +63,21 @@ public class vesselMovements : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** The set of current vessel movement modes. */
-    private readonly Dictionary<int, vesselMovement> _current = new Dictionary<int, vesselMovement>();
+    private readonly List<List<vesselMovement>> _movements = new List<List<vesselMovement>>();
 
 
     // Unity Methods
     // ------------------------------------------------------------
 
-    /** Enabling. */
-    void OnEnable()
+    /** Initialization. */
+    private void Awake()
     {
+        // Get the map data component.
         MapData = GetComponent<mapData>();
+
+        // Initialize movement tracking collection.
+        for (var i = 0; i < MaxVessels; i++)
+            _movements.Add(new List<vesselMovement>());
     }
 
     /** Update the vessel movement module. */
@@ -147,8 +159,9 @@ public class vesselMovements : NetworkBehaviour
     public void SetActive(bool value)
     {
         Active = value;
-        foreach (var movement in _current.Values)
-            movement.Active = value;
+        foreach (var vessel in _movements)
+            foreach (var movement in vessel)
+                movement.Active = value;
     }
 
 
@@ -159,14 +172,14 @@ public class vesselMovements : NetworkBehaviour
     public void Register(vesselMovement movement)
     {
         if (!isServer)
-            _current[movement.Vessel] = movement;
+            _movements[movement.Vessel].Add(movement);
     }
 
     /** Unregister a movement module. */
     public void Unregister(vesselMovement movement)
     {
         if (!isServer)
-            _current.Remove(movement.Vessel);
+            _movements[movement.Vessel].Remove(movement);
     }
 
     /** Returns whether a vessel is in a holding pattern. */
@@ -179,7 +192,7 @@ public class vesselMovements : NetworkBehaviour
 
     /** Returns whether any vessel is intercepting. */
     public bool IsAnyIntercepting()
-    { return _current.Values.Any(m => m is vesselIntercept); }
+    { return _movements.Any(ms => ms.Any(m => m is vesselIntercept)); }
 
     /** Returns whether a vessel is on a set vector course. */
     public bool IsSetVector(int vessel)
@@ -192,9 +205,10 @@ public class vesselMovements : NetworkBehaviour
     /** Return the vessel's current movement mode (if any). */
     public vesselMovement GetVesselMovement(int vessel)
     {
-        vesselMovement movement;
-        _current.TryGetValue(vessel, out movement);
-        return movement;
+        if (_movements[vessel].Count > 0)
+            return _movements[vessel][0];
+
+        return null;
     }
 
     /** Whether movement simulation is active. */
@@ -216,9 +230,9 @@ public class vesselMovements : NetworkBehaviour
         json.AddField("TimeToIntercept", TimeToIntercept);
 
         var movementsJson = new JSONObject(JSONObject.Type.ARRAY);
-        var sorted = _current.Values.OrderBy(x => x.Vessel);
-        foreach (var movement in sorted)
-            movementsJson.Add(movement.Save());
+        foreach (var m in _movements)
+            if (m.Count > 0)
+                movementsJson.Add(m[0].Save());
 
         json.AddField("Movements", movementsJson);
 
@@ -263,28 +277,28 @@ public class vesselMovements : NetworkBehaviour
     private void SetVesselMovement(int vessel, vesselMovement movement)
     {
         RemoveVesselMovement(vessel);
-        _current[vessel] = movement;
+        _movements[vessel].Add(movement);
     }
 
     /** Remove any current movement from a vessel. */
     [Server]
     private void RemoveVesselMovement(int vessel)
     {
-        if (!_current.ContainsKey(vessel))
-            return;
-
-        Destroy(_current[vessel].gameObject);
-        _current.Remove(vessel);
+        foreach (var movement in _movements[vessel])
+            Destroy(movement.gameObject);
+        
+        _movements[vessel].Clear();
     }
 
     /** Remove all vessel movements. */
     [Server]
     private void Clear()
     {
-        foreach (var movement in _current.Values)
-            Destroy(movement.gameObject);
+        foreach (var vessel in _movements)
+            foreach (var movement in vessel)
+                Destroy(movement.gameObject);
 
-        _current.Clear();
+        _movements.Clear();
     }
 
     /** Create a movement given a type code. */
@@ -310,12 +324,7 @@ public class vesselMovements : NetworkBehaviour
     [Server]
     private vesselMovement CreateVesselMovement(vesselMovement prefab)
     {
-        var movement = Instantiate(prefab);
-
-        // TODO: Reinstate when vesselMovement becomes a NetworkBehaviour.
-        // NetworkServer.Spawn(movement.gameObject);
-
-        return movement;
+        return Instantiate(prefab);
     }
 
     /** Update vessel movements. */

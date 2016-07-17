@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 /** Base class that moves a vessel over time. */
 
-public abstract class vesselMovement : MonoBehaviour // NetworkBehaviour
+public abstract class vesselMovement : NetworkBehaviour
 {
 
     // Properties
@@ -14,15 +14,15 @@ public abstract class vesselMovement : MonoBehaviour // NetworkBehaviour
     [Header("Synchronization")]
 
     /** Index of the vessel within map data. */
-    // [SyncVar]
+    [SyncVar]
     public int Vessel;
 
     /** Whether interception is active. */
-    // [SyncVar]
+    [SyncVar]
     public bool Active;
 
     /** Vessel's current velocity. */
-    // [SyncVar]
+    [SyncVar]
     public Vector3 Velocity;
 
 
@@ -31,19 +31,35 @@ public abstract class vesselMovement : MonoBehaviour // NetworkBehaviour
 
     /** The vessel movement manager. */
     public vesselMovements Movements
-        { get { return serverUtils.GetVesselMovements(); } }
+    {
+        get
+        {
+            if (!_movements)
+                _movements = serverUtils.GetVesselMovements();
+
+            return _movements;
+        }
+    }
 
     /** The map that this vessel moves within. */
     public mapData MapData
         { get { return Movements.MapData; } }
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** The vessel movements manager. */
+    private vesselMovements _movements;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
-    /** Called when movement is enabled. */
-    protected virtual void OnEnable()
+    /** Called when movement starts up on a client. */
+    public override void OnStartClient()
     {
+        base.OnStartClient();
         if (Movements)
             Movements.Register(this);
     }
@@ -99,29 +115,23 @@ public abstract class vesselMovement : MonoBehaviour // NetworkBehaviour
     // Protected Methods
     // ------------------------------------------------------------
 
-    // TODO: Remove this when reinstating NetworkBehaviour.
-    protected bool isServer
-    { get { return true; } }
-
     /** Update the vessel's movement. */
-    // [Server]
+    [Server]
     protected abstract void UpdateMovement();
 
     /** Configure the vessel's movement. */
-    // [Server]
+    [Server]
     public virtual void Configure(int vessel, bool active)
     {
         Vessel = vessel;
         Active = active;
 
-        // var parent = MapData.transform;
-        // transform.position = parent.position;
-        // transform.rotation = parent.rotation;
-        // transform.parent = parent;
+        // Spawn this movement module on remote clients.
+        NetworkServer.Spawn(gameObject);
     }
 
     /** Sets the vessel's state (position + velocity). */
-    // [Server]
+    [Server]
     protected void SetVesselState(Vector3 position, Vector3 velocity, float reportedSpeed)
     {
         Velocity = velocity;

@@ -35,11 +35,11 @@ public class vesselIntercept : vesselMovement
     // ------------------------------------------------------------
 
     /** Whether to automatically adjust speed to ensure correct arrival time. */
-    // [SyncVar]
+    [SyncVar]
     public bool AutoSpeed = true;
 
     /** Speed of interception. */
-    // [SyncVar]
+    [SyncVar]
     public float Speed;
 
     /** The vessel we're intercepting. */
@@ -92,7 +92,7 @@ public class vesselIntercept : vesselMovement
     // ------------------------------------------------------------
 
     /** Update the vessel's current state. */
-    // [Server]
+    [Server]
     protected override void UpdateMovement()
     {
         // Determine if we've intercepted the target.

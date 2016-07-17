@@ -16,15 +16,15 @@ public class vesselHoldingPattern : vesselMovement
     // ------------------------------------------------------------
 
     /** Period of the holding pattern, in seconds (how quickly vessel repeats the pattern). */
-    // [SyncVar]
+    [SyncVar]
     public float Period = 60;
 
     /** Magnitude of depth change as a fraction. */
-    // [SyncVar]
+    [SyncVar]
     public float DepthFraction = 0.1f;
 
     /** Speed that the vehicle should travel at. */
-    // [SyncVar]
+    [SyncVar]
     public float Speed = 0;
 
 
@@ -68,7 +68,7 @@ public class vesselHoldingPattern : vesselMovement
     // ------------------------------------------------------------
 
     /** Update the vessel's current state. */
-    // [Server]
+    [Server]
     protected override void UpdateMovement()
     {
         // Get the vessel's current state.

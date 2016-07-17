@@ -12,15 +12,15 @@ public class vesselSetVector : vesselMovement
     // ------------------------------------------------------------
 
     /** The vessel's current heading, in degrees (0 = North, 90 = East, etc.) */
-    // [SyncVar]
+    [SyncVar]
     public float Heading;
 
     /** The vessel's current dive angle, in degrees (0 = Level, -90 = up, 90 = down). */
-    // [SyncVar]
+    [SyncVar]
     public float DiveAngle;
 
     /** Speed that the vehicle should travel at. */
-    // [SyncVar]
+    [SyncVar]
     public float Speed;
 
 
@@ -63,7 +63,7 @@ public class vesselSetVector : vesselMovement
     // ------------------------------------------------------------
 
     /** Update the vessel's current state. */
-    // [Server]
+    [Server]
     protected override void UpdateMovement()
     {
         // Get the vessel's current state.
