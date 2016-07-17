@@ -1,193 +1,197 @@
 using UnityEngine;
 using System.Collections;
-using Meg.Maths;
 using Meg.Networking;
+using Vectrosity;
 
-public class NavSubPin : MonoBehaviour 
+
+public class NavSubPin : MonoBehaviour
 {
-    public const int NumVessels = 6;
 
-    mapData VesselData;
-    public float seaFloor = 10994f;
-    public float heightMul = 2.0f;
-    public Camera mapCamera;
-    public float MapSize;
-    public Vector2 imageSize = new Vector2(5, 5);
-    public GameObject mapRoot;
-    public GameObject ServerData;
-    public GameObject[] vesselHeightIndicators = new GameObject[NumVessels];
-    public GameObject[] vesselButtons = new GameObject[NumVessels];
-    public GameObject[] vessels = new GameObject[NumVessels];
-    public float[] distance = new float[NumVessels];
-    public float distanceScale = 0.01f;
-    private Vector3[] vesselMapSource = new Vector3[NumVessels];
-    public GameObject mapWidget;
-    public float lineXOffset = -0.1f;
-    RaycastHit hit;
-    Vector3 hitPos = new Vector3(0, 0, 0);
+    // Properties
+    // ------------------------------------------------------------
 
-    // Use this for initialization
-    void Start () 
+    /** Vessel that this pin represents. */
+    public int VesselId;
+
+    /** Visual indicator for height above ocean floor. */
+    public GameObject vesselHeightIndicator;
+
+    /** Pressable button for this pin. */
+    public GameObject vesselButton;
+
+    /** 3D representation of the vessel. */
+    public GameObject vesselModel;
+
+    /** Intercept line color. */
+    public Color InterceptLineColor;
+
+    /** Distance to ocean floor. */
+    public float Distance;
+
+
+    // Private Properties
+    // ------------------------------------------------------------
+
+    private float LineXOffset
+    { get { return _manager.lineXOffset; } }
+
+    private Vector2 ImageSize
+    { get { return _manager.imageSize; } }
+
+    
+    // Members
+    // ------------------------------------------------------------
+
+    /** The pin manager. */
+    private NavSubPins _manager;
+
+    /** Raycast result, used to locate ocean floor. */
+    private RaycastHit _hit;
+
+    /** Interception line. */
+    private VectorLine _interceptLine;
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Start()
     {
-        VesselData = ServerData.GetComponent<mapData>();
-	}
-	
-	// Update is called once per frame
-	void LateUpdate () 
+        _manager = GetComponentInParent<NavSubPins>();
+    }
+
+    /** Enabling. */
+    private void OnEnable()
     {
-        for (int i = 0; i < vesselButtons.Length; i++)
+        _interceptLine = VectorLine.SetLine(InterceptLineColor, new Vector3[2]);
+        _interceptLine.lineWidth = 2;
+    }
+
+    /** Disabling. */
+    private void OnDisable()
+    {
+        VectorLine.Destroy(ref _interceptLine);
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Updating. */
+    public void UpdatePin()
+    {
+        // Update pin visibility.
+        var visible = serverUtils.GetVesselVis(VesselId);
+        vesselButton.SetActive(visible);
+        vesselHeightIndicator.SetActive(visible);
+
+        // Get vessel's server position and apply that to the vessel model.
+        Vector3 position = new Vector3();
+        float velocity;
+        serverUtils.GetVesselData(VesselId, out position, out velocity);
+        vesselModel.transform.localPosition = ConvertVesselCoords(position);
+
+        // Get position in map space and position button there.
+        var mapPos = ConvertToMapSpace(vesselModel.transform.position);
+        vesselButton.transform.localPosition = mapPos;
+
+        // Cast a ray down to the terrain from the original position.
+        if (Physics.Raycast(vesselModel.transform.position, -Vector3.up, out _hit))
+            Distance = _hit.distance;
+
+        // Update height indicator.
+        if (Distance > 0)
         {
-            //check that we are enabled
-            if (serverUtils.GetVesselVis(i + 1))
-            {
-                vesselButtons[i].SetActive(true);
-                vesselHeightIndicators[i].SetActive(true);
+            // Set the position of the height indicators to be at ground level
+            var groundPos = ConvertToMapSpace(_hit.point);
+            vesselHeightIndicator.transform.localPosition = groundPos;
 
-                //vessel data
-                Vector3 Vessel = new Vector3();
-
-                //0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
-                int mapIconDirection = 0;
-
-                //get vessel position from crew data
-                switch (i)
-                {
-                    case 0:
-                        Vessel = VesselData.vessel1Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                    case 1:
-                        Vessel = VesselData.vessel2Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                    case 2:
-                        Vessel = VesselData.vessel3Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                    case 3:
-                        Vessel = VesselData.vessel4Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                    case 4:
-                        Vessel = VesselData.meg1Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                    case 5:
-                        Vessel = VesselData.intercept1Pos;
-                        vessels[i].transform.localPosition = ConvertVesselCoords(Vessel);
-                        break;
-                }
-
-                //get position in map space
-                vesselMapSource[i] = ConvertToMapSpace(vessels[i].transform.position);
-
-                //set the position
-                vesselButtons[i].transform.localPosition = vesselMapSource[i];
-
-                //cast a ray down to the terrain from the original position
-                if (Physics.Raycast(vessels[i].transform.position, -Vector3.up, out hit))
-                {
-                    distance[i] = hit.distance;
-                    hitPos = hit.point;
-                }
-
-                if (distance[i] != 0)
-                {
-                    //set the position of the height indicators to be at ground level
-                    vesselHeightIndicators[i].transform.localPosition = ConvertToMapSpace(hitPos);
-
-                    //set the x position to be exactly the same as button plus offset
-                    vesselHeightIndicators[i].transform.localPosition = new Vector3(vesselButtons[i].transform.localPosition.x + lineXOffset, vesselHeightIndicators[i].transform.localPosition.y, vesselHeightIndicators[i].transform.localPosition.z + 1);
-                }
-
-                //set the height of the mesh to distance
-                float vesselHeight = vesselButtons[i].transform.localPosition.y - vesselHeightIndicators[i].transform.localPosition.y;
-                vesselHeightIndicators[i].GetComponent<graphicsSlicedMesh>().Height = vesselHeight;
-
-                //set the vertical tiling to 4x height
-                vesselHeightIndicators[i].GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
-
-                //check to see if child is at edge of the map
-                if (vesselButtons[i].transform.localPosition.x == -imageSize.x && vesselButtons[i].transform.localPosition.y == -imageSize.y)
-                {
-                    mapIconDirection = 8;
-                }
-                else if (vesselButtons[i].transform.localPosition.x == -imageSize.x && vesselButtons[i].transform.localPosition.y == imageSize.y)
-                {
-                    mapIconDirection = 2;
-                }
-                else if (vesselButtons[i].transform.localPosition.x == -imageSize.x)
-                {
-                    mapIconDirection = 1;
-                }
-
-                if (vesselButtons[i].transform.localPosition.x == imageSize.x && vesselButtons[i].transform.localPosition.y == -imageSize.y)
-                {
-                    mapIconDirection = 6;
-                }
-                else if (vesselButtons[i].transform.localPosition.x == imageSize.x && vesselButtons[i].transform.localPosition.y == imageSize.y)
-                {
-                    mapIconDirection = 4;
-                }
-                else if (vesselButtons[i].transform.localPosition.x == imageSize.x)
-                {
-                    mapIconDirection = 5;
-                }
-
-                if (vesselButtons[i].transform.localPosition.y == imageSize.y && vesselButtons[i].transform.localPosition.x != imageSize.x && vesselButtons[i].transform.localPosition.x != -imageSize.x)
-                {
-                    mapIconDirection = 3;
-                }
-                if (vesselButtons[i].transform.localPosition.y == -imageSize.y && vesselButtons[i].transform.localPosition.x != imageSize.x && vesselButtons[i].transform.localPosition.x != -imageSize.x)
-                {
-                    mapIconDirection = 7;
-                }
-
-                //set the orientation of the child to indicate the direction
-                if (mapIconDirection != 0)
-                {
-                    vesselButtons[i].GetComponent<graphicsMapIcon>().atBounds = true;
-                    vesselButtons[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
-                }
-                else
-                {
-                    vesselButtons[i].GetComponent<graphicsMapIcon>().atBounds = false;
-                    vesselButtons[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
-                }
-            }
-            else
-            {
-                vesselButtons[i].SetActive(false);
-                vesselHeightIndicators[i].SetActive(false);
-            }
+            // Set the x position to be exactly the same as button plus offset
+            vesselHeightIndicator.transform.localPosition =
+                new Vector3(mapPos.x + LineXOffset,
+                    vesselHeightIndicator.transform.localPosition.y,
+                    vesselHeightIndicator.transform.localPosition.z + 1);
         }
+
+        // Update the height indicator's length.
+        float vesselHeight = mapPos.y - vesselHeightIndicator.transform.localPosition.y;
+        vesselHeightIndicator.GetComponent<graphicsSlicedMesh>().Height = vesselHeight;
+        vesselHeightIndicator.GetComponent<Renderer>()
+            .material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
+
+        // Update map icon with a direction indicator.
+        UpdateMapIconDirection();
+        
     }
 
-    public Vector2 ConvertToMapSpace(Vector3 _Vessel)
+    /** Update the interception indicator for this vessel (if intercepting). */
+    public void UpdateInterceptIndicator()
     {
-        Vector2 TempMapPos;
+        // Check if this vessel is performing an interception.
+        var intercept = serverUtils.GetVesselMovements().GetVesselMovement(VesselId) as vesselIntercept;
+        _interceptLine.active = intercept != null;
+        if (intercept == null)
+            return;
 
-        Vector3 c = mapCamera.WorldToViewportPoint(_Vessel);
-        TempMapPos.x = Mathf.Clamp((c.x * 10.0f) - 5.0f, -imageSize.x, imageSize.x);
-        TempMapPos.y = Mathf.Clamp((c.y * 10.0f) - 5.0f, -imageSize.y, imageSize.y);
-        return TempMapPos;
+        // Locate interception pin.
+        var interceptPin = _manager.GetVesselPin(intercept.TargetVessel);
+
+        // Get interception locations.
+        var from = vesselButton.transform.position;
+        var to = interceptPin.vesselButton.transform.position;
+
+        // Update interception indicator.
+        _interceptLine.points3[0] = new Vector3(from.x, from.y, from.z + 2);
+        _interceptLine.points3[1] = new Vector3(to.x, to.y, to.z + 2);
+        _interceptLine.Draw3D();
+
     }
 
-    Vector3 ConvertVesselCoords(Vector3 _Vessel)
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    private void UpdateMapIconDirection()
     {
-        Vector3 TempVessel;
+        // 0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
+        int mapIconDirection = 0;
+        var local = vesselButton.transform.localPosition;
+        var x = ImageSize.x;
+        var y = ImageSize.y;
 
-        //"normalise" the coordinate system used in the crew data map
-        //hardcoded with the size of the crew map size
-        TempVessel.x = (_Vessel.x + 5.0f) / 10.0f;
-        TempVessel.y = ((seaFloor - _Vessel.z) / 1000.0f) * heightMul;
-        TempVessel.z = (_Vessel.y + 5.0f) / 10.0f;
+        // Check to see if child is at edge of the map.
+        if (local.x == -x && local.y == -y)
+            mapIconDirection = 8;
+        else if (local.x == -x && local.y == y)
+            mapIconDirection = 2;
+        else if (local.x == -x)
+            mapIconDirection = 1;
 
-        //convert the normalised coordinates to map to the nav map
-        //hardcoded with a displacement to the nav map
-        TempVessel.x = TempVessel.x * MapSize + 130.0f;
-        TempVessel.z = TempVessel.z * MapSize + -25.0f;
+        if (local.x == x && local.y == -y)
+            mapIconDirection = 6;
+        else if (local.x == x && local.y == y)
+            mapIconDirection = 4;
+        else if (local.x == x)
+            mapIconDirection = 5;
 
-        return(TempVessel);
+        if (local.y == y && local.x != x && local.x != -x)
+            mapIconDirection = 3;
+        if (local.y == -y && local.x != x && local.x != -x)
+            mapIconDirection = 7;
+
+        // Set the orientation of the child to indicate the direction.
+        vesselButton.GetComponent<graphicsMapIcon>().atBounds = mapIconDirection != 0;
+        vesselButton.GetComponent<graphicsMapIcon>().direction = mapIconDirection;
     }
+
+    /** Convert a vessel's position into 2D map space. */
+    private Vector2 ConvertToMapSpace(Vector3 p)
+        { return _manager.ConvertToMapSpace(p); }
+
+    /** Convert a vessel's position into 3D map space. */
+    private Vector3 ConvertVesselCoords(Vector3 p)
+        { return _manager.ConvertVesselCoords(p); }
+
+
 }

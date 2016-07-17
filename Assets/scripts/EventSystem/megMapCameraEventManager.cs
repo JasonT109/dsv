@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.EventSystem;
 using Meg.Networking;
@@ -16,7 +16,7 @@ public class megMapCameraEventManager : MonoBehaviour
     public GameObject mapCameraObject;
     public GameObject mapPitchSliderButton;
     public GameObject[] vessels;
-    public GameObject navPinManager;
+
     public float runTime;
     public bool running;
     public float completePercentage;
@@ -111,16 +111,16 @@ public class megMapCameraEventManager : MonoBehaviour
                         switch (serverUtils.GetPlayerVessel())
                         {
                             case 1:
-                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[0].transform.localPosition);
+                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[0].transform.localPosition);
                                 break;
                             case 2:
-                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[1].transform.localPosition);
+                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[1].transform.localPosition);
                                 break;
                             case 3:
-                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[2].transform.localPosition);
+                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[2].transform.localPosition);
                                 break;
                             case 4:
-                                runningEvent.toPosition = navPinManager.GetComponent<NavSubPin>().ConvertToMapSpace(vessels[3].transform.localPosition);
+                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[3].transform.localPosition);
                                 break;
                         }
                         runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
