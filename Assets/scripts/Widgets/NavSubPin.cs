@@ -12,7 +12,7 @@ public class NavSubPin : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Intercept line width. */
-    private const float InterceptLineWidth = 3;
+    private const float InterceptLineWidth = 5;
 
     /** Interval between trail points. */
     private const float TrailInterval = 1.0f;
@@ -21,7 +21,7 @@ public class NavSubPin : MonoBehaviour
     private const int TrailLength = 30;
 
     /** Trail line width. */
-    private const float TrailLineWidth = 3;
+    private const float TrailLineWidth = 5;
 
 
     // Properties
@@ -86,6 +86,9 @@ public class NavSubPin : MonoBehaviour
     /** Vessel button control. */
     private buttonControl _vesselButtonControl;
 
+    /** Map camera. */
+    private Camera _mapCamera;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -95,13 +98,12 @@ public class NavSubPin : MonoBehaviour
     {
         _manager = GetComponentInParent<NavSubPins>();
         _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
+        _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
     }
 
     /** Enabling. */
     private void OnEnable()
     {
-        _interceptLine = VectorLine.SetLine(InterceptLineColor, new Vector3[2]);
-        _interceptLine.lineWidth = InterceptLineWidth;
     }
 
     /** Disabling. */
@@ -165,6 +167,9 @@ public class NavSubPin : MonoBehaviour
     /** Update indicator lines for this vessel pin. */
     public void UpdateIndicators()
     {
+        // Set the correct camera for lines in nav screen.
+        VectorLine.SetCamera3D(_mapCamera);
+
         var movement = serverUtils.GetVesselMovements().GetVesselMovement(VesselId);
         var intercept = movement as vesselIntercept;
 
@@ -226,6 +231,14 @@ public class NavSubPin : MonoBehaviour
     /** Update the interception indicator for this vessel (if intercepting). */
     private void UpdateInterceptIndicator(vesselIntercept intercept)
     {
+        // Ensure intercept line exists.
+        if (_interceptLine == null)
+        { 
+            _interceptLine = VectorLine.SetLine(InterceptLineColor, new Vector3[2]);
+            _interceptLine.lineWidth = InterceptLineWidth;
+            _interceptLine.layer = gameObject.layer;
+        }
+
         // Check if this vessel is performing an interception.
         _interceptLine.active = intercept != null;
         if (intercept == null)
@@ -235,12 +248,12 @@ public class NavSubPin : MonoBehaviour
         var interceptPin = _manager.GetVesselPin(intercept.TargetVessel);
 
         // Get interception locations.
-        var from = vesselButton.transform.position;
-        var to = interceptPin.vesselButton.transform.position;
+        var from = vesselModel.transform.position;
+        var to = interceptPin.vesselModel.transform.position;
 
         // Update interception indicator.
-        _interceptLine.points3[0] = new Vector3(from.x, from.y, from.z + 2);
-        _interceptLine.points3[1] = new Vector3(to.x, to.y, to.z + 2);
+        _interceptLine.points3[0] = new Vector3(from.x, from.y, from.z);
+        _interceptLine.points3[1] = new Vector3(to.x, to.y, to.z);
         _interceptLine.Draw3D();
     }
 
@@ -266,13 +279,17 @@ public class NavSubPin : MonoBehaviour
 
         // Ensure there is a trail line.
         if (_trailLine == null)
+        {
             _trailLine = new VectorLine("Trail", new List<Vector3>(), 1, LineType.Continuous);
+            _trailLine.lineWidth = TrailLineWidth;
+            _trailLine.layer = gameObject.layer;
+        }
 
         // Populate trail points for this frame.
         _trailLine.points3.Clear();
         for (var i = 0; i < _history.Count; i++)
-            _trailLine.points3.Add(GetTrailPoint(_history[i]));
-        _trailLine.points3.Add(GetTrailPoint(vesselModel.transform.position));
+            _trailLine.points3.Add(_history[i]);
+        _trailLine.points3.Add(vesselModel.transform.position);
 
         // Update trail colors;
         Color32 c = _vesselButtonControl.colorTheme[3];
@@ -286,21 +303,7 @@ public class NavSubPin : MonoBehaviour
         _trailLine.SetColors(_trailColors);
 
         // Draw trail.
-        _trailLine.lineWidth = TrailLineWidth;
         _trailLine.Draw3D();
-    }
-
-    /** Convert a trail point into map screen space for this frame. */
-    private Vector3 GetTrailPoint(Vector3 p)
-    {
-        // Locate the point in current map screen space.
-        var space = vesselButton.transform.parent;
-        var point = space.TransformPoint(ConvertToMapSpace(p));
-
-        // Push point back in Z so it appears beneath other UI elements.
-        point.z += 5;
-
-        return point;
     }
 
 }
