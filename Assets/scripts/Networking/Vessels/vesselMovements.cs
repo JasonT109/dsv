@@ -294,11 +294,8 @@ public class vesselMovements : NetworkBehaviour
     [Server]
     private void Clear()
     {
-        foreach (var vessel in _movements)
-            foreach (var movement in vessel)
-                Destroy(movement.gameObject);
-
-        _movements.Clear();
+        for (var i = 0; i < _movements.Count; i++)
+            RemoveVesselMovement(i);
     }
 
     /** Create a movement given a type code. */

@@ -169,6 +169,10 @@ public class debugVessels : MonoBehaviour
 
     void Update()
     {
+        // Check if debug map screen is visible.
+        if (!gameObject.activeInHierarchy)
+            return;
+
         // Perform an initial UI update when the server is ready.
         if (!initialized && serverUtils.IsReady())
         {
