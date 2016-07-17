@@ -589,6 +589,21 @@ namespace Meg.Networking
             serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
 
+        public static float GetVesselDepth(int vessel)
+        {
+            return GetVesselData(vessel)[2];
+        }
+
+        public static void SetVesselDepth(int vessel, float depth)
+        {
+            Vector3 position;
+            float velocity;
+
+            GetVesselData(vessel, out position, out velocity);
+            position.z = depth;
+            SetVesselData(vessel, position, velocity);
+        }
+
         public static void GetVesselData(int vessel, out Vector3 position, out float velocity)
         {
             var data = GetVesselData(vessel);

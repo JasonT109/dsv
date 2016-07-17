@@ -42,6 +42,10 @@ public class vesselIntercept : vesselMovement
     // [SyncVar]
     public float Speed;
 
+    /** The vessel we're intercepting. */
+    public int TargetVessel
+        { get { return InterceptVessel; } }
+
 
     // Computed Properties
     // ------------------------------------------------------------
@@ -142,7 +146,7 @@ public class vesselIntercept : vesselMovement
             targetSpeed = 0;
         else if (!AutoSpeed && distance <= InterceptAchievedDistance)
             targetSpeed = 0;
-        else if (Active)
+        else if (Active && AutoSpeed)
             targetSpeed = Mathf.Max(0, targetSpeed + Random.Range(-SpeedRandomness, SpeedRandomness));
 
         // Smooth reported velocity over time.

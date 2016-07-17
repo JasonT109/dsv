@@ -9,6 +9,8 @@ using TouchScript.Gestures;
 
 public class debugVessels : MonoBehaviour
 {
+    public const float DepthIncrement = 5;
+
     public debugVesselMarker MarkerPrefab;
 
     public buttonGroup vesselButtonGroup;
@@ -33,6 +35,8 @@ public class debugVessels : MonoBehaviour
     public buttonControl pursueButton;
     public buttonControl activeButton;
     public buttonControl autoSpeedButton;
+    public buttonControl decreaseDepthButton;
+    public buttonControl increaseDepthButton;
 
     public GameObject timeToIntercept;
     public widgetSetTextValue timeToInterceptHours;
@@ -69,6 +73,8 @@ public class debugVessels : MonoBehaviour
         activeButton.onReleased += OnActiveButtonReleased;
         visibleButton.onReleased += OnVisibleButtonReleased;
         autoSpeedButton.onReleased += OnAutoSpeedButtonReleased;
+        decreaseDepthButton.onReleased += OnDecreaseDepthButtonReleased;
+        increaseDepthButton.onReleased += OnIncreaseDepthButtonReleased;
 
         if (serverUtils.IsReady())
             UpdateUiState();
@@ -82,6 +88,8 @@ public class debugVessels : MonoBehaviour
         activeButton.onReleased -= OnActiveButtonReleased;
         visibleButton.onReleased -= OnVisibleButtonReleased;
         autoSpeedButton.onReleased -= OnAutoSpeedButtonReleased;
+        decreaseDepthButton.onReleased -= OnDecreaseDepthButtonReleased;
+        increaseDepthButton.onReleased -= OnIncreaseDepthButtonReleased;
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -496,6 +504,27 @@ public class debugVessels : MonoBehaviour
         var intercept = Movements.GetVesselMovement(activeVessel) as vesselIntercept;
         if (intercept)
             intercept.AutoSpeed = autoSpeedButton.active;
+    }
+
+    void OnDecreaseDepthButtonReleased()
+    {
+        ChangeVesselDepth(-DepthIncrement);
+    }
+
+    void OnIncreaseDepthButtonReleased()
+    {
+        ChangeVesselDepth(DepthIncrement);
+    }
+
+    void ChangeVesselDepth(float delta)
+    {
+        if (Movements.Active)
+            return;
+
+        var depth = serverUtils.GetVesselDepth(activeVessel);
+        var slider = depthSlider.GetComponentInChildren<sliderWidget>();
+        depth = Mathf.Clamp(depth + delta, slider.minValue, slider.maxValue);
+        serverUtils.SetVesselDepth(activeVessel, depth);
     }
 
     void ChangeValue(int vessel, Vector3 pos, float velocity)
