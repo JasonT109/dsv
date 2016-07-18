@@ -12,7 +12,7 @@ public class NavSubPin : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Intercept line width. */
-    private const float InterceptLineWidth = 5;
+    private const float InterceptLineWidth = 3;
 
     /** Interval between trail points. */
     private const float TrailInterval = 1.0f;
@@ -239,9 +239,10 @@ public class NavSubPin : MonoBehaviour
             _interceptLine.layer = gameObject.layer;
         }
 
-        // Check if this vessel is performing an interception.
-        _interceptLine.active = intercept != null;
-        if (intercept == null)
+        // Check if we should draw the intercept indicator.
+        var visible = serverUtils.GetVesselVis(VesselId);
+        _interceptLine.active = intercept != null && visible;
+        if (!_interceptLine.active)
             return;
 
         // Locate interception pin.
@@ -273,10 +274,6 @@ public class NavSubPin : MonoBehaviour
                 _history.RemoveAt(0);
         }
 
-        // Check if we need to update the trail.
-        if (_history.Count == 0)
-            return;
-
         // Ensure there is a trail line.
         if (_trailLine == null)
         {
@@ -284,6 +281,12 @@ public class NavSubPin : MonoBehaviour
             _trailLine.lineWidth = TrailLineWidth;
             _trailLine.layer = gameObject.layer;
         }
+
+        // Check if we should draw the trail.
+        var visible = serverUtils.GetVesselVis(VesselId) && movement;
+        _trailLine.active = visible && _history.Count > 0;
+        if (!_trailLine.active)
+            return;
 
         // Populate trail points for this frame.
         _trailLine.points3.Clear();
@@ -297,7 +300,7 @@ public class NavSubPin : MonoBehaviour
         _trailColors.Clear();
         for (var i = 0; i < nColors; i++)
         {
-            var a = (byte) ((i / (float) nColors) * c.a * 0.5f);
+            var a = (byte) ((i / (float) nColors) * c.a * 0.25f);
             _trailColors.Add(new Color32(c.r, c.g, c.b, a));
         }
         _trailLine.SetColors(_trailColors);
