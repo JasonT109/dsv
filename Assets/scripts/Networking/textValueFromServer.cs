@@ -20,12 +20,10 @@ public class textValueFromServer : widgetText
         if (Time.time > nextUpdate)
         {
             nextUpdate = Time.time + updateTick;
-
-            var value = serverUtils.GetServerDataAsText(linkDataString);
             if (string.IsNullOrEmpty(format))
-                Text = value;
+                Text = serverUtils.GetServerDataAsText(linkDataString);
             else
-                Text = string.Format(format, value);
+                Text = string.Format(format, serverUtils.GetServerData(linkDataString));
         }
     }
 }
