@@ -13,12 +13,12 @@ public class widgetHighLightOnActive : MonoBehaviour
     float startAlpha = 0.0f;
     Color initialColor;
     float alphaLerpStart;
-    bool isAlphaLerping = false;
+    public bool isAlphaLerping = false;
     Renderer r;
     Material m;
     float startScaleX = 0.1f;
     float endScaleX = 1.0f;
-    bool isScaleXLerping = false;
+    public bool isScaleXLerping = false;
     float scaleLerpStart;
     public Vector3 initialScale;
 
@@ -113,40 +113,33 @@ public class widgetHighLightOnActive : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (doAlpha)
+        if (doAlpha && isAlphaLerping)
         {
-            if (isAlphaLerping)
+            float timeSinceStarted = Time.time - alphaLerpStart;
+            float percentageComplete = timeSinceStarted / transitionTime;
+
+            //lerp alpha from start alpha to target alpha
+            m.SetColor("_TintColor", new Color(initialColor.r, initialColor.g, initialColor.b, Mathf.Lerp(startAlpha, targetAlpha, percentageComplete)));
+
+            if (percentageComplete >= 1.0f)
             {
-
-                float timeSinceStarted = Time.time - alphaLerpStart;
-                float percentageComplete = timeSinceStarted / transitionTime;
-
-                //lerp alpha from start alpha to target alpha
-                m.SetColor("_TintColor", new Color(initialColor.r, initialColor.g, initialColor.b, Mathf.Lerp(startAlpha, targetAlpha, percentageComplete)));
-
-                if (percentageComplete >= 1.0f)
-                {
-                    isAlphaLerping = false;
-                }
+                isAlphaLerping = false;
             }
         }
-        if (doScaleX)
+        if (doScaleX && isScaleXLerping)
         {
-            if (isScaleXLerping)
+            float timeSinceStarted = Time.time - scaleLerpStart;
+            float percentageComplete = timeSinceStarted / transitionTime;
+
+            //make the curve an ease in type
+            percentageComplete = graphicsEasing.EaseOut(percentageComplete, EasingType.Cubic);
+
+            //lerp
+            gameObject.transform.localScale = new Vector3(Mathf.Lerp(startScaleX, endScaleX, percentageComplete), gameObject.transform.localScale.y, gameObject.transform.localScale.z);
+
+            if (percentageComplete >= 1.0f)
             {
-                float timeSinceStarted = Time.time - scaleLerpStart;
-                float percentageComplete = timeSinceStarted / transitionTime;
-
-                //make the curve an ease in type
-                percentageComplete = graphicsEasing.EaseOut(percentageComplete, EasingType.Cubic);
-
-                //lerp
-                gameObject.transform.localScale = new Vector3(Mathf.Lerp(startScaleX, endScaleX, percentageComplete), gameObject.transform.localScale.y, gameObject.transform.localScale.z);
-
-                if (percentageComplete >= 1.0f)
-                {
-                    isScaleXLerping = false;
-                }
+                isScaleXLerping = false;
             }
         }
     }
