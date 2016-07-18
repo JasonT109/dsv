@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SliderValue : MonoBehaviour 
 {
+    public bool isDynamicText;
     public bool isInt;
     public bool isFloat1;
     public bool isFloat2;
@@ -19,23 +20,49 @@ public class SliderValue : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
-        if (isInt)
+        if (isDynamicText)
         {
-            this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("N0");
+            if (isInt)
+            {
+                this.GetComponent<DynamicText>().SetText(Slider.returnValue.ToString("N0"));
+            }
+            if (isFloat1)
+            {
+                this.GetComponent<DynamicText>().SetText(Slider.returnValue.ToString("F1"));
+            }
+
+            if (isFloat2)
+            {
+                this.GetComponent<DynamicText>().SetText(Slider.returnValue.ToString("F2"));
+            }
+
+            if (isFloat3)
+            {
+                this.GetComponent<DynamicText>().SetText(Slider.returnValue.ToString("F3"));
+            }
         }
-        if(isFloat1)
+        else
         {
-            this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F1");
+            if (isInt)
+            {
+                this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("N0");
+            }
+            if (isFloat1)
+            {
+                this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F1");
+            }
+
+            if (isFloat2)
+            {
+                this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F2");
+            }
+
+            if (isFloat3)
+            {
+                this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F3");
+            }
         }
 
-        if(isFloat2)
-        {
-            this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F2");
-        }
 
-        if(isFloat3)
-        {
-            this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F3");
-        }
 	}
 }
