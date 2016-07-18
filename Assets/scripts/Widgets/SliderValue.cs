@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SliderValue : MonoBehaviour 
 {
+    public bool isInt;
     public bool isFloat1;
     public bool isFloat2;
     public bool isFloat3;
@@ -18,6 +19,10 @@ public class SliderValue : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
     {
+        if (isInt)
+        {
+            this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("N0");
+        }
         if(isFloat1)
         {
             this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F1");
