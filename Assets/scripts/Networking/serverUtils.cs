@@ -32,6 +32,9 @@ namespace Meg.Networking
                     case "pressure":
                         rValue = serverObject.GetComponent<serverData>().pressure;
                         break;
+                    case "cabinPressure":
+                        rValue = serverObject.GetComponent<serverData>().cabinPressure;
+                        break;
                     case "heading":
                         rValue = serverObject.GetComponent<serverData>().heading;
                         break;
@@ -351,6 +354,9 @@ namespace Meg.Networking
                         break;
                     case "pressure":
                         rValue = serverObject.GetComponent<serverData>().pressure.ToString();
+                        break;
+                    case "cabinPressure":
+                        rValue = serverObject.GetComponent<serverData>().cabinPressure.ToString();
                         break;
                     case "heading":
                         rValue = (serverObject.GetComponent<serverData>().heading.ToString("n1") + "°");

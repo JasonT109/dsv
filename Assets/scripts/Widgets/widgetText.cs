@@ -34,6 +34,9 @@ public class widgetText : MonoBehaviour
                 TextMesh.text = value;
             else if (DynamicText)
                 DynamicText.SetText(value);
+
+            if (ShrinkToFit)
+                UpdateScaleToFit();
         }
     }
 
@@ -59,9 +62,8 @@ public class widgetText : MonoBehaviour
         }
     }
 
-
-    // Members
-    // ------------------------------------------------------------
+    /** Whether to scale text down if it gets too large. */
+    public bool ShrinkToFit;
 
     /** Text mesh (if used). */
     public TextMesh TextMesh
@@ -72,16 +74,64 @@ public class widgetText : MonoBehaviour
         { get; protected set; }
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Collider, used for computing shrink to fit sizing. */
+    private Collider _collider;
+
+    /** Max width and height for the text. */
+    private Vector2 _maxSize;
+
+    /** Initial scale for the text. */
+    private Vector3 _initialScale;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
     protected virtual void Awake()
     {
-        // Look for text components on the 
+        // Look for text components.
         if (!TextMesh)
             TextMesh = GetComponent<TextMesh>();
         if (!DynamicText && !TextMesh)
             DynamicText = GetComponent<DynamicText>();
+
+        // Initialize sizing behaviour.
+        InitializeSizing();
     }
-	
+
+    /** Initialize sizing information. */
+    private void InitializeSizing()
+    {
+        if (!_collider)
+            _collider = GetComponent<Collider>();
+        if (!_collider)
+            return;
+
+        var min = transform.InverseTransformPoint(_collider.bounds.min);
+        var max = transform.InverseTransformPoint(_collider.bounds.max);
+        _maxSize = max - min;
+        _initialScale = transform.localScale;
+    }
+
+    /** Update the local scale of text component to ensure it stays within the attached collider. */
+    protected virtual void UpdateScaleToFit()
+    {
+        // Only works with dynamic text for now.
+        // TODO: Add support for TextMesh.
+        if (!_collider || !DynamicText)
+            return;
+
+        var b = DynamicText.bounds;
+
+        Vector2 sizes = b.extents * 2;
+        sizes.x /= _maxSize.x;
+        sizes.y /= _maxSize.y;
+
+        var scale = Mathf.Clamp01(1 / Mathf.Max(sizes.x, sizes.y));
+        transform.localScale = _initialScale * scale;
+    }
+
 }

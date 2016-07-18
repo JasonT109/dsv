@@ -22,6 +22,8 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float pressure;
     [SyncVar]
+    public float cabinPressure;
+    [SyncVar]
     public float heading;
     [SyncVar]
     public float pitchAngle;
