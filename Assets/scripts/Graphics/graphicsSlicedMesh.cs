@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 [ExecuteInEditMode]
 public class graphicsSlicedMesh : MonoBehaviour
 {
@@ -6,6 +6,7 @@ public class graphicsSlicedMesh : MonoBehaviour
     private float oldWidth;
     private float oldHeight;
     private float oldMargin;
+    private bool oldCentered;
     private Mesh mesh;
 
     public float _b = 0.1f;
@@ -64,6 +65,17 @@ public class graphicsSlicedMesh : MonoBehaviour
         }
     }
 
+    public bool _centered;
+    public bool Centered
+    {
+        get { return _centered; }
+        set
+        {
+            _centered = value;
+            CreateSlicedMesh();
+        }
+    }
+
     void Awake()
     {
         mesh = new Mesh();
@@ -76,6 +88,8 @@ public class graphicsSlicedMesh : MonoBehaviour
         oldHeight = Height;
         oldMargin = Margin;
         oldWidth = Width;
+        oldCentered = Centered;
+
         //_w = 1.0f / gameObject.transform.localScale.x;
         //_h = 1.0f / gameObject.transform.localScale.y;
         CreateSlicedMesh();
@@ -103,27 +117,49 @@ public class graphicsSlicedMesh : MonoBehaviour
             Margin = _m;
             oldMargin = Margin;
         }
+        if (Centered != oldCentered)
+        {
+            Centered = _centered;
+            oldCentered = Centered;
+        }
     }
 #endif
     void CreateSlicedMesh()
     {
         GetComponent<MeshFilter>().sharedMesh = mesh;
 
-        mesh.vertices = new Vector3[] {
-        new Vector3(0, 0, 0), new Vector3(_b, 0, 0), new Vector3(_w-_b, 0, 0), new Vector3(_w, 0, 0),
-        new Vector3(0, _b, 0), new Vector3(_b, _b, 0), new Vector3(_w-_b, _b, 0), new Vector3(_w, _b, 0),
-        new Vector3(0, _h-_b, 0), new Vector3(_b, _h-_b, 0), new Vector3(_w-_b, _h-_b, 0), new Vector3(_w, _h-_b, 0),
-        new Vector3(0, _h, 0), new Vector3(_b, _h, 0), new Vector3(_w-_b, _h, 0), new Vector3(_w, _h, 0)
-    };
+        var vertices = new Vector3[]
+        {
+            new Vector3(0, 0, 0), new Vector3(_b, 0, 0), new Vector3(_w - _b, 0, 0), new Vector3(_w, 0, 0),
+            new Vector3(0, _b, 0), new Vector3(_b, _b, 0), new Vector3(_w - _b, _b, 0), new Vector3(_w, _b, 0),
+            new Vector3(0, _h - _b, 0), new Vector3(_b, _h - _b, 0), new Vector3(_w - _b, _h - _b, 0),
+            new Vector3(_w, _h - _b, 0),
+            new Vector3(0, _h, 0), new Vector3(_b, _h, 0), new Vector3(_w - _b, _h, 0), new Vector3(_w, _h, 0)
+        };
 
-        mesh.uv = new Vector2[] {
-        new Vector2(0, 0), new Vector2(_m, 0), new Vector2(1-_m, 0), new Vector2(1, 0),
-        new Vector2(0, _m), new Vector2(_m, _m), new Vector2(1-_m, _m), new Vector2(1, _m),
-        new Vector2(0, 1-_m), new Vector2(_m, 1-_m), new Vector2(1-_m, 1-_m), new Vector2(1, 1-_m),
-        new Vector2(0, 1), new Vector2(_m, 1), new Vector2(1-_m, 1), new Vector2(1, 1)
-    };
+        if (Centered)
+        {
+            var dx = -_w * 0.5f;
+            var dy = -_h * 0.5f;
+            for (var i = 0; i < vertices.Length; i++)
+            {
+                vertices[i].x += dx;
+                vertices[i].y += dy;
+            }
+        }
 
-        mesh.triangles = new int[] {
+        mesh.vertices = vertices;
+
+        mesh.uv = new Vector2[] 
+        {
+            new Vector2(0, 0), new Vector2(_m, 0), new Vector2(1-_m, 0), new Vector2(1, 0),
+            new Vector2(0, _m), new Vector2(_m, _m), new Vector2(1-_m, _m), new Vector2(1, _m),
+            new Vector2(0, 1-_m), new Vector2(_m, 1-_m), new Vector2(1-_m, 1-_m), new Vector2(1, 1-_m),
+            new Vector2(0, 1), new Vector2(_m, 1), new Vector2(1-_m, 1), new Vector2(1, 1)
+        };
+
+        mesh.triangles = new int[] 
+        {
         0, 4, 5,
         0, 5, 1,
         1, 5, 6,
@@ -142,6 +178,6 @@ public class graphicsSlicedMesh : MonoBehaviour
         9, 14, 10,
         10, 14, 15,
         10, 15, 11
-    };
+        };
     }
 }
