@@ -56,6 +56,9 @@ namespace Meg.Networking
                     case "waterTemp":
                         rValue = serverObject.GetComponent<serverData>().waterTemp;
                         break;
+                    case "cabinTemp":
+                        rValue = serverObject.GetComponent<serverData>().cabinTemp;
+                        break;
                     case "b1":
                         rValue = serverObject.GetComponent<serverData>().batteries[0];
                         break;
@@ -373,6 +376,9 @@ namespace Meg.Networking
                         break;
                     case "waterTemp":
                         rValue = serverObject.GetComponent<serverData>().waterTemp.ToString();
+                        break;
+                    case "cabinTemp":
+                        rValue = serverObject.GetComponent<serverData>().cabinTemp.ToString();
                         break;
                     case "b1":
                         rValue = serverObject.GetComponent<serverData>().batteries[0].ToString("n1");

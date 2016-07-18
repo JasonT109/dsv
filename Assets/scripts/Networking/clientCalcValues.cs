@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-public class clientCalcValues : MonoBehaviour
+public class clientCalcValues : Singleton<clientCalcValues>
 {
     public float pressureResult;
     public float psiResult;
@@ -58,6 +58,12 @@ public class clientCalcValues : MonoBehaviour
         {
             return -1;
         }
+    }
+
+    void Awake()
+    {
+        // Manually set up singleton (since this game object is networked and will be initially disabled).
+        SetInstance(this);
     }
 
 	// Use this for initialization

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 using Meg.Networking;
@@ -252,6 +252,10 @@ public class debugChangeValue : NetworkBehaviour {
                         break;
                     case "waterTemp":
                         tempVal = serverUtils.GetServerData("waterTemp").ToString();
+                        parseAsFloat(tempVal);
+                        break;
+                    case "cabinTemp":
+                        tempVal = serverUtils.GetServerData("cabinTemp").ToString();
                         parseAsFloat(tempVal);
                         break;
                 }

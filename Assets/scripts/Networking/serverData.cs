@@ -44,6 +44,8 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float waterTemp;
     [SyncVar]
+    public float cabinTemp;
+    [SyncVar]
     public float oxygen;
     [SyncVar]
     public string pilot;
@@ -180,6 +182,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "waterTemp":
                 waterTemp = newValue;
+                break;
+            case "cabinTemp":
+                cabinTemp = newValue;
                 break;
             case "b1":
                 gameObject.GetComponent<batteryData>().bank1 = newValue;
