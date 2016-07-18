@@ -1,15 +1,20 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Meg.Networking;
 
-public class countDownTimer : MonoBehaviour {
+public class countDownTimer : widgetText
+{
 
     public TextMesh cText;
     public float hours = 1;
     public float mins = 1;
     public float seconds = 1;
     public bool diveTime = true;
+
     void Start ()
     {
+        if (cText)
+            TextMesh = cText;
+
         if (diveTime)
         {
             hours = serverUtils.GetServerData("diveTimeHours");
@@ -38,7 +43,8 @@ public class countDownTimer : MonoBehaviour {
             mins = serverUtils.GetServerData("dueTimeMins");
             seconds = serverUtils.GetServerData("dueTimeSecs");
         }
+
         string fmt = "00";
-        cText.text = (Mathf.Floor(hours).ToString(fmt) + ":" + Mathf.Floor(mins).ToString(fmt) + ":" + Mathf.Floor(seconds).ToString(fmt));
+        Text = (Mathf.Floor(hours).ToString(fmt) + ":" + Mathf.Floor(mins).ToString(fmt) + ":" + Mathf.Floor(seconds).ToString(fmt));
     }
 }
