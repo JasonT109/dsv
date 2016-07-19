@@ -622,6 +622,50 @@ namespace Meg.Networking
             return new Vector3(data[0], data[1], data[2]);
         }
 
+        /** Return the player vessel's current target vessel (or 0 if there is no target). */
+        public static int GetTargetVessel()
+        {
+            var playerVessel = serverUtils.GetPlayerVessel();
+            if (playerVessel <= 0)
+                return 0;
+
+            var movement = serverUtils.GetVesselMovements().GetVesselMovement(playerVessel);
+            var intercept = movement as vesselIntercept;
+            var pursue = movement as vesselPursue;
+
+            if (intercept)
+                return intercept.TargetVessel;
+            if (pursue)
+                return pursue.TargetVessel;
+
+            // No target vessel.
+            return 0;
+        }
+
+        /** Return whether player's vessel has a current target. */
+        public static bool HasTargetVessel()
+        {
+            return GetTargetVessel() > 0;
+        }
+
+        /** Get a bearing to target vessel, relative to player vessel. */
+        public static float GetVesselBearing(int vessel)
+        {
+            if (vessel <= 0)
+                return 0;
+
+            // TODO: Check math on this one.
+            var origin = GetVesselPosition(GetPlayerVessel());
+            var target = GetVesselPosition(vessel);
+            var heading = GetServerData("heading");
+            var delta = new Vector3(target.x - origin.x, 0, target.y - origin.y);
+            var spherical = new SphericalCoordinates(delta);
+            var headingToTarget = (90 - spherical.polar * Mathf.Rad2Deg);
+            var bearing = headingToTarget - heading;
+
+            return Mathf.Repeat(bearing, 360);
+        }
+
         public static void SetVesselPosition(int vessel, Vector3 p)
         {
             Vector3 position;
@@ -635,6 +679,14 @@ namespace Meg.Networking
             var data = GetVesselData(vessel);
             position = new Vector3(data[0], data[1], data[2]);
             velocity = data[3];
+        }
+
+        /** Return the distance between two vessels in meters. */
+        public static float GetVesselDistance(int from, int to)
+        {
+            var a = GetVesselPosition(from); a.x *= 1000; a.y *= 1000;
+            var b = GetVesselPosition(to); b.x *= 1000; b.y *= 1000;
+            return Vector3.Distance(a, b);
         }
 
         public static float[] GetVesselData(int vessel)
@@ -706,6 +758,8 @@ namespace Meg.Networking
         public static int GetPlayerVessel()
         {
             GameObject serverObject = GameObject.FindWithTag("ServerData");
+            if (!serverObject)
+                return 0;
 
             return serverObject.GetComponent<mapData>().playerVessel;
         }
