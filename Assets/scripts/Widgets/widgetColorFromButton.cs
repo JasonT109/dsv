@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class widgetColorFromButton : MonoBehaviour
@@ -15,13 +15,13 @@ public class widgetColorFromButton : MonoBehaviour
     {
         if (bc != null)
         {
-            Color c = bc.colorTheme[3];
+            Color c = bc.GetThemeColor(3);
             gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", c);
         }
         else
         {
             bc = button.GetComponent<buttonControl>();
-            Color c = bc.colorTheme[3];
+            Color c = bc.GetThemeColor(3);
             gameObject.GetComponent<Renderer>().material.SetColor("_TintColor", c);
         }
     }

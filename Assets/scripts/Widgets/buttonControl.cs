@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using TouchScript.Gestures;
 using TouchScript.Hit;
@@ -8,28 +9,42 @@ using Meg.Graphics;
 
 public class buttonControl : MonoBehaviour
 {
-    public Color[] colorTheme;
-    public bool gliderButton = false;
-    public GameObject gliderButtonOnMesh;
+    [Header("State")]
     public bool pressed = false;
     public bool active = false;
     public bool disabled = false;
     public bool warning = false;
     public bool toggleType = false;
     public bool canToggleOff = false;
+
+    [Header("Appearance")]
+    public Color[] colorTheme;
+    public float Brightness = 1;
+
+    [Header("Groups")]
     public GameObject buttonGroup;
     public GameObject visGroup;
+
+    [Header("Warnings")]
     public float warningFlashSpeed = 1.0f;
     public float warningFlashPause = 1.0f;
     public bool autoWarning = false;
     public float autoWarningValue = 0f;
     public string autoWarningServerName = "depth";
     public bool autoWarningGreaterThan = false;
+
+    [Header("Server")]
     public string serverName = "depth";
     public string serverType = "int";
 
-    public delegate void buttonEventHandler();
+    [Header("Animation")]
+    public bool AnimateOnPress;
 
+    [Header("Glider")]
+    public bool gliderButton = false;
+    public GameObject gliderButtonOnMesh;
+
+    public delegate void buttonEventHandler();
     public event buttonEventHandler onPressed;
     public event buttonEventHandler onReleased;
 
@@ -45,7 +60,7 @@ public class buttonControl : MonoBehaviour
     {
         r = GetComponent<Renderer>();
         m = r.material;
-        m.color = colorTheme[3];
+        m.color = GetThemeColor(3);
         toggleVisGroup();
 
         if (active)
@@ -87,7 +102,7 @@ public class buttonControl : MonoBehaviour
         {
             //Debug.Log("tapped this object: " + gameObject);
             pressed = true;
-            m.color = colorTheme[4];
+            m.color = GetThemeColor(4);
             StartCoroutine(waitPress(0.1f));
         }
     }
@@ -104,7 +119,10 @@ public class buttonControl : MonoBehaviour
             canPress = false;
             StartCoroutine(waitRelease(pressDelay));
             pressed = true;
-            m.color = colorTheme[4];
+            m.color = GetThemeColor(4);
+
+            if (AnimateOnPress)
+                transform.DOPunchScale(transform.localScale * 0.05f, 0.1f);
 
             if (onPressed != null)
                 onPressed();
@@ -130,7 +148,7 @@ public class buttonControl : MonoBehaviour
                 else
                 {
                     pressed = false;
-                    m.color = colorTheme[1];
+                    m.color = GetThemeColor(1);
                 }
             }
             else
@@ -151,13 +169,13 @@ public class buttonControl : MonoBehaviour
             {
                 pressed = false;
                 active = true;
-                m.color = colorTheme[1];
+                m.color = GetThemeColor(1);
             }
             else
             {
                 pressed = false;
                 active = false;
-                m.color = colorTheme[3];
+                m.color = GetThemeColor(3);
             }
         }
         else
@@ -166,7 +184,7 @@ public class buttonControl : MonoBehaviour
             active = false;
             if (m)
             {
-                m.color = colorTheme[3];
+                m.color = GetThemeColor(3);
             }
         }
         toggleVisGroup();
@@ -191,7 +209,19 @@ public class buttonControl : MonoBehaviour
 
         if (active && !warning && !pressed)
         {
-            m.color = colorTheme[1];
+            m.color = GetThemeColor(1);
+        }
+    }
+
+    public Color GetThemeColor(int i)
+    {
+        if (Mathf.Approximately(Brightness, 1))
+            return colorTheme[i];
+        else
+        {
+            var hsb = HSBColor.FromColor(colorTheme[i]);
+            hsb.b *= Brightness;
+            return hsb.ToColor();
         }
     }
 
@@ -249,18 +279,18 @@ public class buttonControl : MonoBehaviour
             }
             if (active)
             {
-                m.color = Color.Lerp(colorTheme[0], colorTheme[1], Mathf.Sin(sinWave));
+                m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
             }
             else
             {
-                m.color = Color.Lerp(colorTheme[0], colorTheme[3], Mathf.Sin(sinWave));
+                m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
             }
         }
         else
         {
             if (!pressed && !active)
             {
-                m.color = colorTheme[3];
+                m.color = GetThemeColor(3);
             }
         }
     }
@@ -282,6 +312,6 @@ public class buttonControl : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         pressed = false;
-        m.color = colorTheme[3];
+        m.color = GetThemeColor(3);
     }
 }

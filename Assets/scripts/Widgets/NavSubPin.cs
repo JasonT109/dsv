@@ -295,7 +295,7 @@ public class NavSubPin : MonoBehaviour
         _trailLine.points3.Add(vesselModel.transform.position);
 
         // Update trail colors;
-        Color32 c = _vesselButtonControl.colorTheme[3];
+        Color32 c = _vesselButtonControl.GetThemeColor(3);
         var nColors = _trailLine.points3.Count - 1;
         _trailColors.Clear();
         for (var i = 0; i < nColors; i++)
