@@ -135,7 +135,7 @@ public class vesselIntercept : vesselMovement
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
-        var dp = direction * requiredSpeed * Time.fixedDeltaTime;
+        var dp = direction * requiredSpeed * GetDeltaTime();
         dp.x *= 0.001f;
         dp.y *= 0.001f;
 

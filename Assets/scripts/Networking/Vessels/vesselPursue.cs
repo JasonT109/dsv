@@ -89,7 +89,7 @@ public class vesselPursue : vesselMovement
 
         // Determine change in position based on direction and velocity.
         // Also convert back into map space.
-        var dp = direction * Speed * Time.fixedDeltaTime;
+        var dp = direction * Speed * GetDeltaTime();
         dp.x *= 0.001f;
         dp.y *= 0.001f;
 

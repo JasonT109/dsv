@@ -72,7 +72,7 @@ public class vesselSetVector : vesselMovement
         GetVesselState(out position, out velocity);
 
         // Determine change in position based on direction and velocity.
-        var delta = Direction * Speed * Time.fixedDeltaTime;
+        var delta = Direction * Speed * GetDeltaTime();
 
         // Convert the change in position into map-space.
         delta.x *= 0.001f;

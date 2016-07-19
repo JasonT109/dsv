@@ -81,7 +81,7 @@ public class vesselMovements : NetworkBehaviour
     }
 
     /** Update the vessel movement module. */
-    protected virtual void FixedUpdate()
+    protected virtual void LateUpdate()
     {
         // Update the vessel's movement.
         if (Active && isServer)

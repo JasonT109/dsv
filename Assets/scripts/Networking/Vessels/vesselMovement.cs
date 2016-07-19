@@ -73,7 +73,7 @@ public abstract class vesselMovement : NetworkBehaviour
 
     /** Update the vessel movement module. */
     // [ServerCallback]
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
         // Only run movement logic on the server.
         if (!isServer)
@@ -85,6 +85,10 @@ public abstract class vesselMovement : NetworkBehaviour
         // Update the vessel's movement.
         UpdateMovement();
     }
+
+    /** Returns time delta increment to use when updating movments. */
+    protected float GetDeltaTime()
+        { return Time.fixedDeltaTime; }
 
 
     // Load / Save

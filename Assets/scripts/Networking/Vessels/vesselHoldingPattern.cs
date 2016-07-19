@@ -84,7 +84,7 @@ public class vesselHoldingPattern : vesselMovement
         var direction = new Vector3(dx, dy, dz).normalized;
 
         // Determine change in position based on direction and velocity.
-        var delta = direction * Speed * Time.fixedDeltaTime;
+        var delta = direction * Speed * GetDeltaTime();
 
         // Convert the change in position into map-space.
         delta.x *= 0.001f;
@@ -95,7 +95,7 @@ public class vesselHoldingPattern : vesselMovement
 
         // Update time.
         if (Active)
-            _time += Time.fixedDeltaTime;
+            _time += GetDeltaTime();
     }
 
 }
