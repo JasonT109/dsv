@@ -82,10 +82,6 @@ public class digital_gauge : MonoBehaviour {
             digitalNeedle.transform.rotation = qAngle;
             minTick.transform.rotation = Quaternion.Euler(0, 0, startAngle);
             maxTick.transform.rotation = Quaternion.Euler(0, 0, endAngle);
-            for (int i = 0; i < numTicks; i++)
-            {
-                digitalTicks[i].SetActive(false);
-            }
         }
         else
         {
@@ -96,10 +92,13 @@ public class digital_gauge : MonoBehaviour {
                 maxTick.SetActive(false);
             }
         }
+
+        for (int i = 0; i < numTicks; i++)
+            digitalTicks[i].SetActive(false);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 
         if (serverObject == null)
         {

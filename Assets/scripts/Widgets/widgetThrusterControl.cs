@@ -67,6 +67,11 @@ public class widgetThrusterControl : MonoBehaviour {
     private float inY;
     private float inZ;
     private float inX2;
+
+    void OnEnable()
+    {
+        Update();
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -82,7 +87,7 @@ public class widgetThrusterControl : MonoBehaviour {
         thrusterMainR = Mathf.Clamp(inZ + (inX * 0.5f), -100, 100);
         thrusterSideL1 = Mathf.Clamp(-inY + (-inX * 0.5f) + inX2, -100, 100);
         thrusterSideR1 = Mathf.Clamp(-inY + (inX * 0.5f) + inX2, -100, 100);
-        thrusterSideL2 = Mathf.Clamp(-inX - inX2, -100, 100);
+        thrusterSideL2 = Mathf.Clamp(-inX + inX2, -100, 100);
         thrusterSideR2 = Mathf.Clamp(inX + inX2, -100, 100);
         thrusterSideL3 = Mathf.Clamp(inY + (-inX * 0.5f) + inX2, -100, 100);
         thrusterSideR3 = Mathf.Clamp(inY + (inX * 0.5f) + inX2, -100, 100);
