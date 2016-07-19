@@ -5,8 +5,6 @@ using System.Linq;
 
 public class gameInputs : NetworkBehaviour
 {
-    //public WindZone wind;
-    private GameObject sData;
     [SyncVar]
     public float output = 0.0f;
     [SyncVar]
@@ -17,20 +15,38 @@ public class gameInputs : NetworkBehaviour
     public float outputX2 = 0.0f;
     [SyncVar]
     public float outputY2 = 0.0f;
-    public string[] joysticks;
     [SyncVar]
     public bool pilot = false;
-    public bool focused = false;
-    public GameObject status;
+    /** which GLIDER screen this client is controlling (left = 2, middle = 1, right = 0) */
+    [SyncVar]
+    public int glScreenID = 0;
+    /** what GLIDER screen content this client is viewing */
+    [SyncVar]
+    public int activeScreen = 0;
+
+    /** list of all active joysticks plugged in */
+    public string[] joysticks;
+
+    /** server data object */
+    private GameObject sData;
+
+    /** this client has windows focus, if joystick is plugged in this client will be setting input that the server can then use */
+    private bool focused = false;
+
+    /** debug text mesh object so we can see if a screen has focus */
+    private GameObject status;
+
+    /** used to restrict updates to a set time tick */
     private bool canSendData = true;
-    public float x1;
-    public float y1;
-    public float z1;
-    public float x2;
-    public float y2;
 
+    /** input axis */
+    private float x1;
+    private float y1;
+    private float z1;
+    private float x2;
+    private float y2;
 
-    // Use this for initialization
+    /** initialisation */
     void Start()
     {
         if (!isLocalPlayer)
@@ -45,6 +61,7 @@ public class gameInputs : NetworkBehaviour
         }
     }
 
+    /** when app gets windows focus sets the focus state */
     void OnApplicationFocus(bool focusStatus)
     {
         if (!isLocalPlayer)
@@ -53,6 +70,7 @@ public class gameInputs : NetworkBehaviour
         focused = focusStatus;
     }
 
+    /** updates the syncvars with the input */
     [Command]
     void CmdChangeInput(bool state, float xAxis1, float yAxis1, float zAxis1, float xAxis2, float yAxis2)
     {
@@ -72,7 +90,19 @@ public class gameInputs : NetworkBehaviour
         }
     }
 
-    // Update is called once per frame
+    [Command]
+    void CmdChangeScreenContent(int scContent)
+    {
+        activeScreen = scContent;
+    }
+
+    [Command]
+    void CmdChangeScreenID(int scID)
+    {
+        glScreenID = scID;
+    }
+
+    /** update */
     void Update()
     {
         if (!isLocalPlayer)
@@ -80,6 +110,21 @@ public class gameInputs : NetworkBehaviour
 
         if (!localPlayerAuthority)
             return;
+
+        /** If we have changed the current screen ID update it with the server */
+        if (glScreenManager.Instance && glScreenManager.Instance.hasChanged)
+        {
+            CmdChangeScreenID(glScreenManager.Instance.screenID);
+            glScreenManager.Instance.hasChanged = false;
+
+            /** If we have changed the right screen content update it with the server */
+            if (glScreenManager.Instance.screenID == 0)
+            {
+                CmdChangeScreenContent(glScreenManager.Instance.rightScreenID);
+            }
+
+            glScreenManager.Instance.hasChanged = false;
+        }
 
         GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
         if(Root)
@@ -114,16 +159,16 @@ public class gameInputs : NetworkBehaviour
         {
             if (focused)
             {
-                if(status)
+                if (status)
                 {
-                status.GetComponent<TextMesh>().text = "Strong";
+                    status.GetComponent<TextMesh>().text = "Strong";
                 }
             }
             else
             {
                 if (status)
                 {
-                status.GetComponent<TextMesh>().text = "Weak";
+                    status.GetComponent<TextMesh>().text = "Weak";
                 }
             }
         }
@@ -152,6 +197,7 @@ public class gameInputs : NetworkBehaviour
         }
     }
 
+    /** wait co-routine so we don't spam the server */
     IEnumerator Wait(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);

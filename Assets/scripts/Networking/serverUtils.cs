@@ -840,5 +840,18 @@ namespace Meg.Networking
             return theme;
         }
 
+        public static int getGliderScreen(int screenID)
+        {
+            GameObject serverObject = GameObject.FindWithTag("ServerData");
+
+            int outID = 0;
+
+            if (serverObject)
+            {
+                outID = serverObject.GetComponent<glScreenData>().getScreen(screenID);
+            }
+
+            return outID;
+        }
     }
 }

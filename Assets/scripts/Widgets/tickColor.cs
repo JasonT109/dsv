@@ -38,7 +38,9 @@ public class tickColor : MonoBehaviour {
                     {
                         x = 0.0f;
                     }
-                    m.color = dScript.colorGradient[(int)x];
+                    //m.color = dScript.colorGradient[(int)x];
+                    m.SetColor("_MainColor", dScript.colorGradient[(int)x]);
+                    m.SetColor("_TintColor", dScript.colorGradient[(int)x]);
                 }
             }
         }
@@ -73,11 +75,13 @@ public class tickColor : MonoBehaviour {
             {
                 m.color = Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex - 1], colorLerpValue);
                 m.SetColor("_TintColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex - 1], colorLerpValue));
+                m.SetColor("_MainColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex - 1], colorLerpValue));
             }
             else
             {
                 m.color = Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex + 1], colorLerpValue);
                 m.SetColor("_TintColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex + 1], colorLerpValue));
+                m.SetColor("_MainColor", Color.Lerp(dScript.colorGradient[colorIndex], dScript.colorGradient[colorIndex + 1], colorLerpValue));
             }
         }
     }
