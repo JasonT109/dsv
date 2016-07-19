@@ -1,12 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using Meg.Networking;
 
-public class textValueFromServer : NetworkBehaviour
+public class textValueFromServer : widgetText
 {
     public string linkDataString = "depth";
     public float updateTick = 0.2f;
     private float nextUpdate = 0;
+
+    public string format = "";
 
     void Start()
     {
@@ -18,7 +20,10 @@ public class textValueFromServer : NetworkBehaviour
         if (Time.time > nextUpdate)
         {
             nextUpdate = Time.time + updateTick;
-            gameObject.GetComponent<TextMesh>().text = serverUtils.GetServerDataAsText(linkDataString);
+            if (string.IsNullOrEmpty(format))
+                Text = serverUtils.GetServerDataAsText(linkDataString);
+            else
+                Text = string.Format(format, serverUtils.GetServerData(linkDataString));
         }
     }
 }

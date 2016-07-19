@@ -205,6 +205,9 @@ public class vesselMovements : NetworkBehaviour
     /** Return the vessel's current movement mode (if any). */
     public vesselMovement GetVesselMovement(int vessel)
     {
+        if (vessel <= 0 || vessel >= _movements.Count)
+            return null;
+
         if (_movements[vessel].Count > 0)
             return _movements[vessel][0];
 

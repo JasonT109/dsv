@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -45,7 +45,10 @@ public class digital_gauge : MonoBehaviour {
     public bool mapGradientToTicks = false;
     private tachometer tachoScript;
 
+    private widgetText text;
     private TextMesh textM;
+    private DynamicText textD;
+
     private float numTicks = 10;
     private float tickRange = 1.0f;
     private float index;
@@ -57,7 +60,9 @@ public class digital_gauge : MonoBehaviour {
         numTicks = digitalTicks.Length;
         if(optionalText)
         {
+            text = optionalText.GetComponent<widgetText>();
             textM = optionalText.GetComponent<TextMesh>();
+            textD = optionalText.GetComponent<DynamicText>();
         }
         if (serverObject == null)
         {
@@ -276,14 +281,25 @@ public class digital_gauge : MonoBehaviour {
             }
 
             if (optionalText)
-            {
-                textM.text = value.ToString("D3");
-            }
+                Text = value.ToString("D3");
 
             if (useValueFromServer && serverObject)
             {
                 value = (int)serverUtils.GetServerData(linkDataString);
             }
+        }
+    }
+
+    private string Text
+    {
+        set
+        {
+            if (text)
+                text.Text = value;
+            else if (textM)
+                textM.text = value;
+            else if (textD)
+                textD.SetText(value);
         }
     }
 }

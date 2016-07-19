@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class sliderWidget : MonoBehaviour
+public class sliderWidget : MonoBehaviour, ValueSettable
 {
     public float minValue;
     public float maxValue;

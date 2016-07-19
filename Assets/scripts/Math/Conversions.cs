@@ -13,4 +13,6 @@ public class Conversions
     public const float MetresPerSecondToKnots = 1.943846f;
     public const float KnotsToMetresPerSecond = 1 / MetresPerSecondToKnots;
 
+    public const float MetresPerSecondToMetersPerMin = 60;
+
 }

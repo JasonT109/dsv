@@ -42,6 +42,8 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("diveTimeHours", serverUtils.GetServerData("diveTimeHours"));
         j.AddField("diveTimeMins", serverUtils.GetServerData("diveTimeMins"));
         j.AddField("diveTimeSecs", serverUtils.GetServerData("diveTimeSecs"));
+        j.AddField("cabinTemp", serverUtils.GetServerData("cabinTemp"));
+        j.AddField("cabinPressure", serverUtils.GetServerData("cabinPressure"));
         j.AddField("b1", serverUtils.GetServerData("b1"));
         j.AddField("b2", serverUtils.GetServerData("b2"));
         j.AddField("b3", serverUtils.GetServerData("b3"));

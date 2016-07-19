@@ -22,6 +22,8 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float pressure;
     [SyncVar]
+    public float cabinPressure;
+    [SyncVar]
     public float heading;
     [SyncVar]
     public float pitchAngle;
@@ -43,6 +45,8 @@ public class serverData : NetworkBehaviour
     public float Co2;
     [SyncVar]
     public float waterTemp;
+    [SyncVar]
+    public float cabinTemp;
     [SyncVar]
     public float oxygen;
     [SyncVar]
@@ -180,6 +184,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "waterTemp":
                 waterTemp = newValue;
+                break;
+            case "cabinTemp":
+                cabinTemp = newValue;
                 break;
             case "b1":
                 gameObject.GetComponent<batteryData>().bank1 = newValue;

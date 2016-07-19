@@ -35,10 +35,21 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     }
 
 
+    // Protected Static Methods
+    // -----------------------------------------------------
+
+    /** Manually set up the singleton instance. */
+    protected static void SetInstance(T value)
+    {
+        _instance = value;
+    }
+
+
     // Static Members
     // -----------------------------------------------------
 
     /** The singleton instance. */
-    private static T _instance;
+    protected static T _instance;
+
 
 }
