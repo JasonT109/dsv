@@ -92,10 +92,14 @@ public class InstrumentsTextValues : MonoBehaviour
         var targetVessel = serverUtils.GetTargetVessel();
         var hasTarget = targetVessel > 0;
         var targetPos = serverUtils.GetVesselPosition(targetVessel);
-        var targetBearing = serverUtils.GetVesselBearing(targetVessel);
         var targetRange = serverUtils.GetVesselDistance(playerVessel, targetVessel);
         var targetX = targetPos.x * 1000;
         var targetY = targetPos.y * 1000;
+        var targetBearing = serverUtils.GetVesselBearing(targetVessel);
+
+        // Avoid bearing readout flip-flopping from 360 to 0 when intercepting.
+        if (targetBearing > 359)
+            targetBearing = 0;
 
         return string.Format("{0:N0}", playerX) + "\n"
             + string.Format("{0:N0}", playerY) + "\n"

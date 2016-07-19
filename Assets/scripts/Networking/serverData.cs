@@ -63,6 +63,9 @@ public class serverData : NetworkBehaviour
     public float diveTimeMins;
     [SyncVar]
     public float diveTimeSecs;
+    [SyncVar]
+    public float commsSignalStrength;
+
     #endregion
     #region PublicVars
 

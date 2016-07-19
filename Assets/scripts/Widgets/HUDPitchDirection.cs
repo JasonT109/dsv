@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -25,6 +25,8 @@ public class HUDPitchDirection : MonoBehaviour {
     public float endPoint;
     public int numSubTicks;
     public float labelShift = 0;
+
+    public bool showAngleTicks;
 
     private GameObject serverObject;
     private GameObject[] mainTicks;

@@ -221,6 +221,9 @@ namespace Meg.Networking
                     case "diveTimeSecs":
                         rValue = serverObject.GetComponent<serverData>().diveTimeSecs;
                         break;
+                    case "commsSignalStrength":
+                        rValue = serverObject.GetComponent<serverData>().commsSignalStrength;
+                        break;
                     case "crewHeartRate1":
                         rValue = serverObject.GetComponent<crewData>().crewHeartRate1;
                         break;
@@ -475,6 +478,9 @@ namespace Meg.Networking
                         break;
                     case "inputYaxis2":
                         rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1");
+                        break;
+                    case "commsSignalStrength":
+                        rValue = serverObject.GetComponent<serverData>().commsSignalStrength.ToString("n1");
                         break;
                     case "crewHeartRate1":
                         rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1");
@@ -828,11 +834,8 @@ namespace Meg.Networking
             GameObject serverObject = GameObject.FindWithTag("ServerData");
 
             megColorTheme theme = new megColorTheme();
-
             if (serverObject)
-            {
                 theme = serverObject.GetComponent<graphicsColourHolder>().theme;
-            }
 
             return theme;
         }

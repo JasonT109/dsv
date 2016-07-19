@@ -70,6 +70,7 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("crewBodyTemp4", serverUtils.GetServerData("crewBodyTemp4"));
         j.AddField("crewBodyTemp5", serverUtils.GetServerData("crewBodyTemp5"));
         j.AddField("crewBodyTemp6", serverUtils.GetServerData("crewBodyTemp6"));
+        j.AddField("commsSignalStrength", serverUtils.GetServerData("commsSignalStrength"));
         j.AddField("vessel1Data", addVessel(1));
         j.AddField("vessel2Data", addVessel(2));
         j.AddField("vessel3Data", addVessel(3));

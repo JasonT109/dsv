@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class graphicsBackColor : MonoBehaviour
@@ -33,10 +33,9 @@ public class graphicsBackColor : MonoBehaviour
     void Update ()
     {
         if (colourThemeObj == null)
-        {
             colourThemeObj = GameObject.FindWithTag("ServerData");
-        }
-        else
+
+        if (colourThemeObj)
         {
             bColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.backgroundColor;
             hColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.highlightColor;
