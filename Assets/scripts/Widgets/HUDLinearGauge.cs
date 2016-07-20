@@ -1,0 +1,240 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using Meg.Networking;
+
+public class HUDLinearGauge : MonoBehaviour
+{
+
+    // Enumerations
+    // ------------------------------------------------------------
+
+    /** Possible directions for gauge values. */
+    public enum LinearGaugeDirection
+    {
+        LowToHigh = -1,
+        HighToLow = 1
+    };
+
+
+    // Properties
+    // ------------------------------------------------------------
+
+    [Header("Quantity")]
+
+    /** Server data ID of the quantity to be displayed. */
+    public string ServerQuantity;
+
+    /** Minimum value. */
+    public float MinValue = 0;
+
+    /** Maximum value. */
+    public float MaxValue = 100;
+
+    /** Current value. */
+    public float Value;
+
+
+    [Header("Appearance")]
+
+    /** Range of values visible in the gauge. */
+    public float VisibleRange = 20;
+
+    /** Direction of the gauge values. */
+    public LinearGaugeDirection Direction = LinearGaugeDirection.LowToHigh;
+
+
+    [Header("Ticks")]
+
+    /** Increment between successive main ticks. */
+    public float MainTickInterval = 5;
+
+    /** Increment between successive ticks. */
+    public float SubTickInterval = 1;
+
+    /** Format string for tick labels. */
+    public string TickFormat = "{0:N0}";
+
+    /** Tick local position offset. */
+    public Vector3 TickLocalOffset = Vector3.zero;
+
+    /** Tick local rotation (euler angles). */
+    public Vector3 TickLocalRotation = Vector3.zero;
+
+    /** Prefab used for a main tick. */
+    public GameObject MainTickPrefab;
+
+    /** Prefab used for a sub tick. */
+    public GameObject SubTickPrefab;
+
+
+    // Private properties
+    // ------------------------------------------------------------
+
+    /** Return value displayed at the low end of the gauge. */
+    private float LowValue
+        { get { return Value - VisibleRange * 0.5f; } }
+
+    /** Return value displayed at the high end of the gauge. */
+    private float HighValue
+        { get { return Value + VisibleRange * 0.5f; } }
+
+
+    // Members
+    // ------------------------------------------------------------
+
+    /** Collider, used for sizing. */
+    private Collider _collider;
+
+    /** Max width and height for the gauge (local space). */
+    private Vector2 _maxSize;
+
+    /** Scale factor used to convert from values to local space. */
+    private float _valueToLocalScale;
+
+    /** List of ticks used in the gauge. */
+    private readonly List<GameObject> _ticks = new List<GameObject>();
+
+    /** List of tick renderers used in the gauge. */
+    private readonly List<Renderer> _renderers = new List<Renderer>();
+
+    /** List of tick labels used in the gauge. */
+    private readonly List<widgetText> _labels = new List<widgetText>();
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Start()
+    {
+        // Initialize format string if needed.
+        if (string.IsNullOrEmpty(TickFormat))
+            TickFormat = "{0:N0}";
+
+        // Initialize sizing behaviour.
+        InitializeSizing();
+
+        // Create tick objects.
+        InitializeTicks();
+
+        // Perform an initial update.
+        Update();
+    }
+
+    /** Enabling. */
+    private void OnEnable()
+    {
+        Update();
+    }
+
+    /** Update. */
+    private void Update()
+    {
+        UpdateValue();
+        UpdateTicks();
+    }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Initialize sizing information. */
+    private void InitializeSizing()
+    {
+        if (!_collider)
+            _collider = GetComponent<Collider>();
+        if (!_collider)
+            return;
+
+        var min = transform.InverseTransformPoint(_collider.bounds.min);
+        var max = transform.InverseTransformPoint(_collider.bounds.max);
+        _maxSize = max - min;
+
+        // Compute spacing between ticks.
+        _valueToLocalScale = _maxSize.x / VisibleRange;
+    }
+
+    /** Initialize the tick objects. */
+    private void InitializeTicks()
+    {
+        // Determine the number of ticks that are visible.
+        var nMainTicks = Mathf.CeilToInt(VisibleRange / MainTickInterval) + 2;
+        var mainTickPeriod = Mathf.RoundToInt(MainTickInterval / SubTickInterval);
+        var nTicks = nMainTicks * mainTickPeriod;
+
+        // Create the tick collection.
+        for (var i = 0; i < nTicks; i++)
+        {
+            var prefab = SubTickPrefab;
+            if (i % mainTickPeriod == 0)
+                prefab = MainTickPrefab;
+
+            var tick = Instantiate(prefab);
+            tick.transform.parent = gameObject.transform;
+            tick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
+
+            _ticks.Add(tick);
+            _renderers.Add(tick.GetComponentInChildren<Renderer>());
+            _labels.Add(tick.GetComponentInChildren<widgetText>());
+        }
+    }
+
+    /** Update the value of this gauge. */
+    private void UpdateValue()
+    {
+        if (!string.IsNullOrEmpty(ServerQuantity))
+            Value = serverUtils.GetServerData(ServerQuantity);
+    }
+
+    /** Position ticks according to current value. */
+    private void UpdateTicks()
+    {
+        // Position ticks.
+        var value = GetInitialTickValue();
+        for (var i = 0; i < _ticks.Count; i++)
+        {
+            var tick = _ticks[i];
+            tick.transform.localPosition = ValueToLocal(value);
+            tick.SetActive(value >= LowValue && value <= HighValue);
+
+            if (_labels[i])
+            {
+                var c = _labels[i].Color;
+                _labels[i].Text = string.Format(TickFormat, value);
+                _labels[i].Color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
+            }
+
+            if (_renderers[i])
+            {
+                var c = _renderers[i].material.color;
+                _renderers[i].material.color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
+            }
+
+            value += SubTickInterval;
+        }
+    }
+
+    /** Compute the correct position in local space for a given value. */
+    private Vector3 ValueToLocal(float value)
+    {
+        var x = (value - Value) * _valueToLocalScale * (int) Direction;
+        return new Vector3(x, 0, 0) + TickLocalOffset;
+    }
+
+    /** Compute the correct alpha for a given tick value. */
+    private float ValueToAlpha(float value)
+    {
+        var f = Mathf.Abs((value - Value) / (VisibleRange * 0.5f));
+        var a = Mathf.Clamp01((1 - f) * 5);
+        return a;
+    }
+
+    /** Determine the gauge's starting tick value, given current gauge value. */
+    private float GetInitialTickValue()
+    {
+        return (Mathf.FloorToInt(LowValue / MainTickInterval) - 1) * MainTickInterval;
+    }
+
+
+}
