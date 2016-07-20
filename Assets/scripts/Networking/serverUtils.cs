@@ -381,7 +381,7 @@ namespace Meg.Networking
                         rValue = flInt.ToString();
                         break;
                     case "Co2":
-                        rValue = serverObject.GetComponent<serverData>().Co2.ToString();
+                        rValue = (serverObject.GetComponent<serverData>().Co2.ToString() + "%");
                         break;
                     case "waterTemp":
                         rValue = serverObject.GetComponent<serverData>().waterTemp.ToString();
@@ -556,6 +556,9 @@ namespace Meg.Networking
                         break;
                     case "mapEventName":
                         rValue = serverObject.GetComponent<mapData>().mapEventName;
+                        break;
+                    case "diveTime":
+                        rValue = (serverObject.GetComponent<serverData>().diveTimeHours + ":" + serverObject.GetComponent<serverData>().diveTimeMins + ":" + serverObject.GetComponent<serverData>().diveTimeSecs);
                         break;
                     default:
                         rValue = "no value";
