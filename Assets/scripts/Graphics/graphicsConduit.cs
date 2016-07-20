@@ -78,7 +78,7 @@ public class graphicsConduit : MonoBehaviour
         }
     }
 
-    public Vector2 _uvOffset = Vector2.one;
+    public Vector2 _uvOffset = Vector2.zero;
     public Vector2 UVOffset
     {
         get { return _uvOffset; }
