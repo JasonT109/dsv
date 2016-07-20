@@ -4,6 +4,8 @@ using Meg.Networking;
 
 public class widgetThrusterControl : MonoBehaviour {
 
+    [Header("Thruster Values")]
+
     public float thrusterMainL;
     public float thrusterMainR;
     public float thrusterSideL1;
@@ -16,52 +18,60 @@ public class widgetThrusterControl : MonoBehaviour {
     public float thrusterVectorAngleL;
     public float thrusterVectorAngleR;
 
+
+    [Header("Constraints")]
+
     public float maxVectorAngle = 30f;
+
+
+    [Header("Left Thrusters")]
 
     public GameObject tMainLPos;
     public GameObject tMainLNeg;
-    public GameObject tMainRPos;
-    public GameObject tMainRNeg;
-
     public GameObject tSideL1Pos;
     public GameObject tSideL1Neg;
-
     public GameObject tSideL2Pos;
     public GameObject tSideL2Neg;
-
     public GameObject tSideL3Pos;
     public GameObject tSideL3Neg;
 
+    public widgetText mainRPMTextL;
+    public widgetText mainPowerTextL;
+    public widgetText mainYawTextL;
+
+    public widgetText mainRPMTextSide1L;
+    public widgetText mainPowerTextSide1L;
+
+    public widgetText mainRPMTextSide2L;
+    public widgetText mainPowerTextSide2L;
+
+    public widgetText mainRPMTextSide3L;
+    public widgetText mainPowerTextSide3L;
+
+    [Header("Right Thrusters")]
+
+    public GameObject tMainRPos;
+    public GameObject tMainRNeg;
     public GameObject tSideR1Pos;
     public GameObject tSideR1Neg;
-
     public GameObject tSideR2Pos;
     public GameObject tSideR2Neg;
-
     public GameObject tSideR3Pos;
     public GameObject tSideR3Neg;
 
-    public TextMesh mainRPMTextL;
-    public TextMesh mainRPMTextR;
+    public widgetText mainRPMTextR;
+    public widgetText mainPowerTextR;
+    public widgetText mainYawTextR;
 
-    public TextMesh mainYawTextL;
-    public TextMesh mainYawTextR;
+    public widgetText mainRPMTextSide1R;
+    public widgetText mainPowerTextSide1R;
 
-    public TextMesh mainRPMTextSide1R;
-    public TextMesh mainRPMTextSide2R;
-    public TextMesh mainRPMTextSide3R;
+    public widgetText mainRPMTextSide2R;
+    public widgetText mainPowerTextSide2R;
 
-    public TextMesh mainRPMTextSide1L;
-    public TextMesh mainRPMTextSide2L;
-    public TextMesh mainRPMTextSide3L;
+    public widgetText mainRPMTextSide3R;
+    public widgetText mainPowerTextSide3R;
 
-    public TextMesh mainPowerTextSide1R;
-    public TextMesh mainPowerTextSide2R;
-    public TextMesh mainPowerTextSide3R;
-
-    public TextMesh mainPowerTextSide1L;
-    public TextMesh mainPowerTextSide2L;
-    public TextMesh mainPowerTextSide3L;
 
     private float inX;
     private float inY;
@@ -97,38 +107,43 @@ public class widgetThrusterControl : MonoBehaviour {
         thrusterVectorAngleR = inX * maxVectorAngle;
 
         if (mainRPMTextL)
-            mainRPMTextL.text = (Mathf.Abs(thrusterMainL * 50)).ToString("n0") + " rpm";
+            mainRPMTextL.Text = (Mathf.Abs(thrusterMainL * 50)).ToString("n0") + " rpm";
         if (mainRPMTextR)
-            mainRPMTextR.text = (Mathf.Abs(thrusterMainR * 50)).ToString("n0") + " rpm";
+            mainRPMTextR.Text = (Mathf.Abs(thrusterMainR * 50)).ToString("n0") + " rpm";
         if (mainYawTextL)
-            mainYawTextL.text = (thrusterVectorAngleL * 0.01f).ToString("n0") + "°";
+            mainYawTextL.Text = (thrusterVectorAngleL * 0.01f).ToString("n0") + "°";
         if (mainYawTextR)
-            mainYawTextR.text = (thrusterVectorAngleR * 0.01f).ToString("n0") + "°";
+            mainYawTextR.Text = (thrusterVectorAngleR * 0.01f).ToString("n0") + "°";
         if (mainRPMTextSide1L)
-            mainRPMTextSide1L.text = (Mathf.Abs(thrusterSideL1 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide1L.Text = (Mathf.Abs(thrusterSideL1 * 50f)).ToString("n0") + " rpm";
         if (mainRPMTextSide2L)
-            mainRPMTextSide2L.text = (Mathf.Abs(thrusterSideL2 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide2L.Text = (Mathf.Abs(thrusterSideL2 * 50f)).ToString("n0") + " rpm";
         if (mainRPMTextSide3L)
-            mainRPMTextSide3L.text = (Mathf.Abs(thrusterSideL3 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide3L.Text = (Mathf.Abs(thrusterSideL3 * 50f)).ToString("n0") + " rpm";
         if (mainRPMTextSide1R)
-            mainRPMTextSide1R.text = (Mathf.Abs(thrusterSideR1 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide1R.Text = (Mathf.Abs(thrusterSideR1 * 50f)).ToString("n0") + " rpm";
         if (mainRPMTextSide2R)
-            mainRPMTextSide2R.text = (Mathf.Abs(thrusterSideR2 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide2R.Text = (Mathf.Abs(thrusterSideR2 * 50f)).ToString("n0") + " rpm";
         if (mainRPMTextSide3R)
-            mainRPMTextSide3R.text = (Mathf.Abs(thrusterSideR3 * 50f)).ToString("n0") + " rpm";
+            mainRPMTextSide3R.Text = (Mathf.Abs(thrusterSideR3 * 50f)).ToString("n0") + " rpm";
 
+        if (mainPowerTextL)
+            mainPowerTextL.Text = (Mathf.Abs(thrusterMainL * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide1L)
-            mainPowerTextSide1L.text = (Mathf.Abs(thrusterSideL1 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide1L.Text = (Mathf.Abs(thrusterSideL1 * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide2L)
-            mainPowerTextSide2L.text = (Mathf.Abs(thrusterSideL2 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide2L.Text = (Mathf.Abs(thrusterSideL2 * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide3L)
-            mainPowerTextSide3L.text = (Mathf.Abs(thrusterSideL3 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide3L.Text = (Mathf.Abs(thrusterSideL3 * 1f)).ToString("n0") + " %";
+
+        if (mainPowerTextR)
+            mainPowerTextR.Text = (Mathf.Abs(thrusterMainR * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide1R)
-            mainPowerTextSide1R.text = (Mathf.Abs(thrusterSideR1 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide1R.Text = (Mathf.Abs(thrusterSideR1 * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide2R)
-            mainPowerTextSide2R.text = (Mathf.Abs(thrusterSideR2 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide2R.Text = (Mathf.Abs(thrusterSideR2 * 1f)).ToString("n0") + " %";
         if (mainPowerTextSide3R)
-            mainPowerTextSide3R.text = (Mathf.Abs(thrusterSideR3 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide3R.Text = (Mathf.Abs(thrusterSideR3 * 1f)).ToString("n0") + " %";
 
         if (thrusterMainL >= 0)
         {
