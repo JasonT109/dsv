@@ -11,16 +11,20 @@ public class graphicsBackColor : MonoBehaviour
     public bool useBackgroundColor = true;
     public bool useHighlightColor = false;
 
+    public float BrightnessScale = 1;
+    public float BrightnessMin = 0;
+
     public void updateColor()
     {
         if (useBackgroundColor)
         {
-            m.color = bColor;
+            m.color = AdjustColor(bColor);
         }
         if (useHighlightColor)
         {
-            m.color = hColor;
-            m.SetColor("_TintColor", hColor);
+            var color = AdjustColor(hColor);
+            m.color = color;
+            m.SetColor("_TintColor", color);
         }
     }
 
@@ -40,6 +44,18 @@ public class graphicsBackColor : MonoBehaviour
             bColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.backgroundColor;
             hColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.highlightColor;
             updateColor();
+        }
+    }
+
+    private Color AdjustColor(Color c)
+    {
+        if (BrightnessScale == 1 && BrightnessMin <= 0)
+            return c;
+        else
+        {
+            var hsb = HSBColor.FromColor(c);
+            hsb.b = Mathf.Max(BrightnessMin, hsb.b * BrightnessScale);
+            return hsb.ToColor();
         }
     }
 }

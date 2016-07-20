@@ -94,9 +94,9 @@ public class widgetText : MonoBehaviour
     {
         // Look for text components.
         if (!TextMesh)
-            TextMesh = GetComponent<TextMesh>();
+            TextMesh = GetComponentInChildren<TextMesh>();
         if (!DynamicText && !TextMesh)
-            DynamicText = GetComponent<DynamicText>();
+            DynamicText = GetComponentInChildren<DynamicText>();
 
         // Initialize sizing behaviour.
         InitializeSizing();
