@@ -31,6 +31,9 @@ public class HUDLinearGauge : MonoBehaviour
     /** Maximum value. */
     public float MaxValue = 100;
 
+    /** Whether to wrap value around if it exceeds the max value. */
+    public bool Wrap;
+
     /** Current value. */
     public float Value;
 
@@ -42,6 +45,9 @@ public class HUDLinearGauge : MonoBehaviour
 
     /** Direction of the gauge values. */
     public LinearGaugeDirection Direction = LinearGaugeDirection.LowToHigh;
+
+    /** Amount of smoothing for gauge movement (seconds to reach target). */
+    public float SmoothTime = 0;
 
 
     [Header("Ticks")]
@@ -73,15 +79,21 @@ public class HUDLinearGauge : MonoBehaviour
 
     /** Return value displayed at the low end of the gauge. */
     private float LowValue
-        { get { return Value - VisibleRange * 0.5f; } }
+        { get { return _smoothed - VisibleRange * 0.5f; } }
 
     /** Return value displayed at the high end of the gauge. */
     private float HighValue
-        { get { return Value + VisibleRange * 0.5f; } }
+        { get { return _smoothed + VisibleRange * 0.5f; } }
 
 
     // Members
     // ------------------------------------------------------------
+
+    /** Gauge's currently displayed value (smoothly follows actual value). */
+    private float _smoothed;
+
+    /** Velocity for smoothing. */
+    private float _smoothedVelocity;
 
     /** Collider, used for sizing. */
     private Collider _collider;
@@ -119,19 +131,21 @@ public class HUDLinearGauge : MonoBehaviour
         InitializeTicks();
 
         // Perform an initial update.
-        Update();
+        UpdateValue(0);
+        UpdateTicks();
     }
 
     /** Enabling. */
     private void OnEnable()
     {
-        Update();
+        UpdateValue(0);
+        UpdateTicks();
     }
 
     /** Update. */
     private void Update()
     {
-        UpdateValue();
+        UpdateValue(SmoothTime);
         UpdateTicks();
     }
 
@@ -181,10 +195,15 @@ public class HUDLinearGauge : MonoBehaviour
     }
 
     /** Update the value of this gauge. */
-    private void UpdateValue()
+    private void UpdateValue(float smoothTime)
     {
         if (!string.IsNullOrEmpty(ServerQuantity))
             Value = serverUtils.GetServerData(ServerQuantity);
+
+        if (smoothTime > 0)
+            _smoothed = Mathf.SmoothDamp(_smoothed, Value, ref _smoothedVelocity, smoothTime);
+        else
+            _smoothed = Value;
     }
 
     /** Position ticks according to current value. */
@@ -211,21 +230,21 @@ public class HUDLinearGauge : MonoBehaviour
                 _renderers[i].material.color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
             }
 
-            value += SubTickInterval;
+            value = ConstrainValue(value + SubTickInterval);
         }
     }
 
     /** Compute the correct position in local space for a given value. */
     private Vector3 ValueToLocal(float value)
     {
-        var x = (value - Value) * _valueToLocalScale * (int) Direction;
+        var x = (value - _smoothed) * _valueToLocalScale * (int) Direction;
         return new Vector3(x, 0, 0) + TickLocalOffset;
     }
 
     /** Compute the correct alpha for a given tick value. */
     private float ValueToAlpha(float value)
     {
-        var f = Mathf.Abs((value - Value) / (VisibleRange * 0.5f));
+        var f = Mathf.Abs((value - _smoothed) / (VisibleRange * 0.5f));
         var a = Mathf.Clamp01((1 - f) * 5);
         return a;
     }
@@ -233,7 +252,17 @@ public class HUDLinearGauge : MonoBehaviour
     /** Determine the gauge's starting tick value, given current gauge value. */
     private float GetInitialTickValue()
     {
-        return (Mathf.FloorToInt(LowValue / MainTickInterval) - 1) * MainTickInterval;
+        var raw = (Mathf.FloorToInt(LowValue / MainTickInterval) - 1) * MainTickInterval;
+        return ConstrainValue(raw);
+    }
+
+    /** Constrain value to legal range. */
+    private float ConstrainValue(float value)
+    {
+        if (Wrap)
+            return MinValue + Mathf.Repeat(value - MinValue, MaxValue - MinValue);
+
+        return value;
     }
 
 

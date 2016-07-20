@@ -38,6 +38,7 @@ public class widgetThrusterControl : MonoBehaviour {
     public widgetText mainRPMTextL;
     public widgetText mainPowerTextL;
     public widgetText mainYawTextL;
+    public HUDLinearGauge mainYawGaugeL;
 
     public widgetText mainRPMTextSide1L;
     public widgetText mainPowerTextSide1L;
@@ -62,6 +63,7 @@ public class widgetThrusterControl : MonoBehaviour {
     public widgetText mainRPMTextR;
     public widgetText mainPowerTextR;
     public widgetText mainYawTextR;
+    public HUDLinearGauge mainYawGaugeR;
 
     public widgetText mainRPMTextSide1R;
     public widgetText mainPowerTextSide1R;
@@ -105,6 +107,11 @@ public class widgetThrusterControl : MonoBehaviour {
         //assign the values to text objects
         thrusterVectorAngleL = inX * maxVectorAngle;
         thrusterVectorAngleR = inX * maxVectorAngle;
+
+	    if (mainYawGaugeL)
+	        mainYawGaugeL.Value = thrusterVectorAngleL * 0.01f;
+        if (mainYawGaugeR)
+            mainYawGaugeR.Value = thrusterVectorAngleR * 0.01f;
 
         if (mainRPMTextL)
             mainRPMTextL.Text = (Mathf.Abs(thrusterMainL * 50)).ToString("n0") + " rpm";
