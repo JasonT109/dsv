@@ -62,6 +62,9 @@ public class vesselIntercept : vesselMovement
     /** Smoothing for reported velocity. */
     private float _speedSmoothingVelocity;
 
+    /** Whether intercept was previously running. */
+    private float _lastTimeToIntercept;
+
 
     // Load / Save
     // ------------------------------------------------------------
@@ -96,8 +99,8 @@ public class vesselIntercept : vesselMovement
     protected override void UpdateMovement()
     {
         // Determine if we've intercepted the target.
-        if (TimeToIntercept <= 0)
-            return;
+        var last = _lastTimeToIntercept;
+        _lastTimeToIntercept = TimeToIntercept;
 
         // Get the vessel's current state.
         Vector3 position;
@@ -118,6 +121,14 @@ public class vesselIntercept : vesselMovement
             predicted.y *= 0.001f;
             interceptPosition += predicted;
         }
+
+        // Stop the player vessel on a dime when intercept ends.
+        if (last > 0 && TimeToIntercept <= 0)
+            SetVesselState(position, Vector3.zero, 0);
+
+        // If interception is complete, we're done.
+        if (TimeToIntercept <= 0)
+            return;
 
         // Determine distance to target, taking map-space into account.
         var delta = (interceptPosition - position);
@@ -142,7 +153,7 @@ public class vesselIntercept : vesselMovement
         // Clamp reported velocity to the vessel's rated top-speed.
         // Add in some random noise when intercepting to make the speed look nice.
         var targetSpeed = requiredSpeed;
-        if (TimeToIntercept <= SpeedSmoothTime)
+        if (TimeToIntercept <= 0)
             targetSpeed = 0;
         else if (!AutoSpeed && distance <= InterceptAchievedDistance)
             targetSpeed = 0;
