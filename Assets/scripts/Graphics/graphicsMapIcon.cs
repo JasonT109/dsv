@@ -18,7 +18,6 @@ public class graphicsMapIcon : MonoBehaviour {
     public Vector3 lowerRightPos = new Vector3(0.22f, 0.53f, 0.4f);
     public Vector3 lowPos = new Vector3(0.62f, 0.13f, 0.4f);
 
-
 	void Update ()
     {
 	    if (atBounds)
@@ -62,7 +61,10 @@ public class graphicsMapIcon : MonoBehaviour {
                     {
                         label.anchor = TextAnchor.UpperLeft;
                     }
-                    label.transform.localPosition = upPos;
+                    if (transform.localPosition.x < 0)
+                        label.transform.localPosition = upperLeftPos;
+                    else
+                        label.transform.localPosition = upperRightPos;
                     break;
                 case 4:
                     //4 up right
@@ -98,7 +100,10 @@ public class graphicsMapIcon : MonoBehaviour {
                     {
                         label.anchor = TextAnchor.LowerLeft;
                     }
-                    label.transform.localPosition = lowPos;
+                    if (transform.localPosition.x < 0)
+                        label.transform.localPosition = lowerLeftPos;
+                    else
+                        label.transform.localPosition = lowerRightPos;
                     break;
                 case 8:
                     //8 down left
