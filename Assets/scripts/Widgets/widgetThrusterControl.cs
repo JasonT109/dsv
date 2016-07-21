@@ -2,7 +2,21 @@ using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-public class widgetThrusterControl : MonoBehaviour {
+public class widgetThrusterControl : MonoBehaviour
+{
+
+    public enum ThrusterId
+    {
+        MainL,
+        MainR,
+        SideL1,
+        SideL2,
+        SideL3,
+        SideR1,
+        SideR2,
+        SideR3
+    }
+
 
     [Header("Thruster Values")]
 
@@ -75,6 +89,10 @@ public class widgetThrusterControl : MonoBehaviour {
     public widgetText mainPowerTextSide3R;
 
 
+    [Header("Appearance")]
+
+    public Gradient LightGradient;
+
     private float inX;
     private float inY;
     private float inZ;
@@ -83,6 +101,32 @@ public class widgetThrusterControl : MonoBehaviour {
     void OnEnable()
     {
         Update();
+    }
+
+
+    public float GetThrusterLevel(ThrusterId thruster)
+    {
+        switch (thruster)
+        {
+            case ThrusterId.MainL:
+                return thrusterMainL;
+            case ThrusterId.MainR:
+                return thrusterMainR;
+            case ThrusterId.SideL1:
+                return thrusterSideL1;
+            case ThrusterId.SideL2:
+                return thrusterSideL2;
+            case ThrusterId.SideL3:
+                return thrusterSideL3;
+            case ThrusterId.SideR1:
+                return thrusterSideR1;
+            case ThrusterId.SideR2:
+                return thrusterSideR2;
+            case ThrusterId.SideR3:
+                return thrusterSideR3;
+            default:
+                return 0;
+        }
     }
 	
 	// Update is called once per frame
