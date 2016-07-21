@@ -65,6 +65,8 @@ public class serverData : NetworkBehaviour
     public float diveTimeSecs;
     [SyncVar]
     public float commsSignalStrength;
+    [SyncVar]
+    public float divertPowerToThrusters;
 
     #endregion
     #region PublicVars
@@ -380,6 +382,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "posZ":
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
+                break;
+            case "commsSignalStrength":
+                commsSignalStrength = newValue;
+                break;
+            case "divertPowerToThrusters":
+                divertPowerToThrusters = newValue;
                 break;
         }
     }

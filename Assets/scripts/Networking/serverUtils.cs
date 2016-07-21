@@ -224,6 +224,9 @@ namespace Meg.Networking
                     case "commsSignalStrength":
                         rValue = serverObject.GetComponent<serverData>().commsSignalStrength;
                         break;
+                    case "divertPowerToThrusters":
+                        rValue = serverObject.GetComponent<serverData>().divertPowerToThrusters;
+                        break;
                     case "crewHeartRate1":
                         rValue = serverObject.GetComponent<crewData>().crewHeartRate1;
                         break;
@@ -481,6 +484,9 @@ namespace Meg.Networking
                         break;
                     case "commsSignalStrength":
                         rValue = serverObject.GetComponent<serverData>().commsSignalStrength.ToString("n1");
+                        break;
+                    case "divertPowerToThrusters":
+                        rValue = serverObject.GetComponent<serverData>().divertPowerToThrusters.ToString("n1");
                         break;
                     case "crewHeartRate1":
                         rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1");
