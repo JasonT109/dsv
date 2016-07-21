@@ -14,7 +14,8 @@ public class widgetThrusterControl : MonoBehaviour
         SideL3,
         SideR1,
         SideR2,
-        SideR3
+        SideR3,
+        MainShared
     }
 
 
@@ -92,6 +93,7 @@ public class widgetThrusterControl : MonoBehaviour
     [Header("Appearance")]
 
     public Gradient LightGradient;
+    public Gradient PowerGradient;
 
     private float inX;
     private float inY;
@@ -103,32 +105,6 @@ public class widgetThrusterControl : MonoBehaviour
         Update();
     }
 
-
-    public float GetThrusterLevel(ThrusterId thruster)
-    {
-        switch (thruster)
-        {
-            case ThrusterId.MainL:
-                return thrusterMainL;
-            case ThrusterId.MainR:
-                return thrusterMainR;
-            case ThrusterId.SideL1:
-                return thrusterSideL1;
-            case ThrusterId.SideL2:
-                return thrusterSideL2;
-            case ThrusterId.SideL3:
-                return thrusterSideL3;
-            case ThrusterId.SideR1:
-                return thrusterSideR1;
-            case ThrusterId.SideR2:
-                return thrusterSideR2;
-            case ThrusterId.SideR3:
-                return thrusterSideR3;
-            default:
-                return 0;
-        }
-    }
-	
 	// Update is called once per frame
 	void Update ()
     {
@@ -316,4 +292,32 @@ public class widgetThrusterControl : MonoBehaviour
                 tSideR3Neg.GetComponent<digital_gauge>().value = -(int)thrusterSideR3;
         }
     }
+
+    public float GetThrusterLevel(ThrusterId thruster)
+    {
+        switch (thruster)
+        {
+            case ThrusterId.MainL:
+                return thrusterMainL;
+            case ThrusterId.MainR:
+                return thrusterMainR;
+            case ThrusterId.SideL1:
+                return thrusterSideL1;
+            case ThrusterId.SideL2:
+                return thrusterSideL2;
+            case ThrusterId.SideL3:
+                return thrusterSideL3;
+            case ThrusterId.SideR1:
+                return thrusterSideR1;
+            case ThrusterId.SideR2:
+                return thrusterSideR2;
+            case ThrusterId.SideR3:
+                return thrusterSideR3;
+            case ThrusterId.MainShared:
+                return Mathf.Max(thrusterMainL, thrusterMainR);
+            default:
+                return 0;
+        }
+    }
+
 }

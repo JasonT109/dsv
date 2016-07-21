@@ -27,10 +27,6 @@ public class ThrusterConduits : MonoBehaviour
     public widgetPowerConduit DivertL;
     public widgetPowerConduit DivertR;
 
-    [Header("Appearance")]
-
-    public Gradient PowerGradient;
-
     public float SmoothTime = 0.25f;
 
     /** Smoothing velocities for the various power conduits. */
@@ -87,7 +83,7 @@ public class ThrusterConduits : MonoBehaviour
         _smoothingVelocities[conduit] = velocity;
 
         conduit.Value = value;
-        conduit.InactiveColor = PowerGradient.Evaluate(value * 0.01f);
-        conduit.ActiveColor = PowerGradient.Evaluate(value * 0.01f);
+        conduit.InactiveColor = Control.PowerGradient.Evaluate(value * 0.01f);
+        conduit.ActiveColor = Control.PowerGradient.Evaluate(value * 0.01f);
     }
 }
