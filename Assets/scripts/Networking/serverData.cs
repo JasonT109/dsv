@@ -571,14 +571,15 @@ public class serverData : NetworkBehaviour
         yawAngle = yawResult;
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
-        depth = -transform.position.y;
+        depth = Mathf.Max(0, -transform.position.y);
+        floorDistance = Mathf.Max(0, 10994 - depth);
         battery = GetBatteryTotal();
         oxygen = GetOxygenTotal();
         dueTimeSecs -= Time.deltaTime;
         diveTimeSecs += Time.deltaTime;
         verticalVelocity = rb.velocity.y;
         horizontalVelocity = rb.velocity.x;
-        floorDistance = 10994 - depth;
+
         if (dueTimeSecs < 0)
         {
             dueTimeSecs = 59.0f + dueTimeSecs;
