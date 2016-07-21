@@ -13,6 +13,10 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public string mapEventName;
     [SyncVar]
+    public float latitude = 18.553059f;
+    [SyncVar]
+    public float longitude = 112.244285f;
+    [SyncVar]
     public Vector3 vessel1Pos = new Vector3(-1f, -0.5f, 2000f);
     [SyncVar]
     public Vector3 vessel2Pos = new Vector3(-2f, 2f, 8900f);

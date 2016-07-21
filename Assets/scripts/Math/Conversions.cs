@@ -15,4 +15,6 @@ public class Conversions
 
     public const float MetresPerSecondToMetersPerMin = 60;
 
+    public const double EarthRadius = 6378137.0;
+
 }

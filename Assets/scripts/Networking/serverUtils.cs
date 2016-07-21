@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using Meg.Graphics;
@@ -338,6 +339,12 @@ namespace Meg.Networking
                     case "initiateMapEvent":
                         rValue = serverObject.GetComponent<mapData>().initiateMapEvent;
                         break;
+                    case "latitude":
+                        rValue = serverObject.GetComponent<mapData>().latitude;
+                        break;
+                    case "longitude":
+                        rValue = serverObject.GetComponent<mapData>().longitude;
+                        break;
                     default:
                         rValue = 50;
                         break;
@@ -566,6 +573,12 @@ namespace Meg.Networking
                     case "diveTime":
                         rValue = (serverObject.GetComponent<serverData>().diveTimeHours + ":" + serverObject.GetComponent<serverData>().diveTimeMins + ":" + serverObject.GetComponent<serverData>().diveTimeSecs);
                         break;
+                    case "latitude":
+                        rValue = FormatLatitude(serverObject.GetComponent<mapData>().latitude);
+                        break;
+                    case "longitude":
+                        rValue = FormatLongitude(serverObject.GetComponent<mapData>().longitude);
+                        break;
                     default:
                         rValue = "no value";
                         break;
@@ -669,7 +682,6 @@ namespace Meg.Networking
             if (vessel <= 0)
                 return 0;
 
-            // TODO: Check math on this one.
             var origin = GetVesselPosition(GetPlayerVessel());
             var target = GetVesselPosition(vessel);
             var heading = GetServerData("heading");
@@ -677,7 +689,6 @@ namespace Meg.Networking
             var spherical = new SphericalCoordinates(delta);
             var headingToTarget = (90 - spherical.polar * Mathf.Rad2Deg);
             var bearing = headingToTarget - heading;
-
             return Mathf.Repeat(bearing, 360);
         }
 
@@ -702,6 +713,21 @@ namespace Meg.Networking
             var a = GetVesselPosition(from); a.x *= 1000; a.y *= 1000;
             var b = GetVesselPosition(to); b.x *= 1000; b.y *= 1000;
             return Vector3.Distance(a, b);
+        }
+
+        public static Vector2 GetVesselLatLong(int vessel)
+        {
+            var position = GetVesselPosition(vessel);
+            var dx = position.x * 1000;
+            var dy = position.y * 1000;
+
+            double latitude = GetServerData("latitude");
+            double longitude = GetServerData("longitude");
+
+            latitude = latitude + (dy / Conversions.EarthRadius) * (180 / Math.PI);
+            longitude = longitude + (dx / Conversions.EarthRadius) * (180 / Math.PI) / Math.Cos(latitude * Math.PI / 180);
+
+            return new Vector2((float) longitude, (float) latitude);
         }
 
         public static float[] GetVesselData(int vessel)
@@ -862,5 +888,22 @@ namespace Meg.Networking
 
             return outID;
         }
+
+        public static string FormatLatitude(float value, int precision = 4)
+            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "N" : "S"); }
+
+        public static string FormatLongitude(float value, int precision = 4)
+            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "E" : "W"); }
+
+        public static string FormatDegreeMinuteSecond(float value, int precision = 4)
+        {
+            var degrees = Mathf.FloorToInt(value);
+            var minutes = Mathf.FloorToInt((value * 60) % 60);
+            var seconds = Mathf.Abs(value * 3600) % 60;
+
+            return string.Format("{0}°{1}\'{2:N" + precision + "}\"", degrees, minutes, seconds);
+        }
+
     }
+
 }

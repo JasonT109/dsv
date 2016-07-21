@@ -82,11 +82,9 @@ public class InstrumentsTextValues : MonoBehaviour
     private string GetAcousticNavigationDataValues()
     {
         // TODO: Implement.
-        var latitude = "-";
-        var longitude = "-";
-
         var playerVessel = serverUtils.GetPlayerVessel();
         var playerPos = serverUtils.GetVesselPosition(playerVessel);
+        var latlong = serverUtils.GetVesselLatLong(playerVessel);
         var playerX = playerPos.x * 1000;
         var playerY = playerPos.y * 1000;
         var targetVessel = serverUtils.GetTargetVessel();
@@ -103,8 +101,8 @@ public class InstrumentsTextValues : MonoBehaviour
 
         return string.Format("{0:N0}", playerX) + "\n"
             + string.Format("{0:N0}", playerY) + "\n"
-            + latitude + "\n"
-            + longitude + "\n"
+            + serverUtils.FormatLatitude(latlong.y, 1) + "\n"
+            + serverUtils.FormatLongitude(latlong.x, 1) + "\n"
             + (hasTarget ? string.Format("{0:N0}", targetBearing) : "-") + "\n"
             + (hasTarget ? string.Format("{0:N0}", targetRange) : "-") + "\n"
             + (hasTarget ? string.Format("{0:N0}", targetX) : "-") + "\n"

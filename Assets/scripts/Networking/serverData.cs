@@ -389,6 +389,12 @@ public class serverData : NetworkBehaviour
             case "divertPowerToThrusters":
                 divertPowerToThrusters = newValue;
                 break;
+            case "latitude":
+                gameObject.GetComponent<mapData>().latitude = newValue;
+                break;
+            case "longitude":
+                gameObject.GetComponent<mapData>().longitude = newValue;
+                break;
         }
     }
 

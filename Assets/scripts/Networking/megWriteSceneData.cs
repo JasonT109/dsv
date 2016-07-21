@@ -79,6 +79,8 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("vessel5Data", addVessel(5));
         j.AddField("vessel6Data", addVessel(6));
         j.AddField("vesselMovements", serverUtils.GetVesselMovements().Save());
+        j.AddField("latitude", serverUtils.GetServerData("latitude"));
+        j.AddField("longitude", serverUtils.GetServerData("latitude"));
 
         jsonData.megSaveJSONData(filePath + "Scene_" + sceneNumber.text + @"\", saveFile, j);
 
