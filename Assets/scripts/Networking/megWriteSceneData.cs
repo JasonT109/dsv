@@ -71,6 +71,7 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("crewBodyTemp5", serverUtils.GetServerData("crewBodyTemp5"));
         j.AddField("crewBodyTemp6", serverUtils.GetServerData("crewBodyTemp6"));
         j.AddField("commsSignalStrength", serverUtils.GetServerData("commsSignalStrength"));
+        j.AddField("divertPowerToThrusters", serverUtils.GetServerData("divertPowerToThrusters"));
         j.AddField("vessel1Data", addVessel(1));
         j.AddField("vessel2Data", addVessel(2));
         j.AddField("vessel3Data", addVessel(3));
@@ -78,6 +79,8 @@ public class megWriteSceneData : MonoBehaviour
         j.AddField("vessel5Data", addVessel(5));
         j.AddField("vessel6Data", addVessel(6));
         j.AddField("vesselMovements", serverUtils.GetVesselMovements().Save());
+        j.AddField("latitude", serverUtils.GetServerData("latitude"));
+        j.AddField("longitude", serverUtils.GetServerData("latitude"));
 
         jsonData.megSaveJSONData(filePath + "Scene_" + sceneNumber.text + @"\", saveFile, j);
 

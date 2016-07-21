@@ -65,6 +65,8 @@ public class serverData : NetworkBehaviour
     public float diveTimeSecs;
     [SyncVar]
     public float commsSignalStrength;
+    [SyncVar]
+    public float divertPowerToThrusters;
 
     #endregion
     #region PublicVars
@@ -381,6 +383,18 @@ public class serverData : NetworkBehaviour
             case "posZ":
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
+            case "commsSignalStrength":
+                commsSignalStrength = newValue;
+                break;
+            case "divertPowerToThrusters":
+                divertPowerToThrusters = newValue;
+                break;
+            case "latitude":
+                gameObject.GetComponent<mapData>().latitude = newValue;
+                break;
+            case "longitude":
+                gameObject.GetComponent<mapData>().longitude = newValue;
+                break;
         }
     }
 
@@ -563,14 +577,15 @@ public class serverData : NetworkBehaviour
         yawAngle = yawResult;
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
-        depth = -transform.position.y;
+        depth = Mathf.Max(0, -transform.position.y);
+        floorDistance = Mathf.Max(0, 10994 - depth);
         battery = GetBatteryTotal();
         oxygen = GetOxygenTotal();
         dueTimeSecs -= Time.deltaTime;
         diveTimeSecs += Time.deltaTime;
         verticalVelocity = rb.velocity.y;
         horizontalVelocity = rb.velocity.x;
-        floorDistance = 10994 - depth;
+
         if (dueTimeSecs < 0)
         {
             dueTimeSecs = 59.0f + dueTimeSecs;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class graphicsRotateObject : MonoBehaviour
 {
@@ -17,6 +17,7 @@ public class graphicsRotateObject : MonoBehaviour
     public float multiplier = 1.0f;
     private float value = 0f;
     public int axis = 0;
+    public bool local;
 
 	void Update ()
     {
@@ -60,13 +61,20 @@ public class graphicsRotateObject : MonoBehaviour
         {
             value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterVectorAngleR;
         }
+
         if (mainLVector)
         {
-            gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0, -value * 0.01f, 0), Time.deltaTime * multiplier);
+            if (local)
+                gameObject.transform.localRotation = Quaternion.Lerp(gameObject.transform.localRotation, Quaternion.Euler(0, -value * 0.01f, 0), Time.deltaTime * multiplier);
+            else
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0, -value * 0.01f, 0), Time.deltaTime * multiplier);
         }
         else if (mainRVector)
         {
-            gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0, value * 0.01f, 0), Time.deltaTime * multiplier);
+            if (local)
+                gameObject.transform.localRotation = Quaternion.Lerp(gameObject.transform.localRotation, Quaternion.Euler(0, -value * 0.01f, 0), Time.deltaTime * multiplier);
+            else
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0, -value * 0.01f, 0), Time.deltaTime * multiplier);
         }
         else
         {
