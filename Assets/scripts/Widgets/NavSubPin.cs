@@ -150,7 +150,7 @@ public class NavSubPin : MonoBehaviour
             vesselHeightIndicator.transform.localPosition =
                 new Vector3(mapPos.x + LineXOffset,
                     vesselHeightIndicator.transform.localPosition.y,
-                    vesselHeightIndicator.transform.localPosition.z + 1);
+                    vesselHeightIndicator.transform.localPosition.z + 0.1f);
         }
 
         // Update the height indicator's length.

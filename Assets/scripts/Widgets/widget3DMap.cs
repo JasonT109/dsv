@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using TouchScript.Gestures;
@@ -129,8 +129,8 @@ public class widget3DMap : MonoBehaviour {
     void UpdateMap()
     {
         //get the view angle slider value
-        float viewAngle = viewAngleSlider.GetComponent<sliderWidget>().returnValue;
-
+        var slider = viewAngleSlider.GetComponent<sliderWidget>();
+        var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
 
         //get current zoom level from camera
