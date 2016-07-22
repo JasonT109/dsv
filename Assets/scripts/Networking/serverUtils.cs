@@ -7,15 +7,21 @@ namespace Meg.Networking
 {
     public class serverUtils : MonoBehaviour
     {
+
+        public static GameObject GetServerObject()
+        {
+            return GameObject.FindWithTag("ServerData");
+        }
+
         public static bool IsReady()
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             return serverObject != null;
         }
 
         public static float GetServerData(string valueName)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             float rValue = 0f;
             if (serverObject != null)
             {
@@ -355,7 +361,7 @@ namespace Meg.Networking
 
         public static string GetServerDataAsText(string valueName)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             string rValue = "no value";
             if (serverObject != null)
             {
@@ -589,7 +595,7 @@ namespace Meg.Networking
 
         public static void SetServerBool(string boolName, bool value)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             if (serverObject == null)
             {
@@ -603,28 +609,28 @@ namespace Meg.Networking
 
         public static void SetServerData(string valueName, float value)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             serverObject.GetComponent<serverData>().OnValueChanged(valueName, value);
         }
 
         public static void SetBatteryData(int bank, float value)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             serverObject.GetComponent<serverData>().OnBatterySliderChanged(bank, value);
         }
 
         public static void SetOxygenData(int bank, float value)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             serverObject.GetComponent<serverData>().OnOxygenSliderChanged(bank, value);
         }
 
         public static void SetVesselData(int vessel, Vector3 pos, float vesselVelocity)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
@@ -734,7 +740,7 @@ namespace Meg.Networking
         {
             //get vessels map space position
 
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             float[] vesselData = new float[4];
 
@@ -783,13 +789,13 @@ namespace Meg.Networking
 
         public static vesselMovements GetVesselMovements()
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             return serverObject ? serverObject.GetComponent<vesselMovements>() : null;
         }
 
         public static void SetPlayerVessel(int vessel)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             //Debug.Log("Setting player vessel to: " + vessel);
             if (serverObject != null)
@@ -798,7 +804,7 @@ namespace Meg.Networking
 
         public static int GetPlayerVessel()
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             if (!serverObject)
                 return 0;
 
@@ -807,14 +813,14 @@ namespace Meg.Networking
 
         public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             if (serverObject != null)
                 serverObject.GetComponent<serverData>().SetPlayerWorldVelocity(velocity);
         }
 
         public static bool GetVesselVis(int vessel)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             if (serverObject == null)
                 return false;
 
@@ -847,14 +853,14 @@ namespace Meg.Networking
 
         public static void SetVesselVis(int vessel, bool state)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             serverObject.GetComponent<serverData>().SetPlayerVisibility(vessel, state);
         }
 
         public static void SetColorTheme(megColorTheme theme)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
             if (serverObject == null)
                 return;
 
@@ -866,7 +872,7 @@ namespace Meg.Networking
 
         public static megColorTheme GetColorTheme()
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             megColorTheme theme = new megColorTheme();
             if (serverObject)
@@ -877,7 +883,7 @@ namespace Meg.Networking
 
         public static int getGliderScreen(int screenID)
         {
-            GameObject serverObject = GameObject.FindWithTag("ServerData");
+            GameObject serverObject = GetServerObject();
 
             int outID = 0;
 

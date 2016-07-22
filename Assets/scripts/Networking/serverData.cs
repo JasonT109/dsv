@@ -150,6 +150,10 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    public delegate void ValueChangeHandler(string valueName, float newValue);
+
+    public ValueChangeHandler ValueChangedEvent;
+
     public void OnValueChanged(string valueName, float newValue)
     {
         //Debug.Log("Setting server data: " + valueName + " to: " + newValue);
@@ -396,6 +400,9 @@ public class serverData : NetworkBehaviour
                 gameObject.GetComponent<mapData>().longitude = newValue;
                 break;
         }
+
+        if (ValueChangedEvent != null)
+            ValueChangedEvent(valueName, newValue);
     }
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
