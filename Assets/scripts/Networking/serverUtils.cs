@@ -8,348 +8,410 @@ namespace Meg.Networking
     public class serverUtils : MonoBehaviour
     {
 
-        public static GameObject GetServerObject()
+        // Static Properties
+        // ------------------------------------------------------------
+
+        private static GameObject _serverObject;
+        public static GameObject ServerObject
         {
-            return GameObject.FindWithTag("ServerData");
+            get
+            {
+                if (!_serverObject)
+                    _serverObject = GameObject.FindWithTag("ServerData");
+
+                return _serverObject;
+            }
         }
+
+        private static serverData _serverData;
+        public static serverData ServerData
+        {
+            get
+            {
+                if (!_serverData && ServerObject)
+                    _serverData = ServerObject.GetComponent<serverData>();
+
+                return _serverData;
+            }
+        }
+
+        private static errorData _errorData;
+        public static errorData ErrorData
+        {
+            get
+            {
+                if (!_errorData && ServerObject)
+                    _errorData = ServerObject.GetComponent<errorData>();
+
+                return _errorData;
+            }
+        }
+
+        private static mapData _mapData;
+        public static mapData MapData
+        {
+            get
+            {
+                if (!_mapData && ServerObject)
+                    _mapData = ServerObject.GetComponent<mapData>();
+
+                return _mapData;
+            }
+        }
+
+
+        private static crewData _crewData;
+        public static crewData CrewData
+        {
+            get
+            {
+                if (!_crewData && ServerObject)
+                    _crewData = ServerObject.GetComponent<crewData>();
+
+                return _crewData;
+            }
+        }
+
+
+
+        // Static Methods
+        // ------------------------------------------------------------
 
         public static bool IsReady()
         {
-            GameObject serverObject = GetServerObject();
-            return serverObject != null;
+            return ServerObject != null;
         }
 
         public static float GetServerData(string valueName)
         {
-            GameObject serverObject = GetServerObject();
             float rValue = 0f;
-            if (serverObject != null)
+            if (ServerObject != null)
             {
                 switch (valueName)
                 {
                     case "depth":
-                        rValue = serverObject.GetComponent<serverData>().depth;
+                        rValue = ServerData.depth;
                         break;
                     case "xPos":
-                        rValue = serverObject.transform.position.x;
+                        rValue = ServerObject.transform.position.x;
                         break;
                     case "zPos":
-                        rValue = serverObject.transform.position.z;
+                        rValue = ServerObject.transform.position.z;
                         break;
                     case "pressure":
-                        rValue = serverObject.GetComponent<serverData>().pressure;
+                        rValue = ServerData.pressure;
                         break;
                     case "cabinPressure":
-                        rValue = serverObject.GetComponent<serverData>().cabinPressure;
+                        rValue = ServerData.cabinPressure;
                         break;
                     case "heading":
-                        rValue = serverObject.GetComponent<serverData>().heading;
+                        rValue = ServerData.heading;
                         break;
                     case "pitchAngle":
-                        rValue = serverObject.GetComponent<serverData>().pitchAngle;
+                        rValue = ServerData.pitchAngle;
                         break;
                     case "yawAngle":
-                        rValue = serverObject.GetComponent<serverData>().yawAngle;
+                        rValue = ServerData.yawAngle;
                         break;
                     case "rollAngle":
-                        rValue = serverObject.GetComponent<serverData>().rollAngle;
+                        rValue = ServerData.rollAngle;
                         break;
                     case "velocity":
-                        rValue = serverObject.GetComponent<serverData>().velocity;
+                        rValue = ServerData.velocity;
                         break;
                     case "floorDistance":
-                        rValue = serverObject.GetComponent<serverData>().floorDistance;
+                        rValue = ServerData.floorDistance;
                         break;
                     case "Co2":
-                        rValue = serverObject.GetComponent<serverData>().Co2;
+                        rValue = ServerData.Co2;
                         break;
                     case "waterTemp":
-                        rValue = serverObject.GetComponent<serverData>().waterTemp;
+                        rValue = ServerData.waterTemp;
                         break;
                     case "cabinTemp":
-                        rValue = serverObject.GetComponent<serverData>().cabinTemp;
+                        rValue = ServerData.cabinTemp;
                         break;
                     case "b1":
-                        rValue = serverObject.GetComponent<serverData>().batteries[0];
+                        rValue = ServerData.batteries[0];
                         break;
                     case "b2":
-                        rValue = serverObject.GetComponent<serverData>().batteries[1];
+                        rValue = ServerData.batteries[1];
                         break;
                     case "b3":
-                        rValue = serverObject.GetComponent<serverData>().batteries[2];
+                        rValue = ServerData.batteries[2];
                         break;
                     case "b4":
-                        rValue = serverObject.GetComponent<serverData>().batteries[3];
+                        rValue = ServerData.batteries[3];
                         break;
                     case "b5":
-                        rValue = serverObject.GetComponent<serverData>().batteries[4];
+                        rValue = ServerData.batteries[4];
                         break;
                     case "b6":
-                        rValue = serverObject.GetComponent<serverData>().batteries[5];
+                        rValue = ServerData.batteries[5];
                         break;
                     case "b7":
-                        rValue = serverObject.GetComponent<serverData>().batteries[6];
+                        rValue = ServerData.batteries[6];
                         break;
                     case "o1":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[0];
+                        rValue = ServerData.oxygenTanks[0];
                         break;
                     case "o2":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[1];
+                        rValue = ServerData.oxygenTanks[1];
                         break;
                     case "o3":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[2];
+                        rValue = ServerData.oxygenTanks[2];
                         break;
                     case "o4":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[3];
+                        rValue = ServerData.oxygenTanks[3];
                         break;
                     case "o5":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[4];
+                        rValue = ServerData.oxygenTanks[4];
                         break;
                     case "o6":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[5];
+                        rValue = ServerData.oxygenTanks[5];
                         break;
                     case "o7":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[6];
+                        rValue = ServerData.oxygenTanks[6];
                         break;
                     case "oxygen":
-                        rValue = serverObject.GetComponent<serverData>().oxygen;
+                        rValue = ServerData.oxygen;
                         break;
                     case "battery":
-                        rValue = serverObject.GetComponent<serverData>().battery;
+                        rValue = ServerData.battery;
                         break;
                     case "error_bilgeLeak":
-                        rValue = serverObject.GetComponent<errorData>().error_bilgeLeak;
+                        rValue = ErrorData.error_bilgeLeak;
                         break;
                     case "error_batteryLeak":
-                        rValue = serverObject.GetComponent<errorData>().error_batteryLeak;
+                        rValue = ErrorData.error_batteryLeak;
                         break;
                     case "error_electricLeak":
-                        rValue = serverObject.GetComponent<errorData>().error_electricLeak;
+                        rValue = ErrorData.error_electricLeak;
                         break;
                     case "error_oxygenExt":
-                        rValue = serverObject.GetComponent<errorData>().error_oxygenExt;
+                        rValue = ErrorData.error_oxygenExt;
                         break;
                     case "error_vhf":
-                        rValue = serverObject.GetComponent<errorData>().error_vhf;
+                        rValue = ErrorData.error_vhf;
                         break;
                     case "error_forwardSonar":
-                        rValue = serverObject.GetComponent<errorData>().error_forwardSonar;
+                        rValue = ErrorData.error_forwardSonar;
                         break;
                     case "error_depthSonar":
-                        rValue = serverObject.GetComponent<errorData>().error_depthSonar;
+                        rValue = ErrorData.error_depthSonar;
                         break;
                     case "error_doppler":
-                        rValue = serverObject.GetComponent<errorData>().error_doppler;
+                        rValue = ErrorData.error_doppler;
                         break;
                     case "error_gps":
-                        rValue = serverObject.GetComponent<errorData>().error_gps;
+                        rValue = ErrorData.error_gps;
                         break;
                     case "error_cpu":
-                        rValue = serverObject.GetComponent<errorData>().error_cpu;
+                        rValue = ErrorData.error_cpu;
                         break;
                     case "error_vidhd":
-                        rValue = serverObject.GetComponent<errorData>().error_vidhd;
+                        rValue = ErrorData.error_vidhd;
                         break;
                     case "error_datahd":
-                        rValue = serverObject.GetComponent<errorData>().error_datahd;
+                        rValue = ErrorData.error_datahd;
                         break;
                     case "error_tow":
-                        rValue = serverObject.GetComponent<errorData>().error_tow;
+                        rValue = ErrorData.error_tow;
                         break;
                     case "error_radar":
-                        rValue = serverObject.GetComponent<errorData>().error_radar;
+                        rValue = ErrorData.error_radar;
                         break;
                     case "error_sternLights":
-                        rValue = serverObject.GetComponent<errorData>().error_sternLights;
+                        rValue = ErrorData.error_sternLights;
                         break;
                     case "error_bowLights":
-                        rValue = serverObject.GetComponent<errorData>().error_bowLights;
+                        rValue = ErrorData.error_bowLights;
                         break;
                     case "error_portLights":
-                        rValue = serverObject.GetComponent<errorData>().error_portLights;
+                        rValue = ErrorData.error_portLights;
                         break;
                     case "error_bowThruster":
-                        rValue = serverObject.GetComponent<errorData>().error_bowThruster;
+                        rValue = ErrorData.error_bowThruster;
                         break;
                     case "error_hyrdaulicRes":
-                        rValue = serverObject.GetComponent<errorData>().error_hyrdaulicRes;
+                        rValue = ErrorData.error_hyrdaulicRes;
                         break;
                     case "error_starboardLights":
-                        rValue = serverObject.GetComponent<errorData>().error_starboardLights;
+                        rValue = ErrorData.error_starboardLights;
                         break;
                     case "error_runningLights":
-                        rValue = serverObject.GetComponent<errorData>().error_runningLights;
+                        rValue = ErrorData.error_runningLights;
                         break;
                     case "error_ballastTank":
-                        rValue = serverObject.GetComponent<errorData>().error_ballastTank;
+                        rValue = ErrorData.error_ballastTank;
                         break;
                     case "error_hydraulicPump":
-                        rValue = serverObject.GetComponent<errorData>().error_hydraulicPump;
+                        rValue = ErrorData.error_hydraulicPump;
                         break;
                     case "error_oxygenPump":
-                        rValue = serverObject.GetComponent<errorData>().error_oxygenPump;
+                        rValue = ErrorData.error_oxygenPump;
                         break;
                     case "inputXaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis;
+                        rValue = ServerData.inputXaxis;
                         break;
                     case "inputYaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis;
+                        rValue = ServerData.inputYaxis;
                         break;
                     case "inputZaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputZaxis;
+                        rValue = ServerData.inputZaxis;
                         break;
                     case "inputXaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis2;
+                        rValue = ServerData.inputXaxis2;
                         break;
                     case "inputYaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis2;
+                        rValue = ServerData.inputYaxis2;
                         break;
                     case "verticalVelocity":
-                        rValue = serverObject.GetComponent<serverData>().verticalVelocity;
+                        rValue = ServerData.verticalVelocity;
                         break;
                     case "horizontalVelocity":
-                        rValue = serverObject.GetComponent<serverData>().horizontalVelocity;
+                        rValue = ServerData.horizontalVelocity;
                         break;
                     case "dueTimeHours":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeHours;
+                        rValue = ServerData.dueTimeHours;
                         break;
                     case "dueTimeMins":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeMins;
+                        rValue = ServerData.dueTimeMins;
                         break;
                     case "dueTimeSecs":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeSecs;
+                        rValue = ServerData.dueTimeSecs;
                         break;
                     case "diveTimeHours":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeHours;
+                        rValue = ServerData.diveTimeHours;
                         break;
                     case "diveTimeMins":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeMins;
+                        rValue = ServerData.diveTimeMins;
                         break;
                     case "diveTimeSecs":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeSecs;
+                        rValue = ServerData.diveTimeSecs;
                         break;
                     case "commsSignalStrength":
-                        rValue = serverObject.GetComponent<serverData>().commsSignalStrength;
+                        rValue = ServerData.commsSignalStrength;
                         break;
                     case "divertPowerToThrusters":
-                        rValue = serverObject.GetComponent<serverData>().divertPowerToThrusters;
+                        rValue = ServerData.divertPowerToThrusters;
                         break;
                     case "crewHeartRate1":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1;
+                        rValue = CrewData.crewHeartRate1;
                         break;
                     case "crewHeartRate2":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2;
+                        rValue = CrewData.crewHeartRate2;
                         break;
                     case "crewHeartRate3":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3;
+                        rValue = CrewData.crewHeartRate3;
                         break;
                     case "crewHeartRate4":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4;
+                        rValue = CrewData.crewHeartRate4;
                         break;
                     case "crewHeartRate5":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5;
+                        rValue = CrewData.crewHeartRate5;
                         break;
                     case "crewHeartRate6":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6;
+                        rValue = CrewData.crewHeartRate6;
                         break;
                     case "crewBodyTemp1":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1;
+                        rValue = CrewData.crewBodyTemp1;
                         break;
                     case "crewBodyTemp2":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2;
+                        rValue = CrewData.crewBodyTemp2;
                         break;
                     case "crewBodyTemp3":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3;
+                        rValue = CrewData.crewBodyTemp3;
                         break;
                     case "crewBodyTemp4":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4;
+                        rValue = CrewData.crewBodyTemp4;
                         break;
                     case "crewBodyTemp5":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5;
+                        rValue = CrewData.crewBodyTemp5;
                         break;
                     case "crewBodyTemp6":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6;
+                        rValue = CrewData.crewBodyTemp6;
                         break;
                     case "v1posX":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.x;
+                        rValue = MapData.vessel1Pos.x;
                         break;
                     case "v1posY":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.y;
+                        rValue = MapData.vessel1Pos.y;
                         break;
                     case "v1posZ":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.z;
+                        rValue = MapData.vessel1Pos.z;
                         break;
                     case "v2posX":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.x;
+                        rValue = MapData.vessel2Pos.x;
                         break;
                     case "v2posY":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.y;
+                        rValue = MapData.vessel2Pos.y;
                         break;
                     case "v2posZ":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.z;
+                        rValue = MapData.vessel2Pos.z;
                         break;
                     case "v3posX":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.x;
+                        rValue = MapData.vessel3Pos.x;
                         break;
                     case "v3posY":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.y;
+                        rValue = MapData.vessel3Pos.y;
                         break;
                     case "v3posZ":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.z;
+                        rValue = MapData.vessel3Pos.z;
                         break;
                     case "v4posX":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.x;
+                        rValue = MapData.vessel4Pos.x;
                         break;
                     case "v4posY":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.y;
+                        rValue = MapData.vessel4Pos.y;
                         break;
                     case "v4posZ":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.z;
+                        rValue = MapData.vessel4Pos.z;
                         break;
                     case "meg1posX":
-                        rValue = serverObject.GetComponent<mapData>().meg1Pos.x;
+                        rValue = MapData.meg1Pos.x;
                         break;
                     case "meg1posY":
-                        rValue = serverObject.GetComponent<mapData>().meg1Pos.y;
+                        rValue = MapData.meg1Pos.y;
                         break;
                     case "meg1posZ":
-                        rValue = serverObject.GetComponent<mapData>().meg1Pos.z;
+                        rValue = MapData.meg1Pos.z;
                         break;
                     case "intercept1posX":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.x;
+                        rValue = MapData.intercept1Pos.x;
                         break;
                     case "intercept1posY":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.y;
+                        rValue = MapData.intercept1Pos.y;
                         break;
                     case "intercept1posZ":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.z;
+                        rValue = MapData.intercept1Pos.z;
                         break;
                     case "v1velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Velocity;
+                        rValue = MapData.vessel1Velocity;
                         break;
                     case "v2velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Velocity;
+                        rValue = MapData.vessel2Velocity;
                         break;
                     case "v3velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Velocity;
+                        rValue = MapData.vessel3Velocity;
                         break;
                     case "v4velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Velocity;
+                        rValue = MapData.vessel4Velocity;
                         break;
                     case "meg1velocity":
-                        rValue = serverObject.GetComponent<mapData>().meg1Velocity;
+                        rValue = MapData.meg1Velocity;
                         break;
                     case "intercept1velocity":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Velocity;
+                        rValue = MapData.intercept1Velocity;
                         break;
                     case "initiateMapEvent":
-                        rValue = serverObject.GetComponent<mapData>().initiateMapEvent;
+                        rValue = MapData.initiateMapEvent;
                         break;
                     case "latitude":
-                        rValue = serverObject.GetComponent<mapData>().latitude;
+                        rValue = MapData.latitude;
                         break;
                     case "longitude":
-                        rValue = serverObject.GetComponent<mapData>().longitude;
+                        rValue = MapData.longitude;
                         break;
                     default:
                         rValue = 50;
@@ -361,229 +423,228 @@ namespace Meg.Networking
 
         public static string GetServerDataAsText(string valueName)
         {
-            GameObject serverObject = GetServerObject();
             string rValue = "no value";
-            if (serverObject != null)
+            if (ServerObject != null)
             {
                 switch (valueName)
                 {
                     case "depth":
-                        int dInt = (int)serverObject.GetComponent<serverData>().depth;
+                        int dInt = (int)ServerData.depth;
                         rValue = dInt.ToString();
                         break;
                     case "pressure":
-                        rValue = serverObject.GetComponent<serverData>().pressure.ToString();
+                        rValue = ServerData.pressure.ToString();
                         break;
                     case "cabinPressure":
-                        rValue = serverObject.GetComponent<serverData>().cabinPressure.ToString();
+                        rValue = ServerData.cabinPressure.ToString();
                         break;
                     case "heading":
-                        rValue = (serverObject.GetComponent<serverData>().heading.ToString("n1") + "°");
+                        rValue = (ServerData.heading.ToString("n1") + "°");
                         break;
                     case "pitchAngle":
-                        rValue = (serverObject.GetComponent<serverData>().pitchAngle.ToString("n1") + "°");
+                        rValue = (ServerData.pitchAngle.ToString("n1") + "°");
                         break;
                     case "yawAngle":
-                        rValue = (serverObject.GetComponent<serverData>().yawAngle.ToString("n1") + "°");
+                        rValue = (ServerData.yawAngle.ToString("n1") + "°");
                         break;
                     case "rollAngle":
-                        rValue = (serverObject.GetComponent<serverData>().rollAngle.ToString("n1") + "°");
+                        rValue = (ServerData.rollAngle.ToString("n1") + "°");
                         break;
                     case "velocity":
-                        rValue = serverObject.GetComponent<serverData>().velocity.ToString("n1");
+                        rValue = ServerData.velocity.ToString("n1");
                         break;
                     case "floorDistance":
-                        int flInt = (int)serverObject.GetComponent<serverData>().floorDistance;
+                        int flInt = (int)ServerData.floorDistance;
                         rValue = flInt.ToString();
                         break;
                     case "Co2":
-                        rValue = (serverObject.GetComponent<serverData>().Co2.ToString() + "%");
+                        rValue = (ServerData.Co2.ToString() + "%");
                         break;
                     case "waterTemp":
-                        rValue = serverObject.GetComponent<serverData>().waterTemp.ToString();
+                        rValue = ServerData.waterTemp.ToString();
                         break;
                     case "cabinTemp":
-                        rValue = serverObject.GetComponent<serverData>().cabinTemp.ToString();
+                        rValue = ServerData.cabinTemp.ToString();
                         break;
                     case "b1":
-                        rValue = serverObject.GetComponent<serverData>().batteries[0].ToString("n1");
+                        rValue = ServerData.batteries[0].ToString("n1");
                         break;
                     case "b2":
-                        rValue = serverObject.GetComponent<serverData>().batteries[1].ToString("n1");
+                        rValue = ServerData.batteries[1].ToString("n1");
                         break;
                     case "b3":
-                        rValue = serverObject.GetComponent<serverData>().batteries[2].ToString("n1");
+                        rValue = ServerData.batteries[2].ToString("n1");
                         break;
                     case "b4":
-                        rValue = serverObject.GetComponent<serverData>().batteries[3].ToString("n1");
+                        rValue = ServerData.batteries[3].ToString("n1");
                         break;
                     case "b5":
-                        rValue = serverObject.GetComponent<serverData>().batteries[4].ToString("n1");
+                        rValue = ServerData.batteries[4].ToString("n1");
                         break;
                     case "b6":
-                        rValue = serverObject.GetComponent<serverData>().batteries[5].ToString("n1");
+                        rValue = ServerData.batteries[5].ToString("n1");
                         break;
                     case "b7":
-                        rValue = serverObject.GetComponent<serverData>().batteries[6].ToString("n1");
+                        rValue = ServerData.batteries[6].ToString("n1");
                         break;
                     case "o1":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[0].ToString("n1");
+                        rValue = ServerData.oxygenTanks[0].ToString("n1");
                         break;
                     case "o2":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[1].ToString("n1");
+                        rValue = ServerData.oxygenTanks[1].ToString("n1");
                         break;
                     case "o3":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[2].ToString("n1");
+                        rValue = ServerData.oxygenTanks[2].ToString("n1");
                         break;
                     case "o4":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[3].ToString("n1");
+                        rValue = ServerData.oxygenTanks[3].ToString("n1");
                         break;
                     case "o5":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[4].ToString("n1");
+                        rValue = ServerData.oxygenTanks[4].ToString("n1");
                         break;
                     case "o6":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[5].ToString("n1");
+                        rValue = ServerData.oxygenTanks[5].ToString("n1");
                         break;
                     case "o7":
-                        rValue = serverObject.GetComponent<serverData>().oxygenTanks[6].ToString("n1");
+                        rValue = ServerData.oxygenTanks[6].ToString("n1");
                         break;
                     case "oxygen":
-                        rValue = (serverObject.GetComponent<serverData>().oxygen.ToString("n1") + "%");
+                        rValue = (ServerData.oxygen.ToString("n1") + "%");
                         break;
                     case "battery":
-                        rValue = (serverObject.GetComponent<serverData>().battery.ToString("n1") + "%");
+                        rValue = (ServerData.battery.ToString("n1") + "%");
                         break;
                     case "pilot":
-                        rValue = serverObject.GetComponent<serverData>().pilot;
+                        rValue = ServerData.pilot;
                         break;
                     case "verticalVelocity":
-                        rValue = serverObject.GetComponent<serverData>().verticalVelocity.ToString("n1");
+                        rValue = ServerData.verticalVelocity.ToString("n1");
                         break;
                     case "horizontalVelocity":
-                        rValue = serverObject.GetComponent<serverData>().horizontalVelocity.ToString("n1");
+                        rValue = ServerData.horizontalVelocity.ToString("n1");
                         break;
                     case "dueTimeHours":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeHours.ToString();
+                        rValue = ServerData.dueTimeHours.ToString();
                         break;
                     case "dueTimeMins":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeMins.ToString();
+                        rValue = ServerData.dueTimeMins.ToString();
                         break;
                     case "dueTimeSecs":
-                        rValue = serverObject.GetComponent<serverData>().dueTimeSecs.ToString();
+                        rValue = ServerData.dueTimeSecs.ToString();
                         break;
                     case "diveTimeHours":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeHours.ToString();
+                        rValue = ServerData.diveTimeHours.ToString();
                         break;
                     case "diveTimeMins":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeMins.ToString();
+                        rValue = ServerData.diveTimeMins.ToString();
                         break;
                     case "diveTimeSecs":
-                        rValue = serverObject.GetComponent<serverData>().diveTimeSecs.ToString();
+                        rValue = ServerData.diveTimeSecs.ToString();
                         break;
                     case "inputXaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis.ToString("n1");
+                        rValue = ServerData.inputXaxis.ToString("n1");
                         break;
                     case "inputYaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis.ToString("n1");
+                        rValue = ServerData.inputYaxis.ToString("n1");
                         break;
                     case "inputZaxis":
-                        rValue = serverObject.GetComponent<serverData>().inputZaxis.ToString("n1");
+                        rValue = ServerData.inputZaxis.ToString("n1");
                         break;
                     case "inputXaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputXaxis2.ToString("n1");
+                        rValue = ServerData.inputXaxis2.ToString("n1");
                         break;
                     case "inputYaxis2":
-                        rValue = serverObject.GetComponent<serverData>().inputYaxis2.ToString("n1");
+                        rValue = ServerData.inputYaxis2.ToString("n1");
                         break;
                     case "commsSignalStrength":
-                        rValue = serverObject.GetComponent<serverData>().commsSignalStrength.ToString("n1");
+                        rValue = ServerData.commsSignalStrength.ToString("n1");
                         break;
                     case "divertPowerToThrusters":
-                        rValue = serverObject.GetComponent<serverData>().divertPowerToThrusters.ToString("n1");
+                        rValue = ServerData.divertPowerToThrusters.ToString("n1");
                         break;
                     case "crewHeartRate1":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate1.ToString("n1");
+                        rValue = CrewData.crewHeartRate1.ToString("n1");
                         break;
                     case "crewHeartRate2":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate2.ToString("n1");
+                        rValue = CrewData.crewHeartRate2.ToString("n1");
                         break;
                     case "crewHeartRate3":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate3.ToString("n1");
+                        rValue = CrewData.crewHeartRate3.ToString("n1");
                         break;
                     case "crewHeartRate4":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate4.ToString("n1");
+                        rValue = CrewData.crewHeartRate4.ToString("n1");
                         break;
                     case "crewHeartRate5":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate5.ToString("n1");
+                        rValue = CrewData.crewHeartRate5.ToString("n1");
                         break;
                     case "crewHeartRate6":
-                        rValue = serverObject.GetComponent<crewData>().crewHeartRate6.ToString("n1");
+                        rValue = CrewData.crewHeartRate6.ToString("n1");
                         break;
                     case "crewBodyTemp1":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp1.ToString("n1");
+                        rValue = CrewData.crewBodyTemp1.ToString("n1");
                         break;
                     case "crewBodyTemp2":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp2.ToString("n1");
+                        rValue = CrewData.crewBodyTemp2.ToString("n1");
                         break;
                     case "crewBodyTemp3":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp3.ToString("n1");
+                        rValue = CrewData.crewBodyTemp3.ToString("n1");
                         break;
                     case "crewBodyTemp4":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp4.ToString("n1");
+                        rValue = CrewData.crewBodyTemp4.ToString("n1");
                         break;
                     case "crewBodyTemp5":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp5.ToString("n1");
+                        rValue = CrewData.crewBodyTemp5.ToString("n1");
                         break;
                     case "crewBodyTemp6":
-                        rValue = serverObject.GetComponent<crewData>().crewBodyTemp6.ToString("n1");
+                        rValue = CrewData.crewBodyTemp6.ToString("n1");
                         break;
                     case "v1depth":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Pos.z.ToString("n0");
+                        rValue = MapData.vessel1Pos.z.ToString("n0");
                         break;
                     case "v2depth":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Pos.z.ToString("n0");
+                        rValue = MapData.vessel2Pos.z.ToString("n0");
                         break;
                     case "v3depth":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Pos.z.ToString("n0");
+                        rValue = MapData.vessel3Pos.z.ToString("n0");
                         break;
                     case "v4depth":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Pos.z.ToString("n0");
+                        rValue = MapData.vessel4Pos.z.ToString("n0");
                         break;
                     case "meg1depth":
-                        rValue = serverObject.GetComponent<mapData>().meg1Pos.z.ToString("n0");
+                        rValue = MapData.meg1Pos.z.ToString("n0");
                         break;
                     case "intercept1depth":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Pos.z.ToString("n0");
+                        rValue = MapData.intercept1Pos.z.ToString("n0");
                         break;
                     case "v1velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel1Velocity.ToString("n1");
+                        rValue = MapData.vessel1Velocity.ToString("n1");
                         break;
                     case "v2velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel2Velocity.ToString("n1");
+                        rValue = MapData.vessel2Velocity.ToString("n1");
                         break;
                     case "v3velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel3Velocity.ToString("n1");
+                        rValue = MapData.vessel3Velocity.ToString("n1");
                         break;
                     case "v4velocity":
-                        rValue = serverObject.GetComponent<mapData>().vessel4Velocity.ToString("n1");
+                        rValue = MapData.vessel4Velocity.ToString("n1");
                         break;
                     case "meg1velocity":
-                        rValue = serverObject.GetComponent<mapData>().meg1Velocity.ToString("n1");
+                        rValue = MapData.meg1Velocity.ToString("n1");
                         break;
                     case "intercept1velocity":
-                        rValue = serverObject.GetComponent<mapData>().intercept1Velocity.ToString("n1");
+                        rValue = MapData.intercept1Velocity.ToString("n1");
                         break;
                     case "mapEventName":
-                        rValue = serverObject.GetComponent<mapData>().mapEventName;
+                        rValue = MapData.mapEventName;
                         break;
                     case "diveTime":
-                        rValue = (serverObject.GetComponent<serverData>().diveTimeHours + ":" + serverObject.GetComponent<serverData>().diveTimeMins + ":" + serverObject.GetComponent<serverData>().diveTimeSecs);
+                        rValue = (ServerData.diveTimeHours + ":" + ServerData.diveTimeMins + ":" + ServerData.diveTimeSecs);
                         break;
                     case "latitude":
-                        rValue = FormatLatitude(serverObject.GetComponent<mapData>().latitude);
+                        rValue = FormatLatitude(MapData.latitude);
                         break;
                     case "longitude":
-                        rValue = FormatLongitude(serverObject.GetComponent<mapData>().longitude);
+                        rValue = FormatLongitude(MapData.longitude);
                         break;
                     default:
                         rValue = "no value";
@@ -595,44 +656,34 @@ namespace Meg.Networking
 
         public static void SetServerBool(string boolName, bool value)
         {
-            GameObject serverObject = GetServerObject();
-
-            if (serverObject == null)
+            if (ServerObject == null)
             {
                 Debug.Log("Server object missing");
             }
             else
             {
-                serverObject.GetComponent<serverData>().OnChangeBool(boolName, value);
+                ServerData.OnChangeBool(boolName, value);
             }
         }
 
         public static void SetServerData(string valueName, float value)
         {
-            GameObject serverObject = GetServerObject();
-
-            serverObject.GetComponent<serverData>().OnValueChanged(valueName, value);
+            ServerData.OnValueChanged(valueName, value);
         }
 
         public static void SetBatteryData(int bank, float value)
         {
-            GameObject serverObject = GetServerObject();
-
-            serverObject.GetComponent<serverData>().OnBatterySliderChanged(bank, value);
+            ServerData.OnBatterySliderChanged(bank, value);
         }
 
         public static void SetOxygenData(int bank, float value)
         {
-            GameObject serverObject = GetServerObject();
-
-            serverObject.GetComponent<serverData>().OnOxygenSliderChanged(bank, value);
+            ServerData.OnOxygenSliderChanged(bank, value);
         }
 
         public static void SetVesselData(int vessel, Vector3 pos, float vesselVelocity)
         {
-            GameObject serverObject = GetServerObject();
-
-            serverObject.GetComponent<serverData>().OnVesselDataChanged(vessel, pos, vesselVelocity);
+            ServerData.OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
 
         public static float GetVesselDepth(int vessel)
@@ -740,47 +791,45 @@ namespace Meg.Networking
         {
             //get vessels map space position
 
-            GameObject serverObject = GetServerObject();
-
             float[] vesselData = new float[4];
 
             switch (vessel)
             {
                 case 1:
-                    vesselData[0] = serverObject.GetComponent<mapData>().vessel1Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().vessel1Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().vessel1Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().vessel1Velocity;
+                    vesselData[0] = MapData.vessel1Pos.x;
+                    vesselData[1] = MapData.vessel1Pos.y;
+                    vesselData[2] = MapData.vessel1Pos.z;
+                    vesselData[3] = MapData.vessel1Velocity;
                     break;
                 case 2:
-                    vesselData[0] = serverObject.GetComponent<mapData>().vessel2Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().vessel2Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().vessel2Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().vessel2Velocity;
+                    vesselData[0] = MapData.vessel2Pos.x;
+                    vesselData[1] = MapData.vessel2Pos.y;
+                    vesselData[2] = MapData.vessel2Pos.z;
+                    vesselData[3] = MapData.vessel2Velocity;
                     break;
                 case 3:
-                    vesselData[0] = serverObject.GetComponent<mapData>().vessel3Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().vessel3Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().vessel3Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().vessel3Velocity;
+                    vesselData[0] = MapData.vessel3Pos.x;
+                    vesselData[1] = MapData.vessel3Pos.y;
+                    vesselData[2] = MapData.vessel3Pos.z;
+                    vesselData[3] = MapData.vessel3Velocity;
                     break;
                 case 4:
-                    vesselData[0] = serverObject.GetComponent<mapData>().vessel4Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().vessel4Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().vessel4Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().vessel4Velocity;
+                    vesselData[0] = MapData.vessel4Pos.x;
+                    vesselData[1] = MapData.vessel4Pos.y;
+                    vesselData[2] = MapData.vessel4Pos.z;
+                    vesselData[3] = MapData.vessel4Velocity;
                     break;
                 case 5:
-                    vesselData[0] = serverObject.GetComponent<mapData>().meg1Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().meg1Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().meg1Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().meg1Velocity;
+                    vesselData[0] = MapData.meg1Pos.x;
+                    vesselData[1] = MapData.meg1Pos.y;
+                    vesselData[2] = MapData.meg1Pos.z;
+                    vesselData[3] = MapData.meg1Velocity;
                     break;
                 case 6:
-                    vesselData[0] = serverObject.GetComponent<mapData>().intercept1Pos.x;
-                    vesselData[1] = serverObject.GetComponent<mapData>().intercept1Pos.y;
-                    vesselData[2] = serverObject.GetComponent<mapData>().intercept1Pos.z;
-                    vesselData[3] = serverObject.GetComponent<mapData>().intercept1Velocity;
+                    vesselData[0] = MapData.intercept1Pos.x;
+                    vesselData[1] = MapData.intercept1Pos.y;
+                    vesselData[2] = MapData.intercept1Pos.z;
+                    vesselData[3] = MapData.intercept1Velocity;
                     break;
             }
 
@@ -789,39 +838,33 @@ namespace Meg.Networking
 
         public static vesselMovements GetVesselMovements()
         {
-            GameObject serverObject = GetServerObject();
-            return serverObject ? serverObject.GetComponent<vesselMovements>() : null;
+            return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null;
         }
 
         public static void SetPlayerVessel(int vessel)
         {
-            GameObject serverObject = GetServerObject();
-
             //Debug.Log("Setting player vessel to: " + vessel);
-            if (serverObject != null)
-                serverObject.GetComponent<serverData>().SetPlayerVessel(vessel);
+            if (ServerObject != null)
+                ServerData.SetPlayerVessel(vessel);
         }
 
         public static int GetPlayerVessel()
         {
-            GameObject serverObject = GetServerObject();
-            if (!serverObject)
+            if (!ServerObject)
                 return 0;
 
-            return serverObject.GetComponent<mapData>().playerVessel;
+            return MapData.playerVessel;
         }
 
         public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
-            GameObject serverObject = GetServerObject();
-            if (serverObject != null)
-                serverObject.GetComponent<serverData>().SetPlayerWorldVelocity(velocity);
+            if (ServerObject != null)
+                ServerData.SetPlayerWorldVelocity(velocity);
         }
 
         public static bool GetVesselVis(int vessel)
         {
-            GameObject serverObject = GetServerObject();
-            if (serverObject == null)
+            if (ServerObject == null)
                 return false;
 
             bool vesselVis = true;
@@ -829,22 +872,22 @@ namespace Meg.Networking
             switch (vessel)
             {
                 case 1:
-                    vesselVis = serverObject.GetComponent<mapData>().vessel1Vis;
+                    vesselVis = MapData.vessel1Vis;
                     break;
                 case 2:
-                    vesselVis = serverObject.GetComponent<mapData>().vessel2Vis;
+                    vesselVis = MapData.vessel2Vis;
                     break;
                 case 3:
-                    vesselVis = serverObject.GetComponent<mapData>().vessel3Vis;
+                    vesselVis = MapData.vessel3Vis;
                     break;
                 case 4:
-                    vesselVis = serverObject.GetComponent<mapData>().vessel4Vis;
+                    vesselVis = MapData.vessel4Vis;
                     break;
                 case 5:
-                    vesselVis = serverObject.GetComponent<mapData>().meg1Vis;
+                    vesselVis = MapData.meg1Vis;
                     break;
                 case 6:
-                    vesselVis = serverObject.GetComponent<mapData>().intercept1Vis;
+                    vesselVis = MapData.intercept1Vis;
                     break;
             }
 
@@ -853,43 +896,36 @@ namespace Meg.Networking
 
         public static void SetVesselVis(int vessel, bool state)
         {
-            GameObject serverObject = GetServerObject();
-
-            serverObject.GetComponent<serverData>().SetPlayerVisibility(vessel, state);
+            ServerData.SetPlayerVisibility(vessel, state);
         }
 
         public static void SetColorTheme(megColorTheme theme)
         {
-            GameObject serverObject = GetServerObject();
-            if (serverObject == null)
+            if (ServerObject == null)
                 return;
 
-            serverObject.GetComponent<graphicsColourHolder>().themeName = theme.name;
-            serverObject.GetComponent<graphicsColourHolder>().backgroundColor = theme.backgroundColor;
-            serverObject.GetComponent<graphicsColourHolder>().highlightColor = theme.highlightColor;
-            serverObject.GetComponent<graphicsColourHolder>().keyColor = theme.keyColor;
+            ServerObject.GetComponent<graphicsColourHolder>().themeName = theme.name;
+            ServerObject.GetComponent<graphicsColourHolder>().backgroundColor = theme.backgroundColor;
+            ServerObject.GetComponent<graphicsColourHolder>().highlightColor = theme.highlightColor;
+            ServerObject.GetComponent<graphicsColourHolder>().keyColor = theme.keyColor;
         }
 
         public static megColorTheme GetColorTheme()
         {
-            GameObject serverObject = GetServerObject();
-
             megColorTheme theme = new megColorTheme();
-            if (serverObject)
-                theme = serverObject.GetComponent<graphicsColourHolder>().theme;
+            if (ServerObject)
+                theme = ServerObject.GetComponent<graphicsColourHolder>().theme;
 
             return theme;
         }
 
         public static int getGliderScreen(int screenID)
         {
-            GameObject serverObject = GetServerObject();
-
             int outID = 0;
 
-            if (serverObject)
+            if (ServerObject)
             {
-                outID = serverObject.GetComponent<glScreenData>().getScreen(screenID);
+                outID = ServerObject.GetComponent<glScreenData>().getScreen(screenID);
             }
 
             return outID;
@@ -911,5 +947,6 @@ namespace Meg.Networking
         }
 
     }
+
 
 }

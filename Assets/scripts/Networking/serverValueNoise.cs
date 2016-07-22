@@ -25,13 +25,8 @@ public class serverValueNoise : NetworkBehaviour
     /** Handle startup on the server. */
     public override void OnStartServer()
     {
-        var serverObject = serverUtils.GetServerObject();
-        if (!serverObject)
-            return;
-
-        var serverData = serverObject.GetComponent<serverData>();
-        if (serverData)
-            serverData.ValueChangedEvent += OnValueChanged;
+        if (serverUtils.ServerData)
+            serverUtils.ServerData.ValueChangedEvent += OnValueChanged;
 
         _baseValue = serverUtils.GetServerData(LinkDataString);
     }
@@ -40,13 +35,8 @@ public class serverValueNoise : NetworkBehaviour
     [ServerCallback]
     private void OnDisable()
     {
-        var serverObject = serverUtils.GetServerObject();
-        if (!serverObject)
-            return;
-
-        var serverData = serverObject.GetComponent<serverData>();
-        if (serverData)
-            serverData.ValueChangedEvent -= OnValueChanged;
+        if (serverUtils.ServerData)
+            serverUtils.ServerData.ValueChangedEvent -= OnValueChanged;
     }
 
     /** Handle a change in the server data base value. */
