@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using TouchScript.Gestures;
@@ -264,13 +264,11 @@ public class graphicsPinchZoom : MonoBehaviour {
             //set the orientation of the child to indicate the direction
             if (mapIconDirection != 0)
             {
-                children[i].GetComponent<graphicsMapIcon>().atBounds = true;
-                children[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+                children[i].GetComponent<graphicsMapIcon>().UpdateIcon(true, mapIconDirection);
             }
             else
             {
-                children[i].GetComponent<graphicsMapIcon>().atBounds = false;
-                children[i].GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+                children[i].GetComponent<graphicsMapIcon>().UpdateIcon(false, mapIconDirection);
             }
         }
     }

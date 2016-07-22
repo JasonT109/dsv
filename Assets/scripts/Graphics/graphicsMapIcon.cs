@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class graphicsMapIcon : MonoBehaviour {
@@ -18,9 +18,13 @@ public class graphicsMapIcon : MonoBehaviour {
     public Vector3 lowerRightPos = new Vector3(0.22f, 0.53f, 0.4f);
     public Vector3 lowPos = new Vector3(0.62f, 0.13f, 0.4f);
 
-	void Update ()
+    
+    public void UpdateIcon(bool isAtBounds, int iconDirection)
     {
-	    if (atBounds)
+        atBounds = isAtBounds;
+        direction = iconDirection;
+
+        if (atBounds)
         {
             button.GetComponent<Renderer>().enabled = false;
             directionMarker.GetComponent<Renderer>().enabled = true;

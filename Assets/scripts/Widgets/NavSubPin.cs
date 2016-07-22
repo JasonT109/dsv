@@ -216,8 +216,7 @@ public class NavSubPin : MonoBehaviour
             mapIconDirection = 7;
 
         // Set the orientation of the child to indicate the direction.
-        vesselButton.GetComponent<graphicsMapIcon>().atBounds = mapIconDirection != 0;
-        vesselButton.GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+        vesselButton.GetComponent<graphicsMapIcon>().UpdateIcon(mapIconDirection != 0, mapIconDirection);
     }
 
     /** Convert a vessel's position into 2D map space. */
