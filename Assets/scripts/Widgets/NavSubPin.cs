@@ -150,7 +150,7 @@ public class NavSubPin : MonoBehaviour
             vesselHeightIndicator.transform.localPosition =
                 new Vector3(mapPos.x + LineXOffset,
                     vesselHeightIndicator.transform.localPosition.y,
-                    vesselHeightIndicator.transform.localPosition.z + 1);
+                    vesselHeightIndicator.transform.localPosition.z + 0.1f);
         }
 
         // Update the height indicator's length.
@@ -216,8 +216,7 @@ public class NavSubPin : MonoBehaviour
             mapIconDirection = 7;
 
         // Set the orientation of the child to indicate the direction.
-        vesselButton.GetComponent<graphicsMapIcon>().atBounds = mapIconDirection != 0;
-        vesselButton.GetComponent<graphicsMapIcon>().direction = mapIconDirection;
+        vesselButton.GetComponent<graphicsMapIcon>().UpdateIcon(mapIconDirection != 0, mapIconDirection);
     }
 
     /** Convert a vessel's position into 2D map space. */

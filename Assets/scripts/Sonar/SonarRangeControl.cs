@@ -1,21 +1,21 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class SonarRangeControl : MonoBehaviour 
 {
 
-    public TextMesh OneThirdL;
-    public TextMesh TwoThirdsL;
-    public TextMesh FullRangeL;
+    public widgetText OneThirdL;
+    public widgetText TwoThirdsL;
+    public widgetText FullRangeL;
            
-    public TextMesh OneThirdR;
-    public TextMesh TwoThirdsR;
-    public TextMesh FullRangeR;
+    public widgetText OneThirdR;
+    public widgetText TwoThirdsR;
+    public widgetText FullRangeR;
 
     public GameObject LeftButton;
     public GameObject RightButton;
 
-    public TextMesh RangeValObj;
+    public widgetText RangeValObj;
 
     public int Range = 30;
 
@@ -62,15 +62,16 @@ public class SonarRangeControl : MonoBehaviour
 
     void UpdateValues()
     {
-        OneThirdL.text = "" + Range/3;
-        TwoThirdsL.text = "" + (Range/3) * 2;
-        FullRangeL.text = "" + Range;
+        OneThirdL.Text = "" + Range/3;
+        TwoThirdsL.Text = "" + (Range/3) * 2;
+        FullRangeL.Text = "" + Range;
 
-        OneThirdR.text = "" + Range/3;
-        TwoThirdsR.text = "" + (Range/3) * 2;
-        FullRangeR.text = "" + Range;
+        OneThirdR.Text = "" + Range/3;
+        TwoThirdsR.Text = "" + (Range/3) * 2;
+        FullRangeR.Text = "" + Range;
 
-        RangeValObj.text = "" + Range;
+        if (RangeValObj)
+            RangeValObj.Text = "" + Range;
 
         GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
         Root.GetComponent<SonarData>().SonarRange = Range;

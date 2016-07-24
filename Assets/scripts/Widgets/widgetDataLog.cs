@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -7,7 +7,9 @@ public class widgetDataLog : MonoBehaviour {
     public string[] dataFeedWarning;
     public string[] dataFeedNormal;
     private string[] dataFeed;
-    public TextMesh dataText;
+
+    public widgetText dataText;
+
     private float dataSpeed = 0.4f;
     public float normalDataSpeed = 0.4f;
     public float warningDataSpeed = 0.15f;
@@ -20,7 +22,11 @@ public class widgetDataLog : MonoBehaviour {
     private bool switched = false;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
+	    if (!dataText)
+	        dataText = GetComponent<widgetText>();
+
         dataSpeed = normalDataSpeed;
         feedTime = Time.time + dataSpeed;
         dataFeed = dataFeedNormal;
@@ -72,7 +78,7 @@ public class widgetDataLog : MonoBehaviour {
                     {
                         newTextData += dataFeed[i] + "\n";
                     }
-                    dataText.text = newTextData;
+                    dataText.Text = newTextData;
                 }
             }
         }

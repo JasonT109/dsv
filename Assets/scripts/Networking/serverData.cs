@@ -93,31 +93,79 @@ public class serverData : NetworkBehaviour
     private float yawResult;
     private float bank;
     #endregion
+    
+    #region PrivateProperties
+    private batteryData _batteryData;
+    private batteryData BatteryData
+    {
+        get
+        {
+            if (!_batteryData)
+                _batteryData = gameObject.GetComponent<batteryData>();
+            return _batteryData;
+        }
+    }
+
+    private oxygenData _oxygenData;
+    private oxygenData OxygenData
+    {
+        get
+        {
+            if (!_oxygenData)
+                _oxygenData = gameObject.GetComponent<oxygenData>();
+            return _oxygenData;
+        }
+    }
+
+    private errorData _errorData;
+    private errorData ErrorData
+    {
+        get
+        {
+            if (!_errorData)
+                _errorData = gameObject.GetComponent<errorData>();
+            return _errorData;
+        }
+    }
+
+    private crewData _crewData;
+    private crewData CrewData
+    {
+        get
+        {
+            if (!_crewData)
+                _crewData = CrewData;
+            return _crewData;
+        }
+    }
+
+    #endregion
+
     #region PublicMethods
     public void OnBatterySliderChanged(int bank, float newValues)
     {
         switch (bank)
         {
             case 0:
-                gameObject.GetComponent<batteryData>().bank1 = newValues;
+                BatteryData.bank1 = newValues;
                 break;
             case 1:
-                gameObject.GetComponent<batteryData>().bank2 = newValues;
+                BatteryData.bank2 = newValues;
                 break;
             case 2:
-                gameObject.GetComponent<batteryData>().bank3 = newValues;
+                BatteryData.bank3 = newValues;
                 break;
             case 3:
-                gameObject.GetComponent<batteryData>().bank4 = newValues;
+                BatteryData.bank4 = newValues;
                 break;
             case 4:
-                gameObject.GetComponent<batteryData>().bank5 = newValues;
+                BatteryData.bank5 = newValues;
                 break;
             case 5:
-                gameObject.GetComponent<batteryData>().bank6 = newValues;
+                BatteryData.bank6 = newValues;
                 break;
             case 6:
-                gameObject.GetComponent<batteryData>().bank7 = newValues;
+                BatteryData.bank7 = newValues;
                 break;
         }
     }
@@ -127,28 +175,32 @@ public class serverData : NetworkBehaviour
         switch (tank)
         {
             case 0:
-                gameObject.GetComponent<oxygenData>().oxygenTank1 = newValues;
+                OxygenData.oxygenTank1 = newValues;
                 break;
             case 1:
-                gameObject.GetComponent<oxygenData>().oxygenTank2 = newValues;
+                OxygenData.oxygenTank2 = newValues;
                 break;
             case 2:
-                gameObject.GetComponent<oxygenData>().oxygenTank3 = newValues;
+                OxygenData.oxygenTank3 = newValues;
                 break;
             case 3:
-                gameObject.GetComponent<oxygenData>().oxygenTank4 = newValues;
+                OxygenData.oxygenTank4 = newValues;
                 break;
             case 4:
-                gameObject.GetComponent<oxygenData>().oxygenTank5 = newValues;
+                OxygenData.oxygenTank5 = newValues;
                 break;
             case 5:
-                gameObject.GetComponent<oxygenData>().oxygenTank6 = newValues;
+                OxygenData.oxygenTank6 = newValues;
                 break;
             case 6:
-                gameObject.GetComponent<oxygenData>().oxygenTank7 = newValues;
+                OxygenData.oxygenTank7 = newValues;
                 break;
         }
     }
+
+    public delegate void ValueChangeHandler(string valueName, float newValue);
+
+    public ValueChangeHandler ValueChangedEvent;
 
     public void OnValueChanged(string valueName, float newValue)
     {
@@ -194,118 +246,118 @@ public class serverData : NetworkBehaviour
                 cabinTemp = newValue;
                 break;
             case "b1":
-                gameObject.GetComponent<batteryData>().bank1 = newValue;
+                BatteryData.bank1 = newValue;
                 break;
             case "b2":
-                gameObject.GetComponent<batteryData>().bank2 = newValue;
+                BatteryData.bank2 = newValue;
                 break;
             case "b3":
-                gameObject.GetComponent<batteryData>().bank3 = newValue;
+                BatteryData.bank3 = newValue;
                 break;
             case "b4":
-                gameObject.GetComponent<batteryData>().bank4 = newValue;
+                BatteryData.bank4 = newValue;
                 break;
             case "b5":
-                gameObject.GetComponent<batteryData>().bank5 = newValue;
+                BatteryData.bank5 = newValue;
                 break;
             case "b6":
-                gameObject.GetComponent<batteryData>().bank6 = newValue;
+                BatteryData.bank6 = newValue;
                 break;
             case "b7":
-                gameObject.GetComponent<batteryData>().bank7 = newValue;
+                BatteryData.bank7 = newValue;
                 break;
             case "o1":
-                gameObject.GetComponent<oxygenData>().oxygenTank1 = newValue;
+                OxygenData.oxygenTank1 = newValue;
                 break;
             case "o2":
-                gameObject.GetComponent<oxygenData>().oxygenTank2 = newValue;
+                OxygenData.oxygenTank2 = newValue;
                 break;
             case "o3":
-                gameObject.GetComponent<oxygenData>().oxygenTank3 = newValue;
+                OxygenData.oxygenTank3 = newValue;
                 break;
             case "o4":
-                gameObject.GetComponent<oxygenData>().oxygenTank4 = newValue;
+                OxygenData.oxygenTank4 = newValue;
                 break;
             case "o5":
-                gameObject.GetComponent<oxygenData>().oxygenTank5 = newValue;
+                OxygenData.oxygenTank5 = newValue;
                 break;
             case "o6":
-                gameObject.GetComponent<oxygenData>().oxygenTank6 = newValue;
+                OxygenData.oxygenTank6 = newValue;
                 break;
             case "o7":
-                gameObject.GetComponent<oxygenData>().oxygenTank7 = newValue;
+                OxygenData.oxygenTank7 = newValue;
                 break;
             case "error_bilgeLeak":
-                gameObject.GetComponent<errorData>().error_bilgeLeak = newValue;
+                ErrorData.error_bilgeLeak = newValue;
                 break;
             case "error_batteryLeak":
-                gameObject.GetComponent<errorData>().error_batteryLeak = newValue;
+                ErrorData.error_batteryLeak = newValue;
                 break;
             case "error_electricLeak":
-                gameObject.GetComponent<errorData>().error_electricLeak = newValue;
+                ErrorData.error_electricLeak = newValue;
                 break;
             case "error_oxygenExt":
-                gameObject.GetComponent<errorData>().error_oxygenExt = newValue;
+                ErrorData.error_oxygenExt = newValue;
                 break;
             case "error_vhf":
-                gameObject.GetComponent<errorData>().error_vhf = newValue;
+                ErrorData.error_vhf = newValue;
                 break;
             case "error_forwardSonar":
-                gameObject.GetComponent<errorData>().error_forwardSonar = newValue;
+                ErrorData.error_forwardSonar = newValue;
                 break;
             case "error_depthSonar":
-                gameObject.GetComponent<errorData>().error_depthSonar = newValue;
+                ErrorData.error_depthSonar = newValue;
                 break;
             case "error_doppler":
-                gameObject.GetComponent<errorData>().error_doppler = newValue;
+                ErrorData.error_doppler = newValue;
                 break;
             case "error_gps":
-                gameObject.GetComponent<errorData>().error_gps = newValue;
+                ErrorData.error_gps = newValue;
                 break;
             case "error_cpu":
-                gameObject.GetComponent<errorData>().error_cpu = newValue;
+                ErrorData.error_cpu = newValue;
                 break;
             case "error_vidhd":
-                gameObject.GetComponent<errorData>().error_vidhd = newValue;
+                ErrorData.error_vidhd = newValue;
                 break;
             case "error_datahd":
-                gameObject.GetComponent<errorData>().error_datahd = newValue;
+                ErrorData.error_datahd = newValue;
                 break;
             case "error_tow":
-                gameObject.GetComponent<errorData>().error_tow = newValue;
+                ErrorData.error_tow = newValue;
                 break;
             case "error_radar":
-                gameObject.GetComponent<errorData>().error_radar = newValue;
+                ErrorData.error_radar = newValue;
                 break;
             case "error_sternLights":
-                gameObject.GetComponent<errorData>().error_sternLights = newValue;
+                ErrorData.error_sternLights = newValue;
                 break;
             case "error_bowLights":
-                gameObject.GetComponent<errorData>().error_bowLights = newValue;
+                ErrorData.error_bowLights = newValue;
                 break;
             case "error_portLights":
-                gameObject.GetComponent<errorData>().error_portLights = newValue;
+                ErrorData.error_portLights = newValue;
                 break;
             case "error_bowThruster":
-                gameObject.GetComponent<errorData>().error_bowThruster = newValue;
+                ErrorData.error_bowThruster = newValue;
                 break;
             case "error_hyrdaulicRes":
-                gameObject.GetComponent<errorData>().error_hyrdaulicRes = newValue;
+                ErrorData.error_hyrdaulicRes = newValue;
                 break;
             case "error_starboardLights":
-                gameObject.GetComponent<errorData>().error_starboardLights = newValue;
+                ErrorData.error_starboardLights = newValue;
                 break;
             case "error_runningLights":
-                gameObject.GetComponent<errorData>().error_runningLights = newValue;
+                ErrorData.error_runningLights = newValue;
                 break;
             case "error_ballastTank":
-                gameObject.GetComponent<errorData>().error_ballastTank = newValue;
+                ErrorData.error_ballastTank = newValue;
                 break;
             case "error_hydraulicPump":
-                gameObject.GetComponent<errorData>().error_hydraulicPump = newValue;
+                ErrorData.error_hydraulicPump = newValue;
                 break;
             case "error_oxygenPump":
-                gameObject.GetComponent<errorData>().error_oxygenPump = newValue;
+                ErrorData.error_oxygenPump = newValue;
                 break;
             case "inputXaxis":
                 inputXaxis = newValue;
@@ -339,40 +391,40 @@ public class serverData : NetworkBehaviour
                 rb.velocity = transform.forward * newValue;
                 break;
             case "crewHeartRate1":
-                gameObject.GetComponent<crewData>().crewHeartRate1 = newValue;
+                CrewData.crewHeartRate1 = newValue;
                 break;
             case "crewHeartRate2":
-                gameObject.GetComponent<crewData>().crewHeartRate2 = newValue;
+                CrewData.crewHeartRate2 = newValue;
                 break;
             case "crewHeartRate3":
-                gameObject.GetComponent<crewData>().crewHeartRate3 = newValue;
+                CrewData.crewHeartRate3 = newValue;
                 break;
             case "crewHeartRate4":
-                gameObject.GetComponent<crewData>().crewHeartRate4 = newValue;
+                CrewData.crewHeartRate4 = newValue;
                 break;
             case "crewHeartRate5":
-                gameObject.GetComponent<crewData>().crewHeartRate5 = newValue;
+                CrewData.crewHeartRate5 = newValue;
                 break;
             case "crewHeartRate6":
-                gameObject.GetComponent<crewData>().crewHeartRate6 = newValue;
+                CrewData.crewHeartRate6 = newValue;
                 break;
             case "crewBodyTemp1":
-                gameObject.GetComponent<crewData>().crewBodyTemp1 = newValue;
+                CrewData.crewBodyTemp1 = newValue;
                 break;
             case "crewBodyTemp2":
-                gameObject.GetComponent<crewData>().crewBodyTemp2 = newValue;
+                CrewData.crewBodyTemp2 = newValue;
                 break;
             case "crewBodyTemp3":
-                gameObject.GetComponent<crewData>().crewBodyTemp3 = newValue;
+                CrewData.crewBodyTemp3 = newValue;
                 break;
             case "crewBodyTemp4":
-                gameObject.GetComponent<crewData>().crewBodyTemp4 = newValue;
+                CrewData.crewBodyTemp4 = newValue;
                 break;
             case "crewBodyTemp5":
-                gameObject.GetComponent<crewData>().crewBodyTemp5 = newValue;
+                CrewData.crewBodyTemp5 = newValue;
                 break;
             case "crewBodyTemp6":
-                gameObject.GetComponent<crewData>().crewBodyTemp6 = newValue;
+                CrewData.crewBodyTemp6 = newValue;
                 break;
             case "posX":
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
@@ -396,6 +448,9 @@ public class serverData : NetworkBehaviour
                 gameObject.GetComponent<mapData>().longitude = newValue;
                 break;
         }
+
+        if (ValueChangedEvent != null)
+            ValueChangedEvent(valueName, newValue);
     }
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
@@ -520,21 +575,21 @@ public class serverData : NetworkBehaviour
     public override void OnStartClient()
     {
         //vDescent = descent;
-        gameObject.GetComponent<batteryData>().bank1 = batteries[0];
-        gameObject.GetComponent<batteryData>().bank2 = batteries[1];
-        gameObject.GetComponent<batteryData>().bank3 = batteries[2];
-        gameObject.GetComponent<batteryData>().bank4 = batteries[3];
-        gameObject.GetComponent<batteryData>().bank5 = batteries[4];
-        gameObject.GetComponent<batteryData>().bank6 = batteries[5];
-        gameObject.GetComponent<batteryData>().bank7 = batteries[6];
+        BatteryData.bank1 = batteries[0];
+        BatteryData.bank2 = batteries[1];
+        BatteryData.bank3 = batteries[2];
+        BatteryData.bank4 = batteries[3];
+        BatteryData.bank5 = batteries[4];
+        BatteryData.bank6 = batteries[5];
+        BatteryData.bank7 = batteries[6];
 
-        gameObject.GetComponent<oxygenData>().oxygenTank1 = oxygenTanks[0];
-        gameObject.GetComponent<oxygenData>().oxygenTank2 = oxygenTanks[1];
-        gameObject.GetComponent<oxygenData>().oxygenTank3 = oxygenTanks[2];
-        gameObject.GetComponent<oxygenData>().oxygenTank4 = oxygenTanks[3];
-        gameObject.GetComponent<oxygenData>().oxygenTank5 = oxygenTanks[4];
-        gameObject.GetComponent<oxygenData>().oxygenTank6 = oxygenTanks[5];
-        gameObject.GetComponent<oxygenData>().oxygenTank7 = oxygenTanks[6];
+        OxygenData.oxygenTank1 = oxygenTanks[0];
+        OxygenData.oxygenTank2 = oxygenTanks[1];
+        OxygenData.oxygenTank3 = oxygenTanks[2];
+        OxygenData.oxygenTank4 = oxygenTanks[3];
+        OxygenData.oxygenTank5 = oxygenTanks[4];
+        OxygenData.oxygenTank6 = oxygenTanks[5];
+        OxygenData.oxygenTank7 = oxygenTanks[6];
     }
 
 
@@ -551,21 +606,21 @@ public class serverData : NetworkBehaviour
         pilot = GetPilot();
 
         //get oxygen data from server
-        oxygenTanks[0] = gameObject.GetComponent<oxygenData>().oxygenTank1;
-        oxygenTanks[1] = gameObject.GetComponent<oxygenData>().oxygenTank2;
-        oxygenTanks[2] = gameObject.GetComponent<oxygenData>().oxygenTank3;
-        oxygenTanks[3] = gameObject.GetComponent<oxygenData>().oxygenTank4;
-        oxygenTanks[4] = gameObject.GetComponent<oxygenData>().oxygenTank5;
-        oxygenTanks[5] = gameObject.GetComponent<oxygenData>().oxygenTank6;
-        oxygenTanks[6] = gameObject.GetComponent<oxygenData>().oxygenTank7;
+        oxygenTanks[0] = OxygenData.oxygenTank1;
+        oxygenTanks[1] = OxygenData.oxygenTank2;
+        oxygenTanks[2] = OxygenData.oxygenTank3;
+        oxygenTanks[3] = OxygenData.oxygenTank4;
+        oxygenTanks[4] = OxygenData.oxygenTank5;
+        oxygenTanks[5] = OxygenData.oxygenTank6;
+        oxygenTanks[6] = OxygenData.oxygenTank7;
         //get battery data from server
-        batteries[0] = gameObject.GetComponent<batteryData>().bank1;
-        batteries[1] = gameObject.GetComponent<batteryData>().bank2;
-        batteries[2] = gameObject.GetComponent<batteryData>().bank3;
-        batteries[3] = gameObject.GetComponent<batteryData>().bank4;
-        batteries[4] = gameObject.GetComponent<batteryData>().bank5;
-        batteries[5] = gameObject.GetComponent<batteryData>().bank6;
-        batteries[6] = gameObject.GetComponent<batteryData>().bank7;
+        batteries[0] = BatteryData.bank1;
+        batteries[1] = BatteryData.bank2;
+        batteries[2] = BatteryData.bank3;
+        batteries[3] = BatteryData.bank4;
+        batteries[4] = BatteryData.bank5;
+        batteries[5] = BatteryData.bank6;
+        batteries[6] = BatteryData.bank7;
 
         //server only
         if (!isServer)
