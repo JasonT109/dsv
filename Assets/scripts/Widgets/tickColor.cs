@@ -14,7 +14,7 @@ public class tickColor : MonoBehaviour {
     public digital_gauge dScript;
 
     // Use this for initialization
-    void Start () {
+    void OnEnable () {
 
         dScript = gameObject.GetComponentInParent<digital_gauge>();
         r = gameObject.GetComponent<Renderer>();
@@ -28,17 +28,17 @@ public class tickColor : MonoBehaviour {
             {
                 if (dScript.digitalTicks[i] == gameObject)
                 {
-                    //Debug.Log("Setting colour on tick: " + gameObject);
+                    
                     if (i > 0)
                     {
                         x = Mathf.Floor(((float)i / dScript.digitalTicks.Length) * dScript.colorGradient.Length);
-
+                        //Debug.Log("Setting colour on tick: " + gameObject + "to color index: " + (int)x);
                     }
                     else
                     {
                         x = 0.0f;
                     }
-                    //m.color = dScript.colorGradient[(int)x];
+                    m.color = dScript.colorGradient[(int)x];
                     m.SetColor("_MainColor", dScript.colorGradient[(int)x]);
                     m.SetColor("_TintColor", dScript.colorGradient[(int)x]);
                 }
