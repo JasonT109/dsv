@@ -10,7 +10,7 @@ public class widget3DMap : MonoBehaviour {
     public GameObject mapCameraRoot;
     public GameObject mapCameraPitch;
     public GameObject mapCamera;
-    public Material mapMaterial;
+
     public float rootMaxX = 225f;
     public float rootMaxZ = 225f;
     public float camMaxZ = -400f;
@@ -37,12 +37,9 @@ public class widget3DMap : MonoBehaviour {
     private float rotateAmount = 0f;
     public TiltShift tilt;
 
-    public Terrain Terrain;
     public Material TerrainMaterial2d;
     public Material TerrainMaterial3d;
     public float TerrainTransitionRange = 30;
-
-    private bool _terrainMaterialInitialized;
 
     private Color _loColor2D;
     private Color _hiColor2D;
@@ -52,6 +49,7 @@ public class widget3DMap : MonoBehaviour {
     private Color _ambient2D;
     private float _levels2D;
     private float _gradient2D;
+    private float _lineDetail2D;
 
     private Color _loColor3D;
     private Color _hiColor3D;
@@ -61,6 +59,7 @@ public class widget3DMap : MonoBehaviour {
     private Color _ambient3D;
     private float _levels3D;
     private float _gradient3D;
+    private float _lineDetail3D;
 
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
@@ -164,8 +163,7 @@ public class widget3DMap : MonoBehaviour {
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
 
         // Update terrain material based on view angle.
-        if (Terrain)
-            UpdateTerrainMaterial();
+        UpdateTerrain();
 
         //get current zoom level from camera
         zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
@@ -257,30 +255,24 @@ public class widget3DMap : MonoBehaviour {
 
     void Start()
     {
-        StartCoroutine(wait(0f));
-
-        if (Terrain)
-            InitTerrainMaterial();
-
-        UpdateTerrainMaterial();
-    }
-
-    IEnumerator wait(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        Terrain.activeTerrain.materialTemplate = mapMaterial;
-        Terrain.activeTerrain.basemapDistance = 10000;
         tilt = mapCamera.GetComponent<TiltShift>();
-        UpdateMap();
+
+        InitTerrain();
+        UpdateTerrain();
     }
 
-	void Update ()
+	void Update()
     {
         UpdateMap();
     }
 
-    private void InitTerrainMaterial()
+    private void InitTerrain()
     {
+        var terrain = Terrain.activeTerrain;
+
+        if (!terrain || !TerrainMaterial2d || !TerrainMaterial3d)
+            return;
+
         _loColor2D = TerrainMaterial2d.GetColor("_LoColor");
         _hiColor2D = TerrainMaterial2d.GetColor("_HiColor");
         _lineColor2D = TerrainMaterial2d.GetColor("_LineColor");
@@ -289,6 +281,7 @@ public class widget3DMap : MonoBehaviour {
         _fresnelColor2D = TerrainMaterial2d.GetColor("_FresnelColor");
         _levels2D = TerrainMaterial2d.GetFloat("_Levels");
         _gradient2D = TerrainMaterial2d.GetFloat("_Gradient");
+        _lineDetail2D = TerrainMaterial2d.GetFloat("_LineDetail");
 
         _loColor3D = TerrainMaterial3d.GetColor("_LoColor");
         _hiColor3D = TerrainMaterial3d.GetColor("_HiColor");
@@ -298,25 +291,34 @@ public class widget3DMap : MonoBehaviour {
         _fresnelColor3D = TerrainMaterial3d.GetColor("_FresnelColor");
         _levels3D = TerrainMaterial3d.GetFloat("_Levels");
         _gradient3D = TerrainMaterial3d.GetFloat("_Gradient");
+        _lineDetail3D = TerrainMaterial3d.GetFloat("_LineDetail");
 
-        Terrain.materialTemplate = new Material(TerrainMaterial3d);
+        terrain.materialTemplate = new Material(terrain.materialTemplate);
+        terrain.basemapDistance = 10000;
     }
 
-    private void UpdateTerrainMaterial()
+    private void UpdateTerrain()
     {
+        var terrain = Terrain.activeTerrain;
+        if (!terrain || !TerrainMaterial2d || !TerrainMaterial3d)
+            return;
+
         var slider = viewAngleSlider.GetComponent<sliderWidget>();
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
 
         var transitionStart = slider.maxValue - TerrainTransitionRange;
         var t = 1 - Mathf.Clamp01((viewAngle - transitionStart) / TerrainTransitionRange);
 
-        Terrain.materialTemplate.SetColor("_LoColor", Color.Lerp(_loColor2D, _loColor3D, t));
-        Terrain.materialTemplate.SetColor("_HiColor", Color.Lerp(_hiColor2D, _hiColor3D, t));
-        Terrain.materialTemplate.SetColor("_LineColor", Color.Lerp(_lineColor2D, _lineColor3D, t));
-        Terrain.materialTemplate.SetColor("_LineColorHi", Color.Lerp(_lineColorHi2D, _lineColorHi3D, t));
-        Terrain.materialTemplate.SetColor("_Ambient", Color.Lerp(_ambient2D, _ambient3D, t));
-        Terrain.materialTemplate.SetColor("_FresnelColor", Color.Lerp(_fresnelColor2D, _fresnelColor3D, t));
-        Terrain.materialTemplate.SetFloat("_Levels", Mathf.Lerp(_levels2D, _levels3D, t));
-        Terrain.materialTemplate.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
+        var m = terrain.materialTemplate;
+
+        m.SetColor("_LoColor", Color.Lerp(_loColor2D, _loColor3D, t));
+        m.SetColor("_HiColor", Color.Lerp(_hiColor2D, _hiColor3D, t));
+        m.SetColor("_LineColor", Color.Lerp(_lineColor2D, _lineColor3D, t));
+        m.SetColor("_LineColorHi", Color.Lerp(_lineColorHi2D, _lineColorHi3D, t));
+        m.SetColor("_Ambient", Color.Lerp(_ambient2D, _ambient3D, t));
+        m.SetColor("_FresnelColor", Color.Lerp(_fresnelColor2D, _fresnelColor3D, t));
+        m.SetFloat("_Levels", Mathf.Lerp(_levels2D, _levels3D, t));
+        m.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
+        m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
     }
 }
