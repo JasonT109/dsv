@@ -30,6 +30,7 @@ ModelImporter:
     100044: tail_grp_5
     100046: tail_grp_6
     100048: world_ctrl
+    100050: sharkish
     400000: //RootNode
     400002: head_ctrl_1
     400004: head_grp_1
@@ -55,14 +56,17 @@ ModelImporter:
     400044: tail_grp_5
     400046: tail_grp_6
     400048: world_ctrl
+    400050: sharkish
     2300000: //RootNode
     3300000: //RootNode
     4300000: Shark_01SG1
+    4300002: sharkish
     7400000: swim
     7400002: turnleft
     7400004: turnright
     9500000: //RootNode
     13700000: Shark_01SG1
+    13700002: sharkish
   materials:
     importMaterials: 1
     materialName: 0
