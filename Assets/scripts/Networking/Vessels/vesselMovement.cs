@@ -21,9 +21,13 @@ public abstract class vesselMovement : NetworkBehaviour
     [SyncVar]
     public bool Active;
 
-    /** Vessel's current velocity. */
+    /** Vessel's current velocity (map space). */
     [SyncVar]
     public Vector3 Velocity;
+
+    /** Vessel's current velocity (world space). */
+    public Vector3 WorldVelocity
+        { get { return new Vector3(Velocity.x, -Velocity.z, Velocity.y); } }
 
 
     // Computed Properties
@@ -147,9 +151,8 @@ public abstract class vesselMovement : NetworkBehaviour
 
         // If we're controlling the player vessel, update its world velocity.
         // Supplied velocity uses map axes, so translate it into world space.
-        var worldVelocity = new Vector3(velocity.x, -velocity.z, velocity.y);
         if (Vessel == MapData.playerVessel)
-            serverUtils.SetPlayerWorldVelocity(worldVelocity);
+            serverUtils.SetPlayerWorldVelocity(WorldVelocity);
     }
 
     /** Returns the vessel's state (position + velocity). */

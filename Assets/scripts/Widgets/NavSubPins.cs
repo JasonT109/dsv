@@ -78,4 +78,5 @@ public class NavSubPins : Singleton<NavSubPins>
 
         return(p);
     }
+
 }

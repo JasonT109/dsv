@@ -135,7 +135,7 @@ public class serverData : NetworkBehaviour
         get
         {
             if (!_crewData)
-                _crewData = CrewData;
+                _crewData = gameObject.GetComponent<crewData>();
             return _crewData;
         }
     }

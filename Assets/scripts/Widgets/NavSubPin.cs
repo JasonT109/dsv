@@ -49,6 +49,9 @@ public class NavSubPin : MonoBehaviour
     /** Whether to display pin's label. */
     public bool ShowLabel = true;
 
+    /** Whether to orient pin to face direction of movement. */
+    public bool OrientToHeading;
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -212,6 +215,10 @@ public class NavSubPin : MonoBehaviour
         // Update the trail indicator.
         UpdateTrail(movement);
 
+        // Update button orientation.
+        if (OrientToHeading)
+            UpdateButtonOrientation(movement);
+
         // Remember movement mode.
         _movement = movement;
     }
@@ -259,6 +266,14 @@ public class NavSubPin : MonoBehaviour
     /** Convert a vessel's position into 3D map space. */
     private Vector3 ConvertVesselCoords(Vector3 p)
         { return _manager.ConvertVesselCoords(p); }
+
+    /** Convert a vessel's position into 2D screen space. */
+    private Vector3 ConvertVesselToScreenSpace(Vector3 p)
+    {
+        var map = ConvertToMapSpace(p);
+        var world = vesselButton.transform.parent.TransformPoint(map);
+        return Camera.main.WorldToScreenPoint(world);
+    }
 
     /** Update the interception indicator for this vessel (if intercepting). */
     private void UpdateInterceptIndicator(vesselIntercept intercept)
@@ -339,6 +354,24 @@ public class NavSubPin : MonoBehaviour
 
         // Draw trail.
         _trailLine.Draw3D();
+    }
+
+    /** Update the orientation of the button to face towards movement direction. */
+    private void UpdateButtonOrientation(vesselMovement movement)
+    {
+        // If not moving, orient upwards.
+        if (!movement || movement.Velocity.magnitude < 0.01f)
+            return;
+
+        // Get direction of movement in screen space.
+        var p = vesselModel.transform.position;
+        var v = movement.WorldVelocity;
+        var from = ConvertVesselToScreenSpace(p);
+        var to = ConvertVesselToScreenSpace(p + v);
+        var delta = to - from;
+
+        var angle = -(90 + Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        _icon.button.transform.localRotation = Quaternion.Euler(0, 0, angle);
     }
 
 }

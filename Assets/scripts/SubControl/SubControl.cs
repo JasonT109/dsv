@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 
 public class SubControl : MonoBehaviour 
 {
@@ -79,7 +80,10 @@ public class SubControl : MonoBehaviour
         Vector3 PitchExtract = new Vector3(-1,0,0);
         Vector3 YawExtract = new Vector3(0,1,0);
 
-        if (!disableInput)
+        // Don't apply sub control if vessel is being moved by the vessel simulation.
+        var movement = serverUtils.GetVesselMovements().GetPlayerVesselMovement();
+
+        if (!disableInput && !movement)
         {
             //this.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z);
 

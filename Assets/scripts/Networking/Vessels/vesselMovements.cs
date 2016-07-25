@@ -202,6 +202,10 @@ public class vesselMovements : NetworkBehaviour
     public bool IsPursuing(int vessel)
     { return GetVesselMovement(vessel) is vesselPursue; }
 
+    /** Return the player vessel's current movement mode (if any). */
+    public vesselMovement GetPlayerVesselMovement()
+        { return GetVesselMovement(serverUtils.GetPlayerVessel());}
+
     /** Return the vessel's current movement mode (if any). */
     public vesselMovement GetVesselMovement(int vessel)
     {
