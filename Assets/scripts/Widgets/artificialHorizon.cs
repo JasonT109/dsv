@@ -19,6 +19,11 @@ public class artificialHorizon : MonoBehaviour {
         degreeDistance = (horizonMaxPosition - horizonMinPosition) / 360;
     }
 
+    void OnEnable()
+    {
+        Update();
+    }
+
     // Update is called once per frame
     void Update ()
     {
