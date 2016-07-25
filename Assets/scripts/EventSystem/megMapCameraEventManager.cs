@@ -101,28 +101,17 @@ public class megMapCameraEventManager : MonoBehaviour
                     //if to object get that position in map space
                     if (runningEvent.goToObject)
                     {
-                        runningEvent.toPosition = runningEvent.toObject.transform.localPosition;
+                        var p = runningEvent.toObject.transform.position;
+                        runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
                         runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
                         runningEvent.toZoom = initialZoom;
                     }
 
                     if (runningEvent.goToPlayerVessel)
                     {
-                        switch (serverUtils.GetPlayerVessel())
-                        {
-                            case 1:
-                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[0].transform.localPosition);
-                                break;
-                            case 2:
-                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[1].transform.localPosition);
-                                break;
-                            case 3:
-                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[2].transform.localPosition);
-                                break;
-                            case 4:
-                                runningEvent.toPosition = NavSubPins.Instance.ConvertToMapSpace(vessels[3].transform.localPosition);
-                                break;
-                        }
+                        var playerVessel = serverUtils.GetPlayerVessel();
+                        var p = vessels[playerVessel - 1].transform.position;
+                        runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
                         runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
                         runningEvent.toZoom = initialZoom;
                     }

@@ -96,9 +96,6 @@ public class NavSubPin : MonoBehaviour
     /** Icon. */
     private graphicsMapIcon _icon;
 
-    /** Initial label scale. */
-    private Vector3 _labelScale = Vector3.one;
-
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -110,7 +107,6 @@ public class NavSubPin : MonoBehaviour
         _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
         _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
         _icon = vesselButton.GetComponent<graphicsMapIcon>();
-        _labelScale = _icon.label.transform.localScale;
     }
 
     /** Enabling. */

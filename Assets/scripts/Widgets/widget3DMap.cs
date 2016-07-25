@@ -259,6 +259,14 @@ public class widget3DMap : MonoBehaviour {
 
         InitTerrain();
         UpdateTerrain();
+
+        StartCoroutine(wait(0));
+    }
+
+    IEnumerator wait(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        UpdateMap();
     }
 
 	void Update()
