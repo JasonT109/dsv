@@ -128,6 +128,10 @@ public class widget3DMap : MonoBehaviour {
 
     void UpdateMap()
     {
+        // Cap delta time to avoid jumps at low framerates.
+        const float maxDeltaTime = 1 / 50.0f;
+        var dt = Mathf.Min(maxDeltaTime, Time.deltaTime);
+
         //get the view angle slider value
         var slider = viewAngleSlider.GetComponent<sliderWidget>();
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
@@ -151,7 +155,7 @@ public class widget3DMap : MonoBehaviour {
             if (multiTouch)
             {
                 //slowly increase the rotate amount so we don't get jittery rotations when fingers are close together
-                rotateAmount = Mathf.Lerp(rotateAmount, rotDelta, Time.deltaTime * rotateSpeed);
+                rotateAmount = Mathf.Lerp(rotateAmount, rotDelta, dt * rotateSpeed);
 
                 //apply the rotation
                 mapCameraRoot.transform.Rotate(0, rotateAmount, 0);
@@ -163,7 +167,7 @@ public class widget3DMap : MonoBehaviour {
                 camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
 
                 //add this to the camera pos z
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, Time.deltaTime * 0.2f));
+                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
 
                 mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
 
@@ -197,7 +201,7 @@ public class widget3DMap : MonoBehaviour {
                 float yTrans = (1 - graphicsMaths.remapValue(viewAngle, viewAngleSlider.GetComponent<sliderWidget>().minValue, viewAngleSlider.GetComponent<sliderWidget>().maxValue, 0, 1)) * touchDelta.y;
 
                 //create a local space transform that we can transpose
-                Vector3 worldPos = new Vector3(touchDelta.x * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), yTrans * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)), zTrans * (Time.deltaTime * (scrollSpeed * zoomeSpeedMultiplier)));
+                Vector3 worldPos = new Vector3(touchDelta.x * (dt * (scrollSpeed * zoomeSpeedMultiplier)), yTrans * (dt * (scrollSpeed * zoomeSpeedMultiplier)), zTrans * (dt * (scrollSpeed * zoomeSpeedMultiplier)));
 
                 //transpose to world space
                 worldPos = mapCameraRoot.transform.TransformPoint(worldPos);
@@ -213,7 +217,7 @@ public class widget3DMap : MonoBehaviour {
                 //clamp the translation
                 //rootPos = new Vector3(Mathf.Clamp(rootPos.x, -maxScroll, maxScroll), rootPos.y, Mathf.Clamp(rootPos.z, -maxScroll, maxScroll));
 
-                mapCameraRoot.transform.localPosition = Vector3.Lerp(mapCameraRoot.transform.localPosition, rootPos, Time.deltaTime);
+                mapCameraRoot.transform.localPosition = Vector3.Lerp(mapCameraRoot.transform.localPosition, rootPos, dt);
 
                 //set previous hit point so we can reference it next frame to calculate the delta
                 previousHit = currentHit;
