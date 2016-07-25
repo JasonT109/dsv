@@ -37,6 +37,32 @@ public class widget3DMap : MonoBehaviour {
     private float rotateAmount = 0f;
     public TiltShift tilt;
 
+    public Terrain Terrain;
+    public Material TerrainMaterial2d;
+    public Material TerrainMaterial3d;
+    public float TerrainTransitionRange = 30;
+
+    private bool _terrainMaterialInitialized;
+
+    private Color _loColor2D;
+    private Color _hiColor2D;
+    private Color _lineColor2D;
+    private Color _lineColorHi2D;
+    private Color _fresnelColor2D;
+    private Color _ambient2D;
+    private float _levels2D;
+    private float _gradient2D;
+
+    private Color _loColor3D;
+    private Color _hiColor3D;
+    private Color _lineColor3D;
+    private Color _lineColorHi3D;
+    private Color _fresnelColor3D;
+    private Color _ambient3D;
+    private float _levels3D;
+    private float _gradient3D;
+
+
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
         float ts = (t /= d) * t;
@@ -137,6 +163,10 @@ public class widget3DMap : MonoBehaviour {
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
 
+        // Update terrain material based on view angle.
+        if (Terrain)
+            UpdateTerrainMaterial();
+
         //get current zoom level from camera
         zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         float camZ = mapCamera.transform.localPosition.z;
@@ -228,6 +258,11 @@ public class widget3DMap : MonoBehaviour {
     void Start()
     {
         StartCoroutine(wait(0f));
+
+        if (Terrain)
+            InitTerrainMaterial();
+
+        UpdateTerrainMaterial();
     }
 
     IEnumerator wait(float waitTime)
@@ -242,5 +277,46 @@ public class widget3DMap : MonoBehaviour {
 	void Update ()
     {
         UpdateMap();
+    }
+
+    private void InitTerrainMaterial()
+    {
+        _loColor2D = TerrainMaterial2d.GetColor("_LoColor");
+        _hiColor2D = TerrainMaterial2d.GetColor("_HiColor");
+        _lineColor2D = TerrainMaterial2d.GetColor("_LineColor");
+        _lineColorHi2D = TerrainMaterial2d.GetColor("_LineColorHi");
+        _ambient2D = TerrainMaterial2d.GetColor("_Ambient");
+        _fresnelColor2D = TerrainMaterial2d.GetColor("_FresnelColor");
+        _levels2D = TerrainMaterial2d.GetFloat("_Levels");
+        _gradient2D = TerrainMaterial2d.GetFloat("_Gradient");
+
+        _loColor3D = TerrainMaterial3d.GetColor("_LoColor");
+        _hiColor3D = TerrainMaterial3d.GetColor("_HiColor");
+        _lineColor3D = TerrainMaterial3d.GetColor("_LineColor");
+        _lineColorHi3D = TerrainMaterial3d.GetColor("_LineColorHi");
+        _ambient3D = TerrainMaterial3d.GetColor("_Ambient");
+        _fresnelColor3D = TerrainMaterial3d.GetColor("_FresnelColor");
+        _levels3D = TerrainMaterial3d.GetFloat("_Levels");
+        _gradient3D = TerrainMaterial3d.GetFloat("_Gradient");
+
+        Terrain.materialTemplate = new Material(TerrainMaterial3d);
+    }
+
+    private void UpdateTerrainMaterial()
+    {
+        var slider = viewAngleSlider.GetComponent<sliderWidget>();
+        var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
+
+        var transitionStart = slider.maxValue - TerrainTransitionRange;
+        var t = 1 - Mathf.Clamp01((viewAngle - transitionStart) / TerrainTransitionRange);
+
+        Terrain.materialTemplate.SetColor("_LoColor", Color.Lerp(_loColor2D, _loColor3D, t));
+        Terrain.materialTemplate.SetColor("_HiColor", Color.Lerp(_hiColor2D, _hiColor3D, t));
+        Terrain.materialTemplate.SetColor("_LineColor", Color.Lerp(_lineColor2D, _lineColor3D, t));
+        Terrain.materialTemplate.SetColor("_LineColorHi", Color.Lerp(_lineColorHi2D, _lineColorHi3D, t));
+        Terrain.materialTemplate.SetColor("_Ambient", Color.Lerp(_ambient2D, _ambient3D, t));
+        Terrain.materialTemplate.SetColor("_FresnelColor", Color.Lerp(_fresnelColor2D, _fresnelColor3D, t));
+        Terrain.materialTemplate.SetFloat("_Levels", Mathf.Lerp(_levels2D, _levels3D, t));
+        Terrain.materialTemplate.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
     }
 }
