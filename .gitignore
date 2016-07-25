@@ -67,3 +67,5 @@ Temporary Items
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.csproj
+*.sln
