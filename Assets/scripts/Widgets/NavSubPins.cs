@@ -42,6 +42,12 @@ public class NavSubPins : Singleton<NavSubPins>
             _pins[i].UpdateIndicators();
     }
 
+    public void ToggleLabels()
+    {
+        for (var i = 0; i < _pins.Length; i++)
+            _pins[i].ToggleLabel();
+    }
+
     public NavSubPin GetVesselPin(int vessel)
         { return _pinLookup[vessel]; }
 

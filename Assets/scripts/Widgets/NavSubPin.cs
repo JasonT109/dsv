@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Meg.Networking;
 using Vectrosity;
 
@@ -44,6 +45,9 @@ public class NavSubPin : MonoBehaviour
 
     /** Distance to ocean floor. */
     public float Distance;
+
+    /** Whether to display pin's label. */
+    public bool ShowLabel = true;
 
 
     // Private Properties
@@ -89,6 +93,12 @@ public class NavSubPin : MonoBehaviour
     /** Map camera. */
     private Camera _mapCamera;
 
+    /** Icon. */
+    private graphicsMapIcon _icon;
+
+    /** Initial label scale. */
+    private Vector3 _labelScale = Vector3.one;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -99,6 +109,8 @@ public class NavSubPin : MonoBehaviour
         _manager = GetComponentInParent<NavSubPins>();
         _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
         _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
+        _icon = vesselButton.GetComponent<graphicsMapIcon>();
+        _labelScale = _icon.label.transform.localScale;
     }
 
     /** Enabling. */
@@ -116,6 +128,31 @@ public class NavSubPin : MonoBehaviour
 
     // Public Methods
     // ------------------------------------------------------------
+
+    /** Toggle pin's label. */
+    public void ToggleLabel()
+    {
+        // Toggle label visibility.
+        ShowLabel = !ShowLabel;
+
+        // Fade the label in/out.
+        var label = _icon.label;
+        var c = label.color;
+        var to = new Color(c.r, c.g, c.g, ShowLabel ? 1 : 0);
+        label.DOKill();
+        DOTween.To(() => label.color, x => label.color = x, to, 0.25f);
+
+        // Fade the label's backdrop in/out.
+        if (label.transform.childCount <= 0)
+            return;
+
+        var backdrop = label.transform.GetChild(0).GetComponentInChildren<MeshRenderer>();
+        if (!backdrop)
+            return;
+
+        backdrop.DOKill();
+        backdrop.material.DOFade(ShowLabel ? 0.5f : 0, "_TintColor", 0.25f);
+    }
 
     /** Updating. */
     public void UpdatePin()
@@ -216,7 +253,7 @@ public class NavSubPin : MonoBehaviour
             mapIconDirection = 7;
 
         // Set the orientation of the child to indicate the direction.
-        vesselButton.GetComponent<graphicsMapIcon>().UpdateIcon(mapIconDirection != 0, mapIconDirection);
+        _icon.UpdateIcon(mapIconDirection != 0, mapIconDirection);
     }
 
     /** Convert a vessel's position into 2D map space. */
