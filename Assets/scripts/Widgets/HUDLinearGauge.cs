@@ -73,6 +73,9 @@ public class HUDLinearGauge : MonoBehaviour
     /** Prefab used for a sub tick. */
     public GameObject SubTickPrefab;
 
+    /** Prefab used for the zero-point tick (optional). */
+    public GameObject ZeroTickPrefab;
+
 
     // Private properties
     // ------------------------------------------------------------
@@ -112,6 +115,15 @@ public class HUDLinearGauge : MonoBehaviour
 
     /** List of tick labels used in the gauge. */
     private readonly List<widgetText> _labels = new List<widgetText>();
+
+    /** The zero tick (optional). */
+    private GameObject _zeroTick;
+
+    /** The zero tick renderer. */
+    private Renderer _zeroRenderer;
+
+    /** The zero tick label. */
+    private widgetText _zeroLabel;
 
 
     // Unity Methods
@@ -192,6 +204,17 @@ public class HUDLinearGauge : MonoBehaviour
             _renderers.Add(tick.GetComponentInChildren<Renderer>());
             _labels.Add(tick.GetComponentInChildren<widgetText>());
         }
+
+        // Create the zero tick (if specified).
+        if (ZeroTickPrefab)
+        {
+            _zeroTick = Instantiate(ZeroTickPrefab);
+            _zeroTick.transform.parent = gameObject.transform;
+            _zeroTick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
+            _zeroTick.SetActive(false);
+            _zeroRenderer = _zeroTick.GetComponentInChildren<Renderer>();
+            _zeroLabel = _zeroTick.GetComponentInChildren<widgetText>();
+        }
     }
 
     /** Update the value of this gauge. */
@@ -209,27 +232,52 @@ public class HUDLinearGauge : MonoBehaviour
     /** Position ticks according to current value. */
     private void UpdateTicks()
     {
+        // Disable the zero tick by default.
+        if (_zeroTick)
+            _zeroTick.SetActive(false);
+
         // Position ticks.
         var value = GetInitialTickValue();
         for (var i = 0; i < _ticks.Count; i++)
         {
-            var tick = _ticks[i];
+            var visible = value >= LowValue && value <= HighValue;
+            var isZero = Mathf.Approximately(value, 0) && _zeroTick;
+            var isNonZero = !isZero;
+
+            // Set tick visibility.
+            _ticks[i].SetActive(visible && isNonZero);
+
+            // Select a regular (or zero) tick to position.
+            var tick = isNonZero ? _ticks[i] : _zeroTick;
+            if (isZero)
+                _zeroTick.SetActive(visible);
+
+            // Position the tick.
             tick.transform.localPosition = ValueToLocal(value);
-            tick.SetActive(value >= LowValue && value <= HighValue);
 
-            if (_labels[i])
+            // Update tick label.
+            var label = isNonZero ? _labels[i] : _zeroLabel;
+            if (label)
             {
-                var c = _labels[i].Color;
-                _labels[i].Text = string.Format(TickFormat, value);
-                _labels[i].Color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
+                var c = label.Color;
+                label.Text = string.Format(TickFormat, value);
+                label.Color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
             }
 
-            if (_renderers[i])
+            // Update tick color.
+            var r = isNonZero ? _renderers[i] : _zeroRenderer;
+            if (r && r.material.HasProperty("_Color"))
             {
-                var c = _renderers[i].material.color;
-                _renderers[i].material.color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
+                var c = r.material.color;
+                r.material.color = new Color(c.r, c.g, c.b, ValueToAlpha(value));
+            }
+            else if (r && r.material.HasProperty("_TintColor"))
+            {
+                var c = r.material.GetColor("_TintColor");
+                r.material.SetColor("_TintColor", new Color(c.r, c.g, c.b, ValueToAlpha(value)));
             }
 
+            // Update current value.
             value = ConstrainValue(value + SubTickInterval);
         }
     }
