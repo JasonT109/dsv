@@ -10,9 +10,11 @@ public class graphicsBackColor : MonoBehaviour
     private Material m;
     public bool useBackgroundColor = true;
     public bool useHighlightColor = false;
+    public bool overrideAlpha = false;
 
     public float BrightnessScale = 1;
     public float BrightnessMin = 0;
+    public float Alpha = 1;
 
     public void updateColor()
     {
@@ -49,12 +51,14 @@ public class graphicsBackColor : MonoBehaviour
 
     private Color AdjustColor(Color c)
     {
-        if (BrightnessScale == 1 && BrightnessMin <= 0)
+        if (BrightnessScale == 1 && BrightnessMin <= 0 && !overrideAlpha)
             return c;
         else
         {
             var hsb = HSBColor.FromColor(c);
             hsb.b = Mathf.Max(BrightnessMin, hsb.b * BrightnessScale);
+            hsb.a = overrideAlpha ? Alpha : c.a;
+
             return hsb.ToColor();
         }
     }
