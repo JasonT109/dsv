@@ -72,6 +72,7 @@ public class serverData : NetworkBehaviour
     #region PublicVars
 
     //public float descent;
+    public bool isGlider = false;
     public float[] batteries = new float[7];
     public float[] oxygenTanks = new float[7];
     public float thrust = 1.0f;
@@ -534,7 +535,17 @@ public class serverData : NetworkBehaviour
 
     public float GetBatteryTotal()
     {
-        float batPower = (batteries[0] + batteries[1] + batteries[2] + batteries[3] + batteries[4] + batteries[5] + batteries[6]) / 7.0f;
+        float batPower;
+
+        //gliders only have 4 battery banks
+        if (isGlider)
+        {
+            batPower = (batteries[0] + batteries[1] + batteries[2] + batteries[3]) / 4.0f;
+        }
+        else
+        {
+            batPower = (batteries[0] + batteries[1] + batteries[2] + batteries[3] + batteries[4] + batteries[5] + batteries[6]) / 7.0f;
+        }
         return batPower;
     }
 

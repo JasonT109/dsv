@@ -67,6 +67,66 @@ ModelImporter:
     100118: gl_tick_8
     100120: gl_tick_9
     100122: GL_battery_ring_back_plane
+    100124: gl_battery_tick_1
+    100126: gl_battery_tick_10
+    100128: gl_battery_tick_11
+    100130: gl_battery_tick_12
+    100132: gl_battery_tick_13
+    100134: gl_battery_tick_14
+    100136: gl_battery_tick_15
+    100138: gl_battery_tick_16
+    100140: gl_battery_tick_17
+    100142: gl_battery_tick_18
+    100144: gl_battery_tick_19
+    100146: gl_battery_tick_2
+    100148: gl_battery_tick_20
+    100150: gl_battery_tick_21
+    100152: gl_battery_tick_22
+    100154: gl_battery_tick_23
+    100156: gl_battery_tick_24
+    100158: gl_battery_tick_25
+    100160: gl_battery_tick_26
+    100162: gl_battery_tick_27
+    100164: gl_battery_tick_28
+    100166: gl_battery_tick_29
+    100168: gl_battery_tick_3
+    100170: gl_battery_tick_30
+    100172: gl_battery_tick_31
+    100174: gl_battery_tick_32
+    100176: gl_battery_tick_33
+    100178: gl_battery_tick_34
+    100180: gl_battery_tick_35
+    100182: gl_battery_tick_36
+    100184: gl_battery_tick_37
+    100186: gl_battery_tick_38
+    100188: gl_battery_tick_39
+    100190: gl_battery_tick_4
+    100192: gl_battery_tick_40
+    100194: gl_battery_tick_41
+    100196: gl_battery_tick_42
+    100198: gl_battery_tick_43
+    100200: gl_battery_tick_44
+    100202: gl_battery_tick_45
+    100204: gl_battery_tick_46
+    100206: gl_battery_tick_47
+    100208: gl_battery_tick_48
+    100210: gl_battery_tick_49
+    100212: gl_battery_tick_5
+    100214: gl_battery_tick_50
+    100216: gl_battery_tick_51
+    100218: gl_battery_tick_52
+    100220: gl_battery_tick_53
+    100222: gl_battery_tick_54
+    100224: gl_battery_tick_55
+    100226: gl_battery_tick_56
+    100228: gl_battery_tick_57
+    100230: gl_battery_tick_58
+    100232: gl_battery_tick_59
+    100234: gl_battery_tick_6
+    100236: gl_battery_tick_60
+    100238: gl_battery_tick_7
+    100240: gl_battery_tick_8
+    100242: gl_battery_tick_9
     400000: //RootNode
     400002: gl_tick_1
     400004: gl_tick_10
@@ -129,6 +189,66 @@ ModelImporter:
     400118: gl_tick_8
     400120: gl_tick_9
     400122: GL_battery_ring_back_plane
+    400124: gl_battery_tick_1
+    400126: gl_battery_tick_10
+    400128: gl_battery_tick_11
+    400130: gl_battery_tick_12
+    400132: gl_battery_tick_13
+    400134: gl_battery_tick_14
+    400136: gl_battery_tick_15
+    400138: gl_battery_tick_16
+    400140: gl_battery_tick_17
+    400142: gl_battery_tick_18
+    400144: gl_battery_tick_19
+    400146: gl_battery_tick_2
+    400148: gl_battery_tick_20
+    400150: gl_battery_tick_21
+    400152: gl_battery_tick_22
+    400154: gl_battery_tick_23
+    400156: gl_battery_tick_24
+    400158: gl_battery_tick_25
+    400160: gl_battery_tick_26
+    400162: gl_battery_tick_27
+    400164: gl_battery_tick_28
+    400166: gl_battery_tick_29
+    400168: gl_battery_tick_3
+    400170: gl_battery_tick_30
+    400172: gl_battery_tick_31
+    400174: gl_battery_tick_32
+    400176: gl_battery_tick_33
+    400178: gl_battery_tick_34
+    400180: gl_battery_tick_35
+    400182: gl_battery_tick_36
+    400184: gl_battery_tick_37
+    400186: gl_battery_tick_38
+    400188: gl_battery_tick_39
+    400190: gl_battery_tick_4
+    400192: gl_battery_tick_40
+    400194: gl_battery_tick_41
+    400196: gl_battery_tick_42
+    400198: gl_battery_tick_43
+    400200: gl_battery_tick_44
+    400202: gl_battery_tick_45
+    400204: gl_battery_tick_46
+    400206: gl_battery_tick_47
+    400208: gl_battery_tick_48
+    400210: gl_battery_tick_49
+    400212: gl_battery_tick_5
+    400214: gl_battery_tick_50
+    400216: gl_battery_tick_51
+    400218: gl_battery_tick_52
+    400220: gl_battery_tick_53
+    400222: gl_battery_tick_54
+    400224: gl_battery_tick_55
+    400226: gl_battery_tick_56
+    400228: gl_battery_tick_57
+    400230: gl_battery_tick_58
+    400232: gl_battery_tick_59
+    400234: gl_battery_tick_6
+    400236: gl_battery_tick_60
+    400238: gl_battery_tick_7
+    400240: gl_battery_tick_8
+    400242: gl_battery_tick_9
     2300000: gl_tick_1
     2300002: gl_tick_10
     2300004: gl_tick_11
@@ -190,6 +310,66 @@ ModelImporter:
     2300116: gl_tick_8
     2300118: gl_tick_9
     2300120: GL_battery_ring_back_plane
+    2300122: gl_battery_tick_1
+    2300124: gl_battery_tick_10
+    2300126: gl_battery_tick_11
+    2300128: gl_battery_tick_12
+    2300130: gl_battery_tick_13
+    2300132: gl_battery_tick_14
+    2300134: gl_battery_tick_15
+    2300136: gl_battery_tick_16
+    2300138: gl_battery_tick_17
+    2300140: gl_battery_tick_18
+    2300142: gl_battery_tick_19
+    2300144: gl_battery_tick_2
+    2300146: gl_battery_tick_20
+    2300148: gl_battery_tick_21
+    2300150: gl_battery_tick_22
+    2300152: gl_battery_tick_23
+    2300154: gl_battery_tick_24
+    2300156: gl_battery_tick_25
+    2300158: gl_battery_tick_26
+    2300160: gl_battery_tick_27
+    2300162: gl_battery_tick_28
+    2300164: gl_battery_tick_29
+    2300166: gl_battery_tick_3
+    2300168: gl_battery_tick_30
+    2300170: gl_battery_tick_31
+    2300172: gl_battery_tick_32
+    2300174: gl_battery_tick_33
+    2300176: gl_battery_tick_34
+    2300178: gl_battery_tick_35
+    2300180: gl_battery_tick_36
+    2300182: gl_battery_tick_37
+    2300184: gl_battery_tick_38
+    2300186: gl_battery_tick_39
+    2300188: gl_battery_tick_4
+    2300190: gl_battery_tick_40
+    2300192: gl_battery_tick_41
+    2300194: gl_battery_tick_42
+    2300196: gl_battery_tick_43
+    2300198: gl_battery_tick_44
+    2300200: gl_battery_tick_45
+    2300202: gl_battery_tick_46
+    2300204: gl_battery_tick_47
+    2300206: gl_battery_tick_48
+    2300208: gl_battery_tick_49
+    2300210: gl_battery_tick_5
+    2300212: gl_battery_tick_50
+    2300214: gl_battery_tick_51
+    2300216: gl_battery_tick_52
+    2300218: gl_battery_tick_53
+    2300220: gl_battery_tick_54
+    2300222: gl_battery_tick_55
+    2300224: gl_battery_tick_56
+    2300226: gl_battery_tick_57
+    2300228: gl_battery_tick_58
+    2300230: gl_battery_tick_59
+    2300232: gl_battery_tick_6
+    2300234: gl_battery_tick_60
+    2300236: gl_battery_tick_7
+    2300238: gl_battery_tick_8
+    2300240: gl_battery_tick_9
     3300000: gl_tick_1
     3300002: gl_tick_10
     3300004: gl_tick_11
@@ -251,6 +431,66 @@ ModelImporter:
     3300116: gl_tick_8
     3300118: gl_tick_9
     3300120: GL_battery_ring_back_plane
+    3300122: gl_battery_tick_1
+    3300124: gl_battery_tick_10
+    3300126: gl_battery_tick_11
+    3300128: gl_battery_tick_12
+    3300130: gl_battery_tick_13
+    3300132: gl_battery_tick_14
+    3300134: gl_battery_tick_15
+    3300136: gl_battery_tick_16
+    3300138: gl_battery_tick_17
+    3300140: gl_battery_tick_18
+    3300142: gl_battery_tick_19
+    3300144: gl_battery_tick_2
+    3300146: gl_battery_tick_20
+    3300148: gl_battery_tick_21
+    3300150: gl_battery_tick_22
+    3300152: gl_battery_tick_23
+    3300154: gl_battery_tick_24
+    3300156: gl_battery_tick_25
+    3300158: gl_battery_tick_26
+    3300160: gl_battery_tick_27
+    3300162: gl_battery_tick_28
+    3300164: gl_battery_tick_29
+    3300166: gl_battery_tick_3
+    3300168: gl_battery_tick_30
+    3300170: gl_battery_tick_31
+    3300172: gl_battery_tick_32
+    3300174: gl_battery_tick_33
+    3300176: gl_battery_tick_34
+    3300178: gl_battery_tick_35
+    3300180: gl_battery_tick_36
+    3300182: gl_battery_tick_37
+    3300184: gl_battery_tick_38
+    3300186: gl_battery_tick_39
+    3300188: gl_battery_tick_4
+    3300190: gl_battery_tick_40
+    3300192: gl_battery_tick_41
+    3300194: gl_battery_tick_42
+    3300196: gl_battery_tick_43
+    3300198: gl_battery_tick_44
+    3300200: gl_battery_tick_45
+    3300202: gl_battery_tick_46
+    3300204: gl_battery_tick_47
+    3300206: gl_battery_tick_48
+    3300208: gl_battery_tick_49
+    3300210: gl_battery_tick_5
+    3300212: gl_battery_tick_50
+    3300214: gl_battery_tick_51
+    3300216: gl_battery_tick_52
+    3300218: gl_battery_tick_53
+    3300220: gl_battery_tick_54
+    3300222: gl_battery_tick_55
+    3300224: gl_battery_tick_56
+    3300226: gl_battery_tick_57
+    3300228: gl_battery_tick_58
+    3300230: gl_battery_tick_59
+    3300232: gl_battery_tick_6
+    3300234: gl_battery_tick_60
+    3300236: gl_battery_tick_7
+    3300238: gl_battery_tick_8
+    3300240: gl_battery_tick_9
     4300000: gl_tick_1
     4300002: gl_tick_2
     4300004: gl_tick_3
@@ -312,6 +552,66 @@ ModelImporter:
     4300116: gl_tick_59
     4300118: gl_tick_60
     4300120: GL_battery_ring_back_plane
+    4300122: gl_battery_tick_60
+    4300124: gl_battery_tick_59
+    4300126: gl_battery_tick_58
+    4300128: gl_battery_tick_57
+    4300130: gl_battery_tick_56
+    4300132: gl_battery_tick_55
+    4300134: gl_battery_tick_54
+    4300136: gl_battery_tick_53
+    4300138: gl_battery_tick_52
+    4300140: gl_battery_tick_51
+    4300142: gl_battery_tick_50
+    4300144: gl_battery_tick_49
+    4300146: gl_battery_tick_48
+    4300148: gl_battery_tick_47
+    4300150: gl_battery_tick_46
+    4300152: gl_battery_tick_45
+    4300154: gl_battery_tick_44
+    4300156: gl_battery_tick_43
+    4300158: gl_battery_tick_42
+    4300160: gl_battery_tick_41
+    4300162: gl_battery_tick_40
+    4300164: gl_battery_tick_39
+    4300166: gl_battery_tick_38
+    4300168: gl_battery_tick_37
+    4300170: gl_battery_tick_36
+    4300172: gl_battery_tick_35
+    4300174: gl_battery_tick_34
+    4300176: gl_battery_tick_33
+    4300178: gl_battery_tick_32
+    4300180: gl_battery_tick_31
+    4300182: gl_battery_tick_30
+    4300184: gl_battery_tick_29
+    4300186: gl_battery_tick_28
+    4300188: gl_battery_tick_27
+    4300190: gl_battery_tick_26
+    4300192: gl_battery_tick_25
+    4300194: gl_battery_tick_24
+    4300196: gl_battery_tick_23
+    4300198: gl_battery_tick_22
+    4300200: gl_battery_tick_21
+    4300202: gl_battery_tick_20
+    4300204: gl_battery_tick_19
+    4300206: gl_battery_tick_18
+    4300208: gl_battery_tick_17
+    4300210: gl_battery_tick_16
+    4300212: gl_battery_tick_15
+    4300214: gl_battery_tick_14
+    4300216: gl_battery_tick_13
+    4300218: gl_battery_tick_12
+    4300220: gl_battery_tick_11
+    4300222: gl_battery_tick_10
+    4300224: gl_battery_tick_9
+    4300226: gl_battery_tick_8
+    4300228: gl_battery_tick_7
+    4300230: gl_battery_tick_6
+    4300232: gl_battery_tick_5
+    4300234: gl_battery_tick_4
+    4300236: gl_battery_tick_3
+    4300238: gl_battery_tick_2
+    4300240: gl_battery_tick_1
   materials:
     importMaterials: 1
     materialName: 0
