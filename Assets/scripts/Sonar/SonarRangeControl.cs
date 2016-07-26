@@ -4,7 +4,7 @@ using System.Collections;
 public class SonarRangeControl : MonoBehaviour
 {
 
-    public int Range = 30;
+    public float Range = 30;
     public int RangeIncrement = 15;
     public int MinRange = 30;
     public int MaxRange = 1000;
@@ -24,24 +24,28 @@ public class SonarRangeControl : MonoBehaviour
 
     bool canChangeValue = true;
 
-	// Use this for initialization
-	void Start () 
-    {
-        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
-        Range = Root.GetComponent<SonarData>().SonarRange;
+    public const float SmoothTime = 0.15f;
 
-        UpdateValues();
-	}
-	
+    private float _target;
+    private float _velocity;
+
+    private bool _initialized;
+
+
 	// Update is called once per frame
 	void Update () 
-    {   
-        if(LeftButton.GetComponent<buttonControl>().pressed && canChangeValue)
+    {
+        if (!_initialized)
+            InitValues();
+
+        if (!_initialized)
+            return;
+
+        if (LeftButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
             if(canChangeValue)
             {
-                Range = Mathf.Clamp(Range - RangeIncrement, MinRange, MaxRange);
-                UpdateValues();
+                _target = Mathf.Clamp(_target - RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
             }
@@ -50,26 +54,37 @@ public class SonarRangeControl : MonoBehaviour
         {
             if(canChangeValue)
             {
-                Range = Mathf.Clamp(Range + RangeIncrement, MinRange, MaxRange);
-                UpdateValues();
+                _target = Mathf.Clamp(_target + RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
             }
         }
-	}
+
+        UpdateValues();
+    }
+
+    void InitValues()
+    {
+        _target = Range;
+        _initialized = true;
+    }
 
     void UpdateValues()
     {
-        OneThirdL.Text = "" + Range/3;
-        TwoThirdsL.Text = "" + (Range/3) * 2;
-        FullRangeL.Text = "" + Range;
+        Range = Mathf.SmoothDamp(Range, _target, ref _velocity, SmoothTime);
 
-        OneThirdR.Text = "" + Range/3;
-        TwoThirdsR.Text = "" + (Range/3) * 2;
-        FullRangeR.Text = "" + Range;
+        var r = Mathf.RoundToInt(Range / 5) * 5;
+
+        OneThirdL.Text = "" + r/3;
+        TwoThirdsL.Text = "" + (r/3) * 2;
+        FullRangeL.Text = "" + r;
+
+        OneThirdR.Text = "" + r/3;
+        TwoThirdsR.Text = "" + (r/3) * 2;
+        FullRangeR.Text = "" + r;
 
         if (RangeValObj)
-            RangeValObj.Text = "" + Range;
+            RangeValObj.Text = "" + r;
 
         GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
         Root.GetComponent<SonarData>().SonarRange = Range;

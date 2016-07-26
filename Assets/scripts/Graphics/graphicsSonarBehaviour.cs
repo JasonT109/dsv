@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class graphicsSonarBehaviour : MonoBehaviour {
@@ -32,15 +32,29 @@ public class graphicsSonarBehaviour : MonoBehaviour {
     private Vector3 originalPos;
     private Vector3 directionVector;
 
+    GameObject DataRoot;
+
+    void Awake()
+    {
+        DataRoot = GameObject.FindGameObjectWithTag("ServerData");
+        this.transform.localScale = new Vector3(DataRoot.GetComponent<SonarData>().getScale(),
+                    DataRoot.GetComponent<SonarData>().getScale(),
+                    DataRoot.GetComponent<SonarData>().getScale());
+    }
+
     void Start ()
     { 
         timeCheck = Time.time;
         newPos = transform.position;
         originalPos = transform.position;
     }
-	
-	void Update ()
+
+    void Update ()
     {
+        this.transform.localScale = new Vector3(DataRoot.GetComponent<SonarData>().getScale(),
+            DataRoot.GetComponent<SonarData>().getScale(),
+            DataRoot.GetComponent<SonarData>().getScale());
+
         if (Time.time > timeCheck)
         {
             //create a new position relative to where we are

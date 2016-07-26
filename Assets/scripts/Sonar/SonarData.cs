@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 public class SonarData : NetworkBehaviour 
 {
-    public int SonarRange;
+    public float SonarRange;
     public float SonarGain;
     public float DefaultScale;
 

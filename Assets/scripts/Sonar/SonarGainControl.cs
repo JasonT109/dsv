@@ -18,22 +18,26 @@ public class SonarGainControl : MonoBehaviour
 
     bool canChangeValue = true;
 
-    void Start ()
-    {
-        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
-        Gain = Root.GetComponent<SonarData>().SonarGain;
+    public const float SmoothTime = 0.25f;
 
-        UpdateValues();
-    }
+    private float _target;
+    private float _velocity;
+
+    private bool _initialized;
 
     void Update()
     {
+        if (!_initialized)
+            InitValues();
+
+        if (!_initialized)
+            return;
+
         if (DownButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
             if (canChangeValue)
             {
-                Gain = Mathf.Clamp(Gain - GainIncrement, MinGain, MaxGain);
-                UpdateValues();
+                _target = Mathf.Clamp(_target - GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
             }
@@ -42,19 +46,25 @@ public class SonarGainControl : MonoBehaviour
         {
             if (canChangeValue)
             {
-                Gain = Mathf.Clamp(Gain + GainIncrement, MinGain, MaxGain);
-                UpdateValues();
+                _target = Mathf.Clamp(_target + GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
             }
         }
 
-        if (GainText)
-            GainText.Text = string.Format(GainFormat, Gain);
+        UpdateValues();
+    }
+
+    void InitValues()
+    {
+        _target = Gain;
+        _initialized = true;
     }
 
     void UpdateValues()
     {
+        Gain = Mathf.SmoothDamp(Gain, _target, ref _velocity, SmoothTime);
+
         if (GainText)
             GainText.Text = string.Format(GainFormat, Gain);
 

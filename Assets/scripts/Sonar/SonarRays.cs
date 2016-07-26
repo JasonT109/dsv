@@ -19,8 +19,8 @@ public class SonarRays : MonoBehaviour
 
     private Material _material;
 
-    private const float RangeSmoothTime = 0.05f;
-    private const float GainSmoothTime = 0.25f;
+    private const float RangeSmoothTime = 0.0f;
+    private const float GainSmoothTime = 0.0f;
 
     private Vector3 _lowScale;
     private Vector3 _lowScaleVelocity;
