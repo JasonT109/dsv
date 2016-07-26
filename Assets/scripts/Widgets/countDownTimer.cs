@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Meg.Networking;
 
@@ -15,36 +16,24 @@ public class countDownTimer : widgetText
         if (cText)
             TextMesh = cText;
 
-        if (diveTime)
-        {
-            hours = serverUtils.GetServerData("diveTimeHours");
-            mins = serverUtils.GetServerData("diveTimeMins");
-            seconds = serverUtils.GetServerData("diveTimeSecs");
-        }
-        else
-        {
-            hours = serverUtils.GetServerData("dueTimeHours");
-            mins = serverUtils.GetServerData("dueTimeMins");
-            seconds = serverUtils.GetServerData("dueTimeSecs");
-        }
+        var time = serverUtils.GetServerData(diveTime ? "diveTime" : "dueTime");
+        var span = TimeSpan.FromSeconds(time);
+
+        hours = span.Hours;
+        mins = span.Minutes;
+        seconds = span.Seconds;
     }
 
 	void Update ()
     {
-        if (diveTime)
-        {
-            hours = serverUtils.GetServerData("diveTimeHours");
-            mins = serverUtils.GetServerData("diveTimeMins");
-            seconds = serverUtils.GetServerData("diveTimeSecs");
-        }
-        else
-        {
-            hours = serverUtils.GetServerData("dueTimeHours");
-            mins = serverUtils.GetServerData("dueTimeMins");
-            seconds = serverUtils.GetServerData("dueTimeSecs");
-        }
+        var time = serverUtils.GetServerData(diveTime ? "diveTime" : "dueTime");
+        var span = TimeSpan.FromSeconds(time);
 
-        string fmt = "00";
-        Text = (Mathf.Floor(hours).ToString(fmt) + ":" + Mathf.Floor(mins).ToString(fmt) + ":" + Mathf.Floor(seconds).ToString(fmt));
+        hours = span.Hours;
+        mins = span.Minutes;
+        seconds = span.Seconds;
+
+        Text = string.Format("{0:00}:{1:00}:{2:00}", hours, mins, seconds);
     }
+
 }

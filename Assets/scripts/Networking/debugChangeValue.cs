@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
@@ -58,21 +59,18 @@ public class debugChangeValue : NetworkBehaviour {
                     string valueString1 = (text10k.text.ToString());
                     string valueString2 = (text1k.text.ToString() + text100.text.ToString());
                     string valueString3 = (text10.text.ToString() + text1.text.ToString());
-                    float valueFloat1 = float.Parse(valueString1);
-                    float valueFloat2 = float.Parse(valueString2);
-                    float valueFloat3 = float.Parse(valueString3);
+
+                    int valueInt1 = int.Parse(valueString1);
+                    int valueInt2 = int.Parse(valueString2);
+                    int valueInt3 = int.Parse(valueString3);
+
+                    var span = new System.TimeSpan(valueInt1, valueInt2, valueInt3);
+
                     if (b.GetComponent<buttonControl>().serverName == "ETA")
-                    {
-                        serverUtils.SetServerData("dueTimeHours", valueFloat1);
-                        serverUtils.SetServerData("dueTimeMins", valueFloat2);
-                        serverUtils.SetServerData("dueTimeSecs", valueFloat3);
-                    }
+                        serverUtils.SetServerData("dueTime", (float) span.TotalSeconds);
+
                     if (b.GetComponent<buttonControl>().serverName == "diveTime")
-                    {
-                        serverUtils.SetServerData("diveTimeHours", valueFloat1);
-                        serverUtils.SetServerData("diveTimeMins", valueFloat2);
-                        serverUtils.SetServerData("diveTimeSecs", valueFloat3);
-                    }
+                        serverUtils.SetServerData("diveTime", (float) span.TotalSeconds);
 
                 }
                 else if (b.GetComponent<buttonControl>().serverType == "float")
@@ -175,11 +173,14 @@ public class debugChangeValue : NetworkBehaviour {
         text1.text = tempVal.Substring(4, 1);
     }
 
-    void parseAsTime(int tempInt1, int tempInt2, int tempInt3)
+    void parseAsTime(float totalSeconds)
     {
-        string tempVal1 = tempInt1.ToString("D2");
-        string tempVal2 = tempInt2.ToString("D2");
-        string tempVal3 = tempInt3.ToString("D2");
+        var span = TimeSpan.FromSeconds(totalSeconds);
+        
+        string tempVal1 = span.Hours.ToString("D2");
+        string tempVal2 = span.Minutes.ToString("D2");
+        string tempVal3 = span.Seconds.ToString("D2");
+
         text10k.text = tempVal1.Substring(1, 1);
         text1k.text = tempVal2.Substring(0, 1);
         text100.text = tempVal2.Substring(1, 1);
@@ -235,16 +236,10 @@ public class debugChangeValue : NetworkBehaviour {
                         parseAsInt(tempInt);
                         break;
                     case "ETA":
-                        int tempInt1 = (int)serverUtils.GetServerData("dueTimeHours");
-                        int tempInt2 = (int)serverUtils.GetServerData("dueTimeMins");
-                        int tempInt3 = (int)serverUtils.GetServerData("dueTimeSecs");
-                        parseAsTime(tempInt1, tempInt2, tempInt3);
+                        parseAsTime(serverUtils.GetServerData("dueTime"));
                         break;
                     case "diveTime":
-                        int tempIntDive1 = (int)serverUtils.GetServerData("diveTimeHours");
-                        int tempIntDive2 = (int)serverUtils.GetServerData("diveTimeMins");
-                        int tempIntDive3 = (int)serverUtils.GetServerData("diveTimeSecs");
-                        parseAsTime(tempIntDive1, tempIntDive2, tempIntDive3);
+                        parseAsTime(serverUtils.GetServerData("diveTime"));
                         break;
                     case "Co2":
                         string tempVal = serverUtils.GetServerData("Co2").ToString();

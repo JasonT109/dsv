@@ -34,11 +34,7 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float velocity;
     [SyncVar]
-    public float dueTimeHours;
-    [SyncVar]
-    public float dueTimeMins;
-    [SyncVar]
-    public float dueTimeSecs;
+    public float dueTime;
     [SyncVar]
     public float battery;
     [SyncVar]
@@ -58,11 +54,7 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float floorDistance;
     [SyncVar]
-    public float diveTimeHours;
-    [SyncVar]
-    public float diveTimeMins;
-    [SyncVar]
-    public float diveTimeSecs;
+    public float diveTime;
     [SyncVar]
     public float commsSignalStrength;
     [SyncVar]
@@ -219,23 +211,11 @@ public class serverData : NetworkBehaviour
             case "battery":
                 battery = newValue;
                 break;
-            case "dueTimeHours":
-                dueTimeHours = newValue;
+            case "dueTime":
+                dueTime = newValue;
                 break;
-            case "dueTimeMins":
-                dueTimeMins = newValue;
-                break;
-            case "dueTimeSecs":
-                dueTimeSecs = newValue;
-                break;
-            case "diveTimeHours":
-                diveTimeHours = newValue;
-                break;
-            case "diveTimeMins":
-                diveTimeMins = newValue;
-                break;
-            case "diveTimeSecs":
-                diveTimeSecs = newValue;
+            case "diveTime":
+                diveTime = newValue;
                 break;
             case "waterTemp":
                 waterTemp = newValue;
@@ -644,32 +624,15 @@ public class serverData : NetworkBehaviour
         floorDistance = Mathf.Max(0, 10994 - depth);
         battery = GetBatteryTotal();
         oxygen = GetOxygenTotal();
-        dueTimeSecs -= Time.deltaTime;
-        diveTimeSecs += Time.deltaTime;
+
+        // Update ETA timer.
+        dueTime = Mathf.Max(0, dueTime - Time.deltaTime);
+
+        // Update dive timer.
+        diveTime += Time.deltaTime;
+
         verticalVelocity = rb.velocity.y;
         horizontalVelocity = rb.velocity.x;
-
-        if (dueTimeSecs < 0)
-        {
-            dueTimeSecs = 59.0f + dueTimeSecs;
-            dueTimeMins -= 1.0f;
-        }
-        if (dueTimeMins < 0)
-        {
-            dueTimeMins = 59.0f;
-            dueTimeHours -= 1.0f;
-        }
-
-        if (diveTimeSecs >= 60)
-        {
-            diveTimeSecs = 0f;
-            diveTimeMins += 1.0f;
-        }
-        if (diveTimeMins >= 60)
-        {
-            diveTimeMins = 0f;
-            diveTimeHours += 1.0f;
-        }
     }
 
     void FixedUpdate()

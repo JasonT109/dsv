@@ -122,6 +122,12 @@ namespace Meg.Networking
                     case "floorDistance":
                         rValue = ServerData.floorDistance;
                         break;
+                    case "diveTime":
+                        rValue = ServerData.diveTime;
+                        break;
+                    case "dueTime":
+                        rValue = ServerData.dueTime;
+                        break;
                     case "Co2":
                         rValue = ServerData.Co2;
                         break;
@@ -271,24 +277,6 @@ namespace Meg.Networking
                         break;
                     case "horizontalVelocity":
                         rValue = ServerData.horizontalVelocity;
-                        break;
-                    case "dueTimeHours":
-                        rValue = ServerData.dueTimeHours;
-                        break;
-                    case "dueTimeMins":
-                        rValue = ServerData.dueTimeMins;
-                        break;
-                    case "dueTimeSecs":
-                        rValue = ServerData.dueTimeSecs;
-                        break;
-                    case "diveTimeHours":
-                        rValue = ServerData.diveTimeHours;
-                        break;
-                    case "diveTimeMins":
-                        rValue = ServerData.diveTimeMins;
-                        break;
-                    case "diveTimeSecs":
-                        rValue = ServerData.diveTimeSecs;
                         break;
                     case "commsSignalStrength":
                         rValue = ServerData.commsSignalStrength;
@@ -457,6 +445,14 @@ namespace Meg.Networking
                         int flInt = (int)ServerData.floorDistance;
                         rValue = flInt.ToString();
                         break;
+                    case "diveTime":
+                        var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
+                        rValue = string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
+                        break;
+                    case "dueTime":
+                        var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
+                        rValue = string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
+                        break;
                     case "Co2":
                         rValue = (ServerData.Co2.ToString() + "%");
                         break;
@@ -522,24 +518,6 @@ namespace Meg.Networking
                         break;
                     case "horizontalVelocity":
                         rValue = ServerData.horizontalVelocity.ToString("n1");
-                        break;
-                    case "dueTimeHours":
-                        rValue = ServerData.dueTimeHours.ToString();
-                        break;
-                    case "dueTimeMins":
-                        rValue = ServerData.dueTimeMins.ToString();
-                        break;
-                    case "dueTimeSecs":
-                        rValue = ServerData.dueTimeSecs.ToString();
-                        break;
-                    case "diveTimeHours":
-                        rValue = ServerData.diveTimeHours.ToString();
-                        break;
-                    case "diveTimeMins":
-                        rValue = ServerData.diveTimeMins.ToString();
-                        break;
-                    case "diveTimeSecs":
-                        rValue = ServerData.diveTimeSecs.ToString();
                         break;
                     case "inputXaxis":
                         rValue = ServerData.inputXaxis.ToString("n1");
@@ -636,9 +614,6 @@ namespace Meg.Networking
                         break;
                     case "mapEventName":
                         rValue = MapData.mapEventName;
-                        break;
-                    case "diveTime":
-                        rValue = (ServerData.diveTimeHours + ":" + ServerData.diveTimeMins + ":" + ServerData.diveTimeSecs);
                         break;
                     case "latitude":
                         rValue = FormatLatitude(MapData.latitude);

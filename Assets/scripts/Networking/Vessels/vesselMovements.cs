@@ -347,10 +347,7 @@ public class vesselMovements : NetworkBehaviour
         TimeToIntercept = Mathf.Max(0, TimeToIntercept - Time.deltaTime);
 
         // Update due time to match interception time.
-        var ts = System.TimeSpan.FromSeconds(TimeToIntercept);
-        serverUtils.SetServerData("dueTimeHours", ts.Hours);
-        serverUtils.SetServerData("dueTimeMins", ts.Minutes);
-        serverUtils.SetServerData("dueTimeSecs", ts.Seconds);
+        serverUtils.SetServerData("dueTime", TimeToIntercept);
     }
 
 }
