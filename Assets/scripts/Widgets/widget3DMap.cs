@@ -84,6 +84,8 @@ public class widget3DMap : MonoBehaviour {
         GetComponent<PressGesture>().Pressed += pressedHandler;
         GetComponent<ReleaseGesture>().Released += releaseHandler;
         GetComponent<TransformGesture>().Transformed += transformHandler;
+
+        UpdateZoom();
     }
 
     private void OnDisable()
@@ -161,6 +163,20 @@ public class widget3DMap : MonoBehaviour {
         pressed = false;
     }
 
+    void UpdateZoom()
+    {
+        // Get current zoom level from camera
+        zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
+        var camZ = mapCamera.transform.localPosition.z;
+        if (tilt)
+            tilt.focalPoint = Math.Abs(camZ);
+
+        // Set the camera's FOV.
+        float currentFOV = zoom * ((camMaxFOV - camMinFOV) + camMinFOV);
+        currentFOV = Mathf.Clamp(currentFOV, camMinFOV, camMaxFOV);
+        mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
+    }
+
     void UpdateMap()
     {
         // Cap delta time to avoid jumps at low framerates.
@@ -180,16 +196,10 @@ public class widget3DMap : MonoBehaviour {
         // Update terrain material based on view angle.
         UpdateTerrain();
 
-        //get current zoom level from camera
-        zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
-        float camZ = mapCamera.transform.localPosition.z;
+        // Update camera zoom level.
+        UpdateZoom();
 
-        if (tilt)
-        {
-            tilt.focalPoint = Math.Abs(camZ);
-        }
-
-        //scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
+        // Scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
         float zoomeSpeedMultiplier = graphicsMaths.remapValue(zoom, 0f, 1f, 0.1f, 1f);
 
         if (pressed)
@@ -206,18 +216,13 @@ public class widget3DMap : MonoBehaviour {
                 //scale amount is -1 to 1
                 scaleAmount = graphicsMaths.remapValue(scaleDelta, 0.5f, 1.5f, -1f, 1f);
 
-                //add the scale amount to current camera position value
+                // Add scale amount to current camera position value
+                var camZ = mapCamera.transform.localPosition.z;
                 camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
 
-                //add this to the camera pos z
+                // Add this to the camera pos z
                 mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
-
                 mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
-
-                //set the FOV
-                float currentFOV = zoom * ((camMaxFOV - camMinFOV) + camMinFOV);
-                currentFOV = Mathf.Clamp(currentFOV, camMinFOV, camMaxFOV);
-                mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
             }
 
             //inverse scale the local position constraints so we can't scroll when zoomed out
