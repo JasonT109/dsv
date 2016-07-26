@@ -13,7 +13,7 @@ public class countDownToDepthTimer : widgetText
     public Type Target;
     public float Tolerance = 1;
     public float EtaMaxHours = 1;
-    public float UpdateInterval = 1.0f;
+    public float UpdateInterval = 0.2f;
 
     private float _nextUpdateTime;
 
