@@ -53,13 +53,16 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool intercept1Vis = true;
 
-    void Update()
+    void FixedUpdate()
     {
         if (playerVessel != 0)
         {
             // Set the player vessel's data to match the server objects world position. 
             // Map space is 0.001 x world space. Also SWAP Y and Z for map space.
-            var position = new Vector3(serverUtils.GetServerData("xPos") * 0.001f, serverUtils.GetServerData("zPos") * 0.001f, serverUtils.GetServerData("depth"));
+            var x = serverUtils.GetServerData("xPos") * 0.001f;
+            var y = serverUtils.GetServerData("zPos") * 0.001f;
+            var z = serverUtils.GetServerData("depth");
+            var position = new Vector3(x, y, z);
             var velocity = serverUtils.GetServerData("velocity");
             SetVesselState(playerVessel, position, velocity);
         }
