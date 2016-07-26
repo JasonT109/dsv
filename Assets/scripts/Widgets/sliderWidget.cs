@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using TouchScript.Behaviors;
 
 public class sliderWidget : MonoBehaviour, ValueSettable
 {
@@ -35,4 +36,20 @@ public class sliderWidget : MonoBehaviour, ValueSettable
         carotPos = (v - minValue) / (maxValue - minValue) * (sliderMax - sliderMin) + sliderMin;
         transform.localPosition = new Vector3(Mathf.Clamp(carotPos, sliderMin, sliderMax), 0, 0);
     }
+
+    public void SetInputEnabled(bool value)
+    {
+        var transformer = GetComponent<Transformer>();
+        if (transformer)
+            transformer.enabled = value;
+    }
+
+    public void SetVisible(bool value)
+    {
+        var root = transform.parent.parent;
+        var renderers = root.GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers)
+            r.enabled = value;
+    }
+
 }

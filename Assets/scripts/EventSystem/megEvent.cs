@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 namespace Meg.EventSystem
@@ -46,5 +46,6 @@ namespace Meg.EventSystem
         public bool goToObject;
         public float completeTime;
         public bool goToPlayerVessel;
+        public int priority;
     }
 }

@@ -7,10 +7,18 @@ using Meg.Maths;
 
 public class widget3DMap : MonoBehaviour {
 
+    [Header("Map Components")]
     public GameObject mapCameraRoot;
     public GameObject mapCameraPitch;
     public GameObject mapCamera;
 
+    [Header("Components")]
+    public GameObject viewAngleSlider;
+    public buttonControl button3dMapping;
+    public buttonControl buttonContourMapping;
+    public TiltShift tilt;
+
+    [Header("Configuration")]
     public float rootMaxX = 225f;
     public float rootMaxZ = 225f;
     public float camMaxZ = -400f;
@@ -23,11 +31,16 @@ public class widget3DMap : MonoBehaviour {
     public float scrollSpeed = 1.0f;
     public float rotateSpeed = 0.2f;
     public float scaleSpeed = 0.2f;
-    public GameObject viewAngleSlider;
     public float scaleAmount;
     public float maxScroll;
     public float scaleDelta;
     public bool deactivateChildrenOnScroll = true;
+
+    [Header("Terrain")]
+    public Material TerrainMaterial2d;
+    public Material TerrainMaterial3d;
+    public float TerrainTransitionRange = 30;
+
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
@@ -35,11 +48,6 @@ public class widget3DMap : MonoBehaviour {
     private bool pressed = false;
     private bool multiTouch = false;
     private float rotateAmount = 0f;
-    public TiltShift tilt;
-
-    public Material TerrainMaterial2d;
-    public Material TerrainMaterial3d;
-    public float TerrainTransitionRange = 30;
 
     private bool _terrainInitialized;
 
@@ -163,6 +171,11 @@ public class widget3DMap : MonoBehaviour {
         var slider = viewAngleSlider.GetComponent<sliderWidget>();
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
+
+        // Enable or disable slider based on current camera mapping mode (3d / contours).
+        var is3D = !button3dMapping || button3dMapping.active;
+        slider.SetInputEnabled(is3D);
+        slider.SetVisible(is3D);
 
         // Update terrain material based on view angle.
         UpdateTerrain();

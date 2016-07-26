@@ -72,53 +72,55 @@ public class megMapCameraEventManager : MonoBehaviour
             triggerByName(serverUtils.GetServerDataAsText("mapEventName"));
         }
 
-        if (!running)
+        //we can trigger an event
+        for (int i = 0; i < mapEventList.Length; i++)
         {
-            //we can trigger an event
-            for (int i = 0; i < mapEventList.Length; i++)
+            //check each button to see if it wants to trigger an event
+            if (mapEventList[i].trigger.GetComponent<buttonControl>().pressed)
             {
-                //check each button to see if it wants to trigger an event
-                if (mapEventList[i].trigger.GetComponent<buttonControl>().active == true)
+                // Check if we are allowed to interrupt the current event.
+                if (running && mapEventList[i].priority < runningEvent.priority)
+                    continue;
+                
+                //start this event
+                running = true;
+
+                //set run time to 0
+                runTime = 0f;
+
+                //set the current running event
+                runningEvent = mapEventList[i];
+
+                //set the current running event button group just in case we want to turn this off when the event is complete
+                runningEventButton = mapEventList[i].trigger.GetComponent<buttonControl>();
+
+                //set the initial states
+                initialPosition = mapCameraRoot.transform.localPosition;
+                initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
+                initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
+                initialZoom = mapCameraObject.transform.localPosition.z;
+
+                //if to object get that position in map space
+                if (runningEvent.goToObject)
                 {
-                    //start this event
-                    running = true;
+                    var p = runningEvent.toObject.transform.position;
+                    runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
+                    runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                    runningEvent.toZoom = initialZoom;
+                }
 
-                    //set run time to 0
-                    runTime = 0f;
-
-                    //set the current running event
-                    runningEvent = mapEventList[i];
-
-                    //set the current running event button group just in case we want to turn this off when the event is complete
-                    runningEventButton = mapEventList[i].trigger.GetComponent<buttonControl>();
-
-                    //set the initial states
-                    initialPosition = mapCameraRoot.transform.localPosition;
-                    initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
-                    initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
-                    initialZoom = mapCameraObject.transform.localPosition.z;
-
-                    //if to object get that position in map space
-                    if (runningEvent.goToObject)
-                    {
-                        var p = runningEvent.toObject.transform.position;
-                        runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
-                        runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
-                        runningEvent.toZoom = initialZoom;
-                    }
-
-                    if (runningEvent.goToPlayerVessel)
-                    {
-                        var playerVessel = serverUtils.GetPlayerVessel();
-                        var p = vessels[playerVessel - 1].transform.position;
-                        runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
-                        runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
-                        runningEvent.toZoom = initialZoom;
-                    }
+                if (runningEvent.goToPlayerVessel)
+                {
+                    var playerVessel = serverUtils.GetPlayerVessel();
+                    var p = vessels[playerVessel - 1].transform.position;
+                    runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
+                    runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                    runningEvent.toZoom = initialZoom;
                 }
             }
         }
-        else
+
+        if (running)
         {
             runTime += Time.deltaTime;
             if (runTime > runningEvent.completeTime)
@@ -126,8 +128,9 @@ public class megMapCameraEventManager : MonoBehaviour
                 //stop this event
                 running = false;
 
-                //turn off the trigger button
-                runningEventButton.active = false;
+                // turn off the trigger button
+                if (!runningEventButton.buttonGroup)
+                    runningEventButton.active = false;
             }
             else
             {
