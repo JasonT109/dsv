@@ -21,14 +21,14 @@ public class widgetButtonFont : MonoBehaviour
                 if (bControl.active)
                 {
                     dText.font = activeFont;
-                    dText.GetComponent<Renderer>().sharedMaterial = activeFont.material;
-                    dText.font.material.color = activeColor;
+                    //dText.GetComponent<Renderer>().sharedMaterial = activeFont.material;
+                    //dText.font.material.color = activeColor;
                     dText.color = activeColor;
                 }
                 else
                 {
                     dText.font = inactiveFont;
-                    dText.GetComponent<Renderer>().sharedMaterial = inactiveFont.material;
+                    //dText.GetComponent<Renderer>().sharedMaterial = inactiveFont.material;
                     dText.color = inactiveColor;
                 }
             }
@@ -40,14 +40,14 @@ public class widgetButtonFont : MonoBehaviour
                 if (bControl.active)
                 {
                     buttonText.font = activeFont;
-                    buttonText.GetComponent<Renderer>().sharedMaterial = activeFont.material;
-                    buttonText.font.material.color = activeColor;
+                    //buttonText.GetComponent<Renderer>().sharedMaterial = activeFont.material;
+                    //buttonText.font.material.color = activeColor;
                     buttonText.color = activeColor;
                 }
                 else
                 {
                     buttonText.font = inactiveFont;
-                    buttonText.GetComponent<Renderer>().sharedMaterial = inactiveFont.material;
+                    //buttonText.GetComponent<Renderer>().sharedMaterial = inactiveFont.material;
                     buttonText.color = inactiveColor;
                 }
             }
