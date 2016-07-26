@@ -79,4 +79,12 @@ public class NavSubPins : Singleton<NavSubPins>
         return(p);
     }
 
+    public float GetVesselFloorDistance(int vessel)
+    {
+        if (vessel < 1 || vessel >= _pins.Length)
+            return 0;
+
+        return _pins[vessel - 1].GetFloorDistance();
+    }
+
 }

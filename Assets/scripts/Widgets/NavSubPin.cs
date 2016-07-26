@@ -242,6 +242,10 @@ public class NavSubPin : MonoBehaviour
         _movement = movement;
     }
 
+    /** Return the floor distance for this vessel. */
+    public float GetFloorDistance()
+        { return Distance; }
+
 
     // Private Methods
     // ------------------------------------------------------------
