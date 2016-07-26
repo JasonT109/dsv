@@ -24,6 +24,9 @@ public class NavSubPin : MonoBehaviour
     /** Trail line width. */
     private const float TrailLineWidth = 5;
 
+    /** Pin position smoothing time. */
+    private const float SmoothTime = 0.25f;
+
 
     // Properties
     // ------------------------------------------------------------
@@ -99,6 +102,12 @@ public class NavSubPin : MonoBehaviour
     /** Icon. */
     private graphicsMapIcon _icon;
 
+    /** Current position, smoothed. */
+    private Vector3 _position;
+
+    /** Current position smoothing velocity. */
+    private Vector3 _velocity;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -162,10 +171,17 @@ public class NavSubPin : MonoBehaviour
         vesselHeightIndicator.SetActive(visible);
 
         // Get vessel's server position and apply that to the vessel model.
-        Vector3 position = new Vector3();
+        Vector3 position;
         float velocity;
         serverUtils.GetVesselData(VesselId, out position, out velocity);
-        vesselModel.transform.localPosition = ConvertVesselCoords(position);
+
+        // Apply smoothing to the position.
+        if (Mathf.Approximately(_position.sqrMagnitude, 0))
+            _position = position;
+        else
+            _position = Vector3.SmoothDamp(_position, position, ref _velocity, SmoothTime);
+
+        vesselModel.transform.localPosition = ConvertVesselCoords(_position);
 
         // Get position in map space and position button there.
         var mapPos = ConvertToMapSpace(vesselModel.transform.position);
