@@ -10,20 +10,43 @@ public class textValueFromServer : widgetText
 
     public string format = "";
 
-    void Start()
+    [System.Serializable]
+    public struct ValueRange
     {
-        nextUpdate = Time.time;
+        public string Id;
+        public Vector2 Range;
+        public Color Color;
     }
 
-    void Update()
+    public ValueRange[] Ranges;
+
+    private void Update()
     {
-        if (Time.time > nextUpdate)
+        if (Time.time < nextUpdate)
+            return;
+
+        nextUpdate = Time.time + updateTick;
+
+        // Apply baseline value formatting.
+        var value = serverUtils.GetServerData(linkDataString);
+        if (string.IsNullOrEmpty(format))
+            Text = serverUtils.GetServerDataAsText(linkDataString);
+        else
+            Text = string.Format(format, value);
+
+        // Apply custom formatting for value ranges (if any).
+        for (var i = 0; i < Ranges.Length; i++)
         {
-            nextUpdate = Time.time + updateTick;
-            if (string.IsNullOrEmpty(format))
-                Text = serverUtils.GetServerDataAsText(linkDataString);
-            else
-                Text = string.Format(format, serverUtils.GetServerData(linkDataString));
+            var range = Ranges[i];
+            if (value < range.Range.x || value > range.Range.y)
+                continue;
+
+            Color = range.Color;
+
+            if (!string.IsNullOrEmpty(range.Id))
+                Text = string.Format(range.Id, value);
         }
+
     }
+
 }
