@@ -24,6 +24,9 @@ public class NavSubPin : MonoBehaviour
     /** Trail line width. */
     private const float TrailLineWidth = 5;
 
+    /** Pin position smoothing time. */
+    private const float SmoothTime = 0.2f;
+
 
     // Properties
     // ------------------------------------------------------------
@@ -99,6 +102,12 @@ public class NavSubPin : MonoBehaviour
     /** Icon. */
     private graphicsMapIcon _icon;
 
+    /** Current position, smoothed. */
+    private Vector3 _position;
+
+    /** Current position smoothing velocity. */
+    private Vector3 _velocity;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -122,6 +131,9 @@ public class NavSubPin : MonoBehaviour
     {
         VectorLine.Destroy(ref _interceptLine);
         VectorLine.Destroy(ref _trailLine);
+
+        _position = Vector3.zero;
+        _velocity = Vector3.zero;
     }
 
 
@@ -167,7 +179,12 @@ public class NavSubPin : MonoBehaviour
         serverUtils.GetVesselData(VesselId, out position, out velocity);
 
         // Apply smoothing to the position.
-        vesselModel.transform.localPosition = ConvertVesselCoords(position);
+        if (Mathf.Approximately(_position.sqrMagnitude, 0))
+            _position = position;
+        else
+            _position = Vector3.SmoothDamp(_position, position, ref _velocity, SmoothTime);
+
+        vesselModel.transform.localPosition = ConvertVesselCoords(_position);
 
         // Get position in map space and position button there.
         var mapPos = ConvertToMapSpace(vesselModel.transform.position);
@@ -224,6 +241,10 @@ public class NavSubPin : MonoBehaviour
         // Remember movement mode.
         _movement = movement;
     }
+
+    /** Return the floor distance for this vessel. */
+    public float GetFloorDistance()
+        { return Distance; }
 
 
     // Private Methods

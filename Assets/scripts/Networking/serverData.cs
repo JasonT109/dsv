@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using Meg.Networking;
 
 public class serverData : NetworkBehaviour
 {
@@ -532,6 +533,13 @@ public class serverData : NetworkBehaviour
         return oxyTotal;
     }
 
+    public float GetFloorDistance()
+    {
+        return Mathf.Max(0, 10994 - depth);
+        // var playerVessel = serverUtils.GetPlayerVessel();
+        // return NavSubPins.Instance.GetVesselFloorDistance(playerVessel);
+    }
+
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
@@ -621,7 +629,7 @@ public class serverData : NetworkBehaviour
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = Mathf.Max(0, 10994 - depth);
+        floorDistance = GetFloorDistance(); 
         battery = GetBatteryTotal();
         oxygen = GetOxygenTotal();
 
