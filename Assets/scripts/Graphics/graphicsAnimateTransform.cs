@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Meg.Maths;
 
 public class graphicsAnimateTransform : MonoBehaviour
@@ -67,7 +68,6 @@ public class graphicsAnimateTransform : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         canPress = true;
-
     }
 
     void Update()
@@ -75,6 +75,7 @@ public class graphicsAnimateTransform : MonoBehaviour
         if (triggerButton.GetComponent<buttonControl>().pressed && canPress)
         {
             canPress = false;
+
             StartCoroutine(wait(0.4f));
 
             if (!on)
@@ -125,4 +126,5 @@ public class graphicsAnimateTransform : MonoBehaviour
             }
         }
     }
+
 }
