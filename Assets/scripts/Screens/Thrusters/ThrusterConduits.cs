@@ -46,18 +46,24 @@ public class ThrusterConduits : MonoBehaviour
 
     private void UpdateConduits(bool smoothed = true)
 	{
-        SetConduitValue(L1Conduit, Mathf.Abs(Control.thrusterSideL1), smoothed);
-        SetConduitValue(L2Conduit, Mathf.Abs(Control.thrusterSideL2), smoothed);
-        SetConduitValue(L3Conduit, Mathf.Abs(Control.thrusterSideL3), smoothed);
-
-        SetConduitValue(R1Conduit, Mathf.Abs(Control.thrusterSideR1), smoothed);
-        SetConduitValue(R2Conduit, Mathf.Abs(Control.thrusterSideR2), smoothed);
-        SetConduitValue(R3Conduit, Mathf.Abs(Control.thrusterSideR3), smoothed);
+        if (L1Conduit)
+            SetConduitValue(L1Conduit, Mathf.Abs(Control.thrusterSideL1), smoothed);
+        if (L2Conduit)
+            SetConduitValue(L2Conduit, Mathf.Abs(Control.thrusterSideL2), smoothed);
+        if (L3Conduit)
+            SetConduitValue(L3Conduit, Mathf.Abs(Control.thrusterSideL3), smoothed);
+        if (R1Conduit)
+            SetConduitValue(R1Conduit, Mathf.Abs(Control.thrusterSideR1), smoothed);
+        if (R2Conduit)
+            SetConduitValue(R2Conduit, Mathf.Abs(Control.thrusterSideR2), smoothed);
+        if (R3Conduit)
+            SetConduitValue(R3Conduit, Mathf.Abs(Control.thrusterSideR3), smoothed);
 
         var mainL = Mathf.Abs(Control.thrusterMainL);
         var mainR = Mathf.Abs(Control.thrusterMainL);
-
-        SetConduitValue(MainSharedConduit, Mathf.Max(mainL, mainR), smoothed);
+        
+        if (MainSharedConduit)
+            SetConduitValue(MainSharedConduit, Mathf.Max(mainL, mainR), smoothed);
 
 	    foreach (var conduit in MainLConduits)
             SetConduitValue(conduit, mainL, smoothed);
@@ -66,11 +72,17 @@ public class ThrusterConduits : MonoBehaviour
             SetConduitValue(conduit, mainR, smoothed);
 
         var divert = serverUtils.GetServerData("divertPowerToThrusters");
-        SetConduitValue(DivertL, (divert * 0.01f) * mainL, smoothed);
-        SetConduitValue(DivertR, (divert * 0.01f) * mainR, smoothed);
+        if (DivertL)
+        {
+            SetConduitValue(DivertL, (divert * 0.01f) * mainL, smoothed);
+            DivertL.gameObject.SetActive(divert > 0);
+        }
+        if (DivertR)
+        {
+            SetConduitValue(DivertR, (divert * 0.01f) * mainR, smoothed);
+            DivertR.gameObject.SetActive(divert > 0);
+        }
 
-        DivertL.gameObject.SetActive(divert > 0);
-        DivertR.gameObject.SetActive(divert > 0);
     }
 
     private void SetConduitValue(widgetPowerConduit conduit, float target, bool smoothed)

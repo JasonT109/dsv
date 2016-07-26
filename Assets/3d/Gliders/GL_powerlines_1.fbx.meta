@@ -1,0 +1,113 @@
+fileFormatVersion: 2
+guid: d5caa5d37cefd1c4fa045852df3ac368
+timeCreated: 1469422712
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: gl_powerline_jet_l
+    100002: gl_powerline_jet_r
+    100004: gl_powerline_main_l
+    100006: gl_powerline_main_r
+    100008: gl_powerline_side_l
+    100010: gl_powerline_side_r
+    100012: gl_powerline_systems
+    100014: //RootNode
+    100016: gl_powerline_shared
+    400000: gl_powerline_jet_l
+    400002: gl_powerline_jet_r
+    400004: gl_powerline_main_l
+    400006: gl_powerline_main_r
+    400008: gl_powerline_side_l
+    400010: gl_powerline_side_r
+    400012: gl_powerline_systems
+    400014: //RootNode
+    400016: gl_powerline_shared
+    2300000: gl_powerline_jet_l
+    2300002: gl_powerline_jet_r
+    2300004: gl_powerline_main_l
+    2300006: gl_powerline_main_r
+    2300008: gl_powerline_side_l
+    2300010: gl_powerline_side_r
+    2300012: gl_powerline_systems
+    2300014: gl_powerline_shared
+    3300000: gl_powerline_jet_l
+    3300002: gl_powerline_jet_r
+    3300004: gl_powerline_main_l
+    3300006: gl_powerline_main_r
+    3300008: gl_powerline_side_l
+    3300010: gl_powerline_side_r
+    3300012: gl_powerline_systems
+    3300014: gl_powerline_shared
+    4300000: gl_powerline_main_l
+    4300002: gl_powerline_main_r
+    4300004: gl_powerline_jet_l
+    4300006: gl_powerline_jet_r
+    4300008: gl_powerline_side_l
+    4300010: gl_powerline_side_r
+    4300012: gl_powerline_systems
+    4300014: gl_powerline_shared
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

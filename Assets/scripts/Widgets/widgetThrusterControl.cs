@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using Meg.Maths;
 
 public class widgetThrusterControl : MonoBehaviour
 {
@@ -33,6 +34,12 @@ public class widgetThrusterControl : MonoBehaviour
     public float thrusterVectorAngleL;
     public float thrusterVectorAngleR;
 
+    [Header("Kilowatt output")]
+
+    public float sideThrusterOutputMin = 0f;
+    public float sideThrusterOutputMax = 6.4f;
+    public float mainThrusterOutputMin = 0f;
+    public float mainThrusterOutputMax = 18.0f;
 
     [Header("Constraints")]
 
@@ -292,6 +299,34 @@ public class widgetThrusterControl : MonoBehaviour
                 tSideR3Neg.GetComponent<digital_gauge>().value = -(int)thrusterSideR3;
         }
     }
+
+    public float GetThrusterPowerOutput(ThrusterId thruster)
+    {
+        switch (thruster)
+        {
+            case ThrusterId.MainL:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterMainL), 0, 100, mainThrusterOutputMin, mainThrusterOutputMax);
+            case ThrusterId.MainR:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterMainR), 0, 100, mainThrusterOutputMin, mainThrusterOutputMax);
+            case ThrusterId.SideL1:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideL1), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.SideL2:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideL2), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.SideL3:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideL3), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.SideR1:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideR1), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.SideR2:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideR2), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.SideR3:
+                return graphicsMaths.remapValue(Mathf.Abs(thrusterSideR3), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
+            case ThrusterId.MainShared:
+                return Mathf.Max(graphicsMaths.remapValue(Mathf.Abs(thrusterMainL), -100, 100, mainThrusterOutputMin, mainThrusterOutputMax), graphicsMaths.remapValue(thrusterMainR, -100, 100, mainThrusterOutputMin, mainThrusterOutputMax));
+            default:
+                return 0;
+        }
+    }
+
 
     public float GetThrusterLevel(ThrusterId thruster)
     {
