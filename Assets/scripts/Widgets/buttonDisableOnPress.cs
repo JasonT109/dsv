@@ -36,6 +36,9 @@ public class buttonDisableOnPress : MonoBehaviour
 
     private void SetInputEnabled(bool value)
     {
+        if (!Button)
+            return;
+
         var c = Button.GetComponent<Collider>();
         if (c)
             c.enabled = value;
