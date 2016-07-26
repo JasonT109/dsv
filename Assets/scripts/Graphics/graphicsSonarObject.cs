@@ -35,13 +35,15 @@ public class graphicsSonarObject : NetworkBehaviour
     //next way point number
     public int wayPointNumber = 0;
 
+    public float minTurnSpeed = 1f;
+
     private Vector3 angle;
     private Vector3 nextWayPoint;
     private bool goNext = true;
     private Vector3 originalPos;
     private Rigidbody rb;
     private Animator animator;
-    private Vector3 localVelocity;
+    public Vector3 localVelocity;
     private float blendValueC = 0f;
     private float blendValueL = 0f;
     private float blendValueR = 0f;
@@ -79,9 +81,9 @@ public class graphicsSonarObject : NetworkBehaviour
         turnSpeed = DataRoot.GetComponent<SonarData>().getScaleTurnSpeed();
         speed = DataRoot.GetComponent<SonarData>().getScaleSpeed();
 
-        animator.SetFloat("swim", swimBlend);
-        animator.SetFloat("turnright", turnRightBlend);
-        animator.SetFloat("turnleft", turnLeftBlend);
+        animator.SetFloat("swim", Mathf.Clamp01(swimBlend));
+        animator.SetFloat("turnright", Mathf.Clamp01(turnRightBlend));
+        animator.SetFloat("turnleft", Mathf.Clamp01(turnLeftBlend));
 
         if (!isServer)
             return;
@@ -108,35 +110,27 @@ public class graphicsSonarObject : NetworkBehaviour
                 }
             }
 
-            //determine where the next point is in relation to object
-            Vector3 directionVector = (wayPoints[wayPointNumber] - transform.position).normalized;
-            angle = new Vector3(0, 0, Vector3.Angle(transform.forward, directionVector));
-            angle.z = angle.z / 180;
-
-            //boost this a bit so we get more bend
-            angle.z *= bendBoost;
-
             //get local velocity from rigid body
             localVelocity = transform.InverseTransformDirection(rb.velocity);
 
-            if (localVelocity.x < 0)
+            if (localVelocity.x < -minTurnSpeed)
             {
                 blendValueL = 0;
-                blendValueR = angle.z;
-                blendValueC = 1 - angle.z;
+                blendValueR = Mathf.Clamp(Mathf.Abs(localVelocity.x) * bendBoost, 0, 1); // angle.z;
+                blendValueC = 1 - Mathf.Clamp(Mathf.Abs(localVelocity.x) * bendBoost, 0, 1); // 1 - angle.z;
 
             }
-            else if (localVelocity.x > 0)
+            else if (localVelocity.x > minTurnSpeed)
             {
-                blendValueL = angle.z;
+                blendValueL = Mathf.Clamp(Mathf.Abs(localVelocity.x) * bendBoost, 0, 1); // angle.z;
                 blendValueR = 0;
-                blendValueC = 1 - angle.z;
+                blendValueC = 1 - Mathf.Clamp(Mathf.Abs(localVelocity.x) * bendBoost, 0, 1); // 1 - angle.z;
             }
             else
             {
                 blendValueL = 0;
                 blendValueR = 0;
-                blendValueC = 0;
+                blendValueC = 1;
             }
 
             turnRightBlend = Mathf.Lerp(turnRightBlend, blendValueR, Time.deltaTime * bendBlendSpeed);

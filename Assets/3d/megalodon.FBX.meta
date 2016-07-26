@@ -1,20 +1,20 @@
 fileFormatVersion: 2
-guid: 5bed5fd4a99e38241888fb1a1b1141f0
-timeCreated: 1465173952
-licenseType: Free
+guid: 1769f5bebb446ae4fa57c222148e7271
+timeCreated: 1469563391
+licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: head_ctrl_1
-    100004: head_grp_1
-    100006: head_jnt_1
-    100008: joint1
-    100010: joint2
-    100012: joint3
-    100014: joint4
-    100016: joint5
-    100018: joint6
+    100000: head_ctrl_1
+    100002: head_grp_1
+    100004: head_jnt_1
+    100006: joint1
+    100008: joint2
+    100010: joint3
+    100012: joint4
+    100014: joint5
+    100016: joint6
+    100018: //RootNode
     100020: root_jnt
     100022: Shark_01SG1
     100024: tail_ctrl_1
@@ -30,17 +30,16 @@ ModelImporter:
     100044: tail_grp_5
     100046: tail_grp_6
     100048: world_ctrl
-    100050: sharkish
-    400000: //RootNode
-    400002: head_ctrl_1
-    400004: head_grp_1
-    400006: head_jnt_1
-    400008: joint1
-    400010: joint2
-    400012: joint3
-    400014: joint4
-    400016: joint5
-    400018: joint6
+    400000: head_ctrl_1
+    400002: head_grp_1
+    400004: head_jnt_1
+    400006: joint1
+    400008: joint2
+    400010: joint3
+    400012: joint4
+    400014: joint5
+    400016: joint6
+    400018: //RootNode
     400020: root_jnt
     400022: Shark_01SG1
     400024: tail_ctrl_1
@@ -56,17 +55,10 @@ ModelImporter:
     400044: tail_grp_5
     400046: tail_grp_6
     400048: world_ctrl
-    400050: sharkish
-    2300000: //RootNode
-    3300000: //RootNode
     4300000: Shark_01SG1
-    4300002: sharkish
-    7400000: swim
-    7400002: turnleft
-    7400004: turnright
+    7400000: Take 001
     9500000: //RootNode
     13700000: Shark_01SG1
-    13700002: sharkish
   materials:
     importMaterials: 1
     materialName: 0
@@ -87,241 +79,7 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations:
-    - serializedVersion: 16
-      name: swim
-      takeName: Take 001
-      firstFrame: 0
-      lastFrame: 79
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: root_jnt
-        weight: 1
-      - path: root_jnt/head_jnt_1
-        weight: 1
-      - path: root_jnt/joint1
-        weight: 1
-      - path: root_jnt/joint1/joint2
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5/joint6
-        weight: 1
-      - path: Shark_01SG1
-        weight: 1
-      - path: world_ctrl
-        weight: 1
-      - path: world_ctrl/head_grp_1
-        weight: 1
-      - path: world_ctrl/head_grp_1/head_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6/tail_ctrl_6
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: turnleft
-      takeName: Take 001
-      firstFrame: 100
-      lastFrame: 179
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: root_jnt
-        weight: 1
-      - path: root_jnt/head_jnt_1
-        weight: 1
-      - path: root_jnt/joint1
-        weight: 1
-      - path: root_jnt/joint1/joint2
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5/joint6
-        weight: 1
-      - path: Shark_01SG1
-        weight: 1
-      - path: world_ctrl
-        weight: 1
-      - path: world_ctrl/head_grp_1
-        weight: 1
-      - path: world_ctrl/head_grp_1/head_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6/tail_ctrl_6
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: turnright
-      takeName: Take 001
-      firstFrame: 200
-      lastFrame: 279
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: root_jnt
-        weight: 1
-      - path: root_jnt/head_jnt_1
-        weight: 1
-      - path: root_jnt/joint1
-        weight: 1
-      - path: root_jnt/joint1/joint2
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5
-        weight: 1
-      - path: root_jnt/joint1/joint2/joint3/joint4/joint5/joint6
-        weight: 1
-      - path: Shark_01SG1
-        weight: 1
-      - path: world_ctrl
-        weight: 1
-      - path: world_ctrl/head_grp_1
-        weight: 1
-      - path: world_ctrl/head_grp_1/head_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6
-        weight: 1
-      - path: world_ctrl/tail_grp_1/tail_ctrl_1/tail_grp_2/tail_ctrl_2/tail_grp_3/tail_ctrl_3/tail_grp_4/tail_ctrl_4/tail_grp_5/tail_ctrl_5/tail_grp_6/tail_ctrl_6
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
+    clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -356,7 +114,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    rootMotionBoneName: root_jnt
+    rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
