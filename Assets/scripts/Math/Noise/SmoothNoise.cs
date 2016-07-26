@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class SmoothNoise : MonoBehaviour
+[System.Serializable]
+public class SmoothNoise
 {
 
     // Configuration
@@ -41,18 +42,20 @@ public class SmoothNoise : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Initialization. */
-    protected virtual void Start()
+    public virtual void Start()
     {
         Value = Values.Sample();
     }
 
     /** Updating. */
-    protected virtual void Update()
+    public virtual float Update()
     {
         if (Time.time >= _nextSampleTime)
             Sample();
 
         Value = Mathf.SmoothDamp(Value, _target, ref _valueVelocity, SmoothTime);
+
+        return Value;
     }
 
     /** Pick a new target sampled value. */

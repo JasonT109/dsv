@@ -13,14 +13,18 @@ public class serverValueNoise : NetworkBehaviour
 
     /** Optional range to constrain values to. */
     public Vector2 OutputRange;
-
-
+    
     /** Current base value for the server data. */
     private float _baseValue;
 
     /** Whether we're in the process of updating the server data value. */
     private bool _updating;
 
+    /** Initialization. */
+    private void Start()
+    {
+        NoiseSource.Start();
+    }
 
     /** Handle startup on the server. */
     public override void OnStartServer()
@@ -53,8 +57,11 @@ public class serverValueNoise : NetworkBehaviour
     [ServerCallback]
     private void Update()
 	{
+        // Update noise.
+        NoiseSource.Update();
+
         // Get the current noisy server data value.
-	    var value = _baseValue + NoiseSource.Value;
+        var value = _baseValue + NoiseSource.Value;
 
         // Optionally clamp the output value.
 	    if (OutputRange.x != OutputRange.y)

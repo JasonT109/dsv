@@ -1,8 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class SonarRangeControl : MonoBehaviour 
+public class SonarRangeControl : MonoBehaviour
 {
+
+    public int Range = 30;
+    public int RangeIncrement = 15;
+    public int MinRange = 30;
+    public int MaxRange = 1000;
 
     public widgetText OneThirdL;
     public widgetText TwoThirdsL;
@@ -16,8 +21,6 @@ public class SonarRangeControl : MonoBehaviour
     public GameObject RightButton;
 
     public widgetText RangeValObj;
-
-    public int Range = 30;
 
     bool canChangeValue = true;
 
@@ -37,11 +40,7 @@ public class SonarRangeControl : MonoBehaviour
         {
             if(canChangeValue)
             {
-                Range -= 15;
-                if(Range < 15)
-                {
-                    Range = 15;
-                }
+                Range = Mathf.Clamp(Range - RangeIncrement, MinRange, MaxRange);
                 UpdateValues();
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
@@ -51,8 +50,7 @@ public class SonarRangeControl : MonoBehaviour
         {
             if(canChangeValue)
             {
-                Range += 15;
-               
+                Range = Mathf.Clamp(Range + RangeIncrement, MinRange, MaxRange);
                 UpdateValues();
                 canChangeValue = false;
                 StartCoroutine(Wait(0.2f));
