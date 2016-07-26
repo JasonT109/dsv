@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 
 public class SonarData : NetworkBehaviour 
 {
     public int SonarRange;
+    public float SonarGain;
     public float DefaultScale;
 
     [SyncVar]
