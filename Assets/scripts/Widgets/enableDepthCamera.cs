@@ -36,7 +36,7 @@ public class enableDepthCamera : MonoBehaviour {
         {
             if (dButton.activeSelf)
             {
-                dCam.SetActive(true);
+                //dCam.SetActive(true);
                 for (int i = 0; i < disableObjects.Length; i++)
                 {
                     disableObjects[i].SetActive(true);
@@ -44,7 +44,7 @@ public class enableDepthCamera : MonoBehaviour {
             }
             else
             {
-                dCam.SetActive(false);
+                //dCam.SetActive(false);
                 for (int i = 0; i < disableObjects.Length; i++)
                 {
                     disableObjects[i].SetActive(false);

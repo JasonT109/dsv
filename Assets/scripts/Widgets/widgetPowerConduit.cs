@@ -18,6 +18,8 @@ public class widgetPowerConduit : MonoBehaviour
     /** Conduit activity level [0..100]. */
     public float Value;
 
+    /** Animate y offset instead of x*/
+    public bool animateYOffset = false;
 
     /** Conduit's renderer. */
     private MeshRenderer _renderer;
@@ -31,13 +33,24 @@ public class widgetPowerConduit : MonoBehaviour
 	    if (!Conduit)
 	        Conduit = GetComponent<graphicsConduit>();
 
-	    _renderer = Conduit.GetComponent<MeshRenderer>();
-	}
+        if (Conduit)
+	        _renderer = Conduit.GetComponent<MeshRenderer>();
+        else
+            _renderer = GetComponent<MeshRenderer>();
+    }
 	
     /** Updating. */
 	private void Update()
 	{
-        _offset.x -= GetScrollSpeed(Value) * Time.deltaTime;
+        if (animateYOffset)
+        {
+            _offset.y -= GetScrollSpeed(Value) * Time.deltaTime;
+        }
+        else
+        {
+            _offset.x -= GetScrollSpeed(Value) * Time.deltaTime;
+        }
+        
         _renderer.material.SetColor("_TintColor", GetConduitColor(Value));
         _renderer.material.SetTextureOffset("_MainTex", _offset);
     }
