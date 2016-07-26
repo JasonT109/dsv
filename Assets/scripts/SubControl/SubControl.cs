@@ -76,14 +76,16 @@ public class SubControl : MonoBehaviour
     {
         UpdateData();
 
+        // Don't apply sub control if vessel is being moved by the vessel simulation.
+        var movement = serverUtils.GetVesselMovements().GetPlayerVesselMovement();
+        if (movement)
+            return;
+
         Vector3 RollExtract = new Vector3(0,0,-1);
         Vector3 PitchExtract = new Vector3(-1,0,0);
         Vector3 YawExtract = new Vector3(0,1,0);
 
-        // Don't apply sub control if vessel is being moved by the vessel simulation.
-        var movement = serverUtils.GetVesselMovements().GetPlayerVesselMovement();
-
-        if (!disableInput && !movement)
+        if (!disableInput)
         {
             //this.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z);
 
@@ -94,9 +96,6 @@ public class SubControl : MonoBehaviour
 
             //adjust mix for pitch when doing a banking turn
             rb.AddRelativeTorque(PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
-
-           
-
 
             //apply the thrust forces    
             if(currentThrust < MaxSpeed && currentThrust > MinSpeed)

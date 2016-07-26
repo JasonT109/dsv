@@ -221,15 +221,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "dueTimeHours":
                 dueTimeHours = newValue;
-                diveTimeHours = newValue;
                 break;
             case "dueTimeMins":
                 dueTimeMins = newValue;
-                diveTimeMins = newValue;
                 break;
             case "dueTimeSecs":
                 dueTimeSecs = newValue;
-                diveTimeSecs = newValue;
                 break;
             case "diveTimeHours":
                 diveTimeHours = newValue;
