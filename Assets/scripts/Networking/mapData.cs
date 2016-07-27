@@ -53,6 +53,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool intercept1Vis = true;
 
+    /** Default floor depth to assume. */
+    public const float DefaultFloorDepth = 10994;
+
     void FixedUpdate()
     {
         if (playerVessel != 0)

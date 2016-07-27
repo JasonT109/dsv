@@ -41,6 +41,11 @@ public class widget3DMap : MonoBehaviour {
     public Material TerrainMaterial3d;
     public float TerrainTransitionRange = 30;
 
+    [Header("Water")]
+    public GameObject Water;
+    public Color WaterColor2d;
+    public Color WaterColor3d;
+
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
@@ -70,6 +75,8 @@ public class widget3DMap : MonoBehaviour {
     private float _levels3D;
     private float _gradient3D;
     private float _lineDetail3D;
+
+    private Material _waterMaterial;
 
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
@@ -322,6 +329,8 @@ public class widget3DMap : MonoBehaviour {
         m.SetFloat("_Levels", Mathf.Lerp(_levels2D, _levels3D, t));
         m.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
         m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
+
+        _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
     }
 
     private void InitTerrain()
@@ -352,6 +361,8 @@ public class widget3DMap : MonoBehaviour {
 
         terrain.materialTemplate = new Material(terrain.materialTemplate);
         terrain.basemapDistance = 10000;
+
+        _waterMaterial = Water.GetComponent<Renderer>().material;
 
         _terrainInitialized = true;
     }

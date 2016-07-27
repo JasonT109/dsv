@@ -535,9 +535,16 @@ public class serverData : NetworkBehaviour
 
     public float GetFloorDistance()
     {
-        return Mathf.Max(0, 10994 - depth);
-        // var playerVessel = serverUtils.GetPlayerVessel();
-        // return NavSubPins.Instance.GetVesselFloorDistance(playerVessel);
+        /*
+        // Delegate to navigation map for sub depths.
+        if (NavSubPins.Instance)
+        {
+            var playerVessel = serverUtils.GetPlayerVessel();
+            return NavSubPins.Instance.GetVesselFloorDistance(playerVessel);
+        }
+        */
+        
+        return Mathf.Max(0, mapData.DefaultFloorDepth - depth);
     }
 
     [ClientRpc]

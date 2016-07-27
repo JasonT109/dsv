@@ -144,7 +144,9 @@ public class megMapCameraEventManager : MonoBehaviour
                 mapCameraRoot.transform.localPosition = Vector3.Lerp(initialPosition, runningEvent.toPosition, completePercentage);
 
                 //Lerp the camera y orientation
-                float camY = Mathf.Lerp(initialOrientationY, runningEvent.toOrientation.y, completePercentage);
+                var currentY = Mathf.Repeat(initialOrientationY, 360);
+                var targetY = Mathf.Repeat(runningEvent.toOrientation.y, 360);
+                float camY = Mathf.LerpAngle(currentY, targetY, completePercentage);
 
                 //Lerp the camera pitch
                 float camX = Mathf.Lerp(initialOrientationX, runningEvent.toOrientation.x, completePercentage);
