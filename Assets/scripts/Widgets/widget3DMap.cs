@@ -55,6 +55,8 @@ public class widget3DMap : MonoBehaviour {
     private float rotateAmount = 0f;
 
     private bool _terrainInitialized;
+    private float _terrain3DAmount = 1;
+    private float _terrain3DVelocity = 0;
 
     private Color _loColor2D;
     private Color _hiColor2D;
@@ -316,10 +318,19 @@ public class widget3DMap : MonoBehaviour {
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
 
         var transitionStart = slider.maxValue - TerrainTransitionRange;
-        var t = 1 - Mathf.Clamp01((viewAngle - transitionStart) / TerrainTransitionRange);
+        var target3DAmount = 1 - Mathf.Clamp01((viewAngle - transitionStart) / TerrainTransitionRange);
 
+        // Don't allow crossfade in 3d mode (unless transitioning).
+        var cameraEventManager = GetComponent<megMapCameraEventManager>();
+        var force3D = button3dMapping.active && !cameraEventManager.running;
+        if (force3D)
+            target3DAmount = 1;
+
+        // Smooth terrain 3d fade amount over time.
+        _terrain3DAmount = Mathf.SmoothDamp(_terrain3DAmount, target3DAmount, ref _terrain3DVelocity, 0.5f);
+
+        var t = _terrain3DAmount;
         var m = terrain.materialTemplate;
-
         m.SetColor("_LoColor", Color.Lerp(_loColor2D, _loColor3D, t));
         m.SetColor("_HiColor", Color.Lerp(_hiColor2D, _hiColor3D, t));
         m.SetColor("_LineColor", Color.Lerp(_lineColor2D, _lineColor3D, t));
