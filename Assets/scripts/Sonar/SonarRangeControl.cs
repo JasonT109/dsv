@@ -47,7 +47,7 @@ public class SonarRangeControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target - RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
         else if(RightButton.GetComponent<buttonControl>().pressed && canChangeValue)
@@ -56,7 +56,7 @@ public class SonarRangeControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target + RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
 

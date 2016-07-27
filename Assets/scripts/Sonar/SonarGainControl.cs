@@ -39,7 +39,7 @@ public class SonarGainControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target - GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
         else if (UpButton.GetComponent<buttonControl>().pressed && canChangeValue)
@@ -48,7 +48,7 @@ public class SonarGainControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target + GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.2f));
+                StartCoroutine(Wait(0.5f));
             }
         }
 
