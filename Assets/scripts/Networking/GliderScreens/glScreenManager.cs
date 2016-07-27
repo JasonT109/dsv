@@ -30,7 +30,7 @@ public class glScreenManager : Singleton<glScreenManager> {
     public GameObject tcasScreen;
     public GameObject towingScreen;
     public GameObject powerScreen;
-    public GameObject diagnosticsScreen;
+    //public GameObject diagnosticsScreen;
     public bool hasChanged = true;
 
 
@@ -70,7 +70,7 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                diagnosticsScreen.SetActive(false);
+                //diagnosticsScreen.SetActive(false);
                 break;
             case 9: //map
                 thrusterScreen.SetActive(false);
@@ -78,7 +78,7 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                diagnosticsScreen.SetActive(false);
+                //diagnosticsScreen.SetActive(false);
                 break;
             case 10: //tcas
                 thrusterScreen.SetActive(false);
@@ -86,7 +86,7 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(true);         //<---
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                diagnosticsScreen.SetActive(false);
+                //diagnosticsScreen.SetActive(false);
                 break;
             case 11: //towing
                 thrusterScreen.SetActive(false);
@@ -94,7 +94,7 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(true);       //<---
                 powerScreen.SetActive(false);
-                diagnosticsScreen.SetActive(false);
+                //diagnosticsScreen.SetActive(false);
                 break;
             case 12: //power
                 thrusterScreen.SetActive(false);
@@ -102,15 +102,15 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(true);        //<---
-                diagnosticsScreen.SetActive(false);
+                //diagnosticsScreen.SetActive(false);
                 break;
             case 13: //diagnostics
                 thrusterScreen.SetActive(false);
                 mapScreen.SetActive(false);
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
-                powerScreen.SetActive(false);
-                diagnosticsScreen.SetActive(true);  //<---
+                powerScreen.SetActive(true);        //<--- power screen and diagnostics are the same
+                //diagnosticsScreen.SetActive(false);
                 break;
         }
     }

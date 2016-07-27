@@ -77,21 +77,28 @@ public class digital_gauge : MonoBehaviour {
         }
         if (useDigitalNeedle)
         {
+            value = staticValue;
             currentAngle = ((float)value - minValue) / (maxValue - minValue) * (endAngle - startAngle) + startAngle;
             Quaternion qAngle = Quaternion.Euler(0, 0, currentAngle);
             digitalNeedle.transform.rotation = qAngle;
-            minTick.transform.rotation = Quaternion.Euler(0, 0, startAngle);
-            maxTick.transform.rotation = Quaternion.Euler(0, 0, endAngle);
+            if (minTick)
+                minTick.transform.rotation = Quaternion.Euler(0, 0, startAngle);
+            if (maxTick)
+                maxTick.transform.rotation = Quaternion.Euler(0, 0, endAngle);
         }
         else
         {
             if (digitalNeedle)
             {
                 digitalNeedle.SetActive(false);
-                minTick.SetActive(false);
-                maxTick.SetActive(false);
+                if (minTick)
+                    minTick.SetActive(false);
+                if (maxTick)
+                    maxTick.SetActive(false);
             }
         }
+
+        
 
         for (int i = 0; i < numTicks; i++)
             digitalTicks[i].SetActive(false);

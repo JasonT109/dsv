@@ -133,9 +133,9 @@ public class graphicsSonarObject : NetworkBehaviour
                 blendValueC = 1;
             }
 
-            turnRightBlend = Mathf.Lerp(turnRightBlend, blendValueR, Time.deltaTime * bendBlendSpeed);
-            turnLeftBlend = Mathf.Lerp(turnLeftBlend, blendValueL, Time.deltaTime * bendBlendSpeed);
-            swimBlend = Mathf.Lerp(swimBlend, blendValueC, Time.deltaTime * bendBlendSpeed);
+            turnRightBlend = Mathf.Lerp(turnRightBlend, blendValueR, Time.deltaTime * turnSpeed);
+            turnLeftBlend = Mathf.Lerp(turnLeftBlend, blendValueL, Time.deltaTime * turnSpeed);
+            swimBlend = Mathf.Lerp(swimBlend, blendValueC, Time.deltaTime * turnSpeed);
 
             //move to waypoint in sequence
             rb.AddForce(transform.forward * speed, ForceMode.Impulse);
