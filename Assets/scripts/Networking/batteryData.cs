@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
 public class batteryData : NetworkBehaviour
 {
+    [SyncVar]
+    public float battery;
+
     [SyncVar]
     public float bank1;
     [SyncVar]

@@ -72,6 +72,29 @@ namespace Meg.Networking
             }
         }
 
+        private static oxygenData _oxygenData;
+        public static oxygenData OxygenData
+        {
+            get
+            {
+                if (!_oxygenData && ServerObject)
+                    _oxygenData = ServerObject.GetComponent<oxygenData>();
+
+                return _oxygenData;
+            }
+        }
+
+        private static batteryData _batteryData;
+        public static batteryData BatteryData
+        {
+            get
+            {
+                if (!_batteryData && ServerObject)
+                    _batteryData = ServerObject.GetComponent<batteryData>();
+
+                return _batteryData;
+            }
+        }
 
 
         // Static Methods
@@ -101,9 +124,6 @@ namespace Meg.Networking
                     case "pressure":
                         rValue = ServerData.pressure;
                         break;
-                    case "cabinPressure":
-                        rValue = ServerData.cabinPressure;
-                        break;
                     case "heading":
                         rValue = ServerData.heading;
                         break;
@@ -128,14 +148,8 @@ namespace Meg.Networking
                     case "dueTime":
                         rValue = ServerData.dueTime;
                         break;
-                    case "Co2":
-                        rValue = ServerData.Co2;
-                        break;
                     case "waterTemp":
                         rValue = ServerData.waterTemp;
-                        break;
-                    case "cabinTemp":
-                        rValue = ServerData.cabinTemp;
                         break;
                     case "b1":
                         rValue = ServerData.batteries[0];
@@ -180,10 +194,31 @@ namespace Meg.Networking
                         rValue = ServerData.oxygenTanks[6];
                         break;
                     case "oxygen":
-                        rValue = ServerData.oxygen;
+                        rValue = OxygenData.oxygen;
+                        break;
+                    case "oxygenFlow":
+                        rValue = OxygenData.oxygenFlow;
+                        break;
+                    case "Co2":
+                        rValue = OxygenData.Co2;
+                        break;
+                    case "Co2Ppm":
+                        rValue = OxygenData.Co2Ppm;
+                        break;
+                    case "cabinPressure":
+                        rValue = OxygenData.cabinPressure;
+                        break;
+                    case "cabinPressurePsi":
+                        rValue = OxygenData.cabinPressurePsi;
+                        break;
+                    case "cabinOxygen":
+                        rValue = OxygenData.cabinOxygen;
+                        break;
+                    case "cabinTemp":
+                        rValue = OxygenData.cabinTemp;
                         break;
                     case "battery":
-                        rValue = ServerData.battery;
+                        rValue = BatteryData.battery;
                         break;
                     case "error_bilgeLeak":
                         rValue = ErrorData.error_bilgeLeak;
@@ -423,9 +458,6 @@ namespace Meg.Networking
                     case "pressure":
                         rValue = ServerData.pressure.ToString();
                         break;
-                    case "cabinPressure":
-                        rValue = ServerData.cabinPressure.ToString();
-                        break;
                     case "heading":
                         rValue = (ServerData.heading.ToString("n1") + "°");
                         break;
@@ -453,14 +485,8 @@ namespace Meg.Networking
                         var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
                         rValue = string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
                         break;
-                    case "Co2":
-                        rValue = (ServerData.Co2.ToString() + "%");
-                        break;
                     case "waterTemp":
                         rValue = ServerData.waterTemp.ToString();
-                        break;
-                    case "cabinTemp":
-                        rValue = ServerData.cabinTemp.ToString();
                         break;
                     case "b1":
                         rValue = ServerData.batteries[0].ToString("n1");
@@ -505,10 +531,31 @@ namespace Meg.Networking
                         rValue = ServerData.oxygenTanks[6].ToString("n1");
                         break;
                     case "oxygen":
-                        rValue = (ServerData.oxygen.ToString("n1") + "%");
+                        rValue = (OxygenData.oxygen.ToString("n1") + "%");
+                        break;
+                    case "oxygenFlow":
+                        rValue = (OxygenData.oxygenFlow.ToString("n0") + "lpm");
+                        break;
+                    case "Co2":
+                        rValue = (OxygenData.Co2.ToString() + "%");
+                        break;
+                    case "Co2Ppm":
+                        rValue = OxygenData.Co2Ppm.ToString("n1") + "ppm";
+                        break;
+                    case "cabinPressure":
+                        rValue = OxygenData.cabinPressure.ToString();
+                        break;
+                    case "cabinPressurePsi":
+                        rValue = OxygenData.cabinPressurePsi.ToString("n1");
+                        break;
+                    case "cabinOxygen":
+                        rValue = (OxygenData.cabinOxygen.ToString("n0") + "lpm");
+                        break;
+                    case "cabinTemp":
+                        rValue = OxygenData.cabinTemp.ToString();
                         break;
                     case "battery":
-                        rValue = (ServerData.battery.ToString("n1") + "%");
+                        rValue = (BatteryData.battery.ToString("n1") + "%");
                         break;
                     case "pilot":
                         rValue = ServerData.pilot;

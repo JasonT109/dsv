@@ -85,7 +85,7 @@ public class clientCalcValues : Singleton<clientCalcValues>
             float value = serverUtils.GetServerData("depth");
             pressureResult = calcFromDepth(value, "pressure");
             waterTempResult = calcFromDepth(value, "water");
-            psiResult = pressureResult * 14.5038f;
+            psiResult = pressureResult * Conversions.BarToPsi;
         }
     }
 }

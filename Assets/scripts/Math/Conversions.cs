@@ -4,6 +4,16 @@ using System.Collections;
 public class Conversions
 {
 
+    // Percentage
+    // ------------------------------------------------------------
+
+    public const float PercentToPartsPerMillion = 10000;
+    public const float PartsPerMillionToPercent = 1 / PercentToPartsPerMillion;
+
+
+    // Speed
+    // ------------------------------------------------------------
+
     public const float KphToKnots = 0.5399568f;
     public const float KnotsToKph = 1 / KphToKnots;
 
@@ -14,7 +24,19 @@ public class Conversions
     public const float KnotsToMetresPerSecond = 1 / MetresPerSecondToKnots;
 
     public const float MetresPerSecondToMetersPerMin = 60;
+    public const float MetersPerMinToMetresPerSecond = 1 / MetresPerSecondToMetersPerMin;
+
+
+    // Distance
+    // ------------------------------------------------------------
 
     public const double EarthRadius = 6378137.0;
+
+
+    // Pressure
+    // ------------------------------------------------------------
+
+    public const float BarToPsi = 14.5038f;
+    public const float PsiToBar = 1 / BarToPsi;
 
 }

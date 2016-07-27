@@ -23,7 +23,9 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float pressure;
     [SyncVar]
-    public float cabinPressure;
+    public float waterTemp;
+    [SyncVar]
+    public float floorDistance;
     [SyncVar]
     public float heading;
     [SyncVar]
@@ -35,27 +37,15 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float velocity;
     [SyncVar]
-    public float dueTime;
-    [SyncVar]
-    public float battery;
-    [SyncVar]
-    public float Co2;
-    [SyncVar]
-    public float waterTemp;
-    [SyncVar]
-    public float cabinTemp;
-    [SyncVar]
-    public float oxygen;
-    [SyncVar]
     public string pilot;
     [SyncVar]
     public float verticalVelocity;
     [SyncVar]
     public float horizontalVelocity;
     [SyncVar]
-    public float floorDistance;
-    [SyncVar]
     public float diveTime;
+    [SyncVar]
+    public float dueTime;
     [SyncVar]
     public float commsSignalStrength;
     [SyncVar]
@@ -206,12 +196,6 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
                 break;
-            case "Co2":
-                Co2 = newValue;
-                break;
-            case "battery":
-                battery = newValue;
-                break;
             case "dueTime":
                 dueTime = newValue;
                 break;
@@ -221,8 +205,8 @@ public class serverData : NetworkBehaviour
             case "waterTemp":
                 waterTemp = newValue;
                 break;
-            case "cabinTemp":
-                cabinTemp = newValue;
+            case "battery":
+                BatteryData.battery = newValue;
                 break;
             case "b1":
                 BatteryData.bank1 = newValue;
@@ -265,6 +249,15 @@ public class serverData : NetworkBehaviour
                 break;
             case "o7":
                 OxygenData.oxygenTank7 = newValue;
+                break;
+            case "Co2":
+                OxygenData.Co2 = newValue;
+                break;
+            case "cabinPressure":
+                OxygenData.cabinPressure = newValue;
+                break;
+            case "cabinTemp":
+                OxygenData.cabinTemp = newValue;
                 break;
             case "error_bilgeLeak":
                 ErrorData.error_bilgeLeak = newValue;
@@ -608,7 +601,7 @@ public class serverData : NetworkBehaviour
         //get a list of all the players
         pilot = GetPilot();
 
-        //get oxygen data from server
+        // Get oxygen data from server
         oxygenTanks[0] = OxygenData.oxygenTank1;
         oxygenTanks[1] = OxygenData.oxygenTank2;
         oxygenTanks[2] = OxygenData.oxygenTank3;
@@ -616,6 +609,7 @@ public class serverData : NetworkBehaviour
         oxygenTanks[4] = OxygenData.oxygenTank5;
         oxygenTanks[5] = OxygenData.oxygenTank6;
         oxygenTanks[6] = OxygenData.oxygenTank7;
+
         //get battery data from server
         batteries[0] = BatteryData.bank1;
         batteries[1] = BatteryData.bank2;
@@ -636,9 +630,9 @@ public class serverData : NetworkBehaviour
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = GetFloorDistance(); 
-        battery = GetBatteryTotal();
-        oxygen = GetOxygenTotal();
+        floorDistance = GetFloorDistance();
+        BatteryData.battery = GetBatteryTotal();
+        OxygenData.oxygen = GetOxygenTotal();
 
         // Update ETA timer.
         dueTime = Mathf.Max(0, dueTime - Time.deltaTime);
