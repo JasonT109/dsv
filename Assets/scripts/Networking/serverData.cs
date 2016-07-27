@@ -46,11 +46,7 @@ public class serverData : NetworkBehaviour
     public float diveTime;
     [SyncVar]
     public float dueTime;
-    [SyncVar]
-    public float commsSignalStrength;
-    [SyncVar]
-    public float divertPowerToThrusters;
-
+    
     #endregion
     #region PublicVars
 
@@ -85,7 +81,7 @@ public class serverData : NetworkBehaviour
         get
         {
             if (!_batteryData)
-                _batteryData = gameObject.GetComponent<batteryData>();
+                _batteryData = GetComponent<batteryData>();
             return _batteryData;
         }
     }
@@ -96,7 +92,7 @@ public class serverData : NetworkBehaviour
         get
         {
             if (!_oxygenData)
-                _oxygenData = gameObject.GetComponent<oxygenData>();
+                _oxygenData = GetComponent<oxygenData>();
             return _oxygenData;
         }
     }
@@ -107,7 +103,7 @@ public class serverData : NetworkBehaviour
         get
         {
             if (!_errorData)
-                _errorData = gameObject.GetComponent<errorData>();
+                _errorData = GetComponent<errorData>();
             return _errorData;
         }
     }
@@ -118,10 +114,33 @@ public class serverData : NetworkBehaviour
         get
         {
             if (!_crewData)
-                _crewData = gameObject.GetComponent<crewData>();
+                _crewData = GetComponent<crewData>();
             return _crewData;
         }
     }
+
+    private mapData _mapData;
+    private mapData MapData
+    {
+        get
+        {
+            if (!_mapData)
+                _mapData = GetComponent<mapData>();
+            return _mapData;
+        }
+    }
+
+    private operatingData _operatingData;
+    public operatingData OperatingData
+    {
+        get
+        {
+            if (!_operatingData)
+                _operatingData = GetComponent<operatingData>();
+            return _operatingData;
+        }
+    }
+
 
     #endregion
 
@@ -208,6 +227,9 @@ public class serverData : NetworkBehaviour
             case "battery":
                 BatteryData.battery = newValue;
                 break;
+            case "batteryTemp":
+                BatteryData.batteryTemp = newValue;
+                break;
             case "b1":
                 BatteryData.bank1 = newValue;
                 break;
@@ -258,6 +280,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "cabinTemp":
                 OxygenData.cabinTemp = newValue;
+                break;
+            case "cabinHumidity":
+                OxygenData.cabinHumidity = newValue;
                 break;
             case "error_bilgeLeak":
                 ErrorData.error_bilgeLeak = newValue;
@@ -407,17 +432,71 @@ public class serverData : NetworkBehaviour
             case "posZ":
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
-            case "commsSignalStrength":
-                commsSignalStrength = newValue;
-                break;
-            case "divertPowerToThrusters":
-                divertPowerToThrusters = newValue;
-                break;
             case "latitude":
-                gameObject.GetComponent<mapData>().latitude = newValue;
+                MapData.latitude = newValue;
                 break;
             case "longitude":
-                gameObject.GetComponent<mapData>().longitude = newValue;
+                MapData.longitude = newValue;
+                break;
+            case "vessel1Vis":
+                MapData.vessel1Vis = newValue > 0;
+                break;
+            case "vessel2Vis":
+                MapData.vessel2Vis = newValue > 0;
+                break;
+            case "vessel3Vis":
+                MapData.vessel3Vis = newValue > 0;
+                break;
+            case "vessel4Vis":
+                MapData.vessel4Vis = newValue > 0;
+                break;
+            case "meg1Vis":
+                MapData.meg1Vis = newValue > 0;
+                break;
+            case "intercept1Vis":
+                MapData.intercept1Vis = newValue > 0;
+                break;
+            case "vessel1Warning":
+                MapData.vessel1Warning = newValue > 0;
+                break;
+            case "vessel2Warning":
+                MapData.vessel2Warning = newValue > 0;
+                break;
+            case "vessel3Warning":
+                MapData.vessel3Warning = newValue > 0;
+                break;
+            case "vessel4Warning":
+                MapData.vessel4Warning = newValue > 0;
+                break;
+            case "meg1Warning":
+                MapData.meg1Warning = newValue > 0;
+                break;
+            case "intercept1Warning":
+                MapData.intercept1Warning = newValue > 0;
+                break;
+            case "towWinchLoad":
+                OperatingData.towWinchLoad = newValue;
+                break;
+            case "hydraulicTemp":
+                OperatingData.hydraulicTemp = newValue;
+                break;
+            case "hydraulicPressure":
+                OperatingData.hydraulicPressure = newValue;
+                break;
+            case "ballastPressure":
+                OperatingData.ballastPressure = newValue;
+                break;
+            case "variableBallastTemp":
+                OperatingData.variableBallastTemp = newValue;
+                break;
+            case "variableBallastPressure":
+                OperatingData.variableBallastPressure = newValue;
+                break;
+            case "commsSignalStrength":
+                OperatingData.commsSignalStrength = newValue;
+                break;
+            case "divertPowerToThrusters":
+                OperatingData.divertPowerToThrusters = newValue;
                 break;
         }
 
@@ -427,14 +506,14 @@ public class serverData : NetworkBehaviour
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
     {
-        if (vessel == gameObject.GetComponent<mapData>().playerVessel)
+        if (vessel == MapData.playerVessel)
         {
             //convert from map space to world space
             gameObject.transform.position = new Vector3(pos.x * 1000, -pos.z, pos.y * 1000);
         }
         else
         {
-            gameObject.GetComponent<mapData>().SetVesselState(vessel, pos, vesselVelocity);
+            MapData.SetVesselState(vessel, pos, vesselVelocity);
         }
     }
 
@@ -445,30 +524,30 @@ public class serverData : NetworkBehaviour
 
     public void SetPlayerVessel(int vessel)
     {
-        gameObject.GetComponent<mapData>().playerVessel = vessel;
+        MapData.playerVessel = vessel;
     }
 
-    public void SetPlayerVisibility(int vessel, bool state)
+    public void SetVesselVis(int vessel, bool state)
     {
         switch (vessel)
         {
             case 1:
-                gameObject.GetComponent<mapData>().vessel1Vis = state;
+                MapData.vessel1Vis = state;
                 break;
             case 2:
-                gameObject.GetComponent<mapData>().vessel2Vis = state;
+                MapData.vessel2Vis = state;
                 break;
             case 3:
-                gameObject.GetComponent<mapData>().vessel3Vis = state;
+                MapData.vessel3Vis = state;
                 break;
             case 4:
-                gameObject.GetComponent<mapData>().vessel4Vis = state;
+                MapData.vessel4Vis = state;
                 break;
             case 5:
-                gameObject.GetComponent<mapData>().meg1Vis = state;
+                MapData.meg1Vis = state;
                 break;
             case 6:
-                gameObject.GetComponent<mapData>().intercept1Vis = state;
+                MapData.intercept1Vis = state;
                 break;
         }
     }
@@ -479,6 +558,42 @@ public class serverData : NetworkBehaviour
         {
             case "disableInput":
                 disableInput = newValue;
+                break;
+            case "vessel1Vis":
+                MapData.vessel1Vis = newValue;
+                break;
+            case "vessel2Vis":
+                MapData.vessel2Vis = newValue;
+                break;
+            case "vessel3Vis":
+                MapData.vessel3Vis = newValue;
+                break;
+            case "vessel4Vis":
+                MapData.vessel4Vis = newValue;
+                break;
+            case "meg1Vis":
+                MapData.meg1Vis = newValue;
+                break;
+            case "intercept1Vis":
+                MapData.intercept1Vis = newValue;
+                break;
+            case "vessel1Warning":
+                MapData.vessel1Warning = newValue;
+                break;
+            case "vessel2Warning":
+                MapData.vessel2Warning = newValue;
+                break;
+            case "vessel3Warning":
+                MapData.vessel3Warning = newValue;
+                break;
+            case "vessel4Warning":
+                MapData.vessel4Warning = newValue;
+                break;
+            case "meg1Warning":
+                MapData.meg1Warning = newValue;
+                break;
+            case "intercept1Warning":
+                MapData.intercept1Warning = newValue;
                 break;
         }
     }

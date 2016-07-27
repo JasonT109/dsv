@@ -60,28 +60,19 @@ public class InstrumentsTextValues : MonoBehaviour
 
     private string GetOperatingDataValues()
     {
-        /*
-        // TODO: Implement.
-        var hydraulicPressure = 0;
-        var ballastAirPressure = 0;
-        var variableBallastTemp = 0;
-        var variableBallastPressure = 0;
+        var hydraulicPressure = serverUtils.GetServerData("hydraulicPressure");
+        var ballastAirPressure = serverUtils.GetServerData("ballastPressure");
+        var variableBallastTemp = serverUtils.GetServerData("variableBallastTemp");
+        var variableBallastPressure = serverUtils.GetServerData("variableBallastPressure");
 
         return string.Format("{0:N0}", hydraulicPressure) + "\n"
                + string.Format("{0:N0}", ballastAirPressure) + "\n"
                + string.Format("{0:N0}", variableBallastTemp) + "\n"
                + string.Format("{0:N0}", variableBallastPressure) + "\n";
-        */
-
-        return "-" + "\n"
-               + "-" + "\n"
-               + "-" + "\n"
-               + "-" + "\n";
     }
 
     private string GetAcousticNavigationDataValues()
     {
-        // TODO: Implement.
         var playerVessel = serverUtils.GetPlayerVessel();
         var playerPos = serverUtils.GetVesselPosition(playerVessel);
         var latlong = serverUtils.GetVesselLatLong(playerVessel);

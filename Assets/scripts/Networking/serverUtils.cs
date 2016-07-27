@@ -18,7 +18,6 @@ namespace Meg.Networking
             {
                 if (!_serverObject)
                     _serverObject = GameObject.FindWithTag("ServerData");
-
                 return _serverObject;
             }
         }
@@ -30,7 +29,6 @@ namespace Meg.Networking
             {
                 if (!_serverData && ServerObject)
                     _serverData = ServerObject.GetComponent<serverData>();
-
                 return _serverData;
             }
         }
@@ -42,7 +40,6 @@ namespace Meg.Networking
             {
                 if (!_errorData && ServerObject)
                     _errorData = ServerObject.GetComponent<errorData>();
-
                 return _errorData;
             }
         }
@@ -54,7 +51,6 @@ namespace Meg.Networking
             {
                 if (!_mapData && ServerObject)
                     _mapData = ServerObject.GetComponent<mapData>();
-
                 return _mapData;
             }
         }
@@ -67,7 +63,6 @@ namespace Meg.Networking
             {
                 if (!_crewData && ServerObject)
                     _crewData = ServerObject.GetComponent<crewData>();
-
                 return _crewData;
             }
         }
@@ -79,7 +74,6 @@ namespace Meg.Networking
             {
                 if (!_oxygenData && ServerObject)
                     _oxygenData = ServerObject.GetComponent<oxygenData>();
-
                 return _oxygenData;
             }
         }
@@ -91,8 +85,18 @@ namespace Meg.Networking
             {
                 if (!_batteryData && ServerObject)
                     _batteryData = ServerObject.GetComponent<batteryData>();
-
                 return _batteryData;
+            }
+        }
+
+        private static operatingData _operatingData;
+        public static operatingData OperatingData
+        {
+            get
+            {
+                if (!_operatingData && ServerObject)
+                    _operatingData = ServerObject.GetComponent<operatingData>();
+                return _operatingData;
             }
         }
 
@@ -107,573 +111,444 @@ namespace Meg.Networking
 
         public static float GetServerData(string valueName)
         {
-            float rValue = 0f;
-            if (ServerObject != null)
+            if (!ServerObject)
+                return 0;
+
+            switch (valueName)
             {
-                switch (valueName)
-                {
-                    case "depth":
-                        rValue = ServerData.depth;
-                        break;
-                    case "xPos":
-                        rValue = ServerObject.transform.position.x;
-                        break;
-                    case "zPos":
-                        rValue = ServerObject.transform.position.z;
-                        break;
-                    case "pressure":
-                        rValue = ServerData.pressure;
-                        break;
-                    case "heading":
-                        rValue = ServerData.heading;
-                        break;
-                    case "pitchAngle":
-                        rValue = ServerData.pitchAngle;
-                        break;
-                    case "yawAngle":
-                        rValue = ServerData.yawAngle;
-                        break;
-                    case "rollAngle":
-                        rValue = ServerData.rollAngle;
-                        break;
-                    case "velocity":
-                        rValue = ServerData.velocity;
-                        break;
-                    case "floorDistance":
-                        rValue = ServerData.floorDistance;
-                        break;
-                    case "diveTime":
-                        rValue = ServerData.diveTime;
-                        break;
-                    case "dueTime":
-                        rValue = ServerData.dueTime;
-                        break;
-                    case "waterTemp":
-                        rValue = ServerData.waterTemp;
-                        break;
-                    case "b1":
-                        rValue = ServerData.batteries[0];
-                        break;
-                    case "b2":
-                        rValue = ServerData.batteries[1];
-                        break;
-                    case "b3":
-                        rValue = ServerData.batteries[2];
-                        break;
-                    case "b4":
-                        rValue = ServerData.batteries[3];
-                        break;
-                    case "b5":
-                        rValue = ServerData.batteries[4];
-                        break;
-                    case "b6":
-                        rValue = ServerData.batteries[5];
-                        break;
-                    case "b7":
-                        rValue = ServerData.batteries[6];
-                        break;
-                    case "o1":
-                        rValue = ServerData.oxygenTanks[0];
-                        break;
-                    case "o2":
-                        rValue = ServerData.oxygenTanks[1];
-                        break;
-                    case "o3":
-                        rValue = ServerData.oxygenTanks[2];
-                        break;
-                    case "o4":
-                        rValue = ServerData.oxygenTanks[3];
-                        break;
-                    case "o5":
-                        rValue = ServerData.oxygenTanks[4];
-                        break;
-                    case "o6":
-                        rValue = ServerData.oxygenTanks[5];
-                        break;
-                    case "o7":
-                        rValue = ServerData.oxygenTanks[6];
-                        break;
-                    case "oxygen":
-                        rValue = OxygenData.oxygen;
-                        break;
-                    case "oxygenFlow":
-                        rValue = OxygenData.oxygenFlow;
-                        break;
-                    case "Co2":
-                        rValue = OxygenData.Co2;
-                        break;
-                    case "Co2Ppm":
-                        rValue = OxygenData.Co2Ppm;
-                        break;
-                    case "cabinPressure":
-                        rValue = OxygenData.cabinPressure;
-                        break;
-                    case "cabinPressurePsi":
-                        rValue = OxygenData.cabinPressurePsi;
-                        break;
-                    case "cabinOxygen":
-                        rValue = OxygenData.cabinOxygen;
-                        break;
-                    case "cabinTemp":
-                        rValue = OxygenData.cabinTemp;
-                        break;
-                    case "battery":
-                        rValue = BatteryData.battery;
-                        break;
-                    case "error_bilgeLeak":
-                        rValue = ErrorData.error_bilgeLeak;
-                        break;
-                    case "error_batteryLeak":
-                        rValue = ErrorData.error_batteryLeak;
-                        break;
-                    case "error_electricLeak":
-                        rValue = ErrorData.error_electricLeak;
-                        break;
-                    case "error_oxygenExt":
-                        rValue = ErrorData.error_oxygenExt;
-                        break;
-                    case "error_vhf":
-                        rValue = ErrorData.error_vhf;
-                        break;
-                    case "error_forwardSonar":
-                        rValue = ErrorData.error_forwardSonar;
-                        break;
-                    case "error_depthSonar":
-                        rValue = ErrorData.error_depthSonar;
-                        break;
-                    case "error_doppler":
-                        rValue = ErrorData.error_doppler;
-                        break;
-                    case "error_gps":
-                        rValue = ErrorData.error_gps;
-                        break;
-                    case "error_cpu":
-                        rValue = ErrorData.error_cpu;
-                        break;
-                    case "error_vidhd":
-                        rValue = ErrorData.error_vidhd;
-                        break;
-                    case "error_datahd":
-                        rValue = ErrorData.error_datahd;
-                        break;
-                    case "error_tow":
-                        rValue = ErrorData.error_tow;
-                        break;
-                    case "error_radar":
-                        rValue = ErrorData.error_radar;
-                        break;
-                    case "error_sternLights":
-                        rValue = ErrorData.error_sternLights;
-                        break;
-                    case "error_bowLights":
-                        rValue = ErrorData.error_bowLights;
-                        break;
-                    case "error_portLights":
-                        rValue = ErrorData.error_portLights;
-                        break;
-                    case "error_bowThruster":
-                        rValue = ErrorData.error_bowThruster;
-                        break;
-                    case "error_hyrdaulicRes":
-                        rValue = ErrorData.error_hyrdaulicRes;
-                        break;
-                    case "error_starboardLights":
-                        rValue = ErrorData.error_starboardLights;
-                        break;
-                    case "error_runningLights":
-                        rValue = ErrorData.error_runningLights;
-                        break;
-                    case "error_ballastTank":
-                        rValue = ErrorData.error_ballastTank;
-                        break;
-                    case "error_hydraulicPump":
-                        rValue = ErrorData.error_hydraulicPump;
-                        break;
-                    case "error_oxygenPump":
-                        rValue = ErrorData.error_oxygenPump;
-                        break;
-                    case "inputXaxis":
-                        rValue = ServerData.inputXaxis;
-                        break;
-                    case "inputYaxis":
-                        rValue = ServerData.inputYaxis;
-                        break;
-                    case "inputZaxis":
-                        rValue = ServerData.inputZaxis;
-                        break;
-                    case "inputXaxis2":
-                        rValue = ServerData.inputXaxis2;
-                        break;
-                    case "inputYaxis2":
-                        rValue = ServerData.inputYaxis2;
-                        break;
-                    case "verticalVelocity":
-                        rValue = ServerData.verticalVelocity;
-                        break;
-                    case "horizontalVelocity":
-                        rValue = ServerData.horizontalVelocity;
-                        break;
-                    case "commsSignalStrength":
-                        rValue = ServerData.commsSignalStrength;
-                        break;
-                    case "divertPowerToThrusters":
-                        rValue = ServerData.divertPowerToThrusters;
-                        break;
-                    case "crewHeartRate1":
-                        rValue = CrewData.crewHeartRate1;
-                        break;
-                    case "crewHeartRate2":
-                        rValue = CrewData.crewHeartRate2;
-                        break;
-                    case "crewHeartRate3":
-                        rValue = CrewData.crewHeartRate3;
-                        break;
-                    case "crewHeartRate4":
-                        rValue = CrewData.crewHeartRate4;
-                        break;
-                    case "crewHeartRate5":
-                        rValue = CrewData.crewHeartRate5;
-                        break;
-                    case "crewHeartRate6":
-                        rValue = CrewData.crewHeartRate6;
-                        break;
-                    case "crewBodyTemp1":
-                        rValue = CrewData.crewBodyTemp1;
-                        break;
-                    case "crewBodyTemp2":
-                        rValue = CrewData.crewBodyTemp2;
-                        break;
-                    case "crewBodyTemp3":
-                        rValue = CrewData.crewBodyTemp3;
-                        break;
-                    case "crewBodyTemp4":
-                        rValue = CrewData.crewBodyTemp4;
-                        break;
-                    case "crewBodyTemp5":
-                        rValue = CrewData.crewBodyTemp5;
-                        break;
-                    case "crewBodyTemp6":
-                        rValue = CrewData.crewBodyTemp6;
-                        break;
-                    case "v1posX":
-                        rValue = MapData.vessel1Pos.x;
-                        break;
-                    case "v1posY":
-                        rValue = MapData.vessel1Pos.y;
-                        break;
-                    case "v1posZ":
-                        rValue = MapData.vessel1Pos.z;
-                        break;
-                    case "v2posX":
-                        rValue = MapData.vessel2Pos.x;
-                        break;
-                    case "v2posY":
-                        rValue = MapData.vessel2Pos.y;
-                        break;
-                    case "v2posZ":
-                        rValue = MapData.vessel2Pos.z;
-                        break;
-                    case "v3posX":
-                        rValue = MapData.vessel3Pos.x;
-                        break;
-                    case "v3posY":
-                        rValue = MapData.vessel3Pos.y;
-                        break;
-                    case "v3posZ":
-                        rValue = MapData.vessel3Pos.z;
-                        break;
-                    case "v4posX":
-                        rValue = MapData.vessel4Pos.x;
-                        break;
-                    case "v4posY":
-                        rValue = MapData.vessel4Pos.y;
-                        break;
-                    case "v4posZ":
-                        rValue = MapData.vessel4Pos.z;
-                        break;
-                    case "meg1posX":
-                        rValue = MapData.meg1Pos.x;
-                        break;
-                    case "meg1posY":
-                        rValue = MapData.meg1Pos.y;
-                        break;
-                    case "meg1posZ":
-                        rValue = MapData.meg1Pos.z;
-                        break;
-                    case "intercept1posX":
-                        rValue = MapData.intercept1Pos.x;
-                        break;
-                    case "intercept1posY":
-                        rValue = MapData.intercept1Pos.y;
-                        break;
-                    case "intercept1posZ":
-                        rValue = MapData.intercept1Pos.z;
-                        break;
-                    case "v1velocity":
-                        rValue = MapData.vessel1Velocity;
-                        break;
-                    case "v2velocity":
-                        rValue = MapData.vessel2Velocity;
-                        break;
-                    case "v3velocity":
-                        rValue = MapData.vessel3Velocity;
-                        break;
-                    case "v4velocity":
-                        rValue = MapData.vessel4Velocity;
-                        break;
-                    case "meg1velocity":
-                        rValue = MapData.meg1Velocity;
-                        break;
-                    case "intercept1velocity":
-                        rValue = MapData.intercept1Velocity;
-                        break;
-                    case "initiateMapEvent":
-                        rValue = MapData.initiateMapEvent;
-                        break;
-                    case "latitude":
-                        rValue = MapData.latitude;
-                        break;
-                    case "longitude":
-                        rValue = MapData.longitude;
-                        break;
-                    default:
-                        rValue = 50;
-                        break;
-                }
+                case "depth":
+                    return ServerData.depth;
+                case "xPos":
+                    return ServerObject.transform.position.x;
+                case "zPos":
+                    return ServerObject.transform.position.z;
+                case "pressure":
+                    return ServerData.pressure;
+                case "heading":
+                    return ServerData.heading;
+                case "pitchAngle":
+                    return ServerData.pitchAngle;
+                case "yawAngle":
+                    return ServerData.yawAngle;
+                case "rollAngle":
+                    return ServerData.rollAngle;
+                case "velocity":
+                    return ServerData.velocity;
+                case "floorDistance":
+                    return ServerData.floorDistance;
+                case "diveTime":
+                    return ServerData.diveTime;
+                case "dueTime":
+                    return ServerData.dueTime;
+                case "waterTemp":
+                    return ServerData.waterTemp;
+                case "b1":
+                    return ServerData.batteries[0];
+                case "b2":
+                    return ServerData.batteries[1];
+                case "b3":
+                    return ServerData.batteries[2];
+                case "b4":
+                    return ServerData.batteries[3];
+                case "b5":
+                    return ServerData.batteries[4];
+                case "b6":
+                    return ServerData.batteries[5];
+                case "b7":
+                    return ServerData.batteries[6];
+                case "o1":
+                    return ServerData.oxygenTanks[0];
+                case "o2":
+                    return ServerData.oxygenTanks[1];
+                case "o3":
+                    return ServerData.oxygenTanks[2];
+                case "o4":
+                    return ServerData.oxygenTanks[3];
+                case "o5":
+                    return ServerData.oxygenTanks[4];
+                case "o6":
+                    return ServerData.oxygenTanks[5];
+                case "o7":
+                    return ServerData.oxygenTanks[6];
+                case "oxygen":
+                    return OxygenData.oxygen;
+                case "oxygenFlow":
+                    return OxygenData.oxygenFlow;
+                case "Co2":
+                    return OxygenData.Co2;
+                case "Co2Ppm":
+                    return OxygenData.Co2Ppm;
+                case "cabinPressure":
+                    return OxygenData.cabinPressure;
+                case "cabinPressurePsi":
+                    return OxygenData.cabinPressurePsi;
+                case "cabinOxygen":
+                    return OxygenData.cabinOxygen;
+                case "cabinTemp":
+                    return OxygenData.cabinTemp;
+                case "cabinHumidity":
+                    return OxygenData.cabinHumidity;
+                case "battery":
+                    return BatteryData.battery;
+                case "batteryTemp":
+                    return BatteryData.batteryTemp;
+                case "error_bilgeLeak":
+                    return ErrorData.error_bilgeLeak;
+                case "error_batteryLeak":
+                    return ErrorData.error_batteryLeak;
+                case "error_electricLeak":
+                    return ErrorData.error_electricLeak;
+                case "error_oxygenExt":
+                    return ErrorData.error_oxygenExt;
+                case "error_vhf":
+                    return ErrorData.error_vhf;
+                case "error_forwardSonar":
+                    return ErrorData.error_forwardSonar;
+                case "error_depthSonar":
+                    return ErrorData.error_depthSonar;
+                case "error_doppler":
+                    return ErrorData.error_doppler;
+                case "error_gps":
+                    return ErrorData.error_gps;
+                case "error_cpu":
+                    return ErrorData.error_cpu;
+                case "error_vidhd":
+                    return ErrorData.error_vidhd;
+                case "error_datahd":
+                    return ErrorData.error_datahd;
+                case "error_tow":
+                    return ErrorData.error_tow;
+                case "error_radar":
+                    return ErrorData.error_radar;
+                case "error_sternLights":
+                    return ErrorData.error_sternLights;
+                case "error_bowLights":
+                    return ErrorData.error_bowLights;
+                case "error_portLights":
+                    return ErrorData.error_portLights;
+                case "error_bowThruster":
+                    return ErrorData.error_bowThruster;
+                case "error_hyrdaulicRes":
+                    return ErrorData.error_hyrdaulicRes;
+                case "error_starboardLights":
+                    return ErrorData.error_starboardLights;
+                case "error_runningLights":
+                    return ErrorData.error_runningLights;
+                case "error_ballastTank":
+                    return ErrorData.error_ballastTank;
+                case "error_hydraulicPump":
+                    return ErrorData.error_hydraulicPump;
+                case "error_oxygenPump":
+                    return ErrorData.error_oxygenPump;
+                case "inputXaxis":
+                    return ServerData.inputXaxis;
+                case "inputYaxis":
+                    return ServerData.inputYaxis;
+                case "inputZaxis":
+                    return ServerData.inputZaxis;
+                case "inputXaxis2":
+                    return ServerData.inputXaxis2;
+                case "inputYaxis2":
+                    return ServerData.inputYaxis2;
+                case "verticalVelocity":
+                    return ServerData.verticalVelocity;
+                case "horizontalVelocity":
+                    return ServerData.horizontalVelocity;
+                case "crewHeartRate1":
+                    return CrewData.crewHeartRate1;
+                case "crewHeartRate2":
+                    return CrewData.crewHeartRate2;
+                case "crewHeartRate3":
+                    return CrewData.crewHeartRate3;
+                case "crewHeartRate4":
+                    return CrewData.crewHeartRate4;
+                case "crewHeartRate5":
+                    return CrewData.crewHeartRate5;
+                case "crewHeartRate6":
+                    return CrewData.crewHeartRate6;
+                case "crewBodyTemp1":
+                    return CrewData.crewBodyTemp1;
+                case "crewBodyTemp2":
+                    return CrewData.crewBodyTemp2;
+                case "crewBodyTemp3":
+                    return CrewData.crewBodyTemp3;
+                case "crewBodyTemp4":
+                    return CrewData.crewBodyTemp4;
+                case "crewBodyTemp5":
+                    return CrewData.crewBodyTemp5;
+                case "crewBodyTemp6":
+                    return CrewData.crewBodyTemp6;
+                case "v1posX":
+                    return MapData.vessel1Pos.x;
+                case "v1posY":
+                    return MapData.vessel1Pos.y;
+                case "v1posZ":
+                    return MapData.vessel1Pos.z;
+                case "v2posX":
+                    return MapData.vessel2Pos.x;
+                case "v2posY":
+                    return MapData.vessel2Pos.y;
+                case "v2posZ":
+                    return MapData.vessel2Pos.z;
+                case "v3posX":
+                    return MapData.vessel3Pos.x;
+                case "v3posY":
+                    return MapData.vessel3Pos.y;
+                case "v3posZ":
+                    return MapData.vessel3Pos.z;
+                case "v4posX":
+                    return MapData.vessel4Pos.x;
+                case "v4posY":
+                    return MapData.vessel4Pos.y;
+                case "v4posZ":
+                    return MapData.vessel4Pos.z;
+                case "meg1posX":
+                    return MapData.meg1Pos.x;
+                case "meg1posY":
+                    return MapData.meg1Pos.y;
+                case "meg1posZ":
+                    return MapData.meg1Pos.z;
+                case "intercept1posX":
+                    return MapData.intercept1Pos.x;
+                case "intercept1posY":
+                    return MapData.intercept1Pos.y;
+                case "intercept1posZ":
+                    return MapData.intercept1Pos.z;
+                case "v1velocity":
+                    return MapData.vessel1Velocity;
+                case "v2velocity":
+                    return MapData.vessel2Velocity;
+                case "v3velocity":
+                    return MapData.vessel3Velocity;
+                case "v4velocity":
+                    return MapData.vessel4Velocity;
+                case "meg1velocity":
+                    return MapData.meg1Velocity;
+                case "intercept1velocity":
+                    return MapData.intercept1Velocity;
+                case "vessel1Vis":
+                    return MapData.vessel1Vis ? 1.0f : 0.0f;
+                case "vessel2Vis":
+                    return MapData.vessel2Vis ? 1.0f : 0.0f;
+                case "vessel3Vis":
+                    return MapData.vessel3Vis ? 1.0f : 0.0f;
+                case "vessel4Vis":
+                    return MapData.vessel4Vis ? 1.0f : 0.0f;
+                case "meg1Vis":
+                    return MapData.meg1Vis ? 1.0f : 0.0f;
+                case "intercept1Vis":
+                    return MapData.intercept1Vis ? 1.0f : 0.0f;
+                case "vessel1Warning":
+                    return MapData.vessel1Warning ? 1.0f : 0.0f;
+                case "vessel2Warning":
+                    return MapData.vessel2Warning ? 1.0f : 0.0f;
+                case "vessel3Warning":
+                    return MapData.vessel3Warning ? 1.0f : 0.0f;
+                case "vessel4Warning":
+                    return MapData.vessel4Warning ? 1.0f : 0.0f;
+                case "meg1Warning":
+                    return MapData.meg1Warning ? 1.0f : 0.0f;
+                case "intercept1Warning":
+                    return MapData.intercept1Warning ? 1.0f : 0.0f;
+                case "initiateMapEvent":
+                    return MapData.initiateMapEvent;
+                case "latitude":
+                    return MapData.latitude;
+                case "longitude":
+                    return MapData.longitude;
+                case "towWinchLoad":
+                    return OperatingData.towWinchLoad;
+                case "hydraulicTemp":
+                    return OperatingData.hydraulicTemp;
+                case "hydraulicPressure":
+                    return OperatingData.hydraulicPressure;
+                case "ballastPressure":
+                    return OperatingData.ballastPressure;
+                case "variableBallastTemp":
+                    return OperatingData.variableBallastTemp;
+                case "variableBallastPressure":
+                    return OperatingData.variableBallastPressure;
+                case "commsSignalStrength":
+                    return OperatingData.commsSignalStrength;
+                case "divertPowerToThrusters":
+                    return OperatingData.divertPowerToThrusters;
+                default:
+                    return 0;
             }
-            return rValue;
         }
 
         public static string GetServerDataAsText(string valueName)
         {
-            string rValue = "no value";
-            if (ServerObject != null)
+            if (!ServerObject)
+                return "no value";
+
+            switch (valueName)
             {
-                switch (valueName)
-                {
-                    case "depth":
-                        int dInt = (int)ServerData.depth;
-                        rValue = dInt.ToString();
-                        break;
-                    case "pressure":
-                        rValue = ServerData.pressure.ToString();
-                        break;
-                    case "heading":
-                        rValue = (ServerData.heading.ToString("n1") + "°");
-                        break;
-                    case "pitchAngle":
-                        rValue = (ServerData.pitchAngle.ToString("n1") + "°");
-                        break;
-                    case "yawAngle":
-                        rValue = (ServerData.yawAngle.ToString("n1") + "°");
-                        break;
-                    case "rollAngle":
-                        rValue = (ServerData.rollAngle.ToString("n1") + "°");
-                        break;
-                    case "velocity":
-                        rValue = ServerData.velocity.ToString("n1");
-                        break;
-                    case "floorDistance":
-                        int flInt = (int)ServerData.floorDistance;
-                        rValue = flInt.ToString();
-                        break;
-                    case "diveTime":
-                        var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
-                        rValue = string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
-                        break;
-                    case "dueTime":
-                        var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
-                        rValue = string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
-                        break;
-                    case "waterTemp":
-                        rValue = ServerData.waterTemp.ToString();
-                        break;
-                    case "b1":
-                        rValue = ServerData.batteries[0].ToString("n1");
-                        break;
-                    case "b2":
-                        rValue = ServerData.batteries[1].ToString("n1");
-                        break;
-                    case "b3":
-                        rValue = ServerData.batteries[2].ToString("n1");
-                        break;
-                    case "b4":
-                        rValue = ServerData.batteries[3].ToString("n1");
-                        break;
-                    case "b5":
-                        rValue = ServerData.batteries[4].ToString("n1");
-                        break;
-                    case "b6":
-                        rValue = ServerData.batteries[5].ToString("n1");
-                        break;
-                    case "b7":
-                        rValue = ServerData.batteries[6].ToString("n1");
-                        break;
-                    case "o1":
-                        rValue = ServerData.oxygenTanks[0].ToString("n1");
-                        break;
-                    case "o2":
-                        rValue = ServerData.oxygenTanks[1].ToString("n1");
-                        break;
-                    case "o3":
-                        rValue = ServerData.oxygenTanks[2].ToString("n1");
-                        break;
-                    case "o4":
-                        rValue = ServerData.oxygenTanks[3].ToString("n1");
-                        break;
-                    case "o5":
-                        rValue = ServerData.oxygenTanks[4].ToString("n1");
-                        break;
-                    case "o6":
-                        rValue = ServerData.oxygenTanks[5].ToString("n1");
-                        break;
-                    case "o7":
-                        rValue = ServerData.oxygenTanks[6].ToString("n1");
-                        break;
-                    case "oxygen":
-                        rValue = (OxygenData.oxygen.ToString("n1") + "%");
-                        break;
-                    case "oxygenFlow":
-                        rValue = (OxygenData.oxygenFlow.ToString("n0") + "lpm");
-                        break;
-                    case "Co2":
-                        rValue = (OxygenData.Co2.ToString() + "%");
-                        break;
-                    case "Co2Ppm":
-                        rValue = OxygenData.Co2Ppm.ToString("n1") + "ppm";
-                        break;
-                    case "cabinPressure":
-                        rValue = OxygenData.cabinPressure.ToString();
-                        break;
-                    case "cabinPressurePsi":
-                        rValue = OxygenData.cabinPressurePsi.ToString("n1");
-                        break;
-                    case "cabinOxygen":
-                        rValue = (OxygenData.cabinOxygen.ToString("n0") + "lpm");
-                        break;
-                    case "cabinTemp":
-                        rValue = OxygenData.cabinTemp.ToString();
-                        break;
-                    case "battery":
-                        rValue = (BatteryData.battery.ToString("n1") + "%");
-                        break;
-                    case "pilot":
-                        rValue = ServerData.pilot;
-                        break;
-                    case "verticalVelocity":
-                        rValue = ServerData.verticalVelocity.ToString("n1");
-                        break;
-                    case "horizontalVelocity":
-                        rValue = ServerData.horizontalVelocity.ToString("n1");
-                        break;
-                    case "inputXaxis":
-                        rValue = ServerData.inputXaxis.ToString("n1");
-                        break;
-                    case "inputYaxis":
-                        rValue = ServerData.inputYaxis.ToString("n1");
-                        break;
-                    case "inputZaxis":
-                        rValue = ServerData.inputZaxis.ToString("n1");
-                        break;
-                    case "inputXaxis2":
-                        rValue = ServerData.inputXaxis2.ToString("n1");
-                        break;
-                    case "inputYaxis2":
-                        rValue = ServerData.inputYaxis2.ToString("n1");
-                        break;
-                    case "commsSignalStrength":
-                        rValue = ServerData.commsSignalStrength.ToString("n1");
-                        break;
-                    case "divertPowerToThrusters":
-                        rValue = ServerData.divertPowerToThrusters.ToString("n1");
-                        break;
-                    case "crewHeartRate1":
-                        rValue = CrewData.crewHeartRate1.ToString("n1");
-                        break;
-                    case "crewHeartRate2":
-                        rValue = CrewData.crewHeartRate2.ToString("n1");
-                        break;
-                    case "crewHeartRate3":
-                        rValue = CrewData.crewHeartRate3.ToString("n1");
-                        break;
-                    case "crewHeartRate4":
-                        rValue = CrewData.crewHeartRate4.ToString("n1");
-                        break;
-                    case "crewHeartRate5":
-                        rValue = CrewData.crewHeartRate5.ToString("n1");
-                        break;
-                    case "crewHeartRate6":
-                        rValue = CrewData.crewHeartRate6.ToString("n1");
-                        break;
-                    case "crewBodyTemp1":
-                        rValue = CrewData.crewBodyTemp1.ToString("n1");
-                        break;
-                    case "crewBodyTemp2":
-                        rValue = CrewData.crewBodyTemp2.ToString("n1");
-                        break;
-                    case "crewBodyTemp3":
-                        rValue = CrewData.crewBodyTemp3.ToString("n1");
-                        break;
-                    case "crewBodyTemp4":
-                        rValue = CrewData.crewBodyTemp4.ToString("n1");
-                        break;
-                    case "crewBodyTemp5":
-                        rValue = CrewData.crewBodyTemp5.ToString("n1");
-                        break;
-                    case "crewBodyTemp6":
-                        rValue = CrewData.crewBodyTemp6.ToString("n1");
-                        break;
-                    case "v1depth":
-                        rValue = MapData.vessel1Pos.z.ToString("n0");
-                        break;
-                    case "v2depth":
-                        rValue = MapData.vessel2Pos.z.ToString("n0");
-                        break;
-                    case "v3depth":
-                        rValue = MapData.vessel3Pos.z.ToString("n0");
-                        break;
-                    case "v4depth":
-                        rValue = MapData.vessel4Pos.z.ToString("n0");
-                        break;
-                    case "meg1depth":
-                        rValue = MapData.meg1Pos.z.ToString("n0");
-                        break;
-                    case "intercept1depth":
-                        rValue = MapData.intercept1Pos.z.ToString("n0");
-                        break;
-                    case "v1velocity":
-                        rValue = MapData.vessel1Velocity.ToString("n1");
-                        break;
-                    case "v2velocity":
-                        rValue = MapData.vessel2Velocity.ToString("n1");
-                        break;
-                    case "v3velocity":
-                        rValue = MapData.vessel3Velocity.ToString("n1");
-                        break;
-                    case "v4velocity":
-                        rValue = MapData.vessel4Velocity.ToString("n1");
-                        break;
-                    case "meg1velocity":
-                        rValue = MapData.meg1Velocity.ToString("n1");
-                        break;
-                    case "intercept1velocity":
-                        rValue = MapData.intercept1Velocity.ToString("n1");
-                        break;
-                    case "mapEventName":
-                        rValue = MapData.mapEventName;
-                        break;
-                    case "latitude":
-                        rValue = FormatLatitude(MapData.latitude);
-                        break;
-                    case "longitude":
-                        rValue = FormatLongitude(MapData.longitude);
-                        break;
-                    default:
-                        rValue = "no value";
-                        break;
-                }
+                case "depth":
+                    int dInt = (int)ServerData.depth;
+                    return dInt.ToString();
+                case "pressure":
+                    return ServerData.pressure.ToString();
+                case "heading":
+                    return (ServerData.heading.ToString("n1") + "°");
+                case "pitchAngle":
+                    return (ServerData.pitchAngle.ToString("n1") + "°");
+                case "yawAngle":
+                    return (ServerData.yawAngle.ToString("n1") + "°");
+                case "rollAngle":
+                    return (ServerData.rollAngle.ToString("n1") + "°");
+                case "velocity":
+                    return ServerData.velocity.ToString("n1");
+                case "floorDistance":
+                    int flInt = (int)ServerData.floorDistance;
+                    return flInt.ToString();
+                case "diveTime":
+                    var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
+                    return string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
+                case "dueTime":
+                    var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
+                    return string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
+                case "waterTemp":
+                    return ServerData.waterTemp.ToString();
+                case "b1":
+                    return ServerData.batteries[0].ToString("n1");
+                case "b2":
+                    return ServerData.batteries[1].ToString("n1");
+                case "b3":
+                    return ServerData.batteries[2].ToString("n1");
+                case "b4":
+                    return ServerData.batteries[3].ToString("n1");
+                case "b5":
+                    return ServerData.batteries[4].ToString("n1");
+                case "b6":
+                    return ServerData.batteries[5].ToString("n1");
+                case "b7":
+                    return ServerData.batteries[6].ToString("n1");
+                case "o1":
+                    return ServerData.oxygenTanks[0].ToString("n1");
+                case "o2":
+                    return ServerData.oxygenTanks[1].ToString("n1");
+                case "o3":
+                    return ServerData.oxygenTanks[2].ToString("n1");
+                case "o4":
+                    return ServerData.oxygenTanks[3].ToString("n1");
+                case "o5":
+                    return ServerData.oxygenTanks[4].ToString("n1");
+                case "o6":
+                    return ServerData.oxygenTanks[5].ToString("n1");
+                case "o7":
+                    return ServerData.oxygenTanks[6].ToString("n1");
+                case "oxygen":
+                    return (OxygenData.oxygen.ToString("n1") + "%");
+                case "oxygenFlow":
+                    return (OxygenData.oxygenFlow.ToString("n0") + "lpm");
+                case "Co2":
+                    return (OxygenData.Co2.ToString() + "%");
+                case "Co2Ppm":
+                    return OxygenData.Co2Ppm.ToString("n1") + "ppm";
+                case "cabinPressure":
+                    return OxygenData.cabinPressure.ToString();
+                case "cabinPressurePsi":
+                    return OxygenData.cabinPressurePsi.ToString("n1");
+                case "cabinOxygen":
+                    return (OxygenData.cabinOxygen.ToString("n0") + "lpm");
+                case "cabinHumidity":
+                    return (OxygenData.cabinHumidity.ToString("n1") + "%");
+                case "cabinTemp":
+                    return OxygenData.cabinTemp.ToString();
+                case "battery":
+                    return (BatteryData.battery.ToString("n1") + "%");
+                case "batteryTemp":
+                    return (BatteryData.batteryTemp.ToString("n1") + "°c");
+                case "pilot":
+                    return ServerData.pilot;
+                case "verticalVelocity":
+                    return ServerData.verticalVelocity.ToString("n1");
+                case "horizontalVelocity":
+                    return ServerData.horizontalVelocity.ToString("n1");
+                case "inputXaxis":
+                    return ServerData.inputXaxis.ToString("n1");
+                case "inputYaxis":
+                    return ServerData.inputYaxis.ToString("n1");
+                case "inputZaxis":
+                    return ServerData.inputZaxis.ToString("n1");
+                case "inputXaxis2":
+                    return ServerData.inputXaxis2.ToString("n1");
+                case "inputYaxis2":
+                    return ServerData.inputYaxis2.ToString("n1");
+                case "crewHeartRate1":
+                    return CrewData.crewHeartRate1.ToString("n1");
+                case "crewHeartRate2":
+                    return CrewData.crewHeartRate2.ToString("n1");
+                case "crewHeartRate3":
+                    return CrewData.crewHeartRate3.ToString("n1");
+                case "crewHeartRate4":
+                    return CrewData.crewHeartRate4.ToString("n1");
+                case "crewHeartRate5":
+                    return CrewData.crewHeartRate5.ToString("n1");
+                case "crewHeartRate6":
+                    return CrewData.crewHeartRate6.ToString("n1");
+                case "crewBodyTemp1":
+                    return CrewData.crewBodyTemp1.ToString("n1");
+                case "crewBodyTemp2":
+                    return CrewData.crewBodyTemp2.ToString("n1");
+                case "crewBodyTemp3":
+                    return CrewData.crewBodyTemp3.ToString("n1");
+                case "crewBodyTemp4":
+                    return CrewData.crewBodyTemp4.ToString("n1");
+                case "crewBodyTemp5":
+                    return CrewData.crewBodyTemp5.ToString("n1");
+                case "crewBodyTemp6":
+                    return CrewData.crewBodyTemp6.ToString("n1");
+                case "v1depth":
+                    return MapData.vessel1Pos.z.ToString("n0");
+                case "v2depth":
+                    return MapData.vessel2Pos.z.ToString("n0");
+                case "v3depth":
+                    return MapData.vessel3Pos.z.ToString("n0");
+                case "v4depth":
+                    return MapData.vessel4Pos.z.ToString("n0");
+                case "meg1depth":
+                    return MapData.meg1Pos.z.ToString("n0");
+                case "intercept1depth":
+                    return MapData.intercept1Pos.z.ToString("n0");
+                case "v1velocity":
+                    return MapData.vessel1Velocity.ToString("n1");
+                case "v2velocity":
+                    return MapData.vessel2Velocity.ToString("n1");
+                case "v3velocity":
+                    return MapData.vessel3Velocity.ToString("n1");
+                case "v4velocity":
+                    return MapData.vessel4Velocity.ToString("n1");
+                case "meg1velocity":
+                    return MapData.meg1Velocity.ToString("n1");
+                case "intercept1velocity":
+                    return MapData.intercept1Velocity.ToString("n1");
+                case "mapEventName":
+                    return MapData.mapEventName;
+                case "latitude":
+                    return FormatLatitude(MapData.latitude);
+                case "longitude":
+                    return FormatLongitude(MapData.longitude);
+                case "towWinchLoad":
+                    return OperatingData.towWinchLoad.ToString("n0");
+                case "hydraulicTemp":
+                    return OperatingData.hydraulicTemp.ToString("n1") + "°c";
+                case "hydraulicPressure":
+                    return OperatingData.hydraulicPressure.ToString("n1");
+                case "ballastPressure":
+                    return OperatingData.ballastPressure.ToString("n1") + "°c";
+                case "variableBallastTemp":
+                    return OperatingData.variableBallastTemp.ToString("n1") + "°c";
+                case "variableBallastPressure":
+                    return OperatingData.variableBallastPressure.ToString("n1");
+                case "commsSignalStrength":
+                    return OperatingData.commsSignalStrength.ToString("n1");
+                case "divertPowerToThrusters":
+                    return OperatingData.divertPowerToThrusters.ToString("n1");
+                default:
+                    return "no value";
             }
-            return rValue;
         }
 
         public static void SetServerBool(string boolName, bool value)
@@ -918,7 +793,7 @@ namespace Meg.Networking
 
         public static void SetVesselVis(int vessel, bool state)
         {
-            ServerData.SetPlayerVisibility(vessel, state);
+            ServerData.SetVesselVis(vessel, state);
         }
 
         public static void SetColorTheme(megColorTheme theme)

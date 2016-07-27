@@ -5,6 +5,7 @@ using Meg.Networking;
 public class textValueFromServer : widgetText
 {
     public string linkDataString = "depth";
+    public float scale = 1;
     public float updateTick = 0.2f;
     private float nextUpdate = 0;
 
@@ -28,7 +29,7 @@ public class textValueFromServer : widgetText
         nextUpdate = Time.time + updateTick;
 
         // Apply baseline value formatting.
-        var value = serverUtils.GetServerData(linkDataString);
+        var value = serverUtils.GetServerData(linkDataString) * scale;
         if (string.IsNullOrEmpty(format))
             Text = serverUtils.GetServerDataAsText(linkDataString);
         else

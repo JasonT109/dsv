@@ -53,6 +53,20 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool intercept1Vis = true;
 
+    [SyncVar]
+    public bool vessel1Warning;
+    [SyncVar]
+    public bool vessel2Warning;
+    [SyncVar]
+    public bool vessel3Warning;
+    [SyncVar]
+    public bool vessel4Warning;
+    [SyncVar]
+    public bool meg1Warning;
+    [SyncVar]
+    public bool intercept1Warning;
+
+
     /** Default floor depth to assume. */
     public const float DefaultFloorDepth = 10994;
 

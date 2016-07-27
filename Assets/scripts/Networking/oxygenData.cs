@@ -30,12 +30,15 @@ public class oxygenData : NetworkBehaviour
 
     /** Cabin pressure (in bar). */
     [SyncVar]
-    public float cabinPressure = 1.0f;
+    public float cabinPressure = 1.024f;
 
     /** Cabin temperature (degrees c). */
     [SyncVar]
     public float cabinTemp = 14.3f;
 
+    /** Cabin humidity (%). */
+    [SyncVar]
+    public float cabinHumidity = 42.9f;
 
     /** Oxygen flow (liters / minute, tops out to nominal 22 lpm at 5% reserves). */
     public float oxygenFlow
