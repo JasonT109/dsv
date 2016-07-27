@@ -24,7 +24,8 @@ public class SonarRangeControl : MonoBehaviour
 
     bool canChangeValue = true;
 
-    public const float SmoothTime = 0.15f;
+    public const float SmoothTime = 0.1f;
+    public const float PressInterval = 0.25f;
 
     private float _target;
     private float _velocity;
@@ -47,7 +48,7 @@ public class SonarRangeControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target - RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.5f));
+                StartCoroutine(Wait(PressInterval));
             }
         }
         else if(RightButton.GetComponent<buttonControl>().pressed && canChangeValue)
@@ -56,7 +57,7 @@ public class SonarRangeControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target + RangeIncrement, MinRange, MaxRange);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.5f));
+                StartCoroutine(Wait(PressInterval));
             }
         }
 

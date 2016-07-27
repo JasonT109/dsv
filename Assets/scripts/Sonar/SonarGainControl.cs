@@ -18,7 +18,8 @@ public class SonarGainControl : MonoBehaviour
 
     bool canChangeValue = true;
 
-    public const float SmoothTime = 0.25f;
+    public const float SmoothTime = 0.1f;
+    public const float PressInterval = 0.25f;
 
     private float _target;
     private float _velocity;
@@ -39,7 +40,7 @@ public class SonarGainControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target - GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.5f));
+                StartCoroutine(Wait(PressInterval));
             }
         }
         else if (UpButton.GetComponent<buttonControl>().pressed && canChangeValue)
@@ -48,7 +49,7 @@ public class SonarGainControl : MonoBehaviour
             {
                 _target = Mathf.Clamp(_target + GainIncrement, MinGain, MaxGain);
                 canChangeValue = false;
-                StartCoroutine(Wait(0.5f));
+                StartCoroutine(Wait(PressInterval));
             }
         }
 
