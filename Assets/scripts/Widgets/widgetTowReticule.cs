@@ -1,24 +1,41 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 
 public class widgetTowReticule : MonoBehaviour
 {
 
+    [Header("Required Components")]
     public Transform target;
-    public float lockDistance = 1f;
-    public float trackDistance = 2f;
     public GameObject[] lockedOnGFX;
-    public Color targetColor;
-    public Color lockColor;
     public GameObject lockRing1;
-    public Vector3 lockRing1StartScale = new Vector3(1,1,1);
-    public Vector3 lockRing1EndScale = new Vector3(1, 1, 1);
     public GameObject targetLockText;
     public widgetText targetText;
+    public Transform initPosIndicator;
 
+    [Header("Target Configuration")]
+    public Color targetColor;
+    public Color lockColor;
+    public Vector3 lockRing1StartScale = new Vector3(1, 1, 1);
+    public Vector3 lockRing1EndScale = new Vector3(1, 1, 1);
+    public float lockDistance = 1f;
+    public float trackDistance = 2f;
+
+    [Header("Reticule Configuration")]
+    public float maxX = 6;
+    public float maxY = 5;
+    public float moveSpeed = 1;
+
+    [Header("Text Configuration")]
+    public Color textUnlockedColor;
+    public Color textLockedColor;
+
+    private Vector2 moveDir = Vector2.zero;
+    private Vector2 newMoveDir = Vector2.zero;
     private float distanceLerp;
     private float distance;
     private Vector3 initialPos;
+    private Vector3 startPos;
     private bool locked;
     private float lockedTime;
 
@@ -27,10 +44,26 @@ public class widgetTowReticule : MonoBehaviour
 	void Start ()
     {
         initialPos = transform.position;
-	}
+        startPos = transform.position;
+
+    }
 	
-	// Update is called once per frame
-	void Update ()
+    Vector3 getLocalPosition(Vector3 position, Transform localSpace)
+    {
+        Vector3 localPosition = localSpace.InverseTransformPoint(position);
+
+        return localPosition;
+    }
+
+    Vector3 getWorldPosition(Vector3 position, Transform worldSpace)
+    {
+        Vector3 worldPosition = worldSpace.TransformPoint(position);
+
+        return worldPosition;
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         distance = Vector3.Distance(initialPos, target.position);
         distanceLerp = (Mathf.Abs(distance - lockDistance)) / (trackDistance - lockDistance);
@@ -44,6 +77,7 @@ public class widgetTowReticule : MonoBehaviour
             lockRing1.transform.localScale = lockRing1EndScale;
             targetLockText.SetActive(true);
             targetText.Text = "LOCKED";
+            targetText.Color = textLockedColor;
         }
         else if (distance > lockDistance && distance < trackDistance)
         {
@@ -55,6 +89,7 @@ public class widgetTowReticule : MonoBehaviour
             lockedTime = 0;
             targetLockText.SetActive(false);
             targetText.Text = "AQUIRING...";
+            targetText.Color = textUnlockedColor;
         }
         else
         {
@@ -66,6 +101,7 @@ public class widgetTowReticule : MonoBehaviour
             lockedTime = 0;
             targetLockText.SetActive(false);
             targetText.Text = "NO TARGET";
+            targetText.Color = textUnlockedColor;
         }
 
         if (locked)
@@ -84,5 +120,20 @@ public class widgetTowReticule : MonoBehaviour
                 lockedOnGFX[i].SetActive(false);
             }
         }
+
+        moveDir.y = -serverUtils.GetServerData("inputYaxis");
+        moveDir.x = serverUtils.GetServerData("inputXaxis");
+
+        moveDir *= moveSpeed;
+
+        initialPos = new Vector3(initialPos.x + moveDir.x, initialPos.y + moveDir.y, initialPos.z);
+
+        //set position of indicator
+        initPosIndicator.position = initialPos;
+        initPosIndicator.localPosition = new Vector3(Mathf.Clamp(initPosIndicator.localPosition.x, -maxX, maxX), Mathf.Clamp(initPosIndicator.localPosition.y, -maxY, maxY), initPosIndicator.localPosition.z);
+        initialPos = initPosIndicator.position;
+
+
+        gameObject.transform.Translate(moveDir);
     }
 }
