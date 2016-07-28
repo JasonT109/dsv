@@ -1,4 +1,4 @@
-﻿namespace Meg.SonarEvent
+namespace Meg.SonarEvent
 {
     using UnityEngine;
     using UnityEngine.Networking;

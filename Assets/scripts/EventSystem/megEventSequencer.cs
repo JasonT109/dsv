@@ -5,6 +5,8 @@ using Meg.Networking;
 
 public class megEventSequencer : MonoBehaviour {
 
+    private const float Uninitialized = -float.MaxValue;
+
     public megEventGroup megEvents = new megEventGroup();
     private megEventObject[] megEventList;
     private float eventGroupTimer;
@@ -23,7 +25,7 @@ public class megEventSequencer : MonoBehaviour {
         initialValues = new float[megEvents.eventObjects.Length];
         for (int i = 0; i < megEvents.eventObjects.Length; i++)
         {
-            initialValues[i] = -1337f;
+            initialValues[i] = Uninitialized;
             megEventList[i] = megEvents.eventObjects[i];
             initParams[i] = serverUtils.GetServerData(megEvents.eventObjects[i].serverParam);
         }
@@ -42,19 +44,19 @@ public class megEventSequencer : MonoBehaviour {
         if (megEvents.running)
         {
             //increment time
-            megEvents.eventTime += Time.deltaTime;
+            megEvents.time += Time.deltaTime;
 
             //for each event
             for (int i = 0; i < megEventList.Length; i++)
             {
                 //if event trigger time less than group time and event is not running
-                if(megEventList[i].triggerTime < megEvents.eventTime && !megEventList[i].running)
+                if(megEventList[i].triggerTime < megEvents.time && !megEventList[i].running)
                 {
                     megEventList[i].running = true;
                 }
 
                 //if event is RUNNING and TRIGGER time < EVENT time and has NOT COMPLETED
-                if (megEventList[i].running && megEventList[i].triggerTime < megEvents.eventTime && !megEventList[i].completed)
+                if (megEventList[i].running && megEventList[i].triggerTime < megEvents.time && !megEventList[i].completed)
                 {
                     eventObjectTimers[i] += Time.deltaTime;
                     if (megEventList[i].completeTime == 0 || megEventList[i].physicsEvent)
@@ -81,7 +83,7 @@ public class megEventSequencer : MonoBehaviour {
                         //Debug.Log("Started blend event over " + megEventList[i].completeTime + " seconds.");
 
                         //get the value from the server
-                        if (initialValues[i] == -1337f)
+                        if (initialValues[i] == Uninitialized)
                         {
                             initialValues[i] = serverUtils.GetServerData(megEventList[i].serverParam);
                         }
@@ -95,7 +97,7 @@ public class megEventSequencer : MonoBehaviour {
                         serverUtils.SetServerData(megEventList[i].serverParam, initialValue);
 
                         //set to complete when completeTime is up
-                        if (megEventList[i].completeTime + megEventList[i].triggerTime < megEvents.eventTime)
+                        if (megEventList[i].completeTime + megEventList[i].triggerTime < megEvents.time)
                         {
                             megEventList[i].completed = true;
                         }
@@ -106,7 +108,7 @@ public class megEventSequencer : MonoBehaviour {
         if (megEvents.running && !megEvents.trigger.GetComponent<buttonControl>().active)
         {
             megEvents.running = false;
-            megEvents.eventTime = 0;
+            megEvents.time = 0;
             //reset each event
             for (int i = 0; i < megEventList.Length; i++)
             {
@@ -120,7 +122,7 @@ public class megEventSequencer : MonoBehaviour {
                 megEventList[i].completed = false;
 
                 //reset to a nonsense number
-                initialValues[i] = -1337f;
+                initialValues[i] = Uninitialized;
 
                 //reset individual timers
                 eventObjectTimers[i] = 0;

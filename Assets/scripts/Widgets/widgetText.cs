@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 /** Base class for widgets that deal with on-screen text. */
@@ -22,10 +23,12 @@ public class widgetText : MonoBehaviour
         {
             if (TextMesh)
                 return TextMesh.text;
-            else if (DynamicText)
+            if (DynamicText)
                 return DynamicText.GetText();
-            else
-                return "";
+            if (UiText)
+                return UiText.text;
+            
+            return "";
         }
 
         set
@@ -34,6 +37,8 @@ public class widgetText : MonoBehaviour
                 TextMesh.text = value;
             else if (DynamicText)
                 DynamicText.SetText(value);
+            else if (UiText)
+                UiText.text = value;
 
             if (ShrinkToFit)
                 UpdateScaleToFit();
@@ -47,10 +52,12 @@ public class widgetText : MonoBehaviour
         {
             if (TextMesh)
                 return TextMesh.color;
-            else if (DynamicText)
+            if (DynamicText)
                 return DynamicText.color;
-            else
-                return Color.white;
+            if (UiText)
+                return UiText.color;
+
+            return Color.white;
         }
 
         set
@@ -59,6 +66,8 @@ public class widgetText : MonoBehaviour
                 TextMesh.color = value;
             else if (DynamicText)
                 DynamicText.color = value;
+            else if (UiText)
+                UiText.color = value;
         }
     }
 
@@ -71,6 +80,10 @@ public class widgetText : MonoBehaviour
 
     /** Dynamic text (if used). */
     public DynamicText DynamicText
+        { get; protected set; }
+
+    /** UGUI text (if used). */
+    public Text UiText
         { get; protected set; }
 
 
@@ -97,6 +110,8 @@ public class widgetText : MonoBehaviour
             TextMesh = GetComponentInChildren<TextMesh>();
         if (!DynamicText && !TextMesh)
             DynamicText = GetComponentInChildren<DynamicText>();
+        if (!DynamicText && !TextMesh && !UiText)
+            UiText = GetComponentInChildren<Text>();
 
         // Initialize sizing behaviour.
         InitializeSizing();

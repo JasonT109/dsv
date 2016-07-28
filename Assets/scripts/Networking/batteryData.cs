@@ -7,6 +7,10 @@ public class batteryData : NetworkBehaviour
     [SyncVar]
     public float battery;
 
+    /** Battery temperature (�c). */
+    [SyncVar]
+    public float batteryTemp = 5.2f;
+
     [SyncVar]
     public float bank1;
     [SyncVar]
