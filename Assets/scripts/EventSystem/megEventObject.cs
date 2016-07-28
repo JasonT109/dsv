@@ -44,7 +44,7 @@ namespace Meg.EventSystem
         // Load / Save
         // ------------------------------------------------------------
 
-        /** Save movement state to JSON. */
+        /** Save state to JSON. */
         public override JSONObject Save()
         {
             var json = base.Save();
@@ -55,7 +55,7 @@ namespace Meg.EventSystem
             return json;
         }
 
-        /** Load movement state from JSON. */
+        /** Load state from JSON. */
         public override void Load(JSONObject json)
         {
             base.Load(json);

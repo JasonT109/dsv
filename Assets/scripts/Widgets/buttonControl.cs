@@ -104,6 +104,9 @@ public class buttonControl : MonoBehaviour
             pressed = true;
             m.color = GetThemeColor(4);
             StartCoroutine(waitPress(0.1f));
+
+            if (onPressed != null)
+                onPressed();
         }
     }
 

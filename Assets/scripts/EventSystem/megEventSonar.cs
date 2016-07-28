@@ -29,7 +29,7 @@ namespace Meg.EventSystem
         // Load / Save
         // ------------------------------------------------------------
 
-        /** Save movement state to JSON. */
+        /** Save state to JSON. */
         public virtual JSONObject Save()
         {
             var json = new JSONObject();

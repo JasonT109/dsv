@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
+        /** ID of this event group. */
+        public string id = "Group";
+
         /** Object used to trigger this group. */
         public GameObject trigger;
 
@@ -28,6 +32,9 @@ namespace Meg.EventSystem
 
         /** Whether group is currently running. */
         public bool running { get; set; }
+
+        /** Whether file is currently paused. */
+        public bool paused { get; set; }
 
         /** Whether group is complete. */
         public bool completed { get; set; }
@@ -56,28 +63,36 @@ namespace Meg.EventSystem
         /** Update this event group as time passes. */
         public void Update(float t, float dt)
         {
-            if (!running)
-            {
-                // Trigger the group when a button is pressed.
-                if (trigger && trigger.GetComponent<buttonControl>().active)
-                    Start();
-            }
-            else if (running)
+            // if (trigger)
+            //    paused = !trigger.GetComponent<buttonControl>().active;
+
+            if (paused)
+                return;
+
+            if (running)
             {
                 // Update current time.
                 time += dt;
 
                 // Check if all events are complete.
                 completed = events.All(e => e.completed);
-
-                // Check if we should stop the group.
-                if (trigger && !trigger.GetComponent<buttonControl>().active)
-                    Stop();
             }
 
             // Update each event.
             for (var i = 0; i < events.Count; i++)
                 events[i].UpdateFromGroup(this, time, dt);
+        }
+
+        /** Pause playback on the group. */
+        public void Pause()
+        {
+            paused = true;
+        }
+
+        /** Resume playback on the group. */
+        public void Resume()
+        {
+            paused = false;
         }
 
         /** Stop this event group. */
@@ -94,7 +109,7 @@ namespace Meg.EventSystem
         // Load / Save
         // ------------------------------------------------------------
 
-        /** Save movement state to JSON. */
+        /** Save state to JSON. */
         public virtual JSONObject Save()
         {
             var json = new JSONObject();
@@ -103,20 +118,25 @@ namespace Meg.EventSystem
             foreach (var e in events)
                 eventsJson.Add(e.Save());
 
-            json.AddField("Events", eventsJson);
+            json.AddField("id", id);
+            json.AddField("paused", paused);
+            json.AddField("events", eventsJson);
 
             return json;
         }
 
-        /** Load movement state from JSON. */
+        /** Load state from JSON. */
         public virtual void Load(JSONObject json)
         {
             // Load in value events.
-            var eventsJson = json.GetField("Events");
+            json.GetField(ref id, "id");
+            paused = json.GetField("paused").b;
+            var eventsJson = json.GetField("events");
             events.Clear();
             for (var i = 0; i < eventsJson.Count; i++)
             {
-                var type = (megEventType) eventsJson[i]["type"].i;
+                var s = eventsJson[i]["type"].str;
+                var type = (megEventType) Enum.Parse(typeof(megEventType), s, true);
                 events.Add(CreateEvent(type));
                 events[i].Load(eventsJson[i]);
             }

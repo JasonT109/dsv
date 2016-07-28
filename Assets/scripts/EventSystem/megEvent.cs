@@ -96,21 +96,21 @@ namespace Meg.EventSystem
         // Load / Save
         // ------------------------------------------------------------
 
-        /** Save movement state to JSON. */
+        /** Save state to JSON. */
         public virtual JSONObject Save()
         {
             var json = new JSONObject();
-            json.AddField("Type", (int) type);
-            json.AddField("TriggerTime", triggerTime);
-            json.AddField("Duration", completeTime);
+            json.AddField("type", type.ToString());
+            json.AddField("triggerTime", triggerTime);
+            json.AddField("completeTime", completeTime);
             return json;
         }
 
-        /** Load movement state from JSON. */
+        /** Load state from JSON. */
         public virtual void Load(JSONObject json)
         {
-            json.GetField(ref triggerTime, "TriggerTime");
-            json.GetField(ref completeTime, "Duration");
+            json.GetField(ref triggerTime, "triggerTime");
+            json.GetField(ref completeTime, "completeTime");
         }
 
 

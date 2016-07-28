@@ -32,21 +32,21 @@ namespace Meg.EventSystem
         // Load / Save
         // ------------------------------------------------------------
 
-        /** Save movement state to JSON. */
+        /** Save state to JSON. */
         public override JSONObject Save()
         {
             var json = base.Save();
-            json.AddField("Direction", physicsDirection);
-            json.AddField("Magnitude", physicsMagnitude);
+            json.AddField("physicsDirection", physicsDirection);
+            json.AddField("physicsMagnitude", physicsMagnitude);
             return json;
         }
 
-        /** Load movement state from JSON. */
+        /** Load state from JSON. */
         public override void Load(JSONObject json)
         {
             base.Load(json);
-            json.GetField(ref physicsDirection, "Direction");
-            json.GetField(ref physicsMagnitude, "Magnitude");
+            json.GetField(ref physicsDirection, "physicsDirection");
+            json.GetField(ref physicsMagnitude, "physicsMagnitude");
         }
 
 
