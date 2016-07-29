@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
 using Meg.EventSystem;
 
 public class debugEventPropertiesUi : MonoBehaviour
@@ -169,7 +170,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateCompleteTimeSlider()
     {
-        var maxValue = Mathf.Max(_event.group.endTime, DefaultCompleteTimeSliderLength);
+        var longest = _event.group.events.Max(e => e.completeTime);
+        var maxValue = Mathf.Max(longest, DefaultCompleteTimeSliderLength);
         CompleteTimeSlider.maxValue = maxValue;
         CompleteTimeSlider.value = _event.completeTime;
     }

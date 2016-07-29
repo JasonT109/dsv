@@ -36,8 +36,11 @@ namespace Meg.EventSystem
         /** Whether group is currently running. */
         public bool running { get; set; }
 
-        /** Whether file is currently paused. */
+        /** Whether group is currently paused. */
         public bool paused { get; set; }
+
+        /** Whether group is currently set to loop. */
+        public bool looping { get; set; }
 
         /** Whether group is complete. */
         public bool completed { get; set; }
@@ -96,13 +99,25 @@ namespace Meg.EventSystem
                 events[i].UpdateFromGroup(time, dt);
 
             if (running && !completed)
-                completed = events.All(e => e.completed);
+            {
+                var finished = events.All(e => e.completed);
+                if (finished && !looping)
+                    completed = true;
+                else if (finished && looping)
+                    Rewind();
+            }
         }
 
         /** Set group's paused state. */
         public void SetPaused(bool value)
         {
             paused = value;
+        }
+
+        /** Set group's looping state. */
+        public void SetLooping(bool value)
+        {
+            looping = value;
         }
 
         /** Pause playback on the group. */
@@ -131,6 +146,22 @@ namespace Meg.EventSystem
             foreach (var e in ordered)
                 e.StopFromGroup();
         }
+
+        /** Rewind the group to start time. */
+        public void Rewind()
+        {
+            var wasRunning = running;
+            var wasPaused = paused;
+            var wasCompleted = completed;
+
+            Stop();
+
+            if (wasRunning)
+                Start();
+            if (wasPaused || wasCompleted)
+                Pause();
+        }
+
 
 
         // Load / Save

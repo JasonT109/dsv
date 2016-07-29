@@ -171,12 +171,12 @@ public class debugEventFileUi : MonoBehaviour
 
     private void HandleEventSelected(debugEventUi ui)
     {
-        var e = ui.Event;
-        if (e == Properties.Event)
-            e = null;
+        var selected = ui.Event;
+        if (selected == Properties.Event)
+            selected = null;
 
-        Properties.Event = ui.Event;
-        _file.selectedEvent = ui.Event;
+        Properties.Event = selected;
+        _file.selectedEvent = selected;
     }
 
 

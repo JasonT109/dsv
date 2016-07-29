@@ -16,6 +16,9 @@ public class debugEventGroupUi : MonoBehaviour
     /** The event group's toggle button. */
     public Toggle PausedToggle;
 
+    /** The event group's loop toggle button. */
+    public Toggle LoopingToggle;
+
     /** The timeline for this event group. */
     public debugEventTimelineUi Timeline;
 
@@ -46,6 +49,13 @@ public class debugEventGroupUi : MonoBehaviour
         set { SetPaused(value); }
     }
 
+    /** Whether group is looping. */
+    public bool Looping
+    {
+        get { return _group.looping; }
+        set { SetLooping(value); }
+    }
+
     /** Selection event. */
     public event debugEventUi.EventSelectedHandler OnEventSelected;
 
@@ -58,6 +68,9 @@ public class debugEventGroupUi : MonoBehaviour
 
     /** The event group name. */
     private Text _nameLabel;
+
+    /** Whether ui is being updated. */
+    private bool _updating;
 
 
     // Unity Methods
@@ -91,8 +104,27 @@ public class debugEventGroupUi : MonoBehaviour
     /** Set paused state. */
     public void SetPaused(bool value)
     {
+        if (_updating)
+            return;
+
         _group.SetPaused(value);
         PausedToggle.isOn = !value;
+    }
+
+    /** Toggle looping on/off. */
+    public void ToggleLooping()
+    {
+        Looping = !Looping;
+    }
+
+    /** Set paused state. */
+    public void SetLooping(bool value)
+    {
+        if (_updating)
+            return;
+
+        _group.SetLooping(value);
+        LoopingToggle.isOn = value;
     }
 
 
@@ -109,14 +141,20 @@ public class debugEventGroupUi : MonoBehaviour
         if (_group == null)
             return;
 
+        _updating = true;
+
         PausedToggle.isOn = !_group.paused;
         PausedToggle.graphic.color = File.playing ? ActiveColor : InactiveColor;
+        LoopingToggle.isOn = _group.looping;
+        LoopingToggle.graphic.color = File.playing ? ActiveColor : InactiveColor;
 
         var label = Regex.Replace(Group.id, "[A-Z]", " $0");
         _nameLabel.text = label;
 
         // Set group on timeline.
         Timeline.Group = Group;
+
+        _updating = false;
     }
 
     private void HandleEventSelected(debugEventUi ui)
