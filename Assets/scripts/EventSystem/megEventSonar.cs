@@ -23,16 +23,17 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Constructor for a sonar event. */
-        public megEventSonar() : base(megEventType.Sonar) { }
+        public megEventSonar(megEventGroup group = null) 
+            : base(megEventType.Sonar, group) { }
 
 
         // Load / Save
         // ------------------------------------------------------------
 
         /** Save state to JSON. */
-        public virtual JSONObject Save()
+        public override JSONObject Save()
         {
-            var json = new JSONObject();
+            var json = base.Save();
             json.GetField(ref triggerTime, "triggerTime");
             var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
             foreach (var w in waypoints)
@@ -45,8 +46,9 @@ namespace Meg.EventSystem
         }
 
         /** Load movement state from JSON. */
-        public virtual void Load(JSONObject json)
+        public override void Load(JSONObject json)
         {
+            base.Load(json);
             var waypointsJson = json.GetField("waypoints");
             waypoints = new Vector3[waypointsJson.Count];
             for (var i = 0; i < waypointsJson.Count; i++)

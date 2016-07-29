@@ -31,6 +31,12 @@ namespace Meg.EventSystem
         /** Id for this event. */
         public abstract string id { get; }
 
+        /** Group that this event belongs to. */
+        public megEventGroup group { get { return _group; } }
+
+        /** File that this event belongs to. */
+        public megEventFile file { get { return _group != null ? _group.file : null; } }
+
         /** Optional trigger button object. */
         public GameObject trigger;
 
@@ -40,12 +46,15 @@ namespace Meg.EventSystem
         /** Duration of the event. */
         public float completeTime;
 
+        /** Time at which the event ends. */
+        public float endTime { get { return triggerTime + Mathf.Max(0, completeTime); } }
+
         /** Current local time for event. */
         public float time { get; set; }
 
         /** Fraction of local time within [trigger, complete] interval. */
         public float timeFraction
-            { get { return completeTime > 0 ? Mathf.Clamp01(time - triggerTime) / completeTime : 1; } }
+            { get { return completeTime > 0 ? Mathf.Clamp01(time / completeTime) : 1; } }
 
         /** Whether the event is currently running. */
         public bool running { get; set; }
@@ -53,14 +62,22 @@ namespace Meg.EventSystem
         /** Whether the event has completed. */
         public bool completed { get; set; }
 
+        
+        // Members
+        // ------------------------------------------------------------
+
+        /** The group that this event belongs to. */
+        private readonly megEventGroup _group;
+
 
         // Lifecycle
         // ------------------------------------------------------------
 
         /** Constructor for an event. */
-        protected megEvent(megEventType type)
+        protected megEvent(megEventType type, megEventGroup group = null)
         {
             this.type = type;
+            _group = group;
         }
 
 
@@ -68,7 +85,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Update this event over time from an event group. */
-        public void UpdateFromGroup(megEventGroup group, float t, float dt)
+        public void UpdateFromGroup(float t, float dt)
         {
             if (group.running)
             {
@@ -79,10 +96,10 @@ namespace Meg.EventSystem
                     time = 0;
                     Start();
                 }
-                else if (running)
+                else if (running && !completed)
                     time += dt;
 
-                if (!completed)
+                if (running && !completed)
                     Update(time, dt);
             }
             else if (running)
@@ -90,6 +107,38 @@ namespace Meg.EventSystem
                 running = false;
                 Stop();
             }
+        }
+
+        /** Stop event from an event group. */
+        public void StopFromGroup()
+        {
+            if (!running)
+                return;
+
+            running = false;
+            completed = false;
+            time = 0;
+
+            Stop();
+        }
+
+        /** Stop event from an event file. */
+        public void StopFromFile()
+        {
+            if (!running)
+                return;
+
+            running = false;
+            completed = false;
+            time = 0;
+
+            Stop();
+        }
+
+        /** String representation. */
+        public override string ToString()
+        {
+            return id;
         }
 
 

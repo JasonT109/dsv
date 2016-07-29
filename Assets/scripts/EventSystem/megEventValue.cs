@@ -28,13 +28,26 @@ namespace Meg.EventSystem
         /** Initial value, used when interpolating. */
         private float _initialValue;
 
+        /** Current value. */
+        private float _value = float.MinValue;
+
 
         // Lifecycle
         // ------------------------------------------------------------
 
         /** Constructor for an event. */
-        public megEventValue() : base(megEventType.Value) { }
+        public megEventValue(megEventGroup group = null) : base(megEventType.Value, group) { }
 
+
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            var value = serverUtils.GetServerData(serverParam);
+            return string.Format("{0}: {1:N1} ({2:N1})", id, serverValue, value);
+        }
 
         // Load / Save
         // ------------------------------------------------------------
@@ -65,11 +78,13 @@ namespace Meg.EventSystem
         {
             // Get initial value.
             _initialValue = serverUtils.GetServerData(serverParam);
+            _value = _initialValue;
 
             // Apply final value immediately if needed.
             if (completeTime <= 0)
             {
-                serverUtils.SetServerData(serverParam, serverValue);
+                _value = serverValue;
+                serverUtils.SetServerData(serverParam, _value);
                 completed = true;
             }
         }
@@ -78,8 +93,8 @@ namespace Meg.EventSystem
         protected override void Update(float t, float dt)
         {
             // Interpolate towards final value over time.
-            var value = Mathf.Lerp(_initialValue, serverValue, timeFraction);
-            serverUtils.SetServerData(serverParam, value);
+            _value = Mathf.Lerp(_initialValue, serverValue, timeFraction);
+            serverUtils.SetServerData(serverParam, _value);
 
             // Check if final value has been reached.
             if (timeFraction >= 1)
@@ -89,6 +104,8 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
+            // Reset value to initial value.
+            serverUtils.SetServerData(serverParam, _initialValue);
         }
 
     }

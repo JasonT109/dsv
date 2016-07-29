@@ -26,7 +26,8 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Constructor for an event. */
-        public megEventPhysics() : base(megEventType.Physics) { }
+        public megEventPhysics(megEventGroup group = null) 
+            : base(megEventType.Physics, group) { }
 
 
         // Load / Save

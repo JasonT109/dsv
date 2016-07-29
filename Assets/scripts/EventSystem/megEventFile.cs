@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.EventSystem
 {
@@ -16,8 +18,11 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        /** The events managed by this group. */
+        /** The event groups managed by this file. */
         public List<megEventGroup> groups = new List<megEventGroup>();
+
+        /** All events in the file. */
+        public IEnumerable<megEvent> events { get { return groups.SelectMany(g => g.events); } }
 
         /** Current local time. */
         public float time { get; set; }
@@ -28,16 +33,44 @@ namespace Meg.EventSystem
         /** Whether file is currently paused. */
         public bool paused { get; set; }
 
-        /** Whether file  is complete. */
+        /** Whether file is complete. */
         public bool completed { get; set; }
+
+        /** Whether file is playing back at the moment (running and active). */
+        public bool playing { get { return running && !paused && !completed; } }
+
+        /** Local time at which the file ends. */
+        public float endTime { get { return groups.Max(e => e.endTime); } }
+
+        /** Whether file is empty. */
+        public bool empty { get { return groups.Count == 0; } }
+
+        /** Whether file can be played. */
+        public bool canPlay { get { return !empty; } }
+
+        /** Whether file can be rewound. */
+        public bool canRewind { get { return !empty && !playing && running; } }
+
+        /** The selected event (if any). */
+        public megEvent selectedEvent { get; set; }
 
 
         // Public Methods
         // ------------------------------------------------------------
 
-        /** Start this event group. */
+        /** Play this event file. */
+        public void Play()
+        {
+            Start();
+        }
+
+        /** Start this event file. */
         public void Start()
         {
+            // Allow file to be restarted once complete.
+            if (running && completed)
+                Stop();
+
             if (running)
                 return;
 
@@ -51,22 +84,25 @@ namespace Meg.EventSystem
 
             for (var i = 0; i < groups.Count; i++)
                 groups[i].Start();
+
+            // Register with event manager for updates.
+            megEventManager.Instance.AddFile(this);
         }
 
-        /** Update this event group as time passes. */
+        /** Update this event file as time passes. */
         public void Update(float t, float dt)
         {
             if (paused)
                 return;
 
-            if (running)
-            {
+            if (running && !completed)
                 time += dt;
-                completed = groups.All(e => e.completed);
-            }
 
             for (var i = 0; i < groups.Count; i++)
                 groups[i].Update(time, dt);
+
+            if (running && !completed)
+                completed = groups.All(g => g.completed);
         }
 
         /** Pause playback on the file. */
@@ -87,11 +123,36 @@ namespace Meg.EventSystem
             if (!running)
                 return;
 
+            // Stop all events in the file in reverse time order.
+            // This ensures server values are correctly reset.
+            var ordered = events.OrderByDescending(e => e.triggerTime);
+            foreach (var e in ordered)
+                e.StopFromFile();
+
+            // Stop each group.
             for (var i = 0; i < groups.Count; i++)
                 groups[i].Stop();
 
             time = 0;
             running = false;
+
+            // Stop receiving updates.
+            megEventManager.Instance.RemoveFile(this);
+        }
+
+        /** Rewind the file to start time. */
+        public void Rewind()
+        {
+            var wasRunning = running;
+            var wasPaused = paused;
+            var wasCompleted = completed;
+
+            Stop();
+
+            if (wasRunning)
+                Start();
+            if (wasPaused || wasCompleted)
+                Pause();
         }
 
 
@@ -119,7 +180,7 @@ namespace Meg.EventSystem
             groups.Clear();
             for (var i = 0; i < groupsJson.Count; i++)
             {
-                groups.Add(new megEventGroup());
+                groups.Add(new megEventGroup(this));
                 groups[i].Load(groupsJson[i]);
             }
         }
@@ -127,16 +188,9 @@ namespace Meg.EventSystem
         /** Load state from a JSON file. */
         public virtual void LoadFromFile(string path)
         {
-            try
-            {
-                var text = File.ReadAllText(path);
-                var json = new JSONObject(text);
-                Load(json);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Failed to load event file: " + path + ", error: " + ex);
-            }
+            var text = File.ReadAllText(path);
+            var json = new JSONObject(text);
+            Load(json);
         }
 
     }

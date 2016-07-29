@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Events;
 
-public class debugFileList : MonoBehaviour
+public class debugFileListUi : MonoBehaviour
 {
 
     // Properties
     // ------------------------------------------------------------
 
     /** Prefab to spawn for each file entry. */
-    public debugFileEntry FileEntryPrefab;
+    public debugFileEntryUi FileEntryPrefab;
 
     /** The current folder. */
     public string Folder
@@ -21,8 +21,7 @@ public class debugFileList : MonoBehaviour
     }
 
     /** The currently selected file. */
-
-    public debugFileEntry SelectedEntry
+    public debugFileEntryUi SelectedEntry
     {
         get { return _selectedEntry; }
         set { SetSelectedEntry(value); }
@@ -36,10 +35,10 @@ public class debugFileList : MonoBehaviour
     private string _folder;
 
     /** The current set of file entries. */
-    private readonly List<debugFileEntry> _entries = new List<debugFileEntry>();
+    private readonly List<debugFileEntryUi> _entries = new List<debugFileEntryUi>();
 
     /** The selected entry. */
-    private debugFileEntry _selectedEntry;
+    private debugFileEntryUi _selectedEntry;
 
 
     // Unity Methods
@@ -72,12 +71,12 @@ public class debugFileList : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    private void SetSelectedEntry(debugFileEntry entry)
+    private void SetSelectedEntry(debugFileEntryUi entry)
     {
-        foreach (var e in _entries)
-            entry.Selected = (e == entry);
-
         _selectedEntry = entry;
+
+        foreach (var e in _entries)
+            e.Selected = (e == entry);
     }
 
     private void SetFolder(string value)
@@ -93,22 +92,27 @@ public class debugFileList : MonoBehaviour
         foreach (var f in info)
         {
             var entry = Instantiate(FileEntryPrefab);
+            _entries.Add(entry);
+
             entry.transform.SetParent(transform, false);
             entry.FileInfo = f;
-            entry.Button.onClick.AddListener(() => OnButtonClicked(entry));
-            _entries.Add(entry);
+            entry.Toggle.onValueChanged.AddListener(
+                on => OnEntryChanged(entry, on));
         }
     }
 
-    private void OnButtonClicked(debugFileEntry entry)
+    private void OnEntryChanged(debugFileEntryUi entry, bool value)
     {
-        SelectedEntry = entry;
+        if (value)
+            SelectedEntry = entry;
+        else if (entry == SelectedEntry)
+            SelectedEntry = null;
     }
 
     private void RemoveEntries()
     {
-        foreach (var entry in _entries)
-            Destroy(entry.gameObject);
+        foreach (var e in _entries)
+            Destroy(e.gameObject);
 
         _entries.Clear();
         SetSelectedEntry(null);

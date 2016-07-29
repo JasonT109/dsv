@@ -2,8 +2,9 @@ using System.IO;
 using Meg.EventSystem;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
-public class debugPlayback : MonoBehaviour
+public class debugPlaybackUi : MonoBehaviour
 {
 
     // Properties
@@ -12,22 +13,15 @@ public class debugPlayback : MonoBehaviour
     [Header("Components")]
 
     /** The event scene folder list. */
-    public debugSceneFolder SceneFolder;
+    public debugSceneFolderUi SceneFolder;
 
-    /** Header for the current event file. */
-    public Text CurrentFileHeader;
+    /** The event file UI. */
+    public debugEventFileUi EventFileUi;
 
-
-    // Members
-    // ------------------------------------------------------------
-
-    /** The current event file. */
-    private megEventFile Events = new megEventFile();
 
 
     // Unity Methods
     // ------------------------------------------------------------
-
 
 
     // Public Methods
@@ -40,9 +34,15 @@ public class debugPlayback : MonoBehaviour
         if (!entry || !entry.FileInfo.Exists)
             return;
 
-        Events = new megEventFile();
-        Events.LoadFromFile(entry.FileInfo.FullName);
+        EventFileUi.Load(entry.FileInfo);
+        SceneFolder.FileList.SelectedEntry = null;
     }
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+
+
 
 }
 

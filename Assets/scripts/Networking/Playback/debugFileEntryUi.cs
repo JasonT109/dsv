@@ -4,14 +4,14 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
 
-public class debugFileEntry : MonoBehaviour
+public class debugFileEntryUi : MonoBehaviour
 {
 
     // Properties
     // ------------------------------------------------------------
 
     /** Button for this entry. */
-    public Button Button;
+    public Toggle Toggle;
 
     /** The file info for this entry. */
     public FileInfo FileInfo
@@ -23,7 +23,7 @@ public class debugFileEntry : MonoBehaviour
 
             var label = Path.GetFileNameWithoutExtension(value.Name);
             label = Regex.Replace(label, "[A-Z]", " $0");
-            Button.GetComponentInChildren<Text>().text = label;
+            Toggle.GetComponentInChildren<Text>().text = label;
         }
     }
 
@@ -34,7 +34,7 @@ public class debugFileEntry : MonoBehaviour
         set
         {
             _selected = value;
-            Button.Select();
+            Toggle.isOn = value;
         }
     }
 
@@ -55,8 +55,8 @@ public class debugFileEntry : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
-        if (!Button)
-            Button = GetComponent<Button>();
+        if (!Toggle)
+            Toggle = GetComponent<Toggle>();
     }
 
 

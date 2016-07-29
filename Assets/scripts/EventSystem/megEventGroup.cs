@@ -27,6 +27,9 @@ namespace Meg.EventSystem
         /** TODO: Remove this once transition to megEvent is complete. */
         public megEventObject[] eventObjects;
 
+        /** The file that this group belongs to. */
+        public megEventFile file { get { return _file; } }
+    
         /** Current local time for event group. */
         public float time { get; set; }
 
@@ -38,6 +41,29 @@ namespace Meg.EventSystem
 
         /** Whether group is complete. */
         public bool completed { get; set; }
+
+        /** Local time at which the group ends. */
+        public float endTime { get { return events.Max(e => e.endTime); } }
+
+        /** Selection event. */
+        public event debugEventUi.EventSelectedHandler OnSelected;
+
+
+        // Members
+        // ------------------------------------------------------------
+
+        /** The file that this group belongs to. */
+        private readonly megEventFile _file;
+
+
+        // Lifecycle
+        // ------------------------------------------------------------
+
+        /** Constructor. */
+        public megEventGroup(megEventFile file = null)
+        {
+            _file = file;
+        }
 
 
         // Public Methods
@@ -63,36 +89,35 @@ namespace Meg.EventSystem
         /** Update this event group as time passes. */
         public void Update(float t, float dt)
         {
-            // if (trigger)
-            //    paused = !trigger.GetComponent<buttonControl>().active;
-
             if (paused)
                 return;
 
-            if (running)
-            {
-                // Update current time.
+            if (running && !completed)
                 time += dt;
 
-                // Check if all events are complete.
-                completed = events.All(e => e.completed);
-            }
-
-            // Update each event.
             for (var i = 0; i < events.Count; i++)
-                events[i].UpdateFromGroup(this, time, dt);
+                events[i].UpdateFromGroup(time, dt);
+
+            if (running && !completed)
+                completed = events.All(e => e.completed);
+        }
+
+        /** Set group's paused state. */
+        public void SetPaused(bool value)
+        {
+            paused = value;
         }
 
         /** Pause playback on the group. */
         public void Pause()
         {
-            paused = true;
+            SetPaused(true);
         }
 
         /** Resume playback on the group. */
         public void Resume()
         {
-            paused = false;
+            SetPaused(false);
         }
 
         /** Stop this event group. */
@@ -101,8 +126,13 @@ namespace Meg.EventSystem
             if (!running)
                 return;
 
-            time = 0;
             running = false;
+
+            // Stop events in reverse start time order.
+            // This ensures server values are correctly reset.
+            var ordered = events.OrderByDescending(e => e.triggerTime);
+            foreach (var e in ordered)
+                e.StopFromGroup();
         }
 
 
@@ -152,15 +182,15 @@ namespace Meg.EventSystem
             switch (type)
             {
                 case megEventType.Value:
-                    return new megEventValue();
+                    return new megEventValue(this);
                 case megEventType.Physics:
-                    return new megEventPhysics();
+                    return new megEventPhysics(this);
                 case megEventType.Sonar:
-                    return new megEventSonar();
+                    return new megEventSonar(this);
                 case megEventType.MapCamera:
-                    return new megEventMapCamera();
+                    return new megEventMapCamera(this);
                 default:
-                    return new megEventValue();
+                    return new megEventValue(this);
             }
         }
 

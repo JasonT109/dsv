@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
-public class debugSceneFolder : MonoBehaviour
+public class debugSceneFolderUi : MonoBehaviour
 {
 
     // Properties
@@ -11,10 +11,13 @@ public class debugSceneFolder : MonoBehaviour
     [Header("Components")]
 
     /** File list for event files. */
-    public debugFileList FileList;
+    public debugFileListUi FileList;
 
     /** Label for the current scene. */
     public Text CurrentSceneText;
+
+    /** Button used to load a file. */
+    public Button LoadButton;
 
 
     [Header("Configuration")]
@@ -52,6 +55,13 @@ public class debugSceneFolder : MonoBehaviour
     private void Start()
     {
         SetScene(1);
+        LoadButton.interactable = false;
+    }
+
+    /** Updating. */
+    private void Update()
+    {
+        LoadButton.interactable = FileList.SelectedEntry != null;
     }
 
 

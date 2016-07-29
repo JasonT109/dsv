@@ -38,7 +38,8 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Constructor for an event. */
-        public megEventObject(megEventType type) : base(type) { }
+        public megEventObject(megEventType type, megEventGroup group = null) 
+            : base(type, group) { }
 
 
         // Load / Save

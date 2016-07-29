@@ -29,7 +29,8 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Constructor for a sonar event. */
-        public megEventMapCamera() : base(megEventType.MapCamera) { }
+        public megEventMapCamera(megEventGroup group = null) 
+            : base(megEventType.MapCamera, group) { }
 
 
         // Load / Save
