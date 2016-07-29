@@ -101,6 +101,11 @@ namespace Meg.EventSystem
                 completed = true;
         }
 
+        /** Rewind this event. */
+        protected override void Rewind()
+        {
+        }
+
         /** Stop this event. */
         protected override void Stop()
         {

@@ -122,6 +122,16 @@ namespace Meg.EventSystem
             Stop();
         }
 
+        /** Rewind event from an event group. */
+        public void RewindFromGroup()
+        {
+            running = false;
+            completed = false;
+            time = 0;
+
+            Rewind();
+        }
+
         /** Stop event from an event file. */
         public void StopFromFile()
         {
@@ -174,6 +184,9 @@ namespace Meg.EventSystem
 
         /** Stop this event. */
         protected abstract void Stop();
+
+        /** Reset this event. */
+        protected abstract void Rewind();
 
 
     }

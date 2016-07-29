@@ -83,15 +83,14 @@ public class debugEventFileUi : MonoBehaviour
         try
         {
             _file.Stop();
+            var file = new megEventFile();
+            file.LoadFromFile(f.FullName);
+            _file = file;
 
-            var events = new megEventFile();
-            events.LoadFromFile(f.FullName);
-            _file = events;
-            AddGroups(events);
+            var header = Path.GetFileNameWithoutExtension(f.Name);
+            header = Regex.Replace(header, "[A-Z]", " $0").ToUpper();
 
-            var label = Path.GetFileNameWithoutExtension(f.Name);
-            label = Regex.Replace(label, "[A-Z]", " $0");
-            Header.text = label.ToUpper();
+            InitUi(header);
         }
         catch (Exception ex)
         {
@@ -123,6 +122,14 @@ public class debugEventFileUi : MonoBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Initialize the file UI. */
+    private void InitUi(string header)
+    {
+        Header.text = header;
+        Properties.Event = null;
+        AddGroups(_file);
+    }
 
     /** Update the file UI. */
     private void UpdateUi()

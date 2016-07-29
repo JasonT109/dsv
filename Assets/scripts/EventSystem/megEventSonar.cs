@@ -76,6 +76,11 @@ namespace Meg.EventSystem
         {
         }
 
+        /** Rewind this event. */
+        protected override void Rewind()
+        {
+        }
+
         /** Stop this event. */
         protected override void Stop()
         {

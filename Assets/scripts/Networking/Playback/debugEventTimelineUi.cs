@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -29,7 +30,7 @@ public class debugEventTimelineUi : MonoBehaviour
     [Header("Prefabs")]
 
     /** Component to use for a second tick mark on the timeline. */
-    public Graphic SecondTickPrefab;
+    public debugTickUi TickPrefab;
 
     /** Component to use for an event on the timeline. */
     public debugEventUi EventUiPrefab;
@@ -67,7 +68,7 @@ public class debugEventTimelineUi : MonoBehaviour
     private megEventGroup _group;
 
     /** Second tick markers. */
-    private readonly List<Graphic> _ticks = new List<Graphic>();
+    private readonly List<debugTickUi> _ticks = new List<debugTickUi>();
 
     /** Events. */
     private readonly List<debugEventUi> _events = new List<debugEventUi>();
@@ -129,28 +130,73 @@ public class debugEventTimelineUi : MonoBehaviour
 
     private void UpdateTicks(float scale)
     {
-        var nActive = Mathf.FloorToInt(_group.endTime);
-        var n = Mathf.Max(_ticks.Count, nActive);
+        var groupEndTime = _group.endTime;
+        var fileEndTime = _group.file.endTime;
+        var interval = GetTickInterval(fileEndTime);
+        var fileActive = Mathf.CeilToInt(fileEndTime / interval);
+        var active = Mathf.CeilToInt(groupEndTime / interval);
+        var n = Mathf.Max(_ticks.Count, active);
+
+        var spacing = GetTickLabelSpacing(fileActive);
+        var format = GetTickFormat(fileEndTime);
+        
         for (var i = 0; i < n; i++)
         {
-            var tick = GetSecondTick(i);
+            var t = i * interval;
+            var tick = GetTick(i, t);
             var y = tick.transform.localPosition.y;
-            tick.transform.localPosition = new Vector2(i * scale, y);
-            tick.gameObject.SetActive(i < nActive);
+            tick.transform.localPosition = new Vector2(t * scale, y);
+            tick.Label.text = GetTickLabel(format, t);
+            tick.Label.enabled = (i % spacing) == 0;
+            tick.gameObject.SetActive(i < active);
         }
     }
 
-    private Graphic GetSecondTick(int i)
+    private float GetTickInterval(float length)
+    {
+        if (length <= 30)
+            return 1.0f;
+        if (length <= 120)
+            return 5.0f;
+        if (length <= 300)
+            return 10.0f;
+        if (length <= 900)
+            return 30.0f;
+        if (length <= 3600)
+            return 60.0f;
+
+        return 3600.0f;
+    }
+
+    private int GetTickLabelSpacing(int active)
+        { return Mathf.CeilToInt(active / 10.0f); }
+
+    private debugTickUi GetTick(int i, float t)
     {
         if (i >= _ticks.Count)
         {
-            var tick = Instantiate(SecondTickPrefab);
+            var tick = Instantiate(TickPrefab);
             tick.transform.SetParent(TickContainer, false);
-            tick.GetComponentInChildren<Text>().text = string.Format("{0}", i);
             _ticks.Add(tick);
         }
 
         return _ticks[i];
+    }
+
+    private string GetTickFormat(float t)
+    {
+        if (t < 60)
+            return "{0:0}";
+        if (t < 3600)
+            return "{1:0}:{0:00}";
+
+        return "{2:0}:{1:00}:{0:00}";
+    }
+
+    private string GetTickLabel(string format, float t)
+    {
+        var span = TimeSpan.FromSeconds(t);
+        return string.Format(format, span.Seconds, span.Minutes, span.Hours);
     }
 
     private void UpdateEvents(float scale)

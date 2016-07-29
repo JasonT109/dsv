@@ -150,18 +150,14 @@ namespace Meg.EventSystem
         /** Rewind the group to start time. */
         public void Rewind()
         {
-            var wasRunning = running;
-            var wasPaused = paused;
-            var wasCompleted = completed;
+            completed = false;
+            time = 0;
+            foreach (var e in events)
+                e.RewindFromGroup();
 
-            Stop();
-
-            if (wasRunning)
-                Start();
-            if (wasPaused || wasCompleted)
-                Pause();
+            if (!_file.playing)
+                Stop();
         }
-
 
 
         // Load / Save
