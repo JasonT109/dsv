@@ -20,6 +20,15 @@ public class glScreenData : NetworkBehaviour
     [SyncVar]
     public int screenMatrixID;
 
+    [SyncVar]
+    public bool mapElevation;
+
+    [SyncVar]
+    public bool recentreMap;
+
+    [SyncVar]
+    public bool objectLabelsOn;
+
     /**Get which screen we should be on by passing in our screen ID (0 = right, 1 = middle, 2 = left). */
     public int getScreen(int screenInID)
     {
@@ -60,6 +69,9 @@ public class glScreenData : NetworkBehaviour
             if (players[i].GetComponent<gameInputs>().glScreenID == 0)
             {
                 screenMatrixID = players[i].GetComponent<gameInputs>().activeScreen;
+                mapElevation = players[i].GetComponent<gameInputs>().map3dState;
+                recentreMap = players[i].GetComponent<gameInputs>().mapCentreState;
+                objectLabelsOn = players[i].GetComponent<gameInputs>().mapLabelState;
             }
         }
     }

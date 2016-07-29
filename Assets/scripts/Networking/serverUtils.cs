@@ -843,7 +843,25 @@ namespace Meg.Networking
             return string.Format("{0}°{1}\'{2:N" + precision + "}\"", degrees, minutes, seconds);
         }
 
+        public static bool GetGliderButtonState(int buttonID)
+        {
+            bool buttonState = false;
+
+            switch (buttonID)
+            {
+                case 0:
+                    buttonState = ServerObject.GetComponent<glScreenData>().mapElevation;
+                    break;
+                case 1:
+                    buttonState = ServerObject.GetComponent<glScreenData>().recentreMap;
+                    break;
+                case 2:
+                    buttonState = ServerObject.GetComponent<glScreenData>().objectLabelsOn;
+                    break;
+            }
+
+            return buttonState;
+        }
+
     }
-
-
 }

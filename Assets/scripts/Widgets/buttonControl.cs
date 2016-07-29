@@ -16,6 +16,7 @@ public class buttonControl : MonoBehaviour
     public bool warning = false;
     public bool toggleType = false;
     public bool canToggleOff = false;
+    public bool changed = false;
 
     [Header("Appearance")]
     public Color[] colorTheme;
@@ -34,6 +35,7 @@ public class buttonControl : MonoBehaviour
     public bool autoWarningGreaterThan = false;
 
     [Header("Server")]
+    public bool observeServerState;
     public string serverName = "depth";
     public string serverType = "int";
 
@@ -53,8 +55,10 @@ public class buttonControl : MonoBehaviour
     private Material m;
     private float timeIndex = 0.0f;
     private GameObject colourThemeObj;
-    private float pressDelay = 0.1f;
+    private float pressDelay = 0.2f;
     private bool canPress = true;
+    public widgetHighLightOnActive transition;
+    private int frame = 0;
 
     void Start()
     {
@@ -75,6 +79,70 @@ public class buttonControl : MonoBehaviour
             {
                 toggleButton(gameObject);
             }
+        }
+
+        if (gliderButton)
+        {
+            transition = gliderButtonOnMesh.GetComponent<widgetHighLightOnActive>();
+        }
+    }
+
+    public void RemotePress()
+    {
+        Debug.Log("Remote pressed this object: " + gameObject);
+        if (!disabled && canPress)
+        {
+            //prevent accidental double pressing of button
+            canPress = false;
+            StartCoroutine(waitRelease(pressDelay));
+
+            //set pressed state and change color
+            pressed = true;
+            m.color = GetThemeColor(4);
+
+            //broadcast that this button has changed state
+            changed = true;
+            frame = 0;
+            StartCoroutine(waitOneFrame());
+
+            if (AnimateOnPress)
+                transform.DOPunchScale(transform.localScale * 0.05f, 0.1f);
+
+            if (onPressed != null)
+                onPressed();
+        }
+    }
+
+    public void RemoteToggle()
+    {
+        Debug.Log("Toggled this object: " + gameObject);
+        if (!disabled)
+        {
+            if (buttonGroup)
+            {
+                if (!active || canToggleOff)
+                {
+                    var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
+                    bGroupScript.toggleButtons(gameObject);
+                }
+                else
+                {
+                    pressed = false;
+                    m.color = GetThemeColor(1);
+                }
+            }
+            else
+            {
+                toggleButton(gameObject);
+            }
+
+            //broadcast that this button has changed state
+            changed = true;
+            frame = 0;
+            waitOneFrame();
+
+            if (onReleased != null)
+                onReleased();
         }
     }
 
@@ -98,12 +166,21 @@ public class buttonControl : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        if (!disabled && !toggleType)
+        if (!disabled && !toggleType && canPress)
         {
             //Debug.Log("tapped this object: " + gameObject);
+            //prevent accidental double pressing of button
+            canPress = false;
+            StartCoroutine(waitRelease(pressDelay));
+
+            //set pressed state and change color
             pressed = true;
             m.color = GetThemeColor(4);
-            StartCoroutine(waitPress(0.1f));
+
+            //broadcast that this button has changed state
+            changed = true;
+            frame = 0;
+            waitOneFrame();
 
             if (onPressed != null)
                 onPressed();
@@ -119,10 +196,18 @@ public class buttonControl : MonoBehaviour
         //Debug.Log("Pressed this object: " + gameObject);
         if (!disabled && canPress)
         {
+            //prevent accidental double pressing of button
             canPress = false;
             StartCoroutine(waitRelease(pressDelay));
+
+            //set pressed state and change color
             pressed = true;
             m.color = GetThemeColor(4);
+
+            //broadcast that this button has changed state
+            changed = true;
+            frame = 0;
+            StartCoroutine(waitOneFrame());
 
             if (AnimateOnPress)
                 transform.DOPunchScale(transform.localScale * 0.05f, 0.1f);
@@ -158,6 +243,11 @@ public class buttonControl : MonoBehaviour
             {
                 toggleButton(gameObject);
             }
+
+            //broadcast that this button has changed state
+            changed = true;
+            frame = 0;
+            waitOneFrame();
 
             if (onReleased != null)
                 onReleased();
@@ -230,6 +320,9 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (changed)
+            frame += 1;
+
         if (gliderButton)
         {
             if (pressed || active)
@@ -238,7 +331,18 @@ public class buttonControl : MonoBehaviour
             }
             else
             {
-                gliderButtonOnMesh.SetActive(false);
+                transition = gliderButtonOnMesh.GetComponent<widgetHighLightOnActive>();
+                if (transition)
+                {
+                    if (!transition.isScaleXLerping)
+                    {
+                        gliderButtonOnMesh.SetActive(false);
+                    }
+                }
+                else
+                {
+                    gliderButtonOnMesh.SetActive(false);
+                }
             }
         }
 
@@ -298,6 +402,13 @@ public class buttonControl : MonoBehaviour
         }
     }
 
+    IEnumerator waitOneFrame()
+    {
+        yield return new WaitWhile(() => frame < 1);
+        changed = false;
+        //Debug.Log("Button state changed.");
+    }
+
     IEnumerator waitToDestroy(float waitTime, GameObject g)
     {
         yield return new WaitForSeconds(waitTime);
@@ -309,6 +420,7 @@ public class buttonControl : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         canPress = true;
+        changed = false;
     }
 
     IEnumerator waitPress(float waitTime)

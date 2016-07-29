@@ -24,6 +24,18 @@ public class gameInputs : NetworkBehaviour
     [SyncVar]
     public int activeScreen = 0;
 
+    [SyncVar]
+    public bool map3dState;
+    private bool prev3dState;
+
+    [SyncVar]
+    public bool mapCentreState;
+    private bool prevCentreState;
+
+    [SyncVar]
+    public bool mapLabelState;
+    private bool prevLabelState;
+
     /** list of all active joysticks plugged in */
     public string[] joysticks;
 
@@ -102,6 +114,27 @@ public class gameInputs : NetworkBehaviour
         glScreenID = scID;
     }
 
+    [Command]
+    void CmdSetMap3dState(bool mapState)
+    {
+        map3dState = mapState;
+        Debug.Log("Changing map 3d.");
+    }
+
+    [Command]
+    void CmdSetMapCenterState(bool mapState)
+    {
+        mapCentreState = mapState;
+        Debug.Log("Centering map.");
+    }
+
+    [Command]
+    void CmdSetMapLabelState(bool mapState)
+    {
+        mapLabelState = mapState;
+        Debug.Log("Toggling map labels.");
+    }
+
     /** update */
     void Update()
     {
@@ -112,18 +145,42 @@ public class gameInputs : NetworkBehaviour
             return;
 
         /** If we have changed the current screen ID update it with the server */
-        if (glScreenManager.Instance && glScreenManager.Instance.hasChanged)
+        if (glScreenManager.Instance)
         {
-            CmdChangeScreenID(glScreenManager.Instance.screenID);
-            glScreenManager.Instance.hasChanged = false;
-
-            /** If we have changed the right screen content update it with the server */
-            if (glScreenManager.Instance.screenID == 0)
+            if (glScreenManager.Instance.hasChanged)
             {
-                CmdChangeScreenContent(glScreenManager.Instance.rightScreenID);
+                CmdChangeScreenID(glScreenManager.Instance.screenID);
+                glScreenManager.Instance.hasChanged = false;
+
+                /** If we have changed the right screen content update it with the server */
+                if (glScreenManager.Instance.screenID == 0)
+                {
+                    CmdChangeScreenContent(glScreenManager.Instance.rightScreenID);
+                }
+
+                glScreenManager.Instance.hasChanged = false;
             }
 
-            glScreenManager.Instance.hasChanged = false;
+            //if map 3d state has changed
+            if (glScreenManager.Instance.map3dButton.pressed != prev3dState)
+            {
+                prev3dState = glScreenManager.Instance.map3dButton.pressed;
+                CmdSetMap3dState(prev3dState);
+            }
+
+            //if centre button pressed
+            if (glScreenManager.Instance.mapCenterButton.pressed != prevCentreState)
+            {
+                prevCentreState = glScreenManager.Instance.mapCenterButton.pressed;
+                CmdSetMapCenterState(prevCentreState);
+            }
+
+            //labels toggled
+            if (glScreenManager.Instance.mapLabelButton.pressed != prevLabelState)
+            {
+                prevLabelState = glScreenManager.Instance.mapLabelButton.pressed;
+                CmdSetMapLabelState(prevLabelState);
+            }
         }
 
         GameObject Root = GameObject.FindGameObjectWithTag("ServerData");

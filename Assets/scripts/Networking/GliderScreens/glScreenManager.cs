@@ -30,9 +30,12 @@ public class glScreenManager : Singleton<glScreenManager> {
     public GameObject tcasScreen;
     public GameObject towingScreen;
     public GameObject powerScreen;
-    //public GameObject diagnosticsScreen;
-    public bool hasChanged = true;
 
+    public buttonControl map3dButton;
+    public buttonControl mapCenterButton;
+    public buttonControl mapLabelButton;
+
+    public bool hasChanged = true;
 
     public void SetRightScreenID(int rScreenID)
     {
