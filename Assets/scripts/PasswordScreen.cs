@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -19,7 +19,7 @@ public class PasswordScreen : MonoBehaviour
     public Image GliderButtonImg;
     public Image BigSubButtonImg;
     public Image DCCButtonImg;
-    int ID = 0; // ID of system, in this case it's set to Glider
+    // int ID = 0; // ID of system, in this case it's set to Glider
 
     //public NetworkManagerCustom CustomNetMan;
     NetworkManagerCustom CustomNetMan;
@@ -96,7 +96,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleGlider()
     {
-        ID = 0;
+        // ID = 0;
         GliderButtonImg.color = Color.white;
         BigSubButtonImg.color = Color.grey;
         DCCButtonImg.color = Color.grey;
@@ -106,7 +106,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleBigSub()
     {
-        ID = 2;
+        // ID = 2;
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.white;;
         DCCButtonImg.color = Color.grey;
@@ -115,7 +115,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleDCC()
     {
-        ID = 3;
+        // ID = 3;
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.grey;;
         DCCButtonImg.color = Color.white;

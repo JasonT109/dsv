@@ -45,9 +45,6 @@ namespace Meg.EventSystem
         /** Local time at which the group ends. */
         public float endTime { get { return events.Max(e => e.endTime); } }
 
-        /** Selection event. */
-        public event debugEventUi.EventSelectedHandler OnSelected;
-
 
         // Members
         // ------------------------------------------------------------

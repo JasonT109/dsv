@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Vectrosity;
 using Meg.Maths;
@@ -15,7 +15,7 @@ public class graphicsLineGraph : MonoBehaviour
     public float minHeight = 5.0f;
     private float[] graphHeights;
     private float tickTime;
-    private float timeIndex = 0.0f;
+    // private float timeIndex = 0.0f;
 
     public bool useGaugeAverage = false;
     public digital_gauge[] gauges;

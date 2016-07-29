@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 
@@ -38,8 +38,8 @@ public class graphicsSonarObject : NetworkBehaviour
     public float minTurnSpeed = 1f;
 
     private Vector3 angle;
-    private Vector3 nextWayPoint;
-    private bool goNext = true;
+    // private Vector3 nextWayPoint;
+    // private bool goNext = true;
     private Vector3 originalPos;
     private Rigidbody rb;
     private Animator animator;
@@ -95,7 +95,7 @@ public class graphicsSonarObject : NetworkBehaviour
                 if (wayPointNumber + 1 < wayPoints.Length)
                 {
                     wayPointNumber++;
-                    nextWayPoint = wayPoints[wayPointNumber];
+                    // nextWayPoint = wayPoints[wayPointNumber];
                 }
                 else
                 {

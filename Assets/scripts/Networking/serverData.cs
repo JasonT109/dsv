@@ -64,9 +64,9 @@ public class serverData : NetworkBehaviour
     private Vector3 rotation;
     #endregion
     #region PrivateVars
-    private float bankAmount = 1.0f;
-    private Vector3 bankAxis = new Vector3(0F, 0F, -1F);
-    private float currentThrust = 0.0f;
+    // private float bankAmount = 1.0f;
+    // private Vector3 bankAxis = new Vector3(0F, 0F, -1F);
+    // private float currentThrust = 0.0f;
     private Rigidbody rb;
     private float rollResult;
     private float pitchResult;

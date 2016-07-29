@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class graphicsTransformConstraint : MonoBehaviour
@@ -8,13 +8,13 @@ public class graphicsTransformConstraint : MonoBehaviour
     public bool PositionY;
     public bool PositionZ;
 
-    private Vector3 initPosition;
+    // private Vector3 initPosition;
     private Vector3 newPosition;
 
     // Use this for initialization
     void Start ()
     {
-        initPosition = transform.position;
+        // initPosition = transform.position;
 	}
 	
 	// Update is called once per frame

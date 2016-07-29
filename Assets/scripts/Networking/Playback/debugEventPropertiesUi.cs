@@ -186,6 +186,12 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         BaseProperties.gameObject.SetActive(true);
         Name.text = _event.ToString();
+
+        var editable = !_event.file.playing;
+        TriggerTimeSlider.interactable = editable;
+        TriggerTimeInput.interactable = editable;
+        CompleteTimeSlider.interactable = editable;
+        CompleteTimeInput.interactable = editable;
     }
 
     private void ClearUi()

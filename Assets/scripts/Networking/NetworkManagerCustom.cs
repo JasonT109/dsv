@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
 
@@ -26,7 +26,7 @@ public class NetworkManagerCustom : MonoBehaviour
     private int conListNum = 0;
 
     // Runtime variable
-    bool showServer = false;
+    // bool showServer = false;
 
     void Awake()
     {

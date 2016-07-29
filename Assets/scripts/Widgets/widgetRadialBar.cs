@@ -88,8 +88,8 @@ public class widgetRadialBar : MonoBehaviour, ValueSettable
 
         var from = AngleRange.x;
         var to = Mathf.Lerp(AngleRange.x, AngleRange.y, f);
-        var angle = Mathf.Abs(to - from);
-        var segments = Mathf.Max(Mathf.RoundToInt(angle * SegmentsPerDegree), 4);
+        // var angle = Mathf.Abs(to - from);
+        // var segments = Mathf.Max(Mathf.RoundToInt(angle * SegmentsPerDegree), 4);
 
         var line = vo.vectorLine;
         line.active = _value > MinValue;
