@@ -19,6 +19,10 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Default server value slider length. */
     public const float DefaultServerValueSliderLength = 100.0f;
 
+    /** Default phyiscs magnitude slider length. */
+    public const float DefaultPhysicsMagnitudeSliderLength = 1.0f;
+
+
 
     // Properties
     // ------------------------------------------------------------
@@ -62,6 +66,23 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField ServerValueInput;
 
 
+    [Header("Physics Event Components")]
+
+    /** Properties panel for value events. */
+    public Transform PhysicsProperties;
+
+    /** Input text for physics direction components. */
+    public InputField PhysicsDirectionXInput;
+    public InputField PhysicsDirectionYInput;
+    public InputField PhysicsDirectionZInput;
+
+    /** Physics magnitude slider. */
+    public Slider PhysicsMagnitudeSlider;
+
+    /** Server value input text. */
+    public InputField PhysicsMagnitudeInput;
+
+
     /** The event being represented. */
     public megEvent Event
     {
@@ -69,9 +90,13 @@ public class debugEventPropertiesUi : MonoBehaviour
         set { SetEvent(value); }
     }
 
-    /** Event interpreted as a server value event. */
+    /** Event interpreted as a value event. */
     public megEventValue ValueEvent
         { get { return _event as megEventValue; } }
+
+    /** Event interpreted as a physics event. */
+    public megEventPhysics PhysicsEvent
+        { get { return _event as megEventPhysics; } }
 
 
     // Members
@@ -125,6 +150,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         if (_event is megEventValue)
             UpdateValueProperties();
+        if (_event is megEventPhysics)
+            UpdatePhysicsProperties();
 
         _initializing = false;
     }
@@ -137,15 +164,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         Name.text = _event.ToString();
         BaseProperties.gameObject.SetActive(true);
         ValueProperties.gameObject.SetActive(_event is megEventValue);
+        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics);
         CanvasGroup.interactable = !_event.file.playing;
-
-        /*
-        TriggerTimeSlider.interactable = editable;
-        TriggerTimeInput.interactable = editable;
-        CompleteTimeSlider.interactable = editable;
-        CompleteTimeInput.interactable = editable;
-        ServerParamInput.interactable = editable;
-        */
     }
 
     private void ClearUi()
@@ -153,6 +173,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         Name.text = "";
         BaseProperties.gameObject.SetActive(false);
         ValueProperties.gameObject.SetActive(false);
+        PhysicsProperties.gameObject.SetActive(false);
     }
 
 
@@ -269,7 +290,6 @@ public class debugEventPropertiesUi : MonoBehaviour
         ServerValueInput.text = string.Format("{0:N1}", ValueEvent.serverValue);
     }
 
-    /** Update the event's trigger time from input field. */
     public void ServerParamInputChanged(string value)
     {
         if (_initializing)
@@ -278,7 +298,6 @@ public class debugEventPropertiesUi : MonoBehaviour
         ValueEvent.serverParam = value;
     }
 
-    /** Update the event's trigger time from slider. */
     public void ServerValueSliderChanged(float value)
     {
         if (_initializing)
@@ -288,7 +307,6 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerValueInput();
     }
 
-    /** Update the event's trigger time from input field. */
     public void ServerValueInputChanged(string value)
     {
         if (_initializing)
@@ -300,6 +318,95 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         ValueEvent.serverValue = result;
         UpdateServerValueSlider();
+    }
+
+
+
+    // Physics Event Properties
+    // ------------------------------------------------------------
+
+    private void UpdatePhysicsProperties()
+    {
+        UpdatePhysicsDirectionInputs();
+        UpdatePhysicsMagnitudeSlider();
+        UpdatePhysicsMagnitudeInput();
+    }
+
+    private void UpdatePhysicsDirectionInputs()
+    {
+        PhysicsDirectionXInput.text = string.Format("{0:N1}", PhysicsEvent.physicsDirection.x);
+        PhysicsDirectionYInput.text = string.Format("{0:N1}", PhysicsEvent.physicsDirection.y);
+        PhysicsDirectionZInput.text = string.Format("{0:N1}", PhysicsEvent.physicsDirection.z);
+    }
+
+    private void UpdatePhysicsMagnitudeSlider()
+    {
+        var maxValue = Mathf.Max(PhysicsEvent.physicsMagnitude, DefaultPhysicsMagnitudeSliderLength);
+        ServerValueSlider.maxValue = maxValue;
+        PhysicsMagnitudeSlider.value = PhysicsEvent.physicsMagnitude;
+    }
+
+    private void UpdatePhysicsMagnitudeInput()
+    {
+        PhysicsMagnitudeInput.text = string.Format("{0:N1}", PhysicsEvent.physicsMagnitude);
+    }
+
+    public void PhysicsDirectionXInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PhysicsEvent.physicsDirection.x = result;
+    }
+
+    public void PhysicsDirectionYInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PhysicsEvent.physicsDirection.y = result;
+    }
+
+    public void PhysicsDirectionZInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PhysicsEvent.physicsDirection.z = result;
+    }
+
+    public void PhysicsMagnitudeSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        PhysicsEvent.physicsMagnitude = value;
+        UpdatePhysicsMagnitudeInput();
+    }
+
+    public void PhysicsMagnitudeInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PhysicsEvent.physicsMagnitude = result;
+        UpdatePhysicsMagnitudeSlider();
     }
 
 
