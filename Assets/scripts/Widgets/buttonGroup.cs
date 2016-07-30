@@ -20,10 +20,17 @@ public class buttonGroup : MonoBehaviour {
 
     public bool anyButtonActive()
     {
+        // Disable warning 'gameObject.active is obsolete.' (not harmful).
+        // The warning is due to buttonControl.active hiding gameObject.active.
+        #pragma warning disable 0618
+
         foreach (var button in buttons)
             if (button.active)
                 return true;
 
         return false;
+
+        // Restore compiler warning for other areas of the code.
+        #pragma warning restore 0618
     }
 }

@@ -176,7 +176,7 @@ public class AVProLiveCamera : MonoBehaviour
 		}
 		else
 		{
-			Debug.LogWarning("[AVPro Live Camera] Could not find the device.");
+			// Debug.LogWarning("[AVPro Live Camera] Could not find the device.");
 		}
 	}
 	
