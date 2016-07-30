@@ -2,11 +2,15 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class graphicsSlicedMesh : MonoBehaviour
 {
+
+#if UNITY_EDITOR
     private float oldBorder;
     private float oldWidth;
     private float oldHeight;
     private float oldMargin;
     private bool oldCentered;
+#endif
+
     private Mesh mesh;
 
     public float _b = 0.1f;
@@ -83,17 +87,20 @@ public class graphicsSlicedMesh : MonoBehaviour
 
     void Start()
     {
-        
+
+#if UNITY_EDITOR
         oldBorder = Border;
         oldHeight = Height;
         oldMargin = Margin;
         oldWidth = Width;
         oldCentered = Centered;
+#endif
 
         //_w = 1.0f / gameObject.transform.localScale.x;
         //_h = 1.0f / gameObject.transform.localScale.y;
         CreateSlicedMesh();
     }
+
 #if UNITY_EDITOR
     void Update()
     {
@@ -124,6 +131,7 @@ public class graphicsSlicedMesh : MonoBehaviour
         }
     }
 #endif
+
     void CreateSlicedMesh()
     {
         GetComponent<MeshFilter>().sharedMesh = mesh;
