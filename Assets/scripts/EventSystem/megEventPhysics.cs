@@ -67,8 +67,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            Debug.Log("Physics event.");
-            serverUtils.ServerData.RpcImpact(physicsDirection * physicsMagnitude);
+            serverUtils.PostImpact(physicsDirection * physicsMagnitude);
         }
 
         /** Update this event internally. */

@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -184,7 +182,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Set a server float value. */
-        public void SetServerData(string key, float value)
+        public void PostServerData(string key, float value)
         {
             // Record initial value if this is the first time we've set it.
             // This will be used to reset the value when file playback stops.
@@ -196,12 +194,12 @@ namespace Meg.EventSystem
                 };
 
             // Set the server data value.
-            serverUtils.SetServerData(key, value);
+            serverUtils.PostServerData(key, value);
         }
 
         /** Set a server string value. */
-        public void SetServerData(string key, string value)
-            { serverUtils.SetServerData(key, value); }
+        public void PostServerData(string key, string value)
+            { serverUtils.PostServerData(key, value); }
 
         /** Return a server value. */
         public float GetServerData(string key)
@@ -211,7 +209,7 @@ namespace Meg.EventSystem
         private void ResetServerData()
         {
             foreach (var e in _values)
-                serverUtils.SetServerData(e.Key, e.Value.initial);
+                serverUtils.PostServerData(e.Key, e.Value.initial);
             
             _values.Clear();
         }

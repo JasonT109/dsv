@@ -164,18 +164,16 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Set a server value. */
-        protected void SetServerData(string key, float value)
-            { file.SetServerData(key, value); }
+        protected void PostServerData(string key, float value)
+            { file.PostServerData(key, value); }
 
         /** Set a server value. */
-        protected void SetServerData(string key, string value)
-            { file.SetServerData(key, value); }
+        protected void PostServerData(string key, string value)
+            { file.PostServerData(key, value); }
 
         /** Return a server value. */
         public float GetServerData(string key)
             { return file.GetServerData(key); }
-
-
 
 
         // Protected Methods
