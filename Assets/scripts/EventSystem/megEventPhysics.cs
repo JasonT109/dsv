@@ -69,12 +69,14 @@ namespace Meg.EventSystem
         {
             Debug.Log("Physics event.");
             serverUtils.ServerData.RpcImpact(physicsDirection * physicsMagnitude);
-            completed = true;
         }
 
         /** Update this event internally. */
         protected override void Update(float t, float dt)
         {
+            // Check if final value has been reached.
+            if (timeFraction >= 1)
+                completed = true;
         }
 
         /** Rewind this event. */

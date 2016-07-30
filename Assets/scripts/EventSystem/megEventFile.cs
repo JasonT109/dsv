@@ -61,6 +61,13 @@ namespace Meg.EventSystem
         public megEvent selectedEvent { get; set; }
 
 
+        // Members
+        // ------------------------------------------------------------
+
+        /** Loaded files. */
+        private HashSet<string> _loadedFiles = new HashSet<string>();
+
+
         // Public Methods
         // ------------------------------------------------------------
 
@@ -197,9 +204,14 @@ namespace Meg.EventSystem
         /** Load state from a JSON file. */
         public virtual void LoadFromFile(string path)
         {
+            if (_loadedFiles.Contains(path))
+                return;
+
             var text = File.ReadAllText(path);
             var json = new JSONObject(text);
             Load(json);
+
+            _loadedFiles.Add(path);
         }
 
     }

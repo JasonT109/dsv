@@ -174,7 +174,7 @@ public class debugEventUi : MonoBehaviour
 
         // Update label positioning to try and ensure it's visible.
         var fileEndTime = _event.file.endTime;
-        var r = fileEndTime <= 0 || (_event.triggerTime / fileEndTime < LabelOnLeftThreshold);
+        var r = fileEndTime <= 5 || (_event.triggerTime / fileEndTime < LabelOnLeftThreshold);
         Label.rectTransform.pivot = new Vector2(r ? 0 : 1, 0.5f);
         Label.transform.localPosition = new Vector2(r ? LabelOffset : -LabelOffset, -2);
         Label.alignment = r ? TextAnchor.LowerLeft : TextAnchor.LowerRight;

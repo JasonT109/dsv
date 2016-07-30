@@ -88,7 +88,8 @@ namespace Meg.EventSystem
 
             ResetMapCameraEvent();
 
-            if (time >= completeTime)
+            // Check if final value has been reached.
+            if (timeFraction >= 1)
                 completed = true;
         }
 

@@ -45,6 +45,9 @@ namespace Meg.EventSystem
         /** Whether group is complete. */
         public bool completed { get; set; }
 
+        /** Whether group should pause when it completes. */
+        public bool pauseOnComplete { get; set; }
+
         /** Whether group is minimized. */
         public bool minimized { get; set; }
 
@@ -113,7 +116,9 @@ namespace Meg.EventSystem
                     Rewind();
             }
 
-            if (completed && looping)
+            if (completed && pauseOnComplete)
+                paused = true;
+            if (completed && (looping || pauseOnComplete))
                 Rewind();
         }
 
@@ -185,6 +190,7 @@ namespace Meg.EventSystem
             json.AddField("paused", paused);
             json.AddField("events", eventsJson);
             json.AddField("looping", looping);
+            json.AddField("pauseOnComplete", pauseOnComplete);
 
             return json;
         }
@@ -205,6 +211,10 @@ namespace Meg.EventSystem
             bool jsonMinimized;
             if (json.GetField(out jsonMinimized, "minimized", false))
                 minimized = jsonMinimized;
+
+            bool jsonPauseOnComplete;
+            if (json.GetField(out jsonPauseOnComplete, "pauseOnComplete", false))
+                pauseOnComplete = jsonPauseOnComplete;
 
             var eventsJson = json.GetField("events");
             events.Clear();
