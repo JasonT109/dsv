@@ -108,6 +108,10 @@ public class debugEventPropertiesUi : MonoBehaviour
         set { SetEvent(value); }
     }
 
+    /** Whether an event is set. */
+    public bool HasEvent
+        { get { return _event != null; } }
+
     /** Event interpreted as a value event. */
     public megEventValue ValueEvent
         { get { return _event as megEventValue; } }
@@ -198,7 +202,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera);
         SonarProperties.gameObject.SetActive(_event is megEventSonar);
 
-        CanvasGroup.interactable = !_event.file.playing;
+        CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
     }
 
     private void ClearUi()
@@ -374,7 +378,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdatePhysicsMagnitudeSlider()
     {
         var maxValue = Mathf.Max(PhysicsEvent.physicsMagnitude, DefaultPhysicsMagnitudeSliderLength);
-        ServerValueSlider.maxValue = maxValue;
+        PhysicsMagnitudeSlider.maxValue = maxValue;
         PhysicsMagnitudeSlider.value = PhysicsEvent.physicsMagnitude;
     }
 

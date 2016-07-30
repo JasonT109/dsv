@@ -149,6 +149,7 @@ public class debugEventGroupUi : MonoBehaviour
         LoopingToggle.graphic.color = File.playing ? ActiveColor : InactiveColor;
 
         var label = Regex.Replace(Group.id, "[A-Z]", " $0");
+        label = Regex.Replace(label, "([A-Z])([0-9])", "$0 $1").ToUpper();
         _nameLabel.text = label;
 
         // Set group on timeline.

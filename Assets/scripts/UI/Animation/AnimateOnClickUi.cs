@@ -21,7 +21,9 @@ public class AnimateOnClickUi : MonoBehaviour
 
     private void OnButtonClick()
     {
-        if (Button)
-            Button.transform.DOPunchScale(Strength, Duration);
+        if (!Button || DOTween.IsTweening(Button.transform))
+            return;
+
+        Button.transform.DOPunchScale(Strength, Duration);
     }
 }

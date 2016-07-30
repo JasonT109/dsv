@@ -41,6 +41,16 @@ namespace Meg.EventSystem
             : base(megEventType.MapCamera, group) { }
 
 
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            return string.Format("Map Camera: {0}", eventName);
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 

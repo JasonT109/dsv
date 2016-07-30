@@ -45,8 +45,14 @@ namespace Meg.EventSystem
         /** Whether group is complete. */
         public bool completed { get; set; }
 
+        /** Whether group is minimized. */
+        public bool minimized { get; set; }
+
+        /** Whether group is empty. */
+        public bool empty { get { return events.Count == 0; } }
+
         /** Local time at which the group ends. */
-        public float endTime { get { return events.Max(e => e.endTime); } }
+        public float endTime { get { return empty ? 0 : events.Max(e => e.endTime); } }
 
 
         // Members
@@ -106,6 +112,9 @@ namespace Meg.EventSystem
                 else if (finished && looping)
                     Rewind();
             }
+
+            if (completed && looping)
+                Rewind();
         }
 
         /** Set group's paused state. */
@@ -185,8 +194,18 @@ namespace Meg.EventSystem
         {
             // Load in value events.
             json.GetField(ref id, "id");
-            paused = json.GetField("paused").b;
-            looping = json.GetField("looping").b;
+            bool jsonPaused;
+            if (json.GetField(out jsonPaused, "paused", false))
+                paused = jsonPaused;
+
+            bool jsonLooping;
+            if (json.GetField(out jsonLooping, "looping", false))
+                looping = jsonLooping;
+
+            bool jsonMinimized;
+            if (json.GetField(out jsonMinimized, "minimized", false))
+                minimized = jsonMinimized;
+
             var eventsJson = json.GetField("events");
             events.Clear();
             for (var i = 0; i < eventsJson.Count; i++)

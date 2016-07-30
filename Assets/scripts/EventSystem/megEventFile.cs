@@ -37,10 +37,10 @@ namespace Meg.EventSystem
         public bool completed { get; set; }
 
         /** Whether file is playing back at the moment (running and active). */
-        public bool playing { get { return running && !paused && !completed; } }
+        public bool playing { get { return running && !paused; } }
 
         /** Local time at which the file ends. */
-        public float endTime { get { return groups.Max(e => e.endTime); } }
+        public float endTime { get { return empty ? 0 : groups.Max(e => e.endTime); } }
 
         /** Whether file is empty. */
         public bool empty { get { return groups.Count == 0; } }
@@ -50,6 +50,12 @@ namespace Meg.EventSystem
 
         /** Whether file can be rewound. */
         public bool canRewind { get { return !empty && !playing && running; } }
+
+        /** Whether file can load more groups. */
+        public bool canLoad { get { return true; } } // !playing; } }
+
+        /** Whether file can be cleared. */
+        public bool canClear { get { return !empty && !playing; } }
 
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
@@ -95,7 +101,7 @@ namespace Meg.EventSystem
             if (paused)
                 return;
 
-            if (running && !completed)
+            if (running)
                 time += dt;
 
             for (var i = 0; i < groups.Count; i++)
@@ -177,11 +183,14 @@ namespace Meg.EventSystem
         {
             // Load in value events.
             var groupsJson = json.GetField("groups");
-            groups.Clear();
             for (var i = 0; i < groupsJson.Count; i++)
             {
-                groups.Add(new megEventGroup(this));
-                groups[i].Load(groupsJson[i]);
+                var group = new megEventGroup(this);
+                groups.Add(group);
+                group.Load(groupsJson[i]);
+
+                if (running)
+                    group.Start();
             }
         }
 

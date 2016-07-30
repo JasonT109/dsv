@@ -7,6 +7,17 @@ using Meg.EventSystem;
 public class debugEventUi : MonoBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Threshold for placing event label to the left of its start point. */
+    private const float LabelOnLeftThreshold = 0.7f;
+
+    /** offset of label from start point. */
+    private const float LabelOffset = 17;
+
+
+
     // Properties
     // ------------------------------------------------------------
 
@@ -55,6 +66,10 @@ public class debugEventUi : MonoBehaviour
         set { SetEvent(value); }
     }
 
+    /** Whether event is minimized. */
+    public bool Minimized
+        { get { return _event.group.minimized; } }
+
     /** Event signature for a selection event. */
     public delegate void EventSelectedHandler(debugEventUi ui);
 
@@ -68,7 +83,10 @@ public class debugEventUi : MonoBehaviour
     /** The event. */
     private megEvent _event;
 
+    /** Event's normal height. */
+    private float _height;
 
+    
     // Unity Methods
     // ------------------------------------------------------------
 
@@ -97,9 +115,26 @@ public class debugEventUi : MonoBehaviour
         if (OnSelected != null)
             OnSelected(this);
 
-        var s = transform.localScale;
-        transform.DOKill();
-        transform.DOPunchScale(new Vector3(0, s.y * 0.25f, 0), 0.25f);
+        if (!DOTween.IsTweening(transform))
+        {
+            var s = transform.localScale;
+            transform.DOPunchScale(new Vector3(0, s.y*0.25f, 0), 0.25f);
+        }
+    }
+
+    /** Update event's position and size on the timeline. */
+    public void UpdatePosition(float scale, float y)
+    {
+        var t = GetComponent<RectTransform>();
+        if (_height <= 0)
+            _height = t.sizeDelta.y;
+
+        var h = Minimized ? _height * 0.1f : _height;
+        t.localPosition = new Vector2(_event.triggerTime * scale, y);
+        t.sizeDelta = new Vector2(_event.completeTime * scale, h);
+
+        var s = Minimized ? 0.5f : 1;
+        StartIcon.rectTransform.localScale = new Vector3(s, s, 1);
     }
 
 
@@ -136,7 +171,14 @@ public class debugEventUi : MonoBehaviour
             l = LabelSelectedColor;
 
         Label.color = l;
-    }
 
+        // Update label positioning to try and ensure it's visible.
+        var fileEndTime = _event.file.endTime;
+        var r = fileEndTime <= 0 || (_event.triggerTime / fileEndTime < LabelOnLeftThreshold);
+        Label.rectTransform.pivot = new Vector2(r ? 0 : 1, 0.5f);
+        Label.transform.localPosition = new Vector2(r ? LabelOffset : -LabelOffset, -2);
+        Label.alignment = r ? TextAnchor.LowerLeft : TextAnchor.LowerRight;
+        Label.gameObject.SetActive(!Minimized);
+    }
 
 }

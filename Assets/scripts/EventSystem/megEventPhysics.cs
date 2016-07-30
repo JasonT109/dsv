@@ -30,6 +30,16 @@ namespace Meg.EventSystem
             : base(megEventType.Physics, group) { }
 
 
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            return string.Format("Impact: d={0}, m={1:N1}", physicsDirection, physicsMagnitude);
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 

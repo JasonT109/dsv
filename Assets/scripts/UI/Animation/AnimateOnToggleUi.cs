@@ -21,7 +21,9 @@ public class AnimateOnToggleUi : MonoBehaviour
 
     private void OnToggleChanged(bool value)
     {
-        if (Toggle)
-            Toggle.transform.DOPunchScale(Strength, Duration);
+        if (!Toggle || DOTween.IsTweening(Toggle.transform))
+            return;
+
+        Toggle.transform.DOPunchScale(Strength, Duration);
     }
 }

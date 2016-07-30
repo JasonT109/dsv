@@ -26,6 +26,9 @@ public class debugEventTimelineUi : MonoBehaviour
     /** Event container. */
     public Transform EventContainer;
 
+    /** Minimize toggle. */
+    public Toggle MinimizeToggle;
+
 
     [Header("Prefabs")]
 
@@ -42,10 +45,7 @@ public class debugEventTimelineUi : MonoBehaviour
     public float Scale = 100;
 
     /** Minimum timeline width. */
-    public float MinWidth = 0;
-
-    /** Maximum timeline width. */
-    public float MaxWidth = 780;
+    public float MinWidth = 100;
 
     /** Vertical spacing between events. */
     public float EventSpacing = 10;
@@ -55,6 +55,13 @@ public class debugEventTimelineUi : MonoBehaviour
     {
         get { return _group; }
         set { SetGroup(value); }
+    }
+
+    /** Whether timeline is minimized. */
+    public bool Minimized
+    {
+        get { return _group.minimized; }
+        set { SetMinimized(value); }
     }
 
     /** Selection event. */
@@ -73,6 +80,9 @@ public class debugEventTimelineUi : MonoBehaviour
     /** Events. */
     private readonly List<debugEventUi> _events = new List<debugEventUi>();
 
+    /** Whether UI is being updated. */
+    private bool _updating;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -90,7 +100,25 @@ public class debugEventTimelineUi : MonoBehaviour
             return;
 
         UpdateTimeline();
-        UpdateNeedle();
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Toggle timeline's minimized state. */
+    public void ToggleMinimized()
+    {
+        if (_updating)
+            return;
+
+        Minimized = !Minimized;
+    }
+
+    /** Set timeline's minimized state. */
+    public void SetMinimized(bool value)
+    {
+        _group.minimized = value;
     }
 
 
@@ -105,25 +133,39 @@ public class debugEventTimelineUi : MonoBehaviour
 
     private void UpdateTimeline()
     {
+        _updating = true;
+
+        var p = transform.parent as RectTransform;
+        var maxWidth = p.sizeDelta.x;
+
         // Update the current timeline scale.
         var fileEndTime = _group.file.endTime;
-        var fileWidth = Mathf.Clamp(fileEndTime * Scale, MinWidth, MaxWidth);
-        var fileScale = fileWidth / fileEndTime;
+        var fileWidth = Mathf.Clamp(fileEndTime * Scale, MinWidth, maxWidth);
+        var fileScale = fileEndTime > 0 ? fileWidth / fileEndTime : fileWidth;
         var scale = Mathf.Min(Scale, fileScale);
+        var width = Mathf.Clamp(scale * _group.endTime, MinWidth, maxWidth);
+        var spacing = Minimized ? 5 : EventSpacing;
+        var margin = Minimized ? 15 : 30;
 
-        var width = scale * _group.endTime;
         Layout.preferredWidth = width;
-        Layout.minHeight = _group.events.Count * EventSpacing + 30;
+        Layout.minHeight = _group.events.Count * spacing + margin;
+
+        // Force a UI reflow to ensure timeline layout is correct.
+        Canvas.ForceUpdateCanvases();
 
         UpdateTicks(scale);
-        UpdateEvents(scale);
+        UpdateEvents(scale, spacing);
+        UpdateNeedle(scale);
+
+        MinimizeToggle.gameObject.SetActive(_group.minimized || Layout.minHeight > 90);
+        MinimizeToggle.isOn = !_group.minimized;
+
+        _updating = false;
     }
 
-    private void UpdateNeedle()
+    private void UpdateNeedle(float scale)
     {
-        var t = _group.time;
-        var e = _group.endTime;
-        var x = e > 0 ? (t / e) * Layout.preferredWidth : 0;
+        var x = _group.time * scale;
         var y = Needle.transform.localPosition.y;
         Needle.transform.localPosition = new Vector2(x, y);
     }
@@ -169,7 +211,14 @@ public class debugEventTimelineUi : MonoBehaviour
     }
 
     private int GetTickLabelSpacing(int active)
-        { return Mathf.CeilToInt(active / 10.0f); }
+    {
+        if (active < 15)
+            return 1;
+        if (active < 150)
+            return 5;
+
+        return Mathf.CeilToInt(active / 10.0f);
+    }
 
     private debugTickUi GetTick(int i, float t)
     {
@@ -199,7 +248,7 @@ public class debugEventTimelineUi : MonoBehaviour
         return string.Format(format, span.Seconds, span.Minutes, span.Hours);
     }
 
-    private void UpdateEvents(float scale)
+    private void UpdateEvents(float scale, float spacing)
     {
         var nActive = _group.events.Count;
         var n = Mathf.Max(_events.Count, nActive);
@@ -212,11 +261,7 @@ public class debugEventTimelineUi : MonoBehaviour
 
             var e = _group.events[i];
             ui.Event = e;
-
-            var y = -i * EventSpacing;
-            var t = ui.GetComponent<RectTransform>();
-            t.localPosition = new Vector2(e.triggerTime * scale, y);
-            t.sizeDelta = new Vector2(e.completeTime * scale, t.sizeDelta.y);
+            ui.UpdatePosition(scale, -i * spacing);
         }
     }
 
