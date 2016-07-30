@@ -132,19 +132,6 @@ namespace Meg.EventSystem
             Rewind();
         }
 
-        /** Stop event from an event file. */
-        public void StopFromFile()
-        {
-            if (!running)
-                return;
-
-            running = false;
-            completed = false;
-            time = 0;
-
-            Stop();
-        }
-
         /** String representation. */
         public override string ToString()
         {
@@ -171,6 +158,24 @@ namespace Meg.EventSystem
             json.GetField(ref triggerTime, "triggerTime");
             json.GetField(ref completeTime, "completeTime");
         }
+
+
+        // Server values
+        // ------------------------------------------------------------
+
+        /** Set a server value. */
+        protected void SetServerData(string key, float value)
+            { file.SetServerData(key, value); }
+
+        /** Set a server value. */
+        protected void SetServerData(string key, string value)
+            { file.SetServerData(key, value); }
+
+        /** Return a server value. */
+        public float GetServerData(string key)
+            { return file.GetServerData(key); }
+
+
 
 
         // Protected Methods

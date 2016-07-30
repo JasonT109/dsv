@@ -61,11 +61,25 @@ namespace Meg.EventSystem
         public megEvent selectedEvent { get; set; }
 
 
+        // Structures
+        // ------------------------------------------------------------
+
+        /** Tracking data for a server value. */
+        private struct ServerValue
+        {
+            public float time;
+            public float initial;
+        }
+
+
         // Members
         // ------------------------------------------------------------
 
         /** Loaded files. */
-        private HashSet<string> _loadedFiles = new HashSet<string>();
+        private readonly HashSet<string> _loadedFiles = new HashSet<string>();
+
+        /** Tracking data for server values. */
+        private readonly Dictionary<string, ServerValue> _values = new Dictionary<string, ServerValue>();
 
 
         // Public Methods
@@ -136,15 +150,12 @@ namespace Meg.EventSystem
             if (!running)
                 return;
 
-            // Stop all events in the file in reverse time order.
-            // This ensures server values are correctly reset.
-            var ordered = events.OrderByDescending(e => e.triggerTime);
-            foreach (var e in ordered)
-                e.StopFromFile();
-
             // Stop each group.
             for (var i = 0; i < groups.Count; i++)
                 groups[i].Stop();
+
+            // Restore initial values for server data.
+            ResetServerData();
 
             time = 0;
             running = false;
@@ -166,6 +177,43 @@ namespace Meg.EventSystem
                 Start();
             if (wasPaused || wasCompleted)
                 Pause();
+        }
+
+
+        // Server values
+        // ------------------------------------------------------------
+
+        /** Set a server float value. */
+        public void SetServerData(string key, float value)
+        {
+            // Record initial value if this is the first time we've set it.
+            // This will be used to reset the value when file playback stops.
+            if (!_values.ContainsKey(key))
+                _values[key] = new ServerValue
+                {
+                    initial = serverUtils.GetServerData(key),
+                    time = time
+                };
+
+            // Set the server data value.
+            serverUtils.SetServerData(key, value);
+        }
+
+        /** Set a server string value. */
+        public void SetServerData(string key, string value)
+            { serverUtils.SetServerData(key, value); }
+
+        /** Return a server value. */
+        public float GetServerData(string key)
+            { return serverUtils.GetServerData(key); }
+
+        /** Reset all server values to initial settings. */
+        private void ResetServerData()
+        {
+            foreach (var e in _values)
+                serverUtils.SetServerData(e.Key, e.Value.initial);
+            
+            _values.Clear();
         }
 
 

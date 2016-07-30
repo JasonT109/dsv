@@ -153,11 +153,7 @@ namespace Meg.EventSystem
                 return;
 
             running = false;
-
-            // Stop events in reverse start time order.
-            // This ensures server values are correctly reset.
-            var ordered = events.OrderByDescending(e => e.triggerTime);
-            foreach (var e in ordered)
+            foreach (var e in events)
                 e.StopFromGroup();
         }
 

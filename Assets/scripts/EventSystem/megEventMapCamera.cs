@@ -114,17 +114,16 @@ namespace Meg.EventSystem
         {
             // TODO: Turn this into an RPC.
             Debug.Log("Map camera event: " + id);
-            serverUtils.SetServerData("mapEventName", eventName);
-            serverUtils.SetServerData("initiateMapEvent", 1.0f);
+            SetServerData("mapEventName", eventName);
+            SetServerData("initiateMapEvent", 1.0f);
         }
 
         /** Reset map camera event syncvars. */
         private void ResetMapCameraEvent()
         {
-            serverUtils.SetServerData("mapEventName", "");
-            serverUtils.SetServerData("initiateMapEvent", 0);
+            SetServerData("mapEventName", "");
+            SetServerData("initiateMapEvent", 0);
         }
-
 
     }
 

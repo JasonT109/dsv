@@ -67,6 +67,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
+            // TODO: Implement.
             Debug.Log("Sonar event.");
             completed = true;
         }
