@@ -568,6 +568,11 @@ namespace Meg.Networking
             ServerData.OnValueChanged(valueName, value);
         }
 
+        public static void SetServerData(string valueName, string value)
+        {
+            ServerData.OnValueChanged(valueName, value);
+        }
+
         public static void SetBatteryData(int bank, float value)
         {
             ServerData.OnBatterySliderChanged(bank, value);

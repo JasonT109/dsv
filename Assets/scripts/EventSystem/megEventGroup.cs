@@ -175,6 +175,7 @@ namespace Meg.EventSystem
             json.AddField("id", id);
             json.AddField("paused", paused);
             json.AddField("events", eventsJson);
+            json.AddField("looping", looping);
 
             return json;
         }
@@ -185,6 +186,7 @@ namespace Meg.EventSystem
             // Load in value events.
             json.GetField(ref id, "id");
             paused = json.GetField("paused").b;
+            looping = json.GetField("looping").b;
             var eventsJson = json.GetField("events");
             events.Clear();
             for (var i = 0; i < eventsJson.Count; i++)

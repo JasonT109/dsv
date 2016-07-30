@@ -474,6 +474,9 @@ public class serverData : NetworkBehaviour
             case "intercept1Warning":
                 MapData.intercept1Warning = newValue > 0;
                 break;
+            case "initiateMapEvent":
+                MapData.initiateMapEvent = newValue;
+                break;
             case "towWinchLoad":
                 OperatingData.towWinchLoad = newValue;
                 break;
@@ -502,6 +505,22 @@ public class serverData : NetworkBehaviour
 
         if (ValueChangedEvent != null)
             ValueChangedEvent(valueName, newValue);
+    }
+
+    public void OnValueChanged(string valueName, string newValue)
+    {
+        switch (valueName)
+        {
+            case "mapEventName":
+                MapData.mapEventName = newValue;
+                break;
+
+            default:
+                float value;
+                if (float.TryParse(newValue, out value))
+                    OnValueChanged(valueName, value);
+                break;
+        }
     }
 
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)

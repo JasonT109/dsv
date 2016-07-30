@@ -23,8 +23,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public const float DefaultPhysicsMagnitudeSliderLength = 1.0f;
 
 
-
-    // Properties
+    // Configuration
     // ------------------------------------------------------------
 
     [Header("Components")]
@@ -68,7 +67,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     [Header("Physics Event Components")]
 
-    /** Properties panel for value events. */
+    /** Properties panel for physics events. */
     public Transform PhysicsProperties;
 
     /** Input text for physics direction components. */
@@ -82,6 +81,25 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Server value input text. */
     public InputField PhysicsMagnitudeInput;
 
+
+    [Header("Map Camera Event Components")]
+
+    /** Properties panel for map camera events. */
+    public Transform MapCameraProperties;
+
+    /** Input text for map camera event name. */
+    public InputField MapCameraEventNameInput;
+
+
+    [Header("Sonar Event Components")]
+
+    /** Properties panel for sonar events. */
+    public Transform SonarProperties;
+
+
+
+    // Properties
+    // ------------------------------------------------------------
 
     /** The event being represented. */
     public megEvent Event
@@ -97,6 +115,14 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Event interpreted as a physics event. */
     public megEventPhysics PhysicsEvent
         { get { return _event as megEventPhysics; } }
+
+    /** Event interpreted as a map camera event. */
+    public megEventMapCamera MapCameraEvent
+        { get { return _event as megEventMapCamera; } }
+
+    /** Event interpreted as a sonar event. */
+    public megEventSonar SonarEvent
+        { get { return _event as megEventSonar; } }
 
 
     // Members
@@ -150,8 +176,12 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         if (_event is megEventValue)
             UpdateValueProperties();
-        if (_event is megEventPhysics)
+        else if (_event is megEventPhysics)
             UpdatePhysicsProperties();
+        else if (_event is megEventMapCamera)
+            UpdateMapCameraProperties();
+        else if (_event is megEventSonar)
+            UpdateSonarProperties();
 
         _initializing = false;
     }
@@ -165,6 +195,9 @@ public class debugEventPropertiesUi : MonoBehaviour
         BaseProperties.gameObject.SetActive(true);
         ValueProperties.gameObject.SetActive(_event is megEventValue);
         PhysicsProperties.gameObject.SetActive(_event is megEventPhysics);
+        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera);
+        SonarProperties.gameObject.SetActive(_event is megEventSonar);
+
         CanvasGroup.interactable = !_event.file.playing;
     }
 
@@ -174,10 +207,11 @@ public class debugEventPropertiesUi : MonoBehaviour
         BaseProperties.gameObject.SetActive(false);
         ValueProperties.gameObject.SetActive(false);
         PhysicsProperties.gameObject.SetActive(false);
+        SonarProperties.gameObject.SetActive(false);
     }
 
 
-    // Base Event Properties
+    // Base Event Interface
     // ------------------------------------------------------------
 
     private void UpdateBaseProperties()
@@ -262,8 +296,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     }
 
 
-
-    // Value Event Properties
+    // Value Event Interface
     // ------------------------------------------------------------
 
     private void UpdateValueProperties()
@@ -321,8 +354,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     }
 
 
-
-    // Physics Event Properties
+    // Physics Event Interface
     // ------------------------------------------------------------
 
     private void UpdatePhysicsProperties()
@@ -407,6 +439,37 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         PhysicsEvent.physicsMagnitude = result;
         UpdatePhysicsMagnitudeSlider();
+    }
+
+
+    // Map Camera Event Interface
+    // ------------------------------------------------------------
+
+    private void UpdateMapCameraProperties()
+    {
+        UpdateMapCameraEventNameInput();
+    }
+
+    private void UpdateMapCameraEventNameInput()
+    {
+        MapCameraEventNameInput.text = MapCameraEvent.eventName;
+    }
+
+    public void MapCameraEventNameInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.eventName = value;
+    }
+
+
+    // Sonar Event Interface
+    // ------------------------------------------------------------
+
+    private void UpdateSonarProperties()
+    {
+        UpdateMapCameraEventNameInput();
     }
 
 
