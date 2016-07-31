@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Meg.EventSystem;
 using Meg.Graphics;
 using UnityEngine.Networking;
 
@@ -609,6 +610,12 @@ namespace Meg.Networking
                 ServerData.RpcImpact(impactVector);
             else if (LocalPlayer)
                 LocalPlayer.PostImpact(impactVector);
+        }
+
+        public static void PostSonarEvent(megEventSonar sonarEvent)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSonarEvent(sonarEvent);
         }
 
         public static void SetBatteryData(int bank, float value)

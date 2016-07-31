@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Meg.SonarEvent
 {
     using UnityEngine;
@@ -63,6 +65,13 @@ namespace Meg.SonarEvent
             {
                 //for (int i = 0; i < customButtonGroup.GetComponent<buttonGroup>().buttons.)
             }
+        }
+
+        public void megPlayMegSonarEventByName(string name)
+        {
+            var sonarEvent = sonarEvents.First(e => e.eventName == name);
+            if (sonarEvent != null)
+                megPlayMegSonarEvent(sonarEvent);
         }
 
         public void megPlayMegSonarEvent(megEventSonar m)

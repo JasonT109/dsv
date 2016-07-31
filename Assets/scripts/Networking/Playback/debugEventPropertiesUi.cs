@@ -97,6 +97,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Properties panel for sonar events. */
     public Transform SonarProperties;
 
+    /** Input text for sonar event name. */
+    public InputField SonarEventNameInput;
 
 
     // Properties
@@ -489,8 +491,20 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateSonarProperties()
     {
-        UpdateMapCameraEventNameInput();
+        UpdateSonarEventNameInput();
     }
 
+    private void UpdateSonarEventNameInput()
+    {
+        SonarEventNameInput.text = SonarEvent.eventName;
+    }
+
+    public void SonarEventNameInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        SonarEvent.eventName = value;
+    }
 
 }
