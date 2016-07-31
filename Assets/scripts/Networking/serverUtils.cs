@@ -843,6 +843,11 @@ namespace Meg.Networking
             return string.Format("{0}°{1}\'{2:N" + precision + "}\"", degrees, minutes, seconds);
         }
 
+        public static void SetMapEventName(string eventName)
+        {
+            ServerObject.GetComponent<mapData>().mapEventName = eventName;
+        }
+
         public static bool GetGliderButtonState(int buttonID)
         {
             bool buttonState = false;
@@ -850,12 +855,15 @@ namespace Meg.Networking
             switch (buttonID)
             {
                 case 0:
+                    //elevation
                     buttonState = ServerObject.GetComponent<glScreenData>().mapElevation;
                     break;
                 case 1:
+                    //recentre
                     buttonState = ServerObject.GetComponent<glScreenData>().recentreMap;
                     break;
                 case 2:
+                    //labels
                     buttonState = ServerObject.GetComponent<glScreenData>().objectLabelsOn;
                     break;
             }

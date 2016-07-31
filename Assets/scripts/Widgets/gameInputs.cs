@@ -118,21 +118,21 @@ public class gameInputs : NetworkBehaviour
     void CmdSetMap3dState(bool mapState)
     {
         map3dState = mapState;
-        Debug.Log("Changing map 3d.");
+        //Debug.Log("Changing map 3d.");
     }
 
     [Command]
     void CmdSetMapCenterState(bool mapState)
     {
         mapCentreState = mapState;
-        Debug.Log("Centering map.");
+        //Debug.Log("Centering map.");
     }
 
     [Command]
     void CmdSetMapLabelState(bool mapState)
     {
         mapLabelState = mapState;
-        Debug.Log("Toggling map labels.");
+        //Debug.Log("Toggling map labels.");
     }
 
     /** update */

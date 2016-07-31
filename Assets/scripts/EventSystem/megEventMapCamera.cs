@@ -22,6 +22,8 @@ namespace Meg.EventSystem
         public GameObject toObject;
         public bool goToObject;
         public bool goToPlayerVessel;
+        public bool triggeredByServer;
+        public int serverTriggerID;
         public int priority;
 
 

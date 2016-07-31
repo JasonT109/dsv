@@ -42,6 +42,8 @@ public class megMapCameraEventManager : MonoBehaviour
         {
             if (mapEventList[i].eventName == eventName)
             {
+                serverUtils.SetServerData("initiateMapEvent", 0f);
+
                 //start this event
                 running = true;
 
@@ -59,6 +61,24 @@ public class megMapCameraEventManager : MonoBehaviour
                 initialOrientationX = mapCameraPitch.transform.localRotation.eulerAngles.x;
                 initialOrientationY = mapCameraRoot.transform.localRotation.eulerAngles.y;
                 initialZoom = mapCameraObject.transform.localPosition.z;
+
+                //if to object get that position in map space
+                if (runningEvent.goToObject)
+                {
+                    var p = runningEvent.toObject.transform.position;
+                    runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
+                    runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                    runningEvent.toZoom = initialZoom;
+                }
+
+                if (runningEvent.goToPlayerVessel)
+                {
+                    var playerVessel = serverUtils.GetPlayerVessel();
+                    var p = vessels[playerVessel - 1].transform.position;
+                    runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
+                    runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
+                    runningEvent.toZoom = initialZoom;
+                }
             }
         }
     }
