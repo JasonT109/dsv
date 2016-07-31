@@ -39,7 +39,7 @@ public class debugEventTimelineUi : MonoBehaviour
     public debugEventUi EventUiPrefab;
 
 
-    [Header("Configuration")]
+    [Header("Sizing")]
 
     /** Scale factor for timeline width (pixels per second). */
     public float Scale = 100;
@@ -47,8 +47,20 @@ public class debugEventTimelineUi : MonoBehaviour
     /** Minimum timeline width. */
     public float MinWidth = 100;
 
+    /** Timeline height threshold for minimization. */
+    public float MinimizeThreshold = 80;
+
+    /** Timeline margin in minimized state. */
+    public float MinimizedMargin = 15;
+
+    /** Timeline margin in expanded state. */
+    public float ExpandedMargin = 15;
+
+    /** Vertical spacing between events in minimized state. */
+    public float MinimizedEventSpacing = 5;
+
     /** Vertical spacing between events. */
-    public float EventSpacing = 10;
+    public float ExpandedEventSpacing = 10;
 
     /** The event group. */
     public megEventGroup Group
@@ -144,8 +156,8 @@ public class debugEventTimelineUi : MonoBehaviour
         var fileScale = fileEndTime > 0 ? fileWidth / fileEndTime : fileWidth;
         var scale = Mathf.Min(Scale, fileScale);
         var width = Mathf.Clamp(scale * _group.endTime, MinWidth, maxWidth);
-        var spacing = Minimized ? 5 : EventSpacing;
-        var margin = Minimized ? 15 : 30;
+        var spacing = Minimized ? MinimizedEventSpacing : ExpandedEventSpacing;
+        var margin = Minimized ? MinimizedMargin : ExpandedMargin;
 
         Layout.preferredWidth = width;
         Layout.minHeight = _group.events.Count * spacing + margin;
@@ -157,7 +169,7 @@ public class debugEventTimelineUi : MonoBehaviour
         UpdateEvents(scale, spacing);
         UpdateNeedle(scale);
 
-        var canMinimize = (_group.minimized || Layout.minHeight > 90) && !_group.hideTimeline;
+        var canMinimize = (_group.minimized || Layout.minHeight > MinimizeThreshold) && !_group.hideTimeline;
         MinimizeToggle.gameObject.SetActive(canMinimize);
         MinimizeToggle.isOn = !_group.minimized;
 
