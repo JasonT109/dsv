@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Meg.EventSystem;
 
 public class debugEventPropertiesUi : MonoBehaviour
@@ -145,6 +146,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        ConfigureUi();
         ClearUi();
     }
 
@@ -170,6 +172,20 @@ public class debugEventPropertiesUi : MonoBehaviour
         }
         else
             ClearUi();
+    }
+
+    private void ConfigureUi()
+    {
+        ServerParamInput.onValidateInput += ValidateIdentifierInput;
+        MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
+    }
+
+    private char ValidateIdentifierInput(string text, int index, char addedChar)
+    {
+        if (!Regex.IsMatch(addedChar.ToString(), "[A-Za-z0-9_]"))
+            return '\0';
+
+        return addedChar;
     }
 
     private void InitUi()
