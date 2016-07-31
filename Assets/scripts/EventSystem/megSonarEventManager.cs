@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Meg.SonarEvent
 {
     using UnityEngine;
@@ -65,6 +67,13 @@ namespace Meg.SonarEvent
             }
         }
 
+        public void megPlayMegSonarEventByName(string name)
+        {
+            var sonarEvent = sonarEvents.First(e => e.eventName == name);
+            if (sonarEvent != null)
+                megPlayMegSonarEvent(sonarEvent);
+        }
+
         public void megPlayMegSonarEvent(megEventSonar m)
         {
             Vector3[] wps = new Vector3[m.waypoints.Length];
@@ -111,6 +120,15 @@ namespace Meg.SonarEvent
             //set the sonar objects waypoints
             so.GetComponent<graphicsSonarObject>().wayPoints = wps;
             so.GetComponent<graphicsSonarObject>().destroyOnLastPoint = m.destroyOnEnd;
+        }
+
+        public void megSonarClear()
+        {
+            var objects = FindObjectsOfType(typeof(graphicsSonarObject))
+                .Cast<graphicsSonarObject>();
+
+            foreach (var o in objects)
+                Destroy(o.gameObject);
         }
 
         void Start()

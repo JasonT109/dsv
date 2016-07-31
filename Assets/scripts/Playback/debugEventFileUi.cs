@@ -22,23 +22,52 @@ public class debugEventFileUi : MonoBehaviour
     /** Container for event groups. */
     public Transform Groups;
 
+    /** Load button. */
+    public Button LoadButton;
+
     /** Playback button. */
     public Toggle PlayButton;
 
     /** Rewind button. */
     public Button RewindButton;
 
+    /** Clear button. */
+    public Button ClearButton;
+    
     /** Pause icon. */
     public Graphic PauseIcon;
 
     /** Event properties. */
     public debugEventPropertiesUi Properties;
 
+    /** Current time. */
+    public Text TimeText;
+
+    /** Current duration. */
+    public Text DurationText;
+
 
     [Header("Prefabs")]
 
     /** Prefab to use for an event group UI node. */
     public debugEventGroupUi EventGroupUiPrefab;
+
+
+    [Header("Colors")]
+
+    /** Color for inactive time text. */
+    public Color InactiveTimeTextColor;
+
+    /** Color for active time text. */
+    public Color ActiveTimeTextColor;
+
+    /** Color for inactive duration text. */
+    public Color InactiveDurationTextColor;
+
+    /** Color for active duration text. */
+    public Color ActiveDurationTextColor;
+
+
 
 
     // Members
@@ -82,16 +111,10 @@ public class debugEventFileUi : MonoBehaviour
     {
         try
         {
-            _file.Stop();
+            // _file.Stop();
+            _file.LoadFromFile(f.FullName);
 
-            var events = new megEventFile();
-            events.LoadFromFile(f.FullName);
-            _file = events;
-            AddGroups(events);
-
-            var label = Path.GetFileNameWithoutExtension(f.Name);
-            label = Regex.Replace(label, "[A-Z]", " $0");
-            Header.text = label.ToUpper();
+            InitUi();
         }
         catch (Exception ex)
         {
@@ -120,9 +143,30 @@ public class debugEventFileUi : MonoBehaviour
         _file.Rewind();
     }
 
+    /** Clear the file contents. */
+    public void Clear()
+    {
+        if (!_file.canClear)
+            return;
+
+        Properties.Event = null;
+
+        _file = new megEventFile();
+        InitUi();
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Initialize the file UI. */
+    private void InitUi()
+    {
+        AddGroups(_file);
+
+        // Force a UI reflow to ensure group layouts are correct.
+        Canvas.ForceUpdateCanvases();
+    }
 
     /** Update the file UI. */
     private void UpdateUi()
@@ -135,7 +179,21 @@ public class debugEventFileUi : MonoBehaviour
         _playLabel.text = _file.playing ? "PAUSE" : "PLAY";
         PauseIcon.gameObject.SetActive(_file.playing);
 
+        LoadButton.interactable = _file.canLoad;
         RewindButton.interactable = _file.canRewind;
+        ClearButton.interactable = _file.canClear;
+
+        var t = TimeSpan.FromSeconds(_file.time);
+        TimeText.color = _file.playing ? ActiveTimeTextColor : InactiveTimeTextColor;
+        TimeText.text = string.Format("{0:00}:{1:00}:{2:00}.{3:0}", 
+            t.Hours, t.Minutes, t.Seconds, t.Milliseconds / 100);
+
+        var d = TimeSpan.FromSeconds(_file.endTime);
+        DurationText.color = _file.playing ? ActiveDurationTextColor : InactiveDurationTextColor;
+        DurationText.text = string.Format("/ {0:00}:{1:00}:{2:00}",
+            d.Hours, d.Minutes, d.Seconds);
+
+        Properties.gameObject.SetActive(Properties.HasEvent);
 
         _updatingUi = false;
     }
@@ -171,12 +229,12 @@ public class debugEventFileUi : MonoBehaviour
 
     private void HandleEventSelected(debugEventUi ui)
     {
-        var e = ui.Event;
-        if (e == Properties.Event)
-            e = null;
+        var selected = ui.Event;
+        if (selected == Properties.Event)
+            selected = null;
 
-        Properties.Event = ui.Event;
-        _file.selectedEvent = ui.Event;
+        Properties.Event = selected;
+        _file.selectedEvent = selected;
     }
 
 

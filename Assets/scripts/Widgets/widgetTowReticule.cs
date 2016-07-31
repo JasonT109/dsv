@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -31,11 +31,11 @@ public class widgetTowReticule : MonoBehaviour
     public Color textLockedColor;
 
     private Vector2 moveDir = Vector2.zero;
-    private Vector2 newMoveDir = Vector2.zero;
+    // private Vector2 newMoveDir = Vector2.zero;
     private float distanceLerp;
     private float distance;
     private Vector3 initialPos;
-    private Vector3 startPos;
+    // private Vector3 startPos;
     private bool locked;
     private float lockedTime;
 
@@ -44,8 +44,7 @@ public class widgetTowReticule : MonoBehaviour
 	void Start ()
     {
         initialPos = transform.position;
-        startPos = transform.position;
-
+        // startPos = transform.position;
     }
 	
     Vector3 getLocalPosition(Vector3 position, Transform localSpace)

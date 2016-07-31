@@ -1,7 +1,10 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
+using Meg.EventSystem;
 using Meg.Graphics;
+using UnityEngine.Networking;
 
 namespace Meg.Networking
 {
@@ -10,6 +13,18 @@ namespace Meg.Networking
 
         // Static Properties
         // ------------------------------------------------------------
+
+        public static serverPlayer LocalPlayer
+        {
+            get
+            {
+                var player = ClientScene.localPlayers.First();
+                if (player != null)
+                    return player.gameObject.GetComponent<serverPlayer>();
+
+                return null;
+            }
+        }
 
         private static GameObject _serverObject;
         public static GameObject ServerObject
@@ -566,6 +581,47 @@ namespace Meg.Networking
         public static void SetServerData(string valueName, float value)
         {
             ServerData.OnValueChanged(valueName, value);
+        }
+
+        public static void SetServerData(string valueName, string value)
+        {
+            ServerData.OnValueChanged(valueName, value);
+        }
+
+        public static void PostServerData(string valueName, float value)
+        {
+            if (ServerData && ServerData.isServer)
+                SetServerData(valueName, value);
+            else if (LocalPlayer)
+                LocalPlayer.PostServerData(valueName, value);
+        }
+
+        public static void PostServerData(string valueName, string value)
+        {
+            if (ServerData && ServerData.isServer)
+                SetServerData(valueName, value);
+            else if (LocalPlayer)
+                LocalPlayer.PostServerData(valueName, value);
+        }
+
+        public static void PostImpact(Vector3 impactVector)
+        {
+            if (ServerData && ServerData.isServer)
+                ServerData.RpcImpact(impactVector);
+            else if (LocalPlayer)
+                LocalPlayer.PostImpact(impactVector);
+        }
+
+        public static void PostSonarEvent(megEventSonar sonarEvent)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSonarEvent(sonarEvent);
+        }
+
+        public static void PostSonarClear(megEventSonar sonarEvent)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSonarClear(sonarEvent);
         }
 
         public static void SetBatteryData(int bank, float value)

@@ -1,19 +1,28 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Meg.EventSystem;
+using Meg.SonarEvent;
 
 namespace Meg.EventSystem
 {
 
-    public class megEventManager : AutoSingleton<megEventManager>
+    public class megEventManager : Singleton<megEventManager>
     {
 
-        // Members
+        // Properties
         // ------------------------------------------------------------
 
-        /** The set of registered event files. */
-        private List<megEventFile> _files = new List<megEventFile>();
+        /** The sonar event manager. */
+        public megSonarEventManager Sonar;
+
+
+        // Unity Methods
+        // ------------------------------------------------------------
+
+        /** Initialization. */
+        private void Awake()
+        {
+            // Ensure that the event manager instance is populated.
+            EnsureInstanceExists();
+        }
 
 
         // Public Methods
@@ -21,28 +30,12 @@ namespace Meg.EventSystem
 
         /** Start updating an event file. */
         public void AddFile(megEventFile file)
-        {
-            if (!_files.Contains(file))
-                _files.Add(file);
-        }
+            { megEventRunner.Instance.AddFile(file); }
 
         /** Stop updating an event file. */
         public void RemoveFile(megEventFile file)
-        {
-            _files.Remove(file);
-        }
+            { megEventRunner.Instance.RemoveFile(file); }
 
-
-        // Unity Methods
-        // ------------------------------------------------------------
-
-        /** Updating. */
-        private void Update()
-        {
-            var n = _files.Count;
-            for (var i = 0; i < n; i++)
-                _files[i].Update(Time.time, Time.deltaTime);
-        }
 
     }
 

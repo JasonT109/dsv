@@ -262,23 +262,26 @@ public class buttonControl : MonoBehaviour
             {
                 pressed = false;
                 active = true;
-                m.color = GetThemeColor(1);
+
+                if (m)
+                    m.color = GetThemeColor(1);
             }
             else
             {
                 pressed = false;
                 active = false;
-                m.color = GetThemeColor(3);
+
+                if (m)
+                    m.color = GetThemeColor(3);
             }
         }
         else
         {
             pressed = false;
             active = false;
+
             if (m)
-            {
                 m.color = GetThemeColor(3);
-            }
         }
         toggleVisGroup();
     }

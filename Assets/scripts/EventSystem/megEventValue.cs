@@ -84,7 +84,7 @@ namespace Meg.EventSystem
             if (completeTime <= 0)
             {
                 _value = serverValue;
-                serverUtils.SetServerData(serverParam, _value);
+                PostServerData(serverParam, _value);
                 completed = true;
             }
         }
@@ -94,18 +94,21 @@ namespace Meg.EventSystem
         {
             // Interpolate towards final value over time.
             _value = Mathf.Lerp(_initialValue, serverValue, timeFraction);
-            serverUtils.SetServerData(serverParam, _value);
+            PostServerData(serverParam, _value);
 
             // Check if final value has been reached.
             if (timeFraction >= 1)
                 completed = true;
         }
 
+        /** Rewind this event. */
+        protected override void Rewind()
+        {
+        }
+
         /** Stop this event. */
         protected override void Stop()
         {
-            // Reset value to initial value.
-            serverUtils.SetServerData(serverParam, _initialValue);
         }
 
     }

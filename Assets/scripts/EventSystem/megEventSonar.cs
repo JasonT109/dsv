@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.EventSystem
 {
@@ -15,6 +16,7 @@ namespace Meg.EventSystem
         /** Id for this event. */
         public override string id { get { return "Sonar"; } }
 
+        public string eventName;
         public Vector3[] waypoints;
         public bool destroyOnEnd;
 
@@ -34,7 +36,7 @@ namespace Meg.EventSystem
         public override JSONObject Save()
         {
             var json = base.Save();
-            json.GetField(ref triggerTime, "triggerTime");
+            json.AddField("eventName", eventName);
             var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
             foreach (var w in waypoints)
                 waypointsJson.Add(w);
@@ -49,15 +51,19 @@ namespace Meg.EventSystem
         public override void Load(JSONObject json)
         {
             base.Load(json);
-            var waypointsJson = json.GetField("waypoints");
-            waypoints = new Vector3[waypointsJson.Count];
-            for (var i = 0; i < waypointsJson.Count; i++)
-            {
-                var w = waypointsJson[i];
-                waypoints[i] = new Vector3(w[0].f, w[1].f, w[2].f);
-            }
-
+            json.GetField(ref eventName, "eventName");
             json.GetField(ref destroyOnEnd, "destroyOnEnd");
+            var waypointsJson = json.GetField("waypoints");
+            if (waypointsJson != null)
+            {
+                var n = waypointsJson.Count;
+                waypoints = new Vector3[n];
+                for (var i = 0; i < n; i++)
+                {
+                    var w = waypointsJson[i];
+                    waypoints[i] = new Vector3(w[0].f, w[1].f, w[2].f);
+                }
+            }
         }
 
 
@@ -67,18 +73,26 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            Debug.Log("Sonar event.");
-            completed = true;
+            serverUtils.PostSonarEvent(this);
         }
 
         /** Update this event internally. */
         protected override void Update(float t, float dt)
+        {
+            // Check if final value has been reached.
+            if (timeFraction >= 1)
+                completed = true;
+        }
+
+        /** Rewind this event. */
+        protected override void Rewind()
         {
         }
 
         /** Stop this event. */
         protected override void Stop()
         {
+            serverUtils.PostSonarClear(this);
         }
 
     }

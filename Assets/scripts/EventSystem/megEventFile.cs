@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -37,10 +35,10 @@ namespace Meg.EventSystem
         public bool completed { get; set; }
 
         /** Whether file is playing back at the moment (running and active). */
-        public bool playing { get { return running && !paused && !completed; } }
+        public bool playing { get { return running && !paused; } }
 
         /** Local time at which the file ends. */
-        public float endTime { get { return groups.Max(e => e.endTime); } }
+        public float endTime { get { return empty ? 0 : groups.Max(e => e.endTime); } }
 
         /** Whether file is empty. */
         public bool empty { get { return groups.Count == 0; } }
@@ -51,8 +49,35 @@ namespace Meg.EventSystem
         /** Whether file can be rewound. */
         public bool canRewind { get { return !empty && !playing && running; } }
 
+        /** Whether file can load more groups. */
+        public bool canLoad { get { return true; } } // !playing; } }
+
+        /** Whether file can be cleared. */
+        public bool canClear { get { return !empty && !playing; } }
+
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
+
+
+        // Structures
+        // ------------------------------------------------------------
+
+        /** Tracking data for a server value. */
+        private struct ServerValue
+        {
+            public float time;
+            public float initial;
+        }
+
+
+        // Members
+        // ------------------------------------------------------------
+
+        /** Loaded files. */
+        private readonly HashSet<string> _loadedFiles = new HashSet<string>();
+
+        /** Tracking data for server values. */
+        private readonly Dictionary<string, ServerValue> _values = new Dictionary<string, ServerValue>();
 
 
         // Public Methods
@@ -95,7 +120,7 @@ namespace Meg.EventSystem
             if (paused)
                 return;
 
-            if (running && !completed)
+            if (running)
                 time += dt;
 
             for (var i = 0; i < groups.Count; i++)
@@ -123,15 +148,12 @@ namespace Meg.EventSystem
             if (!running)
                 return;
 
-            // Stop all events in the file in reverse time order.
-            // This ensures server values are correctly reset.
-            var ordered = events.OrderByDescending(e => e.triggerTime);
-            foreach (var e in ordered)
-                e.StopFromFile();
-
             // Stop each group.
             for (var i = 0; i < groups.Count; i++)
                 groups[i].Stop();
+
+            // Restore initial values for server data.
+            ResetServerData();
 
             time = 0;
             running = false;
@@ -156,6 +178,43 @@ namespace Meg.EventSystem
         }
 
 
+        // Server values
+        // ------------------------------------------------------------
+
+        /** Set a server float value. */
+        public void PostServerData(string key, float value)
+        {
+            // Record initial value if this is the first time we've set it.
+            // This will be used to reset the value when file playback stops.
+            if (!_values.ContainsKey(key))
+                _values[key] = new ServerValue
+                {
+                    initial = serverUtils.GetServerData(key),
+                    time = time
+                };
+
+            // Set the server data value.
+            serverUtils.PostServerData(key, value);
+        }
+
+        /** Set a server string value. */
+        public void PostServerData(string key, string value)
+            { serverUtils.PostServerData(key, value); }
+
+        /** Return a server value. */
+        public float GetServerData(string key)
+            { return serverUtils.GetServerData(key); }
+
+        /** Reset all server values to initial settings. */
+        private void ResetServerData()
+        {
+            foreach (var e in _values)
+                serverUtils.PostServerData(e.Key, e.Value.initial);
+            
+            _values.Clear();
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 
@@ -177,20 +236,28 @@ namespace Meg.EventSystem
         {
             // Load in value events.
             var groupsJson = json.GetField("groups");
-            groups.Clear();
             for (var i = 0; i < groupsJson.Count; i++)
             {
-                groups.Add(new megEventGroup(this));
-                groups[i].Load(groupsJson[i]);
+                var group = new megEventGroup(this);
+                groups.Add(group);
+                group.Load(groupsJson[i]);
+
+                if (running)
+                    group.Start();
             }
         }
 
         /** Load state from a JSON file. */
         public virtual void LoadFromFile(string path)
         {
+            if (_loadedFiles.Contains(path))
+                return;
+
             var text = File.ReadAllText(path);
             var json = new JSONObject(text);
             Load(json);
+
+            _loadedFiles.Add(path);
         }
 
     }

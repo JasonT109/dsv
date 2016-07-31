@@ -40,6 +40,9 @@ namespace Meg.EventSystem
         /** Optional trigger button object. */
         public GameObject trigger;
 
+        /** Optional trigger button label. */
+        public string triggerLabel;
+
         /** Time at which to trigger the event. */
         public float triggerTime;
 
@@ -62,7 +65,10 @@ namespace Meg.EventSystem
         /** Whether the event has completed. */
         public bool completed { get; set; }
 
-        
+        /** Whether event should be manually triggered by a button. */
+        public bool hasTrigger { get { return !string.IsNullOrEmpty(triggerLabel); } }
+
+
         // Members
         // ------------------------------------------------------------
 
@@ -84,12 +90,30 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Manually trigger this event. */
+        public void Trigger()
+        {
+            // Check that the event can be manually triggered in principle.
+            if (!hasTrigger)
+                return;
+
+            // Check if we can trigger the event right now.
+            if (!file.playing || !group.running || group.paused)
+                return;
+
+            // Start up the event.
+            running = true;
+            completed = false;
+            time = 0;
+            Start();
+        }
+
         /** Update this event over time from an event group. */
         public void UpdateFromGroup(float t, float dt)
         {
             if (group.running)
             {
-                if (!running && t >= triggerTime)
+                if (!running && t >= triggerTime && !hasTrigger)
                 {
                     running = true;
                     completed = false;
@@ -122,17 +146,14 @@ namespace Meg.EventSystem
             Stop();
         }
 
-        /** Stop event from an event file. */
-        public void StopFromFile()
+        /** Rewind event from an event group. */
+        public void RewindFromGroup()
         {
-            if (!running)
-                return;
-
             running = false;
             completed = false;
             time = 0;
 
-            Stop();
+            Rewind();
         }
 
         /** String representation. */
@@ -150,8 +171,13 @@ namespace Meg.EventSystem
         {
             var json = new JSONObject();
             json.AddField("type", type.ToString());
-            json.AddField("triggerTime", triggerTime);
-            json.AddField("completeTime", completeTime);
+            if (triggerTime > 0)
+                json.AddField("triggerTime", triggerTime);
+            if (completeTime > 0)
+                json.AddField("completeTime", completeTime);
+            if (hasTrigger)
+                json.AddField("triggerLabel", triggerLabel);
+
             return json;
         }
 
@@ -160,7 +186,24 @@ namespace Meg.EventSystem
         {
             json.GetField(ref triggerTime, "triggerTime");
             json.GetField(ref completeTime, "completeTime");
+            json.GetField(ref triggerLabel, "triggerLabel");
         }
+
+
+        // Server values
+        // ------------------------------------------------------------
+
+        /** Set a server value. */
+        protected void PostServerData(string key, float value)
+            { file.PostServerData(key, value); }
+
+        /** Set a server value. */
+        protected void PostServerData(string key, string value)
+            { file.PostServerData(key, value); }
+
+        /** Return a server value. */
+        public float GetServerData(string key)
+            { return file.GetServerData(key); }
 
 
         // Protected Methods
@@ -174,6 +217,9 @@ namespace Meg.EventSystem
 
         /** Stop this event. */
         protected abstract void Stop();
+
+        /** Reset this event. */
+        protected abstract void Rewind();
 
 
     }

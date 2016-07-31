@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.EventSystem
 {
@@ -8,6 +9,13 @@ namespace Meg.EventSystem
     [System.Serializable]
     public class megEventMapCamera : megEvent
     {
+
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Duration for setting map camera event syncvars. */
+        private const float EventBroadcastDuration = 1.0f;
+
 
         // Properties
         // ------------------------------------------------------------
@@ -35,6 +43,16 @@ namespace Meg.EventSystem
             : base(megEventType.MapCamera, group) { }
 
 
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            return string.Format("Map Camera: {0}", eventName);
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 
@@ -43,13 +61,6 @@ namespace Meg.EventSystem
         {
             var json = base.Save();
             json.AddField("eventName", eventName);
-            json.AddField("toPosition", toPosition);
-            json.AddField("toOrientation", toOrientation);
-            json.AddField("toZoom", toZoom);
-            // json.AddField("toObject", toObject);
-            json.AddField("goToObject", goToObject);
-            json.AddField("goToPlayerVessel", goToPlayerVessel);
-            json.AddField("priority", priority);
             return json;
         }
 
@@ -58,13 +69,6 @@ namespace Meg.EventSystem
         {
             base.Load(json);
             json.GetField(ref eventName, "eventName");
-            json.GetField(ref toPosition, "toPosition");
-            json.GetField(ref toOrientation, "toOrientation");
-            json.GetField(ref toZoom, "toZoom");
-            // json.GetField(ref toObject, "toObject");
-            json.GetField(ref goToObject, "goToObject");
-            json.GetField(ref goToPlayerVessel, "goToPlayerVessel");
-            json.GetField(ref priority, "priority");
         }
 
 
@@ -74,20 +78,54 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            Debug.Log("Map camera event: " + id);
-            completed = true;
+            TriggerMapCameraEvent(eventName);
         }
 
         /** Update this event internally. */
         protected override void Update(float t, float dt)
         {
+            // Allow time for all clients to react to the map event syncvar.
+            if (time < EventBroadcastDuration)
+                return;
+
+            ResetMapCameraEvent();
+
+            // Check if final value has been reached.
+            if (timeFraction >= 1)
+                completed = true;
+        }
+
+        /** Rewind this event. */
+        protected override void Rewind()
+        {
+            ResetMapCameraEvent();
         }
 
         /** Stop this event. */
         protected override void Stop()
         {
+            ResetMapCameraEvent();
         }
 
+
+        // Private Methods
+        // ------------------------------------------------------------
+
+        /** Trigger a map camera event via syncvars. */
+        private void TriggerMapCameraEvent(string name)
+        {
+            // TODO: Turn this into an RPC.
+            Debug.Log("Map camera event: " + id);
+            PostServerData("mapEventName", eventName);
+            PostServerData("initiateMapEvent", 1.0f);
+        }
+
+        /** Reset map camera event syncvars. */
+        private void ResetMapCameraEvent()
+        {
+            PostServerData("mapEventName", "");
+            PostServerData("initiateMapEvent", 0);
+        }
 
     }
 

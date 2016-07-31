@@ -36,14 +36,32 @@ namespace Meg.EventSystem
         /** Whether group is currently running. */
         public bool running { get; set; }
 
-        /** Whether file is currently paused. */
+        /** Whether group is currently paused. */
         public bool paused { get; set; }
+
+        /** Whether group is currently set to loop. */
+        public bool looping { get; set; }
 
         /** Whether group is complete. */
         public bool completed { get; set; }
 
+        /** Whether group should pause when it completes. */
+        public bool pauseOnComplete { get; set; }
+
+        /** Whether group is minimized. */
+        public bool minimized { get; set; }
+
+        /** Whether group's timeline is hidden. */
+        public bool hideTimeline { get; set; }
+
+        /** Whether group can be looped. */
+        public bool canLoop { get; set; }
+
+        /** Whether group is empty. */
+        public bool empty { get { return events.Count == 0; } }
+
         /** Local time at which the group ends. */
-        public float endTime { get { return events.Max(e => e.endTime); } }
+        public float endTime { get { return empty ? 0 : events.Max(e => e.endTime); } }
 
 
         // Members
@@ -96,13 +114,30 @@ namespace Meg.EventSystem
                 events[i].UpdateFromGroup(time, dt);
 
             if (running && !completed)
-                completed = events.All(e => e.completed);
+            {
+                var finished = events.All(e => e.completed);
+                if (finished && !looping)
+                    completed = true;
+                else if (finished && looping)
+                    Rewind();
+            }
+
+            if (completed && pauseOnComplete)
+                paused = true;
+            if (completed && (looping || pauseOnComplete))
+                Rewind();
         }
 
         /** Set group's paused state. */
         public void SetPaused(bool value)
         {
             paused = value;
+        }
+
+        /** Set group's looping state. */
+        public void SetLooping(bool value)
+        {
+            looping = value;
         }
 
         /** Pause playback on the group. */
@@ -124,12 +159,20 @@ namespace Meg.EventSystem
                 return;
 
             running = false;
-
-            // Stop events in reverse start time order.
-            // This ensures server values are correctly reset.
-            var ordered = events.OrderByDescending(e => e.triggerTime);
-            foreach (var e in ordered)
+            foreach (var e in events)
                 e.StopFromGroup();
+        }
+
+        /** Rewind the group to start time. */
+        public void Rewind()
+        {
+            completed = false;
+            time = 0;
+            foreach (var e in events)
+                e.RewindFromGroup();
+
+            if (!_file.playing)
+                Stop();
         }
 
 
@@ -146,7 +189,18 @@ namespace Meg.EventSystem
                 eventsJson.Add(e.Save());
 
             json.AddField("id", id);
-            json.AddField("paused", paused);
+
+            if (paused)
+                json.AddField("paused", paused);
+            if (looping)
+                json.AddField("looping", looping);
+            if (pauseOnComplete)
+                json.AddField("pauseOnComplete", pauseOnComplete);
+            if (hideTimeline)
+                json.AddField("hideTimeline", hideTimeline);
+            if (canLoop)
+                json.AddField("canLoop", canLoop);
+
             json.AddField("events", eventsJson);
 
             return json;
@@ -157,7 +211,25 @@ namespace Meg.EventSystem
         {
             // Load in value events.
             json.GetField(ref id, "id");
-            paused = json.GetField("paused").b;
+            bool jsonPaused;
+            if (json.GetField(out jsonPaused, "paused", false))
+                paused = jsonPaused;
+            bool jsonLooping;
+            if (json.GetField(out jsonLooping, "looping", false))
+                looping = jsonLooping;
+            bool jsonCanLoop;
+            if (json.GetField(out jsonCanLoop, "canLoop", false))
+                canLoop = jsonCanLoop;
+            bool jsonMinimized;
+            if (json.GetField(out jsonMinimized, "minimized", false))
+                minimized = jsonMinimized;
+            bool jsonPauseOnComplete;
+            if (json.GetField(out jsonPauseOnComplete, "pauseOnComplete", false))
+                pauseOnComplete = jsonPauseOnComplete;
+            bool jsonHideTimeline;
+            if (json.GetField(out jsonHideTimeline, "hideTimeline", false))
+                hideTimeline = jsonHideTimeline;
+
             var eventsJson = json.GetField("events");
             events.Clear();
             for (var i = 0; i < eventsJson.Count; i++)

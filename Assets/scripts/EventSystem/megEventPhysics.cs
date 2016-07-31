@@ -30,6 +30,16 @@ namespace Meg.EventSystem
             : base(megEventType.Physics, group) { }
 
 
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            return string.Format("Impact: d={0}, m={1:N1}", physicsDirection, physicsMagnitude);
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 
@@ -57,13 +67,19 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            Debug.Log("Physics event.");
-            serverUtils.ServerData.RpcImpact(physicsDirection * physicsMagnitude);
-            completed = true;
+            serverUtils.PostImpact(physicsDirection * physicsMagnitude);
         }
 
         /** Update this event internally. */
         protected override void Update(float t, float dt)
+        {
+            // Check if final value has been reached.
+            if (timeFraction >= 1)
+                completed = true;
+        }
+
+        /** Rewind this event. */
+        protected override void Rewind()
         {
         }
 

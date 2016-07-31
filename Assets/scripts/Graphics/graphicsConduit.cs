@@ -2,12 +2,14 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class graphicsConduit : MonoBehaviour
 {
+#if UNITY_EDITOR
     private float oldWidth;
     private float oldHeight;
     private float oldInAngle;
     private float oldOutAngle;
     private Vector2 oldUVScale;
     private Vector2 oldUVOffset;
+#endif
 
     private Mesh mesh;
 
@@ -96,12 +98,15 @@ public class graphicsConduit : MonoBehaviour
 
     void Start()
     {
+#if UNITY_EDITOR
         oldWidth = Width;
         oldHeight = Height;
         oldInAngle = InAngle;
         oldOutAngle = OutAngle;
         oldUVScale = UVScale;
         oldUVOffset = UVOffset;
+#endif
+
         CreateMesh();
     }
 
