@@ -37,12 +37,16 @@ namespace Meg.EventSystem
         {
             var json = base.Save();
             json.AddField("eventName", eventName);
-            var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
-            foreach (var w in waypoints)
-                waypointsJson.Add(w);
-
-            json.AddField("waypoints", waypointsJson);
             json.AddField("destroyOnEnd", destroyOnEnd);
+
+            if (waypoints != null && waypoints.Length > 0)
+            {
+                var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
+                foreach (var w in waypoints)
+                    waypointsJson.Add(w);
+
+                json.AddField("waypoints", waypointsJson);
+            }
 
             return json;
         }
@@ -53,6 +57,7 @@ namespace Meg.EventSystem
             base.Load(json);
             json.GetField(ref eventName, "eventName");
             json.GetField(ref destroyOnEnd, "destroyOnEnd");
+
             var waypointsJson = json.GetField("waypoints");
             if (waypointsJson != null)
             {

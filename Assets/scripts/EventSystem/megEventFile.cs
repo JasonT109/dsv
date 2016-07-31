@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -54,6 +55,9 @@ namespace Meg.EventSystem
 
         /** Whether file can be cleared. */
         public bool canClear { get { return !empty && !playing; } }
+
+        /** Whether file can be saved at the moment. */
+        public bool canSave { get { return !empty && !playing; } }
 
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
@@ -258,6 +262,15 @@ namespace Meg.EventSystem
             Load(json);
 
             _loadedFiles.Add(path);
+        }
+
+        /** Save state to a JSON file. */
+        public virtual void SaveToFile(string path)
+        {
+            var json = Save();
+            var text = json.Print(true);
+
+            File.WriteAllText(path, text);
         }
 
     }

@@ -5,8 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using Meg.EventSystem;
 using Meg.Networking;
+using Button = UnityEngine.UI.Button;
 
 public class debugEventFileUi : MonoBehaviour
 {
@@ -33,12 +35,18 @@ public class debugEventFileUi : MonoBehaviour
 
     /** Clear button. */
     public Button ClearButton;
-    
+
+    /** Save button. */
+    public Button SaveButton;
+
     /** Pause icon. */
     public Graphic PauseIcon;
 
     /** Event properties. */
     public debugEventPropertiesUi Properties;
+
+    /** Event folder. */
+    public debugSceneFolderUi Folder;
 
     /** Current time. */
     public Text TimeText;
@@ -155,6 +163,36 @@ public class debugEventFileUi : MonoBehaviour
         InitUi();
     }
 
+    /** Save the file. */
+    public void Save()
+    {
+        if (!_file.canSave)
+            return;
+
+        var path = "";
+
+        try
+        {
+            var saveDialog = new System.Windows.Forms.SaveFileDialog();
+            saveDialog.InitialDirectory = Folder.SceneFolder;
+            saveDialog.Title = "Save Event File";
+            saveDialog.Filter = "Event Files (*.json)|*.json";
+            saveDialog.AddExtension = true;
+            saveDialog.DefaultExt = "json";
+            saveDialog.ShowDialog();
+            path = saveDialog.FileName;
+
+            if (!string.IsNullOrEmpty(path))
+                _file.SaveToFile(path);
+
+            Folder.FileList.Refresh();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Failed to save event file: " + path + ", " + ex);
+        }
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -182,6 +220,7 @@ public class debugEventFileUi : MonoBehaviour
         LoadButton.interactable = _file.canLoad;
         RewindButton.interactable = _file.canRewind;
         ClearButton.interactable = _file.canClear;
+        SaveButton.interactable = _file.canSave;
 
         var t = TimeSpan.FromSeconds(_file.time);
         TimeText.color = _file.playing ? ActiveTimeTextColor : InactiveTimeTextColor;
