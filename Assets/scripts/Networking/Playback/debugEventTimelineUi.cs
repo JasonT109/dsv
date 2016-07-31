@@ -157,7 +157,8 @@ public class debugEventTimelineUi : MonoBehaviour
         UpdateEvents(scale, spacing);
         UpdateNeedle(scale);
 
-        MinimizeToggle.gameObject.SetActive(_group.minimized || Layout.minHeight > 90);
+        var canMinimize = (_group.minimized || Layout.minHeight > 90) && !_group.hideTimeline;
+        MinimizeToggle.gameObject.SetActive(canMinimize);
         MinimizeToggle.isOn = !_group.minimized;
 
         _updating = false;

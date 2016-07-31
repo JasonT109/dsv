@@ -51,6 +51,12 @@ namespace Meg.EventSystem
         /** Whether group is minimized. */
         public bool minimized { get; set; }
 
+        /** Whether group's timeline is hidden. */
+        public bool hideTimeline { get; set; }
+
+        /** Whether group can be looped. */
+        public bool canLoop { get; set; }
+
         /** Whether group is empty. */
         public bool empty { get { return events.Count == 0; } }
 
@@ -183,10 +189,19 @@ namespace Meg.EventSystem
                 eventsJson.Add(e.Save());
 
             json.AddField("id", id);
-            json.AddField("paused", paused);
+
+            if (paused)
+                json.AddField("paused", paused);
+            if (looping)
+                json.AddField("looping", looping);
+            if (pauseOnComplete)
+                json.AddField("pauseOnComplete", pauseOnComplete);
+            if (hideTimeline)
+                json.AddField("hideTimeline", hideTimeline);
+            if (canLoop)
+                json.AddField("canLoop", canLoop);
+
             json.AddField("events", eventsJson);
-            json.AddField("looping", looping);
-            json.AddField("pauseOnComplete", pauseOnComplete);
 
             return json;
         }
@@ -199,18 +214,21 @@ namespace Meg.EventSystem
             bool jsonPaused;
             if (json.GetField(out jsonPaused, "paused", false))
                 paused = jsonPaused;
-
             bool jsonLooping;
             if (json.GetField(out jsonLooping, "looping", false))
                 looping = jsonLooping;
-
+            bool jsonCanLoop;
+            if (json.GetField(out jsonCanLoop, "canLoop", false))
+                canLoop = jsonCanLoop;
             bool jsonMinimized;
             if (json.GetField(out jsonMinimized, "minimized", false))
                 minimized = jsonMinimized;
-
             bool jsonPauseOnComplete;
             if (json.GetField(out jsonPauseOnComplete, "pauseOnComplete", false))
                 pauseOnComplete = jsonPauseOnComplete;
+            bool jsonHideTimeline;
+            if (json.GetField(out jsonHideTimeline, "hideTimeline", false))
+                hideTimeline = jsonHideTimeline;
 
             var eventsJson = json.GetField("events");
             events.Clear();
