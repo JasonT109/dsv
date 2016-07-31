@@ -501,9 +501,6 @@ public class serverData : NetworkBehaviour
             case "divertPowerToThrusters":
                 OperatingData.divertPowerToThrusters = newValue;
                 break;
-            case "initiateMapEvent":
-                MapData.initiateMapEvent = newValue;
-                break;
         }
 
         if (ValueChangedEvent != null)
