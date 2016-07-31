@@ -14,6 +14,7 @@ namespace Meg.Networking
         // Static Properties
         // ------------------------------------------------------------
 
+        /** Return the local player object (used to push commands to server.) */
         public static serverPlayer LocalPlayer
         {
             get
@@ -26,6 +27,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the server object (contains all data objects.) */
         private static GameObject _serverObject;
         public static GameObject ServerObject
         {
@@ -37,6 +39,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the server data object (contains shared core state values.) */
         private static serverData _serverData;
         public static serverData ServerData
         {
@@ -48,6 +51,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the error data object (contains shared error flag values.) */
         private static errorData _errorData;
         public static errorData ErrorData
         {
@@ -59,6 +63,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the map data object (contains shared vessel state values.) */
         private static mapData _mapData;
         public static mapData MapData
         {
@@ -70,7 +75,7 @@ namespace Meg.Networking
             }
         }
 
-
+        /** Return the map data object (contains shared crew state values.) */
         private static crewData _crewData;
         public static crewData CrewData
         {
@@ -82,6 +87,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the map data object (contains shared oxygen state values.) */
         private static oxygenData _oxygenData;
         public static oxygenData OxygenData
         {
@@ -93,6 +99,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the map data object (contains shared battery state values.) */
         private static batteryData _batteryData;
         public static batteryData BatteryData
         {
@@ -104,6 +111,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the map data object (contains shared operating state values.) */
         private static operatingData _operatingData;
         public static operatingData OperatingData
         {
@@ -119,11 +127,13 @@ namespace Meg.Networking
         // Static Methods
         // ------------------------------------------------------------
 
+        /** Whether the server object is available for use yet. */
         public static bool IsReady()
         {
             return ServerObject != null;
         }
 
+        /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName)
         {
             if (!ServerObject)
@@ -392,6 +402,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return a string representation of a shared state value, indexed by name. */
         public static string GetServerDataAsText(string valueName)
         {
             if (!ServerObject)
@@ -566,6 +577,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Set the current value of a shared boolean state value by name (only works on host). */
         public static void SetServerBool(string boolName, bool value)
         {
             if (ServerObject == null)
@@ -578,16 +590,19 @@ namespace Meg.Networking
             }
         }
 
+        /** Set the current value of a shared numeric state value by name (only works on host). */
         public static void SetServerData(string valueName, float value)
         {
             ServerData.OnValueChanged(valueName, value);
         }
 
+        /** Set the current value of a shared string state value by name (only works on host). */
         public static void SetServerData(string valueName, string value)
         {
             ServerData.OnValueChanged(valueName, value);
         }
 
+        /** Set the current value of a shared numeric state value by name (works on both clients and host). */
         public static void PostServerData(string valueName, float value)
         {
             if (ServerData && ServerData.isServer)
@@ -596,6 +611,7 @@ namespace Meg.Networking
                 LocalPlayer.PostServerData(valueName, value);
         }
 
+        /** Set the current value of a shared string state value by name (works on both clients and host). */
         public static void PostServerData(string valueName, string value)
         {
             if (ServerData && ServerData.isServer)
@@ -604,6 +620,7 @@ namespace Meg.Networking
                 LocalPlayer.PostServerData(valueName, value);
         }
 
+        /** Initiate a physics impact to the player vessel (works on both clients and host). */
         public static void PostImpact(Vector3 impactVector)
         {
             if (ServerData && ServerData.isServer)
@@ -612,38 +629,51 @@ namespace Meg.Networking
                 LocalPlayer.PostImpact(impactVector);
         }
 
+        /** Initiate a sonar event (works on both clients and host). */
         public static void PostSonarEvent(megEventSonar sonarEvent)
         {
             if (LocalPlayer)
                 LocalPlayer.PostSonarEvent(sonarEvent);
         }
 
+        /** Clear the sonar of all traces (works on both clients and host). */
         public static void PostSonarClear(megEventSonar sonarEvent)
         {
             if (LocalPlayer)
                 LocalPlayer.PostSonarClear(sonarEvent);
         }
 
+        /** Set a battery bank value (only works on host). */
         public static void SetBatteryData(int bank, float value)
         {
             ServerData.OnBatterySliderChanged(bank, value);
         }
 
+        /** Set an oxygen bank value (only works on host). */
         public static void SetOxygenData(int bank, float value)
         {
             ServerData.OnOxygenSliderChanged(bank, value);
         }
 
+        /** Number of vessels that can be displayed on the map. */
+        public static int GetVesselCount()
+        {
+            return mapData.VesselCount;
+        }
+
+        /** Set a vessel's current position and nominal speed (1-based index). */
         public static void SetVesselData(int vessel, Vector3 pos, float vesselVelocity)
         {
             ServerData.OnVesselDataChanged(vessel, pos, vesselVelocity);
         }
 
+        /** Return a vessel's current depth (1-based index). */
         public static float GetVesselDepth(int vessel)
         {
             return GetVesselData(vessel)[2];
         }
 
+        /** Set a vessel's current depth (1-based index). */
         public static void SetVesselDepth(int vessel, float depth)
         {
             Vector3 position;
@@ -654,6 +684,7 @@ namespace Meg.Networking
             SetVesselData(vessel, position, velocity);
         }
 
+        /** Return a vessel's current position (1-based index). */
         public static Vector3 GetVesselPosition(int vessel)
         {
             var data = GetVesselData(vessel);
@@ -702,6 +733,7 @@ namespace Meg.Networking
             return Mathf.Repeat(bearing, 360);
         }
 
+        /** Set a vessel's current position (1-based index). */
         public static void SetVesselPosition(int vessel, Vector3 p)
         {
             Vector3 position;
@@ -710,6 +742,7 @@ namespace Meg.Networking
             SetVesselData(vessel, p, velocity);
         }
 
+        /** Return vessel's current position/velocity data (1-based index). */
         public static void GetVesselData(int vessel, out Vector3 position, out float velocity)
         {
             var data = GetVesselData(vessel);
@@ -725,6 +758,7 @@ namespace Meg.Networking
             return Vector3.Distance(a, b);
         }
 
+        /** Return a vessel's current position as a latitude/longitude pair (1-based index). */
         public static Vector2 GetVesselLatLong(int vessel)
         {
             var position = GetVesselPosition(vessel);
@@ -740,6 +774,7 @@ namespace Meg.Networking
             return new Vector2((float) longitude, (float) latitude);
         }
 
+        /** Return a vessel's current state as am [x,y,z,speed] tuple (1-based index). */
         public static float[] GetVesselData(int vessel)
         {
             //get vessels map space position
@@ -789,11 +824,13 @@ namespace Meg.Networking
             return vesselData;
         }
 
+        /** Return the vessel movements manager. */
         public static vesselMovements GetVesselMovements()
         {
             return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null;
         }
 
+        /** Sets which vessel is controlled by the player (1-based index). */
         public static void SetPlayerVessel(int vessel)
         {
             //Debug.Log("Setting player vessel to: " + vessel);
@@ -801,6 +838,7 @@ namespace Meg.Networking
                 ServerData.SetPlayerVessel(vessel);
         }
 
+        /** Returns which vessel is controlled by the player (1-based index). */
         public static int GetPlayerVessel()
         {
             if (!ServerObject)
@@ -809,12 +847,14 @@ namespace Meg.Networking
             return MapData.playerVessel;
         }
 
+        /** Sets the player vessel's velocity in world space. */
         public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
             if (ServerObject != null)
                 ServerData.SetPlayerWorldVelocity(velocity);
         }
 
+        /** Return a vessel's visibility on the navigation map (1-based index). */
         public static bool GetVesselVis(int vessel)
         {
             if (ServerObject == null)
@@ -847,11 +887,13 @@ namespace Meg.Networking
             return vesselVis;
         }
 
+        /** Sets a vessel's visibility on the navigation map (1-based index). */
         public static void SetVesselVis(int vessel, bool state)
         {
             ServerData.SetVesselVis(vessel, state);
         }
 
+        /** Set the current vessel color theme. */
         public static void SetColorTheme(megColorTheme theme)
         {
             if (ServerObject == null)
@@ -863,6 +905,7 @@ namespace Meg.Networking
             ServerObject.GetComponent<graphicsColourHolder>().keyColor = theme.keyColor;
         }
 
+        /** Returns the current vessel color theme. */
         public static megColorTheme GetColorTheme()
         {
             megColorTheme theme = new megColorTheme();
@@ -872,6 +915,31 @@ namespace Meg.Networking
             return theme;
         }
 
+        /** Format a latitude value into a readable string (e.g. 25°20'10.5 N). */
+        public static string FormatLatitude(float value, int precision = 4)
+            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "N" : "S"); }
+
+        /** Format a longitude value into a readable string (e.g. 85°20'10.5 E). */
+        public static string FormatLongitude(float value, int precision = 4)
+            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "E" : "W"); }
+
+        /** Format a angular value into a readable string (e.g. 85°20'10.5). */
+        public static string FormatDegreeMinuteSecond(float value, int precision = 4)
+        {
+            var degrees = Mathf.FloorToInt(value);
+            var minutes = Mathf.FloorToInt((value * 60) % 60);
+            var seconds = Mathf.Abs(value * 3600) % 60;
+
+            return string.Format("{0}°{1}\'{2:N" + precision + "}\"", degrees, minutes, seconds);
+        }
+
+        /** Set the desired map event name (indicates a camera transition, only works on host). */
+        public static void SetMapEventName(string eventName)
+        {
+            ServerObject.GetComponent<mapData>().mapEventName = eventName;
+        }
+
+        /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
         {
             int outID = 0;
@@ -884,26 +952,7 @@ namespace Meg.Networking
             return outID;
         }
 
-        public static string FormatLatitude(float value, int precision = 4)
-            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "N" : "S"); }
-
-        public static string FormatLongitude(float value, int precision = 4)
-            { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "E" : "W"); }
-
-        public static string FormatDegreeMinuteSecond(float value, int precision = 4)
-        {
-            var degrees = Mathf.FloorToInt(value);
-            var minutes = Mathf.FloorToInt((value * 60) % 60);
-            var seconds = Mathf.Abs(value * 3600) % 60;
-
-            return string.Format("{0}°{1}\'{2:N" + precision + "}\"", degrees, minutes, seconds);
-        }
-
-        public static void SetMapEventName(string eventName)
-        {
-            ServerObject.GetComponent<mapData>().mapEventName = eventName;
-        }
-
+        /** Return the buttons state for a given glider button. */
         public static bool GetGliderButtonState(int buttonID)
         {
             bool buttonState = false;

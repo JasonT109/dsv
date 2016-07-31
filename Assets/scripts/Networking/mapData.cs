@@ -6,16 +6,25 @@ using Meg.Networking;
 
 public class mapData : NetworkBehaviour
 {
-    [SyncVar]
-    public int playerVessel = 1;
-    [SyncVar]
-    public float initiateMapEvent;
-    [SyncVar]
-    public string mapEventName;
+
+    /** Number of vessels that can be displayed on the map. */
+    public const int VesselCount = 6;
+
+    /** Default floor depth to assume. */
+    public const float DefaultFloorDepth = 10994;
+
+
+    [Header("Coordinates")]
     [SyncVar]
     public float latitude = 18.553059f;
     [SyncVar]
     public float longitude = 112.244285f;
+
+    [Header("Player")]
+    [SyncVar]
+    public int playerVessel = 1;
+
+    [Header("Vessel Positions")]
     [SyncVar]
     public Vector3 vessel1Pos = new Vector3(-1f, -0.5f, 2000f);
     [SyncVar]
@@ -28,6 +37,8 @@ public class mapData : NetworkBehaviour
     public Vector3 meg1Pos = new Vector3(0f, -2.5f, 8200f);
     [SyncVar]
     public Vector3 intercept1Pos = new Vector3(2f, 2f, 8200f);
+
+    [Header("Vessel Velocities")]
     [SyncVar]
     public float vessel1Velocity;
     [SyncVar]
@@ -40,6 +51,8 @@ public class mapData : NetworkBehaviour
     public float meg1Velocity;
     [SyncVar]
     public float intercept1Velocity;
+
+    [Header("Vessel Visibility")]
     [SyncVar]
     public bool vessel1Vis = true;
     [SyncVar]
@@ -53,6 +66,7 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool intercept1Vis = true;
 
+    [Header("Vessel Warnings")]
     [SyncVar]
     public bool vessel1Warning;
     [SyncVar]
@@ -66,10 +80,14 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool intercept1Warning;
 
+    [Header("Map Events")]
+    [SyncVar]
+    public float initiateMapEvent;
+    [SyncVar]
+    public string mapEventName;
 
-    /** Default floor depth to assume. */
-    public const float DefaultFloorDepth = 10994;
 
+    /** Physics update. */
     void FixedUpdate()
     {
         if (playerVessel != 0)
@@ -85,6 +103,7 @@ public class mapData : NetworkBehaviour
         }
     }
 
+    /** Set a vessel's current position and nominal speed (1-based index). */
     public void SetVesselState(int vessel, Vector3 position, float velocity)
     {
         switch (vessel)
