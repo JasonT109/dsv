@@ -46,6 +46,16 @@ public class serverPlayer : NetworkBehaviour
             CmdPostSonarEvent(sonar.eventName, sonar.waypoints, sonar.destroyOnEnd);
     }
 
+    /** Post a sonar cleanup command. */
+    public void PostSonarClear(megEventSonar sonar)
+    {
+        if (isServer)
+            ServerSonarClear();
+        else if (isClient)
+            CmdPostSonarClear();
+    }
+
+
 
     // Commands
     // ------------------------------------------------------------
@@ -77,6 +87,11 @@ public class serverPlayer : NetworkBehaviour
         });
     }
 
+    /** Command to issue a sonar clear command on the server. */
+    [Command]
+    public void CmdPostSonarClear()
+        { ServerSonarClear(); }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -94,6 +109,12 @@ public class serverPlayer : NetworkBehaviour
             megEventManager.Instance.Sonar.megPlayMegSonarEvent(sonar);
     }
 
-
+    /** Clear sonar on the server. */
+    [Server]
+    private void ServerSonarClear()
+    {
+        if (megEventManager.HasInstance)
+            megEventManager.Instance.Sonar.megSonarClear();
+    }
 
 }

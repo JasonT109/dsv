@@ -122,6 +122,15 @@ namespace Meg.SonarEvent
             so.GetComponent<graphicsSonarObject>().destroyOnLastPoint = m.destroyOnEnd;
         }
 
+        public void megSonarClear()
+        {
+            var objects = FindObjectsOfType(typeof(graphicsSonarObject))
+                .Cast<graphicsSonarObject>();
+
+            foreach (var o in objects)
+                Destroy(o.gameObject);
+        }
+
         void Start()
         {
             //get our sub so we know where to spawn the sonar object

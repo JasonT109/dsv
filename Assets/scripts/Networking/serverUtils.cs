@@ -618,6 +618,12 @@ namespace Meg.Networking
                 LocalPlayer.PostSonarEvent(sonarEvent);
         }
 
+        public static void PostSonarClear(megEventSonar sonarEvent)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSonarClear(sonarEvent);
+        }
+
         public static void SetBatteryData(int bank, float value)
         {
             ServerData.OnBatterySliderChanged(bank, value);

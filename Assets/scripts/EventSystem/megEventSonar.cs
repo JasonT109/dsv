@@ -92,6 +92,7 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
+            serverUtils.PostSonarClear(this);
         }
 
     }
