@@ -59,6 +59,17 @@ namespace Meg.Networking
             }
         }
 
+        private static gliderErrorData _gliderErrorData;
+        public static gliderErrorData GliderErrorData
+        {
+            get
+            {
+                if (!_gliderErrorData && ServerObject)
+                    _gliderErrorData = ServerObject.GetComponent<gliderErrorData>();
+                return _gliderErrorData;
+            }
+        }
+
         private static mapData _mapData;
         public static mapData MapData
         {
@@ -127,7 +138,7 @@ namespace Meg.Networking
         public static float GetServerData(string valueName)
         {
             if (!ServerObject)
-                return 0;
+                return -1;
 
             switch (valueName)
             {
@@ -255,6 +266,30 @@ namespace Meg.Networking
                     return ErrorData.error_hydraulicPump;
                 case "error_oxygenPump":
                     return ErrorData.error_oxygenPump;
+                case "error_thruster_l":
+                    return GliderErrorData.error_thruster_l;
+                case "error_thruster_r":
+                    return GliderErrorData.error_thruster_r;
+                case "error_vertran_l":
+                    return GliderErrorData.error_vertran_l;
+                case "error_vertran_r":
+                    return GliderErrorData.error_vertran_r;
+                case "error_jet_l":
+                    return GliderErrorData.error_jet_l;
+                case "error_jet_r":
+                    return GliderErrorData.error_jet_r;
+                case "thruster_heat_l":
+                    return GliderErrorData.thruster_heat_l;
+                case "thruster_heat_r":
+                    return GliderErrorData.thruster_heat_r;
+                case "vertran_heat_l":
+                    return GliderErrorData.vertran_heat_l;
+                case "vertran_heat_r":
+                    return GliderErrorData.vertran_heat_r;
+                case "jet_heat_l":
+                    return GliderErrorData.jet_heat_l;
+                case "jet_heat_r":
+                    return GliderErrorData.jet_heat_r;
                 case "inputXaxis":
                     return ServerData.inputXaxis;
                 case "inputYaxis":
@@ -388,7 +423,7 @@ namespace Meg.Networking
                 case "divertPowerToThrusters":
                     return OperatingData.divertPowerToThrusters;
                 default:
-                    return 0;
+                    return -2;
             }
         }
 
@@ -561,6 +596,44 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength.ToString("n1");
                 case "divertPowerToThrusters":
                     return OperatingData.divertPowerToThrusters.ToString("n1");
+                case "thruster_heat_l":
+                    return GliderErrorData.thruster_heat_l.ToString("n1") + "°c";
+                case "thruster_heat_r":
+                    return GliderErrorData.thruster_heat_r.ToString("n1") + "°c";
+                case "vertran_heat_l":
+                    return GliderErrorData.vertran_heat_l.ToString("n1") + "°c";
+                case "vertran_heat_r":
+                    return GliderErrorData.vertran_heat_r.ToString("n1") + "°c";
+                case "thruster_l_status":
+                    if (GliderErrorData.thruster_heat_l > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
+                case "thruster_r_status":
+                    if (GliderErrorData.thruster_heat_r > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
+                case "vertran_l_status":
+                    if (GliderErrorData.vertran_heat_l > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
+                case "vertran_r_status":
+                    if (GliderErrorData.vertran_heat_r > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
+                case "jet_l_status":
+                    if (GliderErrorData.jet_heat_l > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
+                case "jet_r_status":
+                    if (GliderErrorData.jet_heat_r > 85)
+                        return "WARNING";
+                    else
+                        return "OK";
                 default:
                     return "no value";
             }

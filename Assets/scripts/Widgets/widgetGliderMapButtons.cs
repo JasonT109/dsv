@@ -8,7 +8,6 @@ public class widgetGliderMapButtons : MonoBehaviour
     private bool contours = false;
     private bool canTrigger = true;
 
-
     IEnumerator wait(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);

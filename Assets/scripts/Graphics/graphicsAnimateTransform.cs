@@ -11,7 +11,7 @@ public class graphicsAnimateTransform : MonoBehaviour
     public float[] offDelayTime = new float[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     public float[] toValue = new float[9] { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     public float[] fromValue = new float[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
+    public bool animateOnActive = false;
     public GameObject triggerButton;
 
     private bool canPress = true;
@@ -70,9 +70,50 @@ public class graphicsAnimateTransform : MonoBehaviour
         canPress = true;
     }
 
+    void OnEnable()
+    {
+        if (animateOnActive)
+        {
+            triggerOn();
+        }
+    }
+
+    void OnDisable()
+    {
+        if (animateOnActive)
+        {
+            for (int i = 0; i < animateAxis.Length; i++)
+            {
+                if (animateAxis[i])
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            transform.localPosition = new Vector3(fromValue[i], transform.localPosition.y, transform.localPosition.z);
+                            break;
+                        case 1:
+                            transform.localPosition = new Vector3(transform.localPosition.x, fromValue[i], transform.localPosition.z);
+                            break;
+                        case 2:
+                            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, fromValue[i]);
+                            break;
+                        case 6:
+                            transform.localScale = new Vector3(fromValue[i], transform.localScale.y, transform.localScale.z);
+                            break;
+                        case 7:
+                            transform.localScale = new Vector3(transform.localScale.x, fromValue[i], transform.localScale.z);
+                            break;
+                        case 8:
+                            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, fromValue[i]);
+                            break;
+                    }
+                }
+            }
+        }
+    }
     void Update()
     {
-        if (triggerButton.GetComponent<buttonControl>().pressed && canPress)
+        if (!animateOnActive && triggerButton.GetComponent<buttonControl>().pressed && canPress)
         {
             canPress = false;
 

@@ -389,10 +389,14 @@ public class buttonControl : MonoBehaviour
             }
             if (active)
             {
+                m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
+                //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
                 m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
             }
             else
             {
+                m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
+                //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
                 m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
             }
         }
@@ -400,6 +404,7 @@ public class buttonControl : MonoBehaviour
         {
             if (!pressed && !active)
             {
+                m.SetColor("_TintColor", GetThemeColor(3));
                 m.color = GetThemeColor(3);
             }
         }

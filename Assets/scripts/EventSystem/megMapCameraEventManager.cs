@@ -162,6 +162,9 @@ public class megMapCameraEventManager : MonoBehaviour
         runningEvent = null;
         runTime = 0f;
 
+        //stop server initiated event
+        serverUtils.SetServerData("initiateMapEvent", 0);
+
         // turn off the trigger button
         if (!runningEventButton.buttonGroup)
             runningEventButton.active = false;
