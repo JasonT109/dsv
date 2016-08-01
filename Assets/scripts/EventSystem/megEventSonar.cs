@@ -13,12 +13,9 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        /** Id for this event. */
-        public override string id { get { return "Sonar"; } }
-
-        public string eventName;
-        public Vector3[] waypoints;
-        public bool destroyOnEnd;
+        public string eventName = "";
+        public Vector3[] waypoints = { };
+        public bool destroyOnEnd = true;
 
 
         // Lifecycle
@@ -37,12 +34,16 @@ namespace Meg.EventSystem
         {
             var json = base.Save();
             json.AddField("eventName", eventName);
-            var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
-            foreach (var w in waypoints)
-                waypointsJson.Add(w);
-
-            json.AddField("waypoints", waypointsJson);
             json.AddField("destroyOnEnd", destroyOnEnd);
+
+            if (waypoints != null && waypoints.Length > 0)
+            {
+                var waypointsJson = new JSONObject(JSONObject.Type.ARRAY);
+                foreach (var w in waypoints)
+                    waypointsJson.Add(w);
+
+                json.AddField("waypoints", waypointsJson);
+            }
 
             return json;
         }
@@ -53,6 +54,7 @@ namespace Meg.EventSystem
             base.Load(json);
             json.GetField(ref eventName, "eventName");
             json.GetField(ref destroyOnEnd, "destroyOnEnd");
+
             var waypointsJson = json.GetField("waypoints");
             if (waypointsJson != null)
             {
@@ -64,6 +66,18 @@ namespace Meg.EventSystem
                     waypoints[i] = new Vector3(w[0].f, w[1].f, w[2].f);
                 }
             }
+        }
+
+        /** String representation. */
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
+            if (!string.IsNullOrEmpty(eventName))
+                return string.Format("Sonar: {0}", eventName);
+
+            return base.ToString();
         }
 
 

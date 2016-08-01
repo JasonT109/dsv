@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -49,11 +50,20 @@ namespace Meg.EventSystem
         /** Whether file can be rewound. */
         public bool canRewind { get { return !empty && !playing && running; } }
 
-        /** Whether file can load more groups. */
-        public bool canLoad { get { return true; } } // !playing; } }
+        /** Whether file can be added to. */
+        public bool canAdd { get { return !playing; } }
+
+        /** Whether file can be removed from. */
+        public bool canRemove { get { return !empty && !playing; } }
 
         /** Whether file can be cleared. */
         public bool canClear { get { return !empty && !playing; } }
+
+        /** Whether file can be saved at the moment. */
+        public bool canSave { get { return !empty && !playing; } }
+
+        /** The selected event group (if any). */
+        public megEventGroup selectedGroup { get; set; }
 
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
@@ -72,9 +82,6 @@ namespace Meg.EventSystem
 
         // Members
         // ------------------------------------------------------------
-
-        /** Loaded files. */
-        private readonly HashSet<string> _loadedFiles = new HashSet<string>();
 
         /** Tracking data for server values. */
         private readonly Dictionary<string, ServerValue> _values = new Dictionary<string, ServerValue>();
@@ -177,6 +184,36 @@ namespace Meg.EventSystem
                 Pause();
         }
 
+        /** Add an group of a given type. */
+        public megEventGroup AddGroup()
+        {
+            var e = CreateGroup();
+            groups.Add(e);
+            return e;
+        }
+
+        /** Insert an group of a given type after the given group. */
+        public megEventGroup InsertGroup(megEventGroup insertAfter)
+        {
+            var e = CreateGroup();
+            var insertIndex = groups.IndexOf(insertAfter);
+            if (insertIndex >= 0)
+                groups.Insert(insertIndex + 1, e);
+            else
+                groups.Add(e);
+
+            return e;
+        }
+
+        /** Create an group of a given type. */
+        public megEventGroup CreateGroup()
+            { return new megEventGroup(this); }
+
+        /** Remove an group from the group. */
+        public void RemoveGroup(megEventGroup e)
+        {
+            groups.Remove(e);
+        }
 
         // Server values
         // ------------------------------------------------------------
@@ -250,14 +287,18 @@ namespace Meg.EventSystem
         /** Load state from a JSON file. */
         public virtual void LoadFromFile(string path)
         {
-            if (_loadedFiles.Contains(path))
-                return;
-
             var text = File.ReadAllText(path);
             var json = new JSONObject(text);
             Load(json);
+        }
 
-            _loadedFiles.Add(path);
+        /** Save state to a JSON file. */
+        public virtual void SaveToFile(string path)
+        {
+            var json = Save();
+            var text = json.Print(true);
+
+            File.WriteAllText(path, text);
         }
 
     }

@@ -13,13 +13,10 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** The server data value to manipulate. */
-        public string serverParam;
+        public string serverParam = "";
 
         /** Value to apply to server data. */
         public float serverValue;
-
-        /** Id for this event. */
-        public override string id { get { return serverParam; } }
 
 
         // Members
@@ -45,9 +42,15 @@ namespace Meg.EventSystem
         /** String representation. */
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+            if (string.IsNullOrEmpty(serverParam))
+                return base.ToString();
+
             var value = serverUtils.GetServerData(serverParam);
-            return string.Format("{0}: {1:N1} ({2:N1})", id, serverValue, value);
+            return string.Format("{0}: {1:N1} ({2:N1})", serverParam, serverValue, value);
         }
+
 
         // Load / Save
         // ------------------------------------------------------------

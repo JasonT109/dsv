@@ -12,9 +12,6 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        /** Id for this event. */
-        public override string id { get { return "Physics"; } }
-
         /** Direction of physics impact force. */
         public Vector3 physicsDirection;
 
@@ -36,6 +33,9 @@ namespace Meg.EventSystem
         /** String representation. */
         public override string ToString()
         {
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
             return string.Format("Impact: d={0}, m={1:N1}", physicsDirection, physicsMagnitude);
         }
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Linq;
@@ -71,6 +71,8 @@ public class gameInputs : NetworkBehaviour
         {
             status.GetComponent<TextMesh>().text = "Strong";
         }
+
+        glScreenManager.EnsureInstanceExists();
     }
 
     /** when app gets windows focus sets the focus state */
@@ -145,7 +147,7 @@ public class gameInputs : NetworkBehaviour
             return;
 
         /** If we have changed the current screen ID update it with the server */
-        if (glScreenManager.Instance)
+        if (glScreenManager.HasInstance)
         {
             if (glScreenManager.Instance.hasChanged)
             {

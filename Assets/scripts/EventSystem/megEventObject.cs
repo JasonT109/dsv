@@ -18,7 +18,7 @@ namespace Meg.EventSystem
         public float serverValue;
 
         /** Id for this event. */
-        public override string id { get { return serverParam; } }
+        public override string name { get { return serverParam; } }
 
         public bool physicsEvent
         { get { return type == megEventType.Physics; } }

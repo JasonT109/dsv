@@ -28,9 +28,6 @@ namespace Meg.EventSystem
         /** The type of event. */
         public readonly megEventType type;
 
-        /** Id for this event. */
-        public abstract string id { get; }
-
         /** Group that this event belongs to. */
         public megEventGroup group { get { return _group; } }
 
@@ -68,6 +65,13 @@ namespace Meg.EventSystem
         /** Whether event should be manually triggered by a button. */
         public bool hasTrigger { get { return !string.IsNullOrEmpty(triggerLabel); } }
 
+        /** Whether event is minimized. */
+        public bool minimized { get; set; }
+
+        /** Id for this event. */
+        public virtual string name
+            { get { return ToString(); } }
+
 
         // Members
         // ------------------------------------------------------------
@@ -83,6 +87,7 @@ namespace Meg.EventSystem
         protected megEvent(megEventType type, megEventGroup group = null)
         {
             this.type = type;
+            minimized = true;
             _group = group;
         }
 
@@ -159,7 +164,10 @@ namespace Meg.EventSystem
         /** String representation. */
         public override string ToString()
         {
-            return id;
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
+            return type.ToString();
         }
 
 

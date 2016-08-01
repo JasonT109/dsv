@@ -14,6 +14,9 @@ public class debugEventGroupUi : MonoBehaviour
 
     [Header("Components")]
 
+    /** The group's backdrop graphic. */
+    public Graphic Backdrop;
+
     /** The event group's toggle button. */
     public Toggle PausedToggle;
 
@@ -35,6 +38,15 @@ public class debugEventGroupUi : MonoBehaviour
     /** Color to use for paused toggle when file is not playing. */
     public Color InactiveColor;
 
+    /** Color to use for backdrop when group is active. */
+    public Color BackdropActiveColor;
+
+    /** Color to use for backdrop when group is inactive. */
+    public Color BackdropInactiveColor;
+
+    /** Color to use for backdrop when group is selected. */
+    public Color BackdropSelectedColor;
+
 
     [Header("Prefabs")]
 
@@ -49,6 +61,10 @@ public class debugEventGroupUi : MonoBehaviour
         set { SetGroup(value); }
     }
 
+    /** Whether an group is set. */
+    public bool HasGroup
+        { get { return _group != null; } }
+    
     /** The event file. */
     public megEventFile File
         { get { return _group.file; } }
@@ -67,8 +83,11 @@ public class debugEventGroupUi : MonoBehaviour
         set { SetLooping(value); }
     }
 
+    /** Event signature for a group selection event. */
+    public delegate void GroupSelectedHandler(debugEventGroupUi groupUi, debugEventUi eventUi);
+
     /** Selection event. */
-    public event debugEventUi.EventSelectedHandler OnEventSelected;
+    public event GroupSelectedHandler OnSelected;
 
 
     // Members
@@ -142,7 +161,14 @@ public class debugEventGroupUi : MonoBehaviour
         LoopingToggle.isOn = value;
     }
 
+    /** Select this group. */
+    public void Select()
+    {
+        if (OnSelected != null)
+            OnSelected(this, null);
+    }
 
+    
     // Private Methods
     // ------------------------------------------------------------
 
@@ -157,6 +183,15 @@ public class debugEventGroupUi : MonoBehaviour
             return;
 
         _updating = true;
+
+        var c = BackdropInactiveColor;
+        if (_group.running)
+            c = BackdropActiveColor;
+        if (_group.paused)
+            c.a *= 0.5f;
+        if (_group.file.selectedGroup == _group)
+            c = BackdropSelectedColor;
+        Backdrop.color = c;
 
         PausedToggle.isOn = !_group.paused;
         PausedToggle.graphic.color = File.playing ? ActiveColor : InactiveColor;
@@ -174,14 +209,15 @@ public class debugEventGroupUi : MonoBehaviour
 
         // Update trigger buttons.
         UpdateTriggers();
+        TriggerContainer.gameObject.SetActive(!Group.hideTriggers);
 
         _updating = false;
     }
 
     private void HandleEventSelected(debugEventUi ui)
     {
-        if (OnEventSelected != null)
-            OnEventSelected(ui);
+        if (OnSelected != null)
+            OnSelected(this, ui);
     }
 
     private void UpdateTriggers()
