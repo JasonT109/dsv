@@ -212,6 +212,8 @@ namespace Meg.EventSystem
                     return new megEventSonar(this);
                 case megEventType.MapCamera:
                     return new megEventMapCamera(this);
+                case megEventType.Vessels:
+                    return new megEventVessels(this);
                 default:
                     return new megEventValue(this);
             }

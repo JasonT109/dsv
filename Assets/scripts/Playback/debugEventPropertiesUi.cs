@@ -100,6 +100,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Input text for map camera event name. */
     public InputField MapCameraEventNameInput;
 
+    /** Button to capture current map camera state. */
+    public Button MapCameraCaptureButton;
+
 
     [Header("Sonar Event Components")]
 
@@ -108,6 +111,15 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Input text for sonar event name. */
     public InputField SonarEventNameInput;
+
+
+    [Header("Vessels Event Components")]
+
+    /** Properties panel for vessel simulation events. */
+    public Transform VesselsProperties;
+
+    /** Button to capture current state. */
+    public Button VesselsCaptureButton;
 
 
     // Properties
@@ -139,6 +151,10 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Event interpreted as a sonar event. */
     public megEventSonar SonarEvent
         { get { return _event as megEventSonar; } }
+
+    /** Event interpreted as a vessels event. */
+    public megEventVessels VesselsEvent
+        { get { return _event as megEventVessels; } }
 
     /** Whether event is minimized. */
     public bool Minimized
@@ -268,6 +284,8 @@ public class debugEventPropertiesUi : MonoBehaviour
             UpdateMapCameraProperties();
         else if (_event is megEventSonar)
             UpdateSonarProperties();
+        else if (_event is megEventVessels)
+            UpdateVesselsProperties();
 
         _initializing = false;
     }
@@ -289,6 +307,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !minimized);
         MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !minimized);
         SonarProperties.gameObject.SetActive(_event is megEventSonar && !minimized);
+        VesselsProperties.gameObject.SetActive(_event is megEventVessels && !minimized);
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
 
@@ -302,6 +321,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         ValueProperties.gameObject.SetActive(false);
         PhysicsProperties.gameObject.SetActive(false);
         SonarProperties.gameObject.SetActive(false);
+        VesselsProperties.gameObject.SetActive(false);
     }
 
 
@@ -557,6 +577,14 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraEvent.eventName = value;
     }
 
+    public void MapCameraCapture()
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.Capture();
+    }
+
 
     // Sonar Event Interface
     // ------------------------------------------------------------
@@ -577,6 +605,22 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         SonarEvent.eventName = value;
+    }
+
+
+    // Vessels Event Interface
+    // ------------------------------------------------------------
+
+    private void UpdateVesselsProperties()
+    {
+    }
+
+    public void VesselsCapture()
+    {
+        if (_initializing)
+            return;
+
+        VesselsEvent.Capture();
     }
 
 }

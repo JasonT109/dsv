@@ -12,7 +12,8 @@ namespace Meg.EventSystem
         Value = 0,
         Physics = 1,
         Sonar = 2,
-        MapCamera = 3
+        MapCamera = 3,
+        Vessels = 4
     }
 
 
