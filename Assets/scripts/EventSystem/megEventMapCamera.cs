@@ -86,7 +86,7 @@ namespace Meg.EventSystem
             if (!string.IsNullOrEmpty(eventName))
                 return string.Format("Map: {0}", eventName);
 
-            return base.ToString();
+            return string.Format("Map: {0}", toPosition);
         }
 
         /** Apply a custom camera state to this event. */
