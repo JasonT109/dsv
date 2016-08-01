@@ -42,6 +42,12 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Capture current map camera state. */
+        public void Capture()
+        {
+            // TODO: Implement.
+        }
+
         /** String representation. */
         public override string ToString()
         {

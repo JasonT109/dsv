@@ -231,9 +231,14 @@ public class vesselMovements : NetworkBehaviour
     // Load / Save
     // ------------------------------------------------------------
 
+    /** Save both movement and vessel state to JSON. */
+    [Server]
+    public JSONObject SaveWithState()
+        { return Save(true); }
+
     /** Save movement state to JSON. */
     [Server]
-    public JSONObject Save()
+    public JSONObject Save(bool saveVesselState = false)
     {
         var json = new JSONObject();
         json.AddField("Active", Active);
@@ -243,8 +248,16 @@ public class vesselMovements : NetworkBehaviour
         foreach (var m in _movements)
             if (m.Count > 0)
                 movementsJson.Add(m[0].Save());
-
         json.AddField("Movements", movementsJson);
+
+        if (saveVesselState)
+        {
+            var vesselsJson = new JSONObject(JSONObject.Type.ARRAY);
+            for (var i = 0; i < serverUtils.GetVesselCount(); i++)
+                vesselsJson.Add(SaveVesselState(i + 1));
+            json.AddField("Vessels", vesselsJson);
+        }
+
 
         return json;
     }
@@ -266,6 +279,14 @@ public class vesselMovements : NetworkBehaviour
             var movement = CreateVesselMovement(type);
             movement.Load(movementJson, MapData);
             SetVesselMovement(movement.Vessel, movement);
+        }
+
+        // Load in vessel states from data.
+        var vesselsJson = json.GetField("Vessels");
+        if (vesselsJson != null)
+        {
+            for (var i = 0; i < vesselsJson.Count; i++)
+                LoadVesselState(i + 1, vesselsJson[i]);
         }
 
         // Load simulation active state.
@@ -352,5 +373,39 @@ public class vesselMovements : NetworkBehaviour
         // Update due time to match interception time.
         serverUtils.SetServerData("dueTime", TimeToIntercept);
     }
+
+    /** Save vessel state to JSON. */
+    private JSONObject SaveVesselState(int vessel)
+    {
+        var json = new JSONObject();
+        json.AddField("Position", serverUtils.GetVesselPosition(vessel));
+        json.AddField("Velocity", serverUtils.GetVesselVelocity(vessel));
+        json.AddField("Visible", serverUtils.GetVesselVis(vessel));
+        return json;
+    }
+
+    /** Load vessel state from JSON. */
+    private void LoadVesselState(int vessel, JSONObject json)
+    {
+        if (json.HasField("Position"))
+        {
+            var position = Vector3.zero;
+            json.GetField(ref position, "Position");
+            serverUtils.SetVesselPosition(vessel, position);
+        }
+        if (json.HasField("Velocity"))
+        {
+            var velocity = 0.0f;
+            json.GetField(ref velocity, "Velocity");
+            serverUtils.SetVesselVelocity(vessel, velocity);
+        }
+        if (json.HasField("Visible"))
+        {
+            var visible = false;
+            json.GetField(ref visible, "Visible");
+            serverUtils.SetVesselVis(vessel, visible);
+        }
+    }
+
 
 }

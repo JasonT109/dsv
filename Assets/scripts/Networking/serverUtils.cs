@@ -729,6 +729,13 @@ namespace Meg.Networking
             return new Vector3(data[0], data[1], data[2]);
         }
 
+        /** Return a vessel's velocity (1-based index). */
+        public static float GetVesselVelocity(int vessel)
+        {
+            var data = GetVesselData(vessel);
+            return data[3];
+        }
+
         /** Return the player vessel's current target vessel (or 0 if there is no target). */
         public static int GetTargetVessel()
         {
@@ -778,6 +785,15 @@ namespace Meg.Networking
             float velocity;
             GetVesselData(vessel, out position, out velocity);
             SetVesselData(vessel, p, velocity);
+        }
+
+        /** Set a vessel's current speed (1-based index). */
+        public static void SetVesselVelocity(int vessel, float v)
+        {
+            Vector3 position;
+            float velocity;
+            GetVesselData(vessel, out position, out velocity);
+            SetVesselData(vessel, position, v);
         }
 
         /** Return vessel's current position/velocity data (1-based index). */

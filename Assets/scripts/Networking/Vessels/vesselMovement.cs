@@ -105,6 +105,7 @@ public abstract class vesselMovement : NetworkBehaviour
         json.AddField("Vessel", Vessel);
         json.AddField("Active", Active);
         json.AddField("Type", GetSaveKey());
+
         return json;
     }
 
@@ -113,6 +114,7 @@ public abstract class vesselMovement : NetworkBehaviour
     {
         json.GetField(ref Vessel, "Vessel");
         json.GetField(ref Active, "Active");
+
         Configure(Vessel, Active);
     }
 
