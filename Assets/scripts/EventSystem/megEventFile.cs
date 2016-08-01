@@ -83,9 +83,6 @@ namespace Meg.EventSystem
         // Members
         // ------------------------------------------------------------
 
-        /** Loaded files. */
-        private readonly HashSet<string> _loadedFiles = new HashSet<string>();
-
         /** Tracking data for server values. */
         private readonly Dictionary<string, ServerValue> _values = new Dictionary<string, ServerValue>();
 
@@ -290,14 +287,9 @@ namespace Meg.EventSystem
         /** Load state from a JSON file. */
         public virtual void LoadFromFile(string path)
         {
-            if (_loadedFiles.Contains(path))
-                return;
-
             var text = File.ReadAllText(path);
             var json = new JSONObject(text);
             Load(json);
-
-            _loadedFiles.Add(path);
         }
 
         /** Save state to a JSON file. */

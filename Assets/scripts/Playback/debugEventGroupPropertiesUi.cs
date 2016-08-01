@@ -17,6 +17,9 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** The event group's name input. */
     public InputField NameInput;
 
+    /** Header area. */
+    public CanvasGroup Header;
+
     /** The event group's loopable button. */
     public Toggle CanLoopToggle;
 
@@ -116,13 +119,14 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     private void Start()
     {
         ConfigureUi();
-        UpdateUi();
+        ClearUi();
     }
 
     /** Updating. */
     private void Update()
     {
-        UpdateUi();
+        if (_group != null)
+            UpdateUi();
     }
 
 
@@ -132,7 +136,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Sets the group's name. */
     public void NameInputChanged(string value)
     {
-        if (_updating)
+        if (_updating || _group == null)
             return;
 
         _group.id = value;
@@ -277,9 +281,12 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         _group = value;
 
         if (_group != null)
+        {
             NameInput.text = _group.id;
-
-        UpdateUi();
+            UpdateUi();
+        }
+        else
+            ClearUi();
     }
 
     private void ConfigureUi()
@@ -294,11 +301,12 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         _updating = true;
 
+        NameInput.interactable = !File.playing;
+
+        Header.gameObject.SetActive(true);
         CanLoopToggle.isOn = _group.canLoop;
         ShowTimelineToggle.isOn = !_group.hideTimeline;
         ShowTriggersToggle.isOn = !_group.hideTriggers;
-
-        NameInput.interactable = !File.playing;
 
         Footer.interactable = !File.playing;
         RemoveEventButton.interactable = File.selectedEvent != null && !File.playing;
@@ -309,11 +317,21 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         _updating = false;
     }
 
+    private void ClearUi()
+    {
+        NameInput.text = "";
+        Header.gameObject.SetActive(false);
+        Footer.interactable = false;
+
+        UpdateEventProperties();
+    }
+    
     private void UpdateEventProperties()
     {
         var index = 0;
-        foreach (var e in _group.events)
-            GetEventProperties(index++).Event = e;
+        if (_group != null)
+            foreach (var e in _group.events)
+                GetEventProperties(index++).Event = e;
 
         for (var i = 0; i < _eventProperties.Count; i++)
             _eventProperties[i].gameObject.SetActive(i < index);

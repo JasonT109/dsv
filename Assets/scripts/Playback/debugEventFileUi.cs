@@ -145,7 +145,7 @@ public class debugEventFileUi : MonoBehaviour
         if (_updatingUi)
             return;
         
-        if (value && !_file.running || _file.completed)
+        if (value && !_file.running)
             _file.Start();
         else if (value && _file.paused)
             _file.Resume();
@@ -265,7 +265,7 @@ public class debugEventFileUi : MonoBehaviour
         DurationText.text = string.Format("/ {0:00}:{1:00}:{2:00}",
             d.Hours, d.Minutes, d.Seconds);
 
-        Properties.gameObject.SetActive(Properties.HasGroup);
+        // Properties.gameObject.SetActive(Properties.HasGroup);
 
         _updatingUi = false;
     }
