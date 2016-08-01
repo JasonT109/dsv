@@ -43,7 +43,7 @@ public class debugEventFileUi : MonoBehaviour
     public Graphic PauseIcon;
 
     /** Event properties. */
-    public debugEventPropertiesUi Properties;
+    public debugEventGroupPropertiesUi Properties;
 
     /** Event folder. */
     public debugSceneFolderUi Folder;
@@ -101,6 +101,7 @@ public class debugEventFileUi : MonoBehaviour
     private void Start()
     {
         _playLabel = PlayButton.GetComponentInChildren<Text>();
+        Properties.OnSelected += HandlePropertiesSelected;
         UpdateUi();
     }
 
@@ -157,7 +158,7 @@ public class debugEventFileUi : MonoBehaviour
         if (!_file.canClear)
             return;
 
-        Properties.Event = null;
+        Properties.Group = null;
 
         _file = new megEventFile();
         InitUi();
@@ -232,7 +233,7 @@ public class debugEventFileUi : MonoBehaviour
         DurationText.text = string.Format("/ {0:00}:{1:00}:{2:00}",
             d.Hours, d.Minutes, d.Seconds);
 
-        Properties.gameObject.SetActive(Properties.HasEvent);
+        Properties.gameObject.SetActive(Properties.HasGroup);
 
         _updatingUi = false;
     }
@@ -261,20 +262,38 @@ public class debugEventFileUi : MonoBehaviour
         var ui = Instantiate(EventGroupUiPrefab);
         ui.transform.SetParent(Groups, false);
         ui.Group = group;
-        ui.OnEventSelected += HandleEventSelected;
+        ui.OnSelected += HandleGroupSelected;
 
         _groups.Add(ui);
     }
 
-    private void HandleEventSelected(debugEventUi ui)
+    private void HandleGroupSelected(debugEventGroupUi groupUi, debugEventUi eventUi)
     {
-        var selected = ui.Event;
-        if (selected == Properties.Event)
-            selected = null;
+        var g = groupUi.Group;
+        var e = eventUi ? eventUi.Event : null;
+        if (g == _file.selectedGroup && e == null)
+            g = null;
 
-        Properties.Event = selected;
-        _file.selectedEvent = selected;
+        Properties.Group = g;
+
+        if (e == _file.selectedEvent)
+            Properties.ToggleEvent(e);
+        else
+            Properties.ExpandEvent(e);
+
+        _file.selectedGroup = g;
+        _file.selectedEvent = e;
     }
 
+    private void HandlePropertiesSelected(debugEventGroupPropertiesUi groupUi, debugEventPropertiesUi eventUi)
+    {
+        var e = eventUi ? eventUi.Event : null;
+        Properties.ToggleEvent(e);
+
+        if (e == _file.selectedEvent)
+            e = null;
+
+        _file.selectedEvent = e;
+    }
 
 }

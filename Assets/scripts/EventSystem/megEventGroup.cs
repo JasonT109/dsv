@@ -54,6 +54,9 @@ namespace Meg.EventSystem
         /** Whether group's timeline is hidden. */
         public bool hideTimeline { get; set; }
 
+        /** Whether group's trigger buttons are hidden. */
+        public bool hideTriggers { get; set; }
+
         /** Whether group can be looped. */
         public bool canLoop { get; set; }
 
@@ -198,6 +201,8 @@ namespace Meg.EventSystem
                 json.AddField("pauseOnComplete", pauseOnComplete);
             if (hideTimeline)
                 json.AddField("hideTimeline", hideTimeline);
+            if (hideTriggers)
+                json.AddField("hideTriggers", hideTriggers);
             if (canLoop)
                 json.AddField("canLoop", canLoop);
 
@@ -229,6 +234,9 @@ namespace Meg.EventSystem
             bool jsonHideTimeline;
             if (json.GetField(out jsonHideTimeline, "hideTimeline", false))
                 hideTimeline = jsonHideTimeline;
+            bool jsonHideTriggers;
+            if (json.GetField(out jsonHideTriggers, "hideTriggers", false))
+                hideTriggers = jsonHideTriggers;
 
             var eventsJson = json.GetField("events");
             events.Clear();

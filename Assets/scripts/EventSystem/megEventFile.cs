@@ -59,6 +59,9 @@ namespace Meg.EventSystem
         /** Whether file can be saved at the moment. */
         public bool canSave { get { return !empty && !playing; } }
 
+        /** The selected event group (if any). */
+        public megEventGroup selectedGroup { get; set; }
+
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
 

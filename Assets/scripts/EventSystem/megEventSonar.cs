@@ -13,9 +13,6 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        /** Id for this event. */
-        public override string id { get { return "Sonar"; } }
-
         public string eventName;
         public Vector3[] waypoints;
         public bool destroyOnEnd;
@@ -69,6 +66,18 @@ namespace Meg.EventSystem
                     waypoints[i] = new Vector3(w[0].f, w[1].f, w[2].f);
                 }
             }
+        }
+
+        /** String representation. */
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
+            if (!string.IsNullOrEmpty(eventName))
+                return string.Format("Sonar: {0}", eventName);
+
+            return base.ToString();
         }
 
 

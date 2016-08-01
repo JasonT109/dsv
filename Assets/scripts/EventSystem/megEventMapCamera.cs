@@ -20,9 +20,6 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        /** Id for this event. */
-        public override string id { get { return eventName; } }
-
         public string eventName;
         public Vector3 toPosition;
         public Vector3 toOrientation;
@@ -33,7 +30,6 @@ namespace Meg.EventSystem
         public bool triggeredByServer;
         public int serverTriggerID;
         public int priority;
-
 
         // Lifecycle
         // ------------------------------------------------------------
@@ -49,7 +45,13 @@ namespace Meg.EventSystem
         /** String representation. */
         public override string ToString()
         {
-            return string.Format("Map Camera: {0}", eventName);
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
+            if (!string.IsNullOrEmpty(eventName))
+                return string.Format("Map: {0}", eventName);
+
+            return base.ToString();
         }
 
 
@@ -115,7 +117,7 @@ namespace Meg.EventSystem
         private void TriggerMapCameraEvent(string name)
         {
             // TODO: Turn this into an RPC.
-            Debug.Log("Map camera event: " + id);
+            Debug.Log("Map camera event: " + this.name);
             PostServerData("mapEventName", eventName);
             PostServerData("initiateMapEvent", 1.0f);
         }

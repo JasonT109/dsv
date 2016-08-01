@@ -35,6 +35,15 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Canvas group. */
     public CanvasGroup CanvasGroup;
 
+    /** Header toggle. */
+    public Toggle HeaderToggle;
+
+    /** Minimize toggle. */
+    public Toggle MinimizeToggle;
+
+
+    [Header("Base Event Components")]
+
     /** Basic properties panel. */
     public Transform BaseProperties;
 
@@ -131,6 +140,23 @@ public class debugEventPropertiesUi : MonoBehaviour
     public megEventSonar SonarEvent
         { get { return _event as megEventSonar; } }
 
+    /** Whether event is minimized. */
+    public bool Minimized
+    {
+        get { return _event.minimized; }
+        set { SetMinimized(value); }
+    }
+
+
+    // Events
+    // ------------------------------------------------------------
+
+    /** Event signature for a event selection. */
+    public delegate void EventSelectedHandler(debugEventPropertiesUi eventUi);
+
+    /** Selection event. */
+    public event EventSelectedHandler OnSelected;
+
 
     // Members
     // ------------------------------------------------------------
@@ -140,6 +166,9 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Whether UI is being initialized. */
     private bool _initializing;
+
+    /** Whether UI is being updated. */
+    private bool _updating;
 
 
     // Unity Methods
@@ -160,11 +189,46 @@ public class debugEventPropertiesUi : MonoBehaviour
     }
 
 
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Select this event. */
+    public void Select()
+    {
+        if (_initializing || _updating)
+            return;
+
+        if (OnSelected != null)
+            OnSelected(this);
+    }
+
+    /** Toggle event's minimized state. */
+    public void ToggleMinimized()
+    {
+        if (_initializing || _updating)
+            return;
+
+        Minimized = !Minimized;
+    }
+
+    /** Set timeline's minimized state. */
+    public void SetMinimized(bool value)
+    {
+        if (_initializing || _updating)
+            return;
+
+        _event.minimized = value;
+    }
+
+
     // Private Methods
     // ------------------------------------------------------------
 
     private void SetEvent(megEvent value)
     {
+        if (_event == value)
+            return;
+
         _event = value;
 
         if (_event != null)
@@ -213,14 +277,22 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_event == null)
             return;
 
-        Name.text = _event.ToString();
-        BaseProperties.gameObject.SetActive(true);
-        ValueProperties.gameObject.SetActive(_event is megEventValue);
-        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics);
-        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera);
-        SonarProperties.gameObject.SetActive(_event is megEventSonar);
+        _updating = true;
+
+        var minimized = _event.minimized;
+        MinimizeToggle.isOn = !minimized;
+        HeaderToggle.isOn = !minimized;
+
+        Name.text = _event.name;
+        BaseProperties.gameObject.SetActive(!minimized);
+        ValueProperties.gameObject.SetActive(_event is megEventValue && !minimized);
+        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !minimized);
+        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !minimized);
+        SonarProperties.gameObject.SetActive(_event is megEventSonar && !minimized);
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
+
+        _updating = false;
     }
 
     private void ClearUi()
