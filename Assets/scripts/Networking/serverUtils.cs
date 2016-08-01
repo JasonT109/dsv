@@ -754,6 +754,20 @@ namespace Meg.Networking
                 LocalPlayer.PostSonarClear(sonarEvent);
         }
 
+        /** Post a custom camera event by name. */
+        public static void PostMapCameraEvent(string eventName)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostMapCameraEvent(eventName);
+        }
+
+        /** Post a custom camera event by supplying the target state. */
+        public static void PostMapCameraState(megMapCameraEventManager.State state)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostMapCameraState(state);
+        }
+
         /** Set a battery bank value (only works on host). */
         public static void SetBatteryData(int bank, float value)
         {

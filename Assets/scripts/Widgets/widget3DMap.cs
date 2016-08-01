@@ -186,7 +186,7 @@ public class widget3DMap : MonoBehaviour {
         mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
     }
 
-    void UpdateMap()
+    public void UpdateMap()
     {
         // Cap delta time to avoid jumps at low framerates.
         const float maxDeltaTime = 1 / 50.0f;
@@ -285,16 +285,7 @@ public class widget3DMap : MonoBehaviour {
     void Start()
     {
         tilt = mapCamera.GetComponent<TiltShift>();
-
         UpdateTerrain();
-
-        StartCoroutine(wait(0));
-    }
-
-    IEnumerator wait(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        UpdateMap();
     }
 
 	void Update()

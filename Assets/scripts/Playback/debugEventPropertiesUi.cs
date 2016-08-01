@@ -23,6 +23,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Default phyiscs magnitude slider length. */
     public const float DefaultPhysicsMagnitudeSliderLength = 1.0f;
 
+    /** Default phyiscs magnitude slider length. */
+    public const float DefaultMapCameraDistanceSliderLength = 1000.0f;
+
 
     // Configuration
     // ------------------------------------------------------------
@@ -99,6 +102,18 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Input text for map camera event name. */
     public InputField MapCameraEventNameInput;
+
+    /** Camera state component UI. */
+    public CanvasGroup MapCameraStateGroup;
+    public InputField MapCameraXInput;
+    public InputField MapCameraYInput;
+    public InputField MapCameraZInput;
+    public Slider MapCameraPitchSlider;
+    public InputField MapCameraPitchInput;
+    public Slider MapCameraYawSlider;
+    public InputField MapCameraYawInput;
+    public Slider MapCameraDistanceSlider;
+    public InputField MapCameraDistanceInput;
 
     /** Button to capture current map camera state. */
     public Button MapCameraCaptureButton;
@@ -308,6 +323,9 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !minimized);
         SonarProperties.gameObject.SetActive(_event is megEventSonar && !minimized);
         VesselsProperties.gameObject.SetActive(_event is megEventVessels && !minimized);
+
+        if (MapCameraEvent != null)
+            MapCameraStateGroup.gameObject.SetActive(string.IsNullOrEmpty(MapCameraEvent.eventName));
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
 
@@ -562,6 +580,13 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateMapCameraProperties()
     {
         UpdateMapCameraEventNameInput();
+        UpdateMapCameraPositionInputs();
+        UpdateMapCameraPitchSlider();
+        UpdateMapCameraPitchInput();
+        UpdateMapCameraYawSlider();
+        UpdateMapCameraYawInput();
+        UpdateMapCameraDistanceSlider();
+        UpdateMapCameraDistanceInput();
     }
 
     private void UpdateMapCameraEventNameInput()
@@ -577,12 +602,156 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraEvent.eventName = value;
     }
 
+    private void UpdateMapCameraPositionInputs()
+    {
+        MapCameraXInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.x);
+        MapCameraYInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.y);
+        MapCameraZInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.z);
+    }
+
+    public void MapCameraXInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toPosition.x = result;
+    }
+
+    public void MapCameraYInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toPosition.y = result;
+    }
+
+    public void MapCameraZInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toPosition.z = result;
+    }
+
+    private void UpdateMapCameraPitchSlider()
+    {
+        MapCameraPitchSlider.value = MapCameraEvent.toOrientation.x;
+    }
+
+    private void UpdateMapCameraPitchInput()
+    {
+        MapCameraPitchInput.text = string.Format("{0:N1}", MapCameraEvent.toOrientation.x);
+    }
+
+    public void MapCameraPitchInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toOrientation.x = result;
+        UpdateMapCameraPitchSlider();
+    }
+
+    public void MapCameraPitchSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.toOrientation.x = value;
+        UpdateMapCameraPitchInput();
+    }
+
+    private void UpdateMapCameraYawSlider()
+    {
+        MapCameraYawSlider.value = MapCameraEvent.toOrientation.y;
+    }
+
+    private void UpdateMapCameraYawInput()
+    {
+        MapCameraYawInput.text = string.Format("{0:N1}", MapCameraEvent.toOrientation.y);
+    }
+
+    public void MapCameraYawInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toOrientation.y = result;
+        UpdateMapCameraYawSlider();
+    }
+
+    public void MapCameraYawSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.toOrientation.y = value;
+        UpdateMapCameraYawInput();
+    }
+
+    private void UpdateMapCameraDistanceSlider()
+    {
+        var distance = -MapCameraEvent.toZoom;
+        var maxValue = Mathf.Max(distance, DefaultMapCameraDistanceSliderLength);
+        MapCameraDistanceSlider.maxValue = maxValue;
+        MapCameraDistanceSlider.value = distance;
+    }
+
+    private void UpdateMapCameraDistanceInput()
+    {
+        var distance = -MapCameraEvent.toZoom;
+        MapCameraDistanceInput.text = string.Format("{0:N1}", distance);
+    }
+
+    public void MapCameraDistanceSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.toZoom = -value;
+        UpdateMapCameraDistanceInput();
+    }
+
+    public void MapCameraDistanceInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        MapCameraEvent.toZoom = -result;
+        UpdateMapCameraDistanceSlider();
+    }
+    
     public void MapCameraCapture()
     {
         if (_initializing)
             return;
 
         MapCameraEvent.Capture();
+        InitUi();
     }
 
 

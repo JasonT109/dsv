@@ -70,7 +70,9 @@ namespace Meg.EventSystem
             if (vesselMovements == null)
                 return;
 
-            _initialState = serverUtils.VesselMovements.Save();
+            if (_initialState == null)
+                _initialState = serverUtils.VesselMovements.Save();
+
             serverUtils.VesselMovements.Load(vesselMovements);
         }
 

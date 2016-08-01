@@ -3,9 +3,38 @@ using UnityEngine.Networking;
 using System.Collections;
 using Meg.EventSystem;
 using Meg.Networking;
+using Meg.SonarEvent;
 
 public class serverPlayer : NetworkBehaviour
 {
+
+    // Private Properties
+    // ------------------------------------------------------------
+
+    /** The sonar event manager. */
+    private megSonarEventManager Sonar
+    {
+        get
+        {
+            if (megEventManager.HasInstance)
+                return megEventManager.Instance.GetSonarEventManager();
+            else
+                return null;
+        }
+    }
+
+    /** The map camera event manager. */
+    private megMapCameraEventManager MapCamera
+    {
+        get
+        {
+            if (megEventManager.HasInstance)
+                return megEventManager.Instance.GetMapCameraEventManager();
+            else
+                return null;
+        }
+    }
+
 
     // Public Methods
     // ------------------------------------------------------------
@@ -55,6 +84,23 @@ public class serverPlayer : NetworkBehaviour
             CmdPostSonarClear();
     }
 
+    /** Post a custom camera event by name. */
+    public void PostMapCameraEvent(string eventName)
+    {
+        if (isServer)
+            ServerTriggerMapCameraEvent(eventName);
+        else
+            CmdTriggerMapCameraEvent(eventName);
+    }
+
+    /** Post a custom camera event by supplying the target state. */
+    public void PostMapCameraState(megMapCameraEventManager.State state)
+    {
+        if (isServer)
+            ServerTriggerMapCameraState(state);
+        else
+            CmdTriggerMapCameraState(state);
+    }
 
 
     // Commands
@@ -92,6 +138,16 @@ public class serverPlayer : NetworkBehaviour
     public void CmdPostSonarClear()
         { ServerSonarClear(); }
 
+    /** Command to trigger a named camera event on the server. */
+    [Command]
+    public void CmdTriggerMapCameraEvent(string eventName)
+        { ServerTriggerMapCameraEvent(eventName); }
+
+    /** Command to trigger a custom camera event on the server. */
+    [Command]
+    public void CmdTriggerMapCameraState(megMapCameraEventManager.State state)
+        { ServerTriggerMapCameraState(state); }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -100,21 +156,58 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     private void ServerSonarEvent(megEventSonar sonar)
     {
-        if (!megEventManager.HasInstance)
+        if (!Sonar)
             return;
 
         if (!string.IsNullOrEmpty(sonar.eventName))
-            megEventManager.Instance.Sonar.megPlayMegSonarEventByName(sonar.eventName);
+            Sonar.megPlayMegSonarEventByName(sonar.eventName);
         else
-            megEventManager.Instance.Sonar.megPlayMegSonarEvent(sonar);
+            Sonar.megPlayMegSonarEvent(sonar);
     }
 
     /** Clear sonar on the server. */
     [Server]
     private void ServerSonarClear()
     {
-        if (megEventManager.HasInstance)
-            megEventManager.Instance.Sonar.megSonarClear();
+        if (Sonar)
+            Sonar.megSonarClear();
     }
+
+    /** Trigger a named camera event on the server. */
+    [Server]
+    public void ServerTriggerMapCameraEvent(string eventName)
+    {
+        // Forward trigger command to all clients.
+        RpcTriggerMapCameraEvent(eventName);
+    }
+
+    /** Trigger a custom camera event on the server. */
+    [Server]
+    public void ServerTriggerMapCameraState(megMapCameraEventManager.State state)
+    {
+        // Forward trigger command to all clients.
+        RpcTriggerMapCameraState(state);
+    }
+
+
+    // Client Methods
+    // ------------------------------------------------------------
+
+    /** Trigger a named camera event on the client. */
+    [ClientRpc]
+    public void RpcTriggerMapCameraEvent(string eventName)
+    {
+        if (MapCamera)
+            MapCamera.triggerByName(eventName);
+    }
+
+    /** Trigger a custom camera event on the client. */
+    [ClientRpc]
+    public void RpcTriggerMapCameraState(megMapCameraEventManager.State state)
+    {
+        if (MapCamera)
+            MapCamera.triggerEventFromState(state);
+    }
+
 
 }

@@ -4,11 +4,27 @@ using Meg.EventSystem;
 using Meg.Networking;
 using Meg.Maths;
 
-public class megMapCameraEventManager : MonoBehaviour
+public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
 {
     //map camera events are local and do not need to be sync'd with the server
     //they can however be triggered by the server
     //they are typically used for tracking an object on the map
+
+
+    // Structures
+    // ------------------------------------------------------------
+
+    public struct State
+    {
+        public Vector3 toPosition;
+        public Vector3 toOrientation;
+        public float toZoom;
+        public float completeTime;
+    }
+
+
+    // Properties
+    // ------------------------------------------------------------
 
     public megEventMapCamera[] mapEventList;
     public GameObject mapCameraRoot;
@@ -26,33 +42,32 @@ public class megMapCameraEventManager : MonoBehaviour
     private float initialOrientationX;
     private float initialOrientationY;
     private float initialZoom;
-    private float sliderMinValue;
-    private float sliderMaxValue;
-    
 
-    void Start()
+    private widget3DMap _map;
+
+    private bool _started;
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Awake()
     {
-        sliderMinValue = mapPitchSliderButton.GetComponent<sliderWidget>().minValue;
-        sliderMaxValue = mapPitchSliderButton.GetComponent<sliderWidget>().maxValue;
+        // Immediately update the camera when manager is started.
+        UpdateMap();
+        _started = true;
     }
 
-    public void triggerByName(string eventName)
+    /** Enabling. */
+    private void OnEnable()
     {
-        for (var i = 0; i < mapEventList.Length; i++)
-        {
-            if (mapEventList[i].eventName == eventName)
-            {
-                StartRunningEvent(mapEventList[i]);
-
-                // Toggle the event's associated button on if desired.
-                var b = runningEventButton;
-                if (b != null && b.toggleType && !b.active)
-                    b.RemoteToggle();
-            }
-        }
+        // Immediately update the camera when manager is enabled.
+        if (_started)
+            UpdateMap();
     }
 
-	private void Update()
+    /** Update map camera events. */
+    private void Update()
     {
         // Check to see if the server wants to start an event
         if (Mathf.Approximately(serverUtils.GetServerData("initiateMapEvent"), 1))
@@ -78,7 +93,58 @@ public class megMapCameraEventManager : MonoBehaviour
             else
                 UpdateRunningEvent();
         }
-	}
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Trigger a registered camera event by name. */
+    public void triggerByName(string eventName)
+    {
+        for (var i = 0; i < mapEventList.Length; i++)
+        {
+            if (mapEventList[i].eventName == eventName)
+            {
+                StartRunningEvent(mapEventList[i]);
+
+                // Toggle the event's associated button on if desired.
+                var b = runningEventButton;
+                if (b != null && b.toggleType && !b.active)
+                    b.RemoteToggle();
+            }
+        }
+    }
+
+    /** Trigger a custom (possibly unregistered) camera event. */
+    public void triggerEvent(megEventMapCamera e)
+    {
+        StartRunningEvent(e);
+    }
+
+    /** Trigger a custom camera state. */
+    public void triggerEventFromState(State state)
+    {
+        var e = new megEventMapCamera(state);
+        StartRunningEvent(e);
+    }
+
+    /** Capture the map camera's current state into a camera event.  */
+    public void Capture(ref State state)
+    {
+        state.toPosition = mapCameraRoot.transform.localPosition;
+
+        var camY = mapCameraRoot.transform.rotation.eulerAngles.y;
+        var camX = mapPitchSliderButton.GetComponent<sliderWidget>().returnValue;
+        state.toOrientation = new Vector3(camX, camY);
+
+        var camZ = mapCameraObject.transform.localPosition.z;
+        state.toZoom = camZ;
+    }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
 
     /** Start running the given camera event. */
     private void StartRunningEvent(megEventMapCamera e)
@@ -97,7 +163,8 @@ public class megMapCameraEventManager : MonoBehaviour
         runningEvent = e;
 
         // set the current running event button group just in case we want to turn this off when the event is complete
-        runningEventButton = e.trigger.GetComponent<buttonControl>();
+        if (e.trigger)
+            runningEventButton = e.trigger.GetComponent<buttonControl>();
 
         //set the initial states
         initialPosition = mapCameraRoot.transform.localPosition;
@@ -148,7 +215,7 @@ public class megMapCameraEventManager : MonoBehaviour
         mapCameraRoot.transform.rotation = Quaternion.Euler(0, camY, 0);
 
         // Set the pitch
-        mapPitchSliderButton.transform.localPosition = new Vector3(graphicsMaths.remapValue(camX, sliderMinValue, sliderMaxValue, -1, 1), 0, mapPitchSliderButton.transform.localPosition.z);
+        mapPitchSliderButton.GetComponent<sliderWidget>().SetValue(camX);
 
         // Lerp the camera zoom
         mapCameraObject.transform.localPosition = Vector3.Lerp(new Vector3(0, 0, initialZoom), new Vector3(0, 0, runningEvent.toZoom), completePercentage);
@@ -157,6 +224,10 @@ public class megMapCameraEventManager : MonoBehaviour
     /** Stop running the current camera event. */
     private void StopRunningEvent()
     {
+        // Ensure camera is in final state.
+        if (runningEvent != null && gameObject.activeInHierarchy)
+            SetState(runningEvent.GetState());
+
         //stop this event
         running = false;
         runningEvent = null;
@@ -166,8 +237,36 @@ public class megMapCameraEventManager : MonoBehaviour
         serverUtils.SetServerData("initiateMapEvent", 0);
 
         // turn off the trigger button
-        if (!runningEventButton.buttonGroup)
+        if (runningEventButton && !runningEventButton.buttonGroup)
             runningEventButton.active = false;
+    }
+
+    /** Set a given state on the camera. */
+    private void SetState(State state)
+    {
+        mapCameraRoot.transform.localPosition = state.toPosition;
+        var camY = Mathf.Repeat(state.toOrientation.y, 360);
+        var camX = state.toOrientation.x;
+
+        mapCameraRoot.transform.rotation = Quaternion.Euler(0, camY, 0);
+
+        mapPitchSliderButton.GetComponent<sliderWidget>().SetValue(camX);
+
+        mapCameraObject.transform.localPosition = new Vector3(0, 0, state.toZoom);
+    }
+
+    /** Update the map immediately. */
+    private void UpdateMap()
+    {
+        // Update the current camera event state.
+        Update();
+
+        // Attempt to update the map immediately.
+        if (!_map)
+            _map = GetComponent<widget3DMap>();
+
+        if (_map)
+            _map.UpdateMap();
     }
 
 }

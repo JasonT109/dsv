@@ -12,7 +12,7 @@ public class sliderWidget : MonoBehaviour, ValueSettable
     private float sliderMin = -1f;
     private float sliderMax = 1f;
     private float carotPos = 0f;
-	
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -35,6 +35,12 @@ public class sliderWidget : MonoBehaviour, ValueSettable
     {
         carotPos = (v - minValue) / (maxValue - minValue) * (sliderMax - sliderMin) + sliderMin;
         transform.localPosition = new Vector3(Mathf.Clamp(carotPos, sliderMin, sliderMax), 0, 0);
+
+        if (returnValue != prevValue)
+            valueChanged = true;
+
+        returnValue = v;
+        prevValue = returnValue;
     }
 
     public void SetInputEnabled(bool value)

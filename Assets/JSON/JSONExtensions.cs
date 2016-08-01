@@ -29,12 +29,16 @@ public static class JSONExtensions
         json.AddField(field, o);
     }
 
-    public static void GetField(this JSONObject json, ref Vector3 v, string field)
+    public static bool GetField(this JSONObject json, ref Vector3 v, string field)
     {
         JSONObject o = json[field];
+        if (!o)
+            return false;
+
         v.x = o[0].f;
         v.y = o[1].f;
         v.z = o[2].f;
+        return true;
     }
 
 

@@ -13,6 +13,9 @@ namespace Meg.EventSystem
         /** The sonar event manager. */
         public megSonarEventManager Sonar;
 
+        /** The camera event manager. */
+        public megMapCameraEventManager MapCamera;
+
 
         // Unity Methods
         // ------------------------------------------------------------
@@ -36,6 +39,22 @@ namespace Meg.EventSystem
         public void RemoveFile(megEventFile file)
             { megEventRunner.Instance.RemoveFile(file); }
 
+        /** Look up the sonar event manager. */
+        public megSonarEventManager GetSonarEventManager()
+        {
+            return Sonar;
+        }
+
+        /** Look up the map camera event manager. */
+        public megMapCameraEventManager GetMapCameraEventManager()
+        {
+            if (MapCamera)
+                return MapCamera;
+
+            MapCamera = megMapCameraEventManager.Instance;
+
+            return MapCamera;
+        }
 
     }
 

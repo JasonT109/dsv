@@ -10,13 +10,6 @@ namespace Meg.EventSystem
     public class megEventMapCamera : megEvent
     {
 
-        // Constants
-        // ------------------------------------------------------------
-
-        /** Duration for setting map camera event syncvars. */
-        private const float EventBroadcastDuration = 1.0f;
-
-
         // Properties
         // ------------------------------------------------------------
 
@@ -31,12 +24,39 @@ namespace Meg.EventSystem
         public int serverTriggerID;
         public int priority;
 
+
+        // Private Properties
+        // ------------------------------------------------------------
+
+        /** The camera event manager. */
+        private megMapCameraEventManager Manager
+            { get { return megEventManager.Instance.MapCamera; } }
+
+
+
+        // Members
+        // ------------------------------------------------------------
+
+        /** Initial camera state. */
+        private megMapCameraEventManager.State _initialState;
+
+        /** Whether initial camera state is known. */
+        private bool _initialStateKnown;
+
+
         // Lifecycle
         // ------------------------------------------------------------
 
-        /** Constructor for a sonar event. */
+        /** Constructor for a map camera event. */
         public megEventMapCamera(megEventGroup group = null) 
             : base(megEventType.MapCamera, group) { }
+
+        /** Constructor for a map camera event, taking a custom state. */
+        public megEventMapCamera(megMapCameraEventManager.State state)
+            : base(megEventType.MapCamera)
+        {
+            SetState(state);
+        }
 
 
         // Public Methods
@@ -45,7 +65,16 @@ namespace Meg.EventSystem
         /** Capture current map camera state. */
         public void Capture()
         {
-            // TODO: Implement.
+            // Check that manager exists.
+            if (!Manager)
+                return;
+
+            // Capture current camera state.
+            var state = new megMapCameraEventManager.State();
+            Manager.Capture(ref state);
+
+            // Apply state to the event.
+            SetState(state);
         }
 
         /** String representation. */
@@ -60,6 +89,34 @@ namespace Meg.EventSystem
             return base.ToString();
         }
 
+        /** Apply a custom camera state to this event. */
+        public void SetState(megMapCameraEventManager.State state)
+        {
+            eventName = "";
+            completeTime = state.completeTime;
+            toPosition = state.toPosition;
+            toOrientation = state.toOrientation;
+            toZoom = state.toZoom;
+            toObject = null;
+            goToObject = false;
+            goToPlayerVessel = false;
+            triggeredByServer = false;
+            serverTriggerID = 0;
+            priority = 0;
+        }
+
+        /** Return event as a map camera state. */
+        public megMapCameraEventManager.State GetState()
+        {
+            return new megMapCameraEventManager.State
+            {
+                toOrientation = toOrientation,
+                toPosition = toPosition,
+                toZoom = toZoom,
+                completeTime = completeTime
+            };
+        }
+
 
         // Load / Save
         // ------------------------------------------------------------
@@ -68,7 +125,16 @@ namespace Meg.EventSystem
         public override JSONObject Save()
         {
             var json = base.Save();
-            json.AddField("eventName", eventName);
+
+            if (!string.IsNullOrEmpty(eventName))
+                json.AddField("eventName", eventName);
+            else
+            {
+                json.AddField("toPosition", toPosition);
+                json.AddField("toOrientation", toOrientation);
+                json.AddField("toZoom", toZoom);
+            }
+
             return json;
         }
 
@@ -76,9 +142,13 @@ namespace Meg.EventSystem
         public override void Load(JSONObject json)
         {
             base.Load(json);
-            json.GetField(ref eventName, "eventName");
-        }
 
+            json.GetField(ref eventName, "eventName");
+            json.GetField(ref toPosition, "toPosition");
+            json.GetField(ref toOrientation, "toOrientation");
+            json.GetField(ref toZoom, "toZoom");
+        }
+        
 
         // Protected Methods
         // ------------------------------------------------------------
@@ -86,18 +156,16 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            TriggerMapCameraEvent(eventName);
+            // Capture current camera state if possible.
+            if (!_initialStateKnown)
+                _initialStateKnown = CaptureInitialState();
+
+            TriggerMapCameraEvent();
         }
 
         /** Update this event internally. */
         protected override void Update(float t, float dt)
         {
-            // Allow time for all clients to react to the map event syncvar.
-            if (time < EventBroadcastDuration)
-                return;
-
-            ResetMapCameraEvent();
-
             // Check if final value has been reached.
             if (timeFraction >= 1)
                 completed = true;
@@ -106,33 +174,46 @@ namespace Meg.EventSystem
         /** Rewind this event. */
         protected override void Rewind()
         {
-            ResetMapCameraEvent();
         }
 
         /** Stop this event. */
         protected override void Stop()
         {
-            ResetMapCameraEvent();
+            if (_initialStateKnown)
+                ResetToInitialState();
         }
 
 
         // Private Methods
         // ------------------------------------------------------------
 
-        /** Trigger a map camera event via syncvars. */
-        private void TriggerMapCameraEvent(string name)
+        /** Trigger a map camera event on the server. */
+        private void TriggerMapCameraEvent()
         {
-            // TODO: Turn this into an RPC.
-            Debug.Log("Map camera event: " + this.name);
-            PostServerData("mapEventName", eventName);
-            PostServerData("initiateMapEvent", 1.0f);
+            if (!string.IsNullOrEmpty(eventName))
+                serverUtils.PostMapCameraEvent(eventName);
+            else
+                serverUtils.PostMapCameraState(GetState());
         }
 
-        /** Reset map camera event syncvars. */
-        private void ResetMapCameraEvent()
+        /** Capture initial camera state. */
+        private bool CaptureInitialState()
         {
-            PostServerData("mapEventName", "");
-            PostServerData("initiateMapEvent", 0);
+            if (!Manager)
+                return false;
+
+            Manager.Capture(ref _initialState);
+            return true;
+        }
+
+        /** Reset camera state. */
+        private bool ResetToInitialState()
+        {
+            if (!Manager)
+                return false;
+
+            serverUtils.PostMapCameraState(_initialState);
+            return true;
         }
 
     }
