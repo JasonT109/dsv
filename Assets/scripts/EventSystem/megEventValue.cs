@@ -13,7 +13,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** The server data value to manipulate. */
-        public string serverParam;
+        public string serverParam = "";
 
         /** Value to apply to server data. */
         public float serverValue;

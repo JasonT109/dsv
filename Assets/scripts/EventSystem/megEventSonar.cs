@@ -13,9 +13,9 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        public string eventName;
-        public Vector3[] waypoints;
-        public bool destroyOnEnd;
+        public string eventName = "";
+        public Vector3[] waypoints = { };
+        public bool destroyOnEnd = true;
 
 
         // Lifecycle

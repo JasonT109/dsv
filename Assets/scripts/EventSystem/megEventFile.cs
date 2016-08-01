@@ -50,8 +50,11 @@ namespace Meg.EventSystem
         /** Whether file can be rewound. */
         public bool canRewind { get { return !empty && !playing && running; } }
 
-        /** Whether file can load more groups. */
-        public bool canLoad { get { return true; } } // !playing; } }
+        /** Whether file can be added to. */
+        public bool canAdd { get { return !playing; } }
+
+        /** Whether file can be removed from. */
+        public bool canRemove { get { return !empty && !playing; } }
 
         /** Whether file can be cleared. */
         public bool canClear { get { return !empty && !playing; } }
@@ -184,6 +187,36 @@ namespace Meg.EventSystem
                 Pause();
         }
 
+        /** Add an group of a given type. */
+        public megEventGroup AddGroup()
+        {
+            var e = CreateGroup();
+            groups.Add(e);
+            return e;
+        }
+
+        /** Insert an group of a given type after the given group. */
+        public megEventGroup InsertGroup(megEventGroup insertAfter)
+        {
+            var e = CreateGroup();
+            var insertIndex = groups.IndexOf(insertAfter);
+            if (insertIndex >= 0)
+                groups.Insert(insertIndex + 1, e);
+            else
+                groups.Add(e);
+
+            return e;
+        }
+
+        /** Create an group of a given type. */
+        public megEventGroup CreateGroup()
+            { return new megEventGroup(this); }
+
+        /** Remove an group from the group. */
+        public void RemoveGroup(megEventGroup e)
+        {
+            groups.Remove(e);
+        }
 
         // Server values
         // ------------------------------------------------------------

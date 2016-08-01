@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Meg.EventSystem;
@@ -32,6 +33,12 @@ public class debugEventFileUi : MonoBehaviour
 
     /** Rewind button. */
     public Button RewindButton;
+
+    /** Add group button. */
+    public Button AddGroupButton;
+
+    /** Remove group button. */
+    public Button RemoveGroupButton;
 
     /** Clear button. */
     public Button ClearButton;
@@ -149,7 +156,31 @@ public class debugEventFileUi : MonoBehaviour
     /** Rewind to the start of the event file. */
     public void Rewind()
     {
+        if (!_file.canRewind)
+            return;
+
         _file.Rewind();
+    }
+
+    /** Add a new group to the file. */
+    public void AddGroup()
+    {
+        if (!_file.canAdd)
+            return;
+
+        var group = _file.InsertGroup(_file.selectedGroup);
+        AddGroupUi(group);
+    }
+
+    /** Remove the selected group from the file. */
+    public void RemoveGroup()
+    {
+        if (!_file.canRemove)
+            return;
+
+        var group = _file.selectedGroup;
+        _file.RemoveGroup(group);
+        RemoveGroupUi(group);
     }
 
     /** Clear the file contents. */
@@ -201,7 +232,7 @@ public class debugEventFileUi : MonoBehaviour
     /** Initialize the file UI. */
     private void InitUi()
     {
-        AddGroups(_file);
+        AddGroupUis(_file);
 
         // Force a UI reflow to ensure group layouts are correct.
         Canvas.ForceUpdateCanvases();
@@ -218,8 +249,9 @@ public class debugEventFileUi : MonoBehaviour
         _playLabel.text = _file.playing ? "PAUSE" : "PLAY";
         PauseIcon.gameObject.SetActive(_file.playing);
 
-        LoadButton.interactable = _file.canLoad;
         RewindButton.interactable = _file.canRewind;
+        AddGroupButton.interactable = _file.canAdd;
+        RemoveGroupButton.interactable = _file.canRemove && _file.selectedGroup != null;
         ClearButton.interactable = _file.canClear;
         SaveButton.interactable = _file.canSave;
 
@@ -239,7 +271,7 @@ public class debugEventFileUi : MonoBehaviour
     }
 
     /** Remove all event groups. */
-    private void RemoveGroups()
+    private void RemoveGroupUis()
     {
         foreach (var group in _groups)
             Destroy(group.gameObject);
@@ -247,17 +279,31 @@ public class debugEventFileUi : MonoBehaviour
         _groups.Clear();
     }
 
-    /** Add event groups from a file. */
-    private void AddGroups(megEventFile file)
+    /** Remove a single group ui. */
+    private void RemoveGroupUi(megEventGroup group)
     {
-        RemoveGroups();
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
+        if (!ui)
+            return;
+
+        if (Properties.Group == group)
+            Properties.Group = null;
+
+        _groups.Remove(ui);
+        Destroy(ui.gameObject);
+    }
+
+    /** Add event groups from a file. */
+    private void AddGroupUis(megEventFile file)
+    {
+        RemoveGroupUis();
 
         foreach (var group in _file.groups)
-            AddGroup(group);
+            AddGroupUi(group);
     }
 
     /** Add UI for an event group. */
-    private void AddGroup(megEventGroup group)
+    private void AddGroupUi(megEventGroup group)
     {
         var ui = Instantiate(EventGroupUiPrefab);
         ui.transform.SetParent(Groups, false);

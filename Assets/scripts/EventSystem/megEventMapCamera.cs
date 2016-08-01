@@ -20,7 +20,7 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        public string eventName;
+        public string eventName = "";
         public Vector3 toPosition;
         public Vector3 toOrientation;
         public float toZoom;

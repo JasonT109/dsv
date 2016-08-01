@@ -14,8 +14,8 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     [Header("Components")] 
     
-    /** The event group's name label. */
-    public Text NameLabel;
+    /** The event group's name input. */
+    public InputField NameInput;
 
     /** The event group's loopable button. */
     public Toggle CanLoopToggle;
@@ -28,6 +28,18 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** Container for event properties. */
     public Transform EventPropertiesContainer;
+
+    /** Footer area. */
+    public CanvasGroup Footer;
+
+    /** Event typ dropdown. */
+    public Dropdown EventTypeDropdown;
+
+    /** Event add button. */
+    public Button AddEventButton;
+
+    /** Event removal button. */
+    public Button RemoveEventButton;
 
 
     [Header("Prefabs")]
@@ -72,13 +84,15 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         set { SetShowTriggers(value); }
     }
 
+
+    // Events
+    // ------------------------------------------------------------
+
     /** Event signature for a event selection. */
     public delegate void EventSelectedHandler(debugEventGroupPropertiesUi groupUi, debugEventPropertiesUi eventUi);
 
     /** Selection event. */
     public event EventSelectedHandler OnSelected;
-
-
 
 
     // Members
@@ -101,18 +115,28 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
-        UpdateGroupUi();
+        ConfigureUi();
+        UpdateUi();
     }
 
     /** Updating. */
     private void Update()
     {
-        UpdateGroupUi();
+        UpdateUi();
     }
 
 
     // Public Methods
     // ------------------------------------------------------------
+
+    /** Sets the group's name. */
+    public void NameInputChanged(string value)
+    {
+        if (_updating)
+            return;
+
+        _group.id = value;
+    }
 
     /** Toggle whether group can be looped. */
     public void ToggleCanLoop()
@@ -199,6 +223,48 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
             eventProperties.Minimized = true;
     }
 
+    /** Select an event. */
+    public void SelectEvent(megEvent toSelect)
+    {
+        var eventProperties = _eventProperties.FirstOrDefault(e => e.Event == toSelect);
+        if (OnSelected != null)
+            OnSelected(this, eventProperties);
+    }
+
+    /** Add an event to the group. */
+    public void AddEvent()
+        { AddEvent((megEventType)EventTypeDropdown.value); }
+
+    /** Add a value event to the group. */
+    public void AddValueEvent()
+        {  AddEvent(megEventType.Value); }
+
+    /** Add a physics event to the group. */
+    public void AddPhysicsEvent()
+        { AddEvent(megEventType.Physics); }
+
+    /** Add a sonar event to the group. */
+    public void AddSonarEvent()
+        { AddEvent(megEventType.Sonar); }
+
+    /** Add a map camera event to the group. */
+    public void AddMapCameraEvent()
+        { AddEvent(megEventType.MapCamera); }
+
+    /** Add an event of a given type to the group. */
+    public void AddEvent(megEventType type)
+        { _group.InsertEvent(type, File.selectedEvent); }
+
+    /** Remove an event from the group. */
+    public void RemoveEvent()
+    {
+        var toRemove = File.selectedEvent;
+        if (toRemove == null)
+            return;
+
+        _group.RemoveEvent(toRemove);
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -209,10 +275,19 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
             return;
 
         _group = value;
-        UpdateGroupUi();
+
+        if (_group != null)
+            NameInput.text = _group.id;
+
+        UpdateUi();
     }
 
-    private void UpdateGroupUi()
+    private void ConfigureUi()
+    {
+        NameInput.onValidateInput += ValidateGroupNameInput;
+    }
+
+    private void UpdateUi()
     {
         if (_group == null)
             return;
@@ -223,9 +298,10 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         ShowTimelineToggle.isOn = !_group.hideTimeline;
         ShowTriggersToggle.isOn = !_group.hideTriggers;
 
-        var label = Regex.Replace(Group.id, "[A-Z]", " $0");
-        label = Regex.Replace(label, "([A-Z])([0-9])", "$0 $1").ToUpper();
-        NameLabel.text = label;
+        NameInput.interactable = !File.playing;
+
+        Footer.interactable = !File.playing;
+        RemoveEventButton.interactable = File.selectedEvent != null && !File.playing;
 
         // Update event properties.
         UpdateEventProperties();
@@ -260,6 +336,14 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     {
         if (OnSelected != null)
             OnSelected(this, ui);
+    }
+
+    private char ValidateGroupNameInput(string text, int index, char addedChar)
+    {
+        if (!Regex.IsMatch(addedChar.ToString(), "[A-Za-z0-9_ ]"))
+            return '\0';
+
+        return addedChar;
     }
 
 

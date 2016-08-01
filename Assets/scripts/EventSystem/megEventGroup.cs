@@ -178,6 +178,51 @@ namespace Meg.EventSystem
                 Stop();
         }
 
+        /** Add an event of a given type. */
+        public megEvent AddEvent(megEventType type)
+        {
+            var e = CreateEvent(type);
+            events.Add(e);
+            return e;
+        }
+
+        /** Insert an event of a given type after the given event. */
+        public megEvent InsertEvent(megEventType type, megEvent insertAfter)
+        {
+            var e = CreateEvent(type);
+            var insertIndex = events.IndexOf(insertAfter);
+            if (insertIndex >= 0)
+                events.Insert(insertIndex + 1, e);
+            else
+                events.Add(e);
+
+            return e;
+        }
+
+        /** Create an event of a given type. */
+        public megEvent CreateEvent(megEventType type)
+        {
+            switch (type)
+            {
+                case megEventType.Value:
+                    return new megEventValue(this);
+                case megEventType.Physics:
+                    return new megEventPhysics(this);
+                case megEventType.Sonar:
+                    return new megEventSonar(this);
+                case megEventType.MapCamera:
+                    return new megEventMapCamera(this);
+                default:
+                    return new megEventValue(this);
+            }
+        }
+
+        /** Remove an event from the group. */
+        public void RemoveEvent(megEvent e)
+        {
+            events.Remove(e);
+        }
+
 
         // Load / Save
         // ------------------------------------------------------------
@@ -244,30 +289,8 @@ namespace Meg.EventSystem
             {
                 var s = eventsJson[i]["type"].str;
                 var type = (megEventType) Enum.Parse(typeof(megEventType), s, true);
-                events.Add(CreateEvent(type));
-                events[i].Load(eventsJson[i]);
-            }
-        }
-
-
-        // Private Methods
-        // ------------------------------------------------------------
-
-        /** Create an event of a given type. */
-        private megEvent CreateEvent(megEventType type)
-        {
-            switch (type)
-            {
-                case megEventType.Value:
-                    return new megEventValue(this);
-                case megEventType.Physics:
-                    return new megEventPhysics(this);
-                case megEventType.Sonar:
-                    return new megEventSonar(this);
-                case megEventType.MapCamera:
-                    return new megEventMapCamera(this);
-                default:
-                    return new megEventValue(this);
+                var e = AddEvent(type);
+                e.Load(eventsJson[i]);
             }
         }
 
