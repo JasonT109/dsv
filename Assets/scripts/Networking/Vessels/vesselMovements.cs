@@ -83,6 +83,9 @@ public class vesselMovements : NetworkBehaviour
     /** Update the vessel movement module. */
     protected virtual void LateUpdate()
     {
+        // Update active state on all vessels.
+        SetActive(Active);
+
         // Update the vessel's movement.
         if (Active && isServer)
             UpdateMovement();
@@ -268,8 +271,8 @@ public class vesselMovements : NetworkBehaviour
         // Load simulation active state.
         var active = true;
         json.GetField(ref active, "Active");
-        SetActive(active);
-
+        serverUtils.SetServerData("simulating", active ? 1 : 0);
+        
         float tti = 0;
         json.GetField(ref tti, "TimeToIntercept");
         SetTimeToIntercept(tti);

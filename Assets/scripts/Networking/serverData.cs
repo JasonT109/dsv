@@ -141,6 +141,10 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    public vesselMovements VesselMovements
+    {
+        get { return serverUtils.VesselMovements; }
+    }
 
     #endregion
 
@@ -500,6 +504,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "divertPowerToThrusters":
                 OperatingData.divertPowerToThrusters = newValue;
+                break;
+            case "vesselMovementsActive":
+                VesselMovements.Active = newValue > 0;
+                break;
+            case "timeToIntercept":
+                VesselMovements.TimeToIntercept = newValue;
                 break;
         }
 

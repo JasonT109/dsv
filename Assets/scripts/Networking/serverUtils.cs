@@ -123,6 +123,12 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the vessel movements controller. */
+        public static vesselMovements VesselMovements
+        {
+            get { return GetVesselMovements(); }
+        }
+
 
         // Static Methods
         // ------------------------------------------------------------
@@ -397,6 +403,10 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength;
                 case "divertPowerToThrusters":
                     return OperatingData.divertPowerToThrusters;
+                case "vesselMovementsActive":
+                    return VesselMovements.Active ? 1 : 0;
+                case "timeToIntercept":
+                    return VesselMovements.TimeToIntercept;
                 default:
                     return 0;
             }
@@ -552,6 +562,30 @@ namespace Meg.Networking
                     return MapData.intercept1Velocity.ToString("n1");
                 case "mapEventName":
                     return MapData.mapEventName;
+                case "vessel1Vis":
+                    return MapData.vessel1Vis.ToString();
+                case "vessel2Vis":
+                    return MapData.vessel2Vis.ToString();
+                case "vessel3Vis":
+                    return MapData.vessel3Vis.ToString();
+                case "vessel4Vis":
+                    return MapData.vessel4Vis.ToString();
+                case "meg1Vis":
+                    return MapData.meg1Vis.ToString();
+                case "intercept1Vis":
+                    return MapData.intercept1Vis.ToString();
+                case "vessel1Warning":
+                    return MapData.vessel1Warning.ToString();
+                case "vessel2Warning":
+                    return MapData.vessel2Warning.ToString();
+                case "vessel3Warning":
+                    return MapData.vessel3Warning.ToString();
+                case "vessel4Warning":
+                    return MapData.vessel4Warning.ToString();
+                case "meg1Warning":
+                    return MapData.meg1Warning.ToString();
+                case "intercept1Warning":
+                    return MapData.intercept1Warning.ToString();
                 case "latitude":
                     return FormatLatitude(MapData.latitude);
                 case "longitude":
@@ -572,6 +606,10 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength.ToString("n1");
                 case "divertPowerToThrusters":
                     return OperatingData.divertPowerToThrusters.ToString("n1");
+                case "vesselMovementsActive":
+                    return VesselMovements.Active.ToString();
+                case "timeToIntercept":
+                    return VesselMovements.TimeToIntercept.ToString();
                 default:
                     return "no value";
             }
