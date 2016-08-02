@@ -232,12 +232,10 @@ public class vesselMovements : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** Save both movement and vessel state to JSON. */
-    [Server]
     public JSONObject SaveFullState()
         { return Save(true); }
 
     /** Save movement state to JSON. */
-    [Server]
     public JSONObject Save(bool saveVesselState = false)
     {
         var json = new JSONObject();

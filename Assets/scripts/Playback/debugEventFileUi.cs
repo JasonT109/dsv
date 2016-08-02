@@ -83,13 +83,15 @@ public class debugEventFileUi : MonoBehaviour
     public Color ActiveDurationTextColor;
 
 
+    /** The current file. */
+    public megEventFile File { get { return _file; } }
 
 
     // Members
     // ------------------------------------------------------------
 
     /** The current event file. */
-    private megEventFile _file = new megEventFile();
+    private readonly megEventFile _file = new megEventFile();
 
     /** Event group UI nodes. */
     private readonly List<debugEventGroupUi> _groups = new List<debugEventGroupUi>();
@@ -107,8 +109,12 @@ public class debugEventFileUi : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        _file.Loaded += OnFileLoaded;
+        _file.Cleared += OnFileCleared;
+
         _playLabel = PlayButton.GetComponentInChildren<Text>();
         Properties.OnSelected += HandlePropertiesSelected;
+
         UpdateUi();
     }
 
@@ -127,10 +133,7 @@ public class debugEventFileUi : MonoBehaviour
     {
         try
         {
-            // _file.Stop();
             _file.LoadFromFile(f.FullName);
-
-            InitUi();
         }
         catch (Exception ex)
         {
@@ -191,8 +194,7 @@ public class debugEventFileUi : MonoBehaviour
 
         Properties.Group = null;
 
-        _file = new megEventFile();
-        InitUi();
+        _file.Clear();
     }
 
     /** Save the file. */
@@ -228,6 +230,14 @@ public class debugEventFileUi : MonoBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Handle the event file being loaded. */
+    private void OnFileLoaded(megEventFile file)
+        { InitUi(); }
+
+    /** Handle the event file being cleared. */
+    private void OnFileCleared(megEventFile file)
+        { InitUi(); }
 
     /** Initialize the file UI. */
     private void InitUi()

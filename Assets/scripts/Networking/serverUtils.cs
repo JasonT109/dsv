@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Meg.EventSystem;
 using Meg.Graphics;
@@ -10,6 +10,13 @@ namespace Meg.Networking
 {
     public class serverUtils : MonoBehaviour
     {
+
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Return value representing an unknown server data value. */
+        public const float Unknown = -1;
+
 
         // Static Properties
         // ------------------------------------------------------------
@@ -162,40 +169,220 @@ namespace Meg.Networking
             return ServerObject != null;
         }
 
+        /** The set of all server data parameters that can be set or read. */
+        public static readonly HashSet<string> Parameters = new HashSet<string>
+        {
+            "b1",
+            "b2",
+            "b3",
+            "b4",
+            "b5",
+            "b6",
+            "b7",
+            "ballastpressure",
+            "battery",
+            "batterytemp",
+            "cabinhumidity",
+            "cabinoxygen",
+            "cabinpressure",
+            "cabinpressurepsi",
+            "cabintemp",
+            "co2",
+            "co2ppm",
+            "commssignalstrength",
+            "crewbodytemp1",
+            "crewbodytemp2",
+            "crewbodytemp3",
+            "crewbodytemp4",
+            "crewbodytemp5",
+            "crewbodytemp6",
+            "crewheartrate1",
+            "crewheartrate2",
+            "crewheartrate3",
+            "crewheartrate4",
+            "crewheartrate5",
+            "crewheartrate6",
+            "depth",
+            "disableinput",
+            "divertpowertothrusters",
+            "divetime",
+            "divetimeactive",
+            "duetime",
+            "duetimeactive",
+            "error_ballasttank",
+            "error_batteryleak",
+            "error_bilgeleak",
+            "error_bowlights",
+            "error_bowthruster",
+            "error_cpu",
+            "error_datahd",
+            "error_depthsonar",
+            "error_doppler",
+            "error_electricleak",
+            "error_forwardsonar",
+            "error_gps",
+            "error_hydraulicpump",
+            "error_hyrdaulicres",
+            "error_jet_l",
+            "error_jet_r",
+            "error_oxygenext",
+            "error_oxygenpump",
+            "error_portlights",
+            "error_radar",
+            "error_runninglights",
+            "error_starboardlights",
+            "error_sternlights",
+            "error_thruster_l",
+            "error_thruster_r",
+            "error_tow",
+            "error_vertran_l",
+            "error_vertran_r",
+            "error_vhf",
+            "error_vidhd",
+            "floordepth",
+            "floordistance",
+            "heading",
+            "horizontalvelocity",
+            "hydraulicpressure",
+            "hydraulictemp",
+            "initiatemapevent",
+            "inputxaxis",
+            "inputxaxis2",
+            "inputyaxis",
+            "inputyaxis2",
+            "inputzaxis",
+            "intercept1posx",
+            "intercept1posy",
+            "intercept1posz",
+            "intercept1velocity",
+            "intercept1vis",
+            "intercept1warning",
+            "jet_heat_l",
+            "jet_heat_r",
+            "latitude",
+            "longitude",
+            "meg1posx",
+            "meg1posy",
+            "meg1posz",
+            "meg1velocity",
+            "meg1vis",
+            "meg1warning",
+            "megspeed",
+            "megturnspeed",
+            "o1",
+            "o2",
+            "o3",
+            "o4",
+            "o5",
+            "o6",
+            "o7",
+            "oxygen",
+            "oxygenflow",
+            "pitchangle",
+            "pressure",
+            "rollangle",
+            "thruster_heat_l",
+            "thruster_heat_r",
+            "timetointercept",
+            "towwinchload",
+            "v1posx",
+            "v1posy",
+            "v1posz",
+            "v1depth",
+            "v1velocity",
+            "v2posx",
+            "v2posy",
+            "v2posz",
+            "v2depth",
+            "v2velocity",
+            "v3posx",
+            "v3posy",
+            "v3posz",
+            "v3depth",
+            "v3velocity",
+            "v4posx",
+            "v4posy",
+            "v4posz",
+            "v4depth",
+            "v4velocity",
+            "v5posx",
+            "v5posy",
+            "v5posz",
+            "v5depth",
+            "v5velocity",
+            "v6posx",
+            "v6posy",
+            "v6posz",
+            "v6depth",
+            "v5velocity",
+            "variableballastpressure",
+            "variableballasttemp",
+            "velocity",
+            "verticalvelocity",
+            "vertran_heat_l",
+            "vertran_heat_r",
+            "vessel1vis",
+            "vessel1warning",
+            "vessel2vis",
+            "vessel2warning",
+            "vessel3vis",
+            "vessel3warning",
+            "vessel4vis",
+            "vessel4warning",
+            "vessel5vis",
+            "vessel5warning",
+            "vessel6vis",
+            "vessel6warning",
+            "vesselmovementsactive",
+            "watertemp",
+            "xpos",
+            "yawangle",
+            "zpos",
+        };
+
+
         /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName)
         {
             if (!ServerObject)
-                return -1;
+                return Unknown;
 
-            switch (valueName)
+            switch (valueName.ToLower())
             {
                 case "depth":
                     return ServerData.depth;
-                case "xPos":
+                case "xpos":
                     return ServerObject.transform.position.x;
-                case "zPos":
+                case "zpos":
                     return ServerObject.transform.position.z;
                 case "pressure":
                     return ServerData.pressure;
                 case "heading":
                     return ServerData.heading;
-                case "pitchAngle":
+                case "pitchangle":
                     return ServerData.pitchAngle;
-                case "yawAngle":
+                case "yawangle":
                     return ServerData.yawAngle;
-                case "rollAngle":
+                case "rollangle":
                     return ServerData.rollAngle;
                 case "velocity":
                     return ServerData.velocity;
-                case "floorDistance":
+                case "floordepth":
+                    return ServerData.floorDepth;
+                case "floordistance":
                     return ServerData.floorDistance;
-                case "diveTime":
+                case "divetime":
                     return ServerData.diveTime;
-                case "dueTime":
+                case "divetimeactive":
+                    return ServerData.diveTimeActive ? 1 : 0;
+                case "duetime":
                     return ServerData.dueTime;
-                case "waterTemp":
+                case "duetimeactive":
+                    return ServerData.dueTimeActive ? 1 : 0;
+                case "watertemp":
                     return ServerData.waterTemp;
+                case "disableinput":
+                    return ServerData.disableInput ? 1 : 0;
                 case "b1":
                     return ServerData.batteries[0];
                 case "b2":
@@ -226,39 +413,39 @@ namespace Meg.Networking
                     return ServerData.oxygenTanks[6];
                 case "oxygen":
                     return OxygenData.oxygen;
-                case "oxygenFlow":
+                case "oxygenflow":
                     return OxygenData.oxygenFlow;
-                case "Co2":
+                case "co2":
                     return OxygenData.Co2;
-                case "Co2Ppm":
+                case "co2ppm":
                     return OxygenData.Co2Ppm;
-                case "cabinPressure":
+                case "cabinpressure":
                     return OxygenData.cabinPressure;
-                case "cabinPressurePsi":
+                case "cabinpressurepsi":
                     return OxygenData.cabinPressurePsi;
-                case "cabinOxygen":
+                case "cabinoxygen":
                     return OxygenData.cabinOxygen;
-                case "cabinTemp":
+                case "cabintemp":
                     return OxygenData.cabinTemp;
-                case "cabinHumidity":
+                case "cabinhumidity":
                     return OxygenData.cabinHumidity;
                 case "battery":
                     return BatteryData.battery;
-                case "batteryTemp":
+                case "batterytemp":
                     return BatteryData.batteryTemp;
-                case "error_bilgeLeak":
+                case "error_bilgeleak":
                     return ErrorData.error_bilgeLeak;
-                case "error_batteryLeak":
+                case "error_batteryleak":
                     return ErrorData.error_batteryLeak;
-                case "error_electricLeak":
+                case "error_electricleak":
                     return ErrorData.error_electricLeak;
-                case "error_oxygenExt":
+                case "error_oxygenext":
                     return ErrorData.error_oxygenExt;
                 case "error_vhf":
                     return ErrorData.error_vhf;
-                case "error_forwardSonar":
+                case "error_forwardsonar":
                     return ErrorData.error_forwardSonar;
-                case "error_depthSonar":
+                case "error_depthsonar":
                     return ErrorData.error_depthSonar;
                 case "error_doppler":
                     return ErrorData.error_doppler;
@@ -274,25 +461,25 @@ namespace Meg.Networking
                     return ErrorData.error_tow;
                 case "error_radar":
                     return ErrorData.error_radar;
-                case "error_sternLights":
+                case "error_sternlights":
                     return ErrorData.error_sternLights;
-                case "error_bowLights":
+                case "error_bowlights":
                     return ErrorData.error_bowLights;
-                case "error_portLights":
+                case "error_portlights":
                     return ErrorData.error_portLights;
-                case "error_bowThruster":
+                case "error_bowthruster":
                     return ErrorData.error_bowThruster;
-                case "error_hyrdaulicRes":
+                case "error_hyrdaulicres":
                     return ErrorData.error_hyrdaulicRes;
-                case "error_starboardLights":
+                case "error_starboardlights":
                     return ErrorData.error_starboardLights;
-                case "error_runningLights":
+                case "error_runninglights":
                     return ErrorData.error_runningLights;
-                case "error_ballastTank":
+                case "error_ballasttank":
                     return ErrorData.error_ballastTank;
-                case "error_hydraulicPump":
+                case "error_hydraulicpump":
                     return ErrorData.error_hydraulicPump;
-                case "error_oxygenPump":
+                case "error_oxygenpump":
                     return ErrorData.error_oxygenPump;
                 case "error_thruster_l":
                     return GliderErrorData.error_thruster_l;
@@ -318,79 +505,91 @@ namespace Meg.Networking
                     return GliderErrorData.jet_heat_l;
                 case "jet_heat_r":
                     return GliderErrorData.jet_heat_r;
-                case "inputXaxis":
+                case "inputxaxis":
                     return ServerData.inputXaxis;
-                case "inputYaxis":
+                case "inputyaxis":
                     return ServerData.inputYaxis;
-                case "inputZaxis":
+                case "inputzaxis":
                     return ServerData.inputZaxis;
-                case "inputXaxis2":
+                case "inputxaxis2":
                     return ServerData.inputXaxis2;
-                case "inputYaxis2":
+                case "inputyaxis2":
                     return ServerData.inputYaxis2;
-                case "verticalVelocity":
+                case "verticalvelocity":
                     return ServerData.verticalVelocity;
-                case "horizontalVelocity":
+                case "horizontalvelocity":
                     return ServerData.horizontalVelocity;
-                case "crewHeartRate1":
+                case "crewheartrate1":
                     return CrewData.crewHeartRate1;
-                case "crewHeartRate2":
+                case "crewheartrate2":
                     return CrewData.crewHeartRate2;
-                case "crewHeartRate3":
+                case "crewheartrate3":
                     return CrewData.crewHeartRate3;
-                case "crewHeartRate4":
+                case "crewheartrate4":
                     return CrewData.crewHeartRate4;
-                case "crewHeartRate5":
+                case "crewheartrate5":
                     return CrewData.crewHeartRate5;
-                case "crewHeartRate6":
+                case "crewheartrate6":
                     return CrewData.crewHeartRate6;
-                case "crewBodyTemp1":
+                case "crewbodytemp1":
                     return CrewData.crewBodyTemp1;
-                case "crewBodyTemp2":
+                case "crewbodytemp2":
                     return CrewData.crewBodyTemp2;
-                case "crewBodyTemp3":
+                case "crewbodytemp3":
                     return CrewData.crewBodyTemp3;
-                case "crewBodyTemp4":
+                case "crewbodytemp4":
                     return CrewData.crewBodyTemp4;
-                case "crewBodyTemp5":
+                case "crewbodytemp5":
                     return CrewData.crewBodyTemp5;
-                case "crewBodyTemp6":
+                case "crewbodytemp6":
                     return CrewData.crewBodyTemp6;
-                case "v1posX":
+                case "v1posx":
                     return MapData.vessel1Pos.x;
-                case "v1posY":
+                case "v1posy":
                     return MapData.vessel1Pos.y;
-                case "v1posZ":
+                case "v1posz":
+                case "v1depth":
                     return MapData.vessel1Pos.z;
-                case "v2posX":
+                case "v2posx":
                     return MapData.vessel2Pos.x;
-                case "v2posY":
+                case "v2posy":
                     return MapData.vessel2Pos.y;
-                case "v2posZ":
+                case "v2posz":
+                case "v2depth":
                     return MapData.vessel2Pos.z;
-                case "v3posX":
+                case "v3posx":
                     return MapData.vessel3Pos.x;
-                case "v3posY":
+                case "v3posy":
                     return MapData.vessel3Pos.y;
-                case "v3posZ":
+                case "v3posz":
+                case "v3depth":
                     return MapData.vessel3Pos.z;
-                case "v4posX":
+                case "v4posx":
                     return MapData.vessel4Pos.x;
-                case "v4posY":
+                case "v4posy":
                     return MapData.vessel4Pos.y;
-                case "v4posZ":
+                case "v4posz":
+                case "v4depth":
                     return MapData.vessel4Pos.z;
-                case "meg1posX":
+                case "v5posx":
+                case "meg1posx":
                     return MapData.meg1Pos.x;
-                case "meg1posY":
+                case "v5posy":
+                case "meg1posy":
                     return MapData.meg1Pos.y;
-                case "meg1posZ":
+                case "v5posz":
+                case "v5depth":
+                case "meg1posz":
                     return MapData.meg1Pos.z;
-                case "intercept1posX":
+                case "v6posx":
+                case "intercept1posx":
                     return MapData.intercept1Pos.x;
-                case "intercept1posY":
+                case "v6posy":
+                case "intercept1posy":
                     return MapData.intercept1Pos.y;
-                case "intercept1posZ":
+                case "v6posz":
+                case "v6depth":
+                case "intercept1posz":
                     return MapData.intercept1Pos.z;
                 case "v1velocity":
                     return MapData.vessel1Velocity;
@@ -400,66 +599,72 @@ namespace Meg.Networking
                     return MapData.vessel3Velocity;
                 case "v4velocity":
                     return MapData.vessel4Velocity;
+                case "v5velocity":
                 case "meg1velocity":
                     return MapData.meg1Velocity;
+                case "v6velocity":
                 case "intercept1velocity":
                     return MapData.intercept1Velocity;
-                case "vessel1Vis":
+                case "vessel1vis":
                     return MapData.vessel1Vis ? 1.0f : 0.0f;
-                case "vessel2Vis":
+                case "vessel2vis":
                     return MapData.vessel2Vis ? 1.0f : 0.0f;
-                case "vessel3Vis":
+                case "vessel3vis":
                     return MapData.vessel3Vis ? 1.0f : 0.0f;
-                case "vessel4Vis":
+                case "vessel4vis":
                     return MapData.vessel4Vis ? 1.0f : 0.0f;
-                case "meg1Vis":
+                case "vessel5vis":
+                case "meg1vis":
                     return MapData.meg1Vis ? 1.0f : 0.0f;
-                case "intercept1Vis":
+                case "vessel6vis":
+                case "intercept1vis":
                     return MapData.intercept1Vis ? 1.0f : 0.0f;
-                case "vessel1Warning":
+                case "vessel1warning":
                     return MapData.vessel1Warning ? 1.0f : 0.0f;
-                case "vessel2Warning":
+                case "vessel2warning":
                     return MapData.vessel2Warning ? 1.0f : 0.0f;
-                case "vessel3Warning":
+                case "vessel3warning":
                     return MapData.vessel3Warning ? 1.0f : 0.0f;
-                case "vessel4Warning":
+                case "vessel4warning":
                     return MapData.vessel4Warning ? 1.0f : 0.0f;
-                case "meg1Warning":
+                case "vessel5warning":
+                case "meg1warning":
                     return MapData.meg1Warning ? 1.0f : 0.0f;
-                case "intercept1Warning":
+                case "vessel6warning":
+                case "intercept1warning":
                     return MapData.intercept1Warning ? 1.0f : 0.0f;
-                case "initiateMapEvent":
+                case "initiatemapevent":
                     return MapData.initiateMapEvent;
                 case "latitude":
                     return MapData.latitude;
                 case "longitude":
                     return MapData.longitude;
-                case "towWinchLoad":
+                case "towwinchload":
                     return OperatingData.towWinchLoad;
-                case "hydraulicTemp":
+                case "hydraulictemp":
                     return OperatingData.hydraulicTemp;
-                case "hydraulicPressure":
+                case "hydraulicpressure":
                     return OperatingData.hydraulicPressure;
-                case "ballastPressure":
+                case "ballastpressure":
                     return OperatingData.ballastPressure;
-                case "variableBallastTemp":
+                case "variableballasttemp":
                     return OperatingData.variableBallastTemp;
-                case "variableBallastPressure":
+                case "variableballastpressure":
                     return OperatingData.variableBallastPressure;
-                case "commsSignalStrength":
+                case "commssignalstrength":
                     return OperatingData.commsSignalStrength;
-                case "divertPowerToThrusters":
+                case "divertpowertothrusters":
                     return OperatingData.divertPowerToThrusters;
-                case "vesselMovementsActive":
+                case "vesselmovementsactive":
                     return VesselMovements.Active ? 1 : 0;
-                case "timeToIntercept":
+                case "timetointercept":
                     return VesselMovements.TimeToIntercept;
-                case "megSpeed":
+                case "megspeed":
                     return SonarData.MegSpeed;
-                case "megTurnSpeed":
+                case "megturnspeed":
                     return SonarData.MegTurnSpeed;
                 default:
-                    return -2;
+                    return Unknown;
             }
         }
 
@@ -469,7 +674,7 @@ namespace Meg.Networking
             if (!ServerObject)
                 return "no value";
 
-            switch (valueName)
+            switch (valueName.ToLower())
             {
                 case "depth":
                     int dInt = (int)ServerData.depth;
@@ -478,24 +683,29 @@ namespace Meg.Networking
                     return ServerData.pressure.ToString();
                 case "heading":
                     return (ServerData.heading.ToString("n1") + "°");
-                case "pitchAngle":
+                case "pitchangle":
                     return (ServerData.pitchAngle.ToString("n1") + "°");
-                case "yawAngle":
+                case "yawangle":
                     return (ServerData.yawAngle.ToString("n1") + "°");
-                case "rollAngle":
+                case "rollangle":
                     return (ServerData.rollAngle.ToString("n1") + "°");
                 case "velocity":
                     return ServerData.velocity.ToString("n1");
-                case "floorDistance":
-                    int flInt = (int)ServerData.floorDistance;
-                    return flInt.ToString();
-                case "diveTime":
+                case "floordepth":
+                    return Mathf.RoundToInt(ServerData.floorDepth).ToString();
+                case "floordistance":
+                    return Mathf.RoundToInt(ServerData.floorDistance).ToString();
+                case "divetime":
                     var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
                     return string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
-                case "dueTime":
+                case "divetimeactive":
+                    return ServerData.diveTimeActive.ToString();
+                case "duetime":
                     var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
                     return string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
-                case "waterTemp":
+                case "duetimeactive":
+                    return ServerData.dueTimeActive.ToString();
+                case "watertemp":
                     return ServerData.waterTemp.ToString();
                 case "b1":
                     return ServerData.batteries[0].ToString("n1");
@@ -527,65 +737,65 @@ namespace Meg.Networking
                     return ServerData.oxygenTanks[6].ToString("n1");
                 case "oxygen":
                     return (OxygenData.oxygen.ToString("n1") + "%");
-                case "oxygenFlow":
+                case "oxygenflow":
                     return (OxygenData.oxygenFlow.ToString("n0") + "lpm");
-                case "Co2":
+                case "co2":
                     return (OxygenData.Co2.ToString() + "%");
-                case "Co2Ppm":
+                case "co2ppm":
                     return OxygenData.Co2Ppm.ToString("n1") + "ppm";
-                case "cabinPressure":
+                case "cabinpressure":
                     return OxygenData.cabinPressure.ToString();
-                case "cabinPressurePsi":
+                case "cabinpressurepsi":
                     return OxygenData.cabinPressurePsi.ToString("n1");
-                case "cabinOxygen":
+                case "cabinoxygen":
                     return (OxygenData.cabinOxygen.ToString("n0") + "lpm");
-                case "cabinHumidity":
+                case "cabinhumidity":
                     return (OxygenData.cabinHumidity.ToString("n1") + "%");
-                case "cabinTemp":
+                case "cabintemp":
                     return OxygenData.cabinTemp.ToString();
                 case "battery":
                     return (BatteryData.battery.ToString("n1") + "%");
-                case "batteryTemp":
+                case "batterytemp":
                     return (BatteryData.batteryTemp.ToString("n1") + "°c");
                 case "pilot":
                     return ServerData.pilot;
-                case "verticalVelocity":
+                case "verticalvelocity":
                     return ServerData.verticalVelocity.ToString("n1");
-                case "horizontalVelocity":
+                case "horizontalvelocity":
                     return ServerData.horizontalVelocity.ToString("n1");
-                case "inputXaxis":
+                case "inputxaxis":
                     return ServerData.inputXaxis.ToString("n1");
-                case "inputYaxis":
+                case "inputyaxis":
                     return ServerData.inputYaxis.ToString("n1");
-                case "inputZaxis":
+                case "inputzaxis":
                     return ServerData.inputZaxis.ToString("n1");
-                case "inputXaxis2":
+                case "inputxaxis2":
                     return ServerData.inputXaxis2.ToString("n1");
-                case "inputYaxis2":
+                case "inputyaxis2":
                     return ServerData.inputYaxis2.ToString("n1");
-                case "crewHeartRate1":
+                case "crewheartrate1":
                     return CrewData.crewHeartRate1.ToString("n1");
-                case "crewHeartRate2":
+                case "crewheartrate2":
                     return CrewData.crewHeartRate2.ToString("n1");
-                case "crewHeartRate3":
+                case "crewheartrate3":
                     return CrewData.crewHeartRate3.ToString("n1");
-                case "crewHeartRate4":
+                case "crewheartrate4":
                     return CrewData.crewHeartRate4.ToString("n1");
-                case "crewHeartRate5":
+                case "crewheartrate5":
                     return CrewData.crewHeartRate5.ToString("n1");
-                case "crewHeartRate6":
+                case "crewheartrate6":
                     return CrewData.crewHeartRate6.ToString("n1");
-                case "crewBodyTemp1":
+                case "crewbodytemp1":
                     return CrewData.crewBodyTemp1.ToString("n1");
-                case "crewBodyTemp2":
+                case "crewbodytemp2":
                     return CrewData.crewBodyTemp2.ToString("n1");
-                case "crewBodyTemp3":
+                case "crewbodytemp3":
                     return CrewData.crewBodyTemp3.ToString("n1");
-                case "crewBodyTemp4":
+                case "crewbodytemp4":
                     return CrewData.crewBodyTemp4.ToString("n1");
-                case "crewBodyTemp5":
+                case "crewbodytemp5":
                     return CrewData.crewBodyTemp5.ToString("n1");
-                case "crewBodyTemp6":
+                case "crewbodytemp6":
                     return CrewData.crewBodyTemp6.ToString("n1");
                 case "v1depth":
                     return MapData.vessel1Pos.z.ToString("n0");
@@ -595,8 +805,10 @@ namespace Meg.Networking
                     return MapData.vessel3Pos.z.ToString("n0");
                 case "v4depth":
                     return MapData.vessel4Pos.z.ToString("n0");
+                case "v5depth":
                 case "meg1depth":
                     return MapData.meg1Pos.z.ToString("n0");
+                case "v6depth":
                 case "intercept1depth":
                     return MapData.intercept1Pos.z.ToString("n0");
                 case "v1velocity":
@@ -607,55 +819,61 @@ namespace Meg.Networking
                     return MapData.vessel3Velocity.ToString("n1");
                 case "v4velocity":
                     return MapData.vessel4Velocity.ToString("n1");
+                case "v5velocity":
                 case "meg1velocity":
                     return MapData.meg1Velocity.ToString("n1");
+                case "v6velocity":
                 case "intercept1velocity":
                     return MapData.intercept1Velocity.ToString("n1");
-                case "mapEventName":
+                case "mapeventname":
                     return MapData.mapEventName;
-                case "vessel1Vis":
+                case "vessel1vis":
                     return MapData.vessel1Vis.ToString();
-                case "vessel2Vis":
+                case "vessel2vis":
                     return MapData.vessel2Vis.ToString();
-                case "vessel3Vis":
+                case "vessel3vis":
                     return MapData.vessel3Vis.ToString();
-                case "vessel4Vis":
+                case "vessel4vis":
                     return MapData.vessel4Vis.ToString();
-                case "meg1Vis":
+                case "vessel5vis":
+                case "meg1vis":
                     return MapData.meg1Vis.ToString();
-                case "intercept1Vis":
+                case "vessel6vis":
+                case "intercept1vis":
                     return MapData.intercept1Vis.ToString();
-                case "vessel1Warning":
+                case "vessel1warning":
                     return MapData.vessel1Warning.ToString();
-                case "vessel2Warning":
+                case "vessel2warning":
                     return MapData.vessel2Warning.ToString();
-                case "vessel3Warning":
+                case "vessel3warning":
                     return MapData.vessel3Warning.ToString();
-                case "vessel4Warning":
+                case "vessel4warning":
                     return MapData.vessel4Warning.ToString();
-                case "meg1Warning":
+                case "vessel5warning":
+                case "meg1warning":
                     return MapData.meg1Warning.ToString();
-                case "intercept1Warning":
+                case "vessel6warning":
+                case "intercept1warning":
                     return MapData.intercept1Warning.ToString();
                 case "latitude":
                     return FormatLatitude(MapData.latitude);
                 case "longitude":
                     return FormatLongitude(MapData.longitude);
-                case "towWinchLoad":
+                case "towwinchload":
                     return OperatingData.towWinchLoad.ToString("n0");
-                case "hydraulicTemp":
+                case "hydraulictemp":
                     return OperatingData.hydraulicTemp.ToString("n1") + "°c";
-                case "hydraulicPressure":
+                case "hydraulicpressure":
                     return OperatingData.hydraulicPressure.ToString("n1");
-                case "ballastPressure":
+                case "ballastpressure":
                     return OperatingData.ballastPressure.ToString("n1") + "°c";
-                case "variableBallastTemp":
+                case "variableballasttemp":
                     return OperatingData.variableBallastTemp.ToString("n1") + "°c";
-                case "variableBallastPressure":
+                case "variableballastpressure":
                     return OperatingData.variableBallastPressure.ToString("n1");
-                case "commsSignalStrength":
+                case "commssignalstrength":
                     return OperatingData.commsSignalStrength.ToString("n1");
-                case "divertPowerToThrusters":
+                case "divertpowertothrusters":
                     return OperatingData.divertPowerToThrusters.ToString("n1");
                 case "thruster_heat_l":
                     return GliderErrorData.thruster_heat_l.ToString("n1") + "°c";
@@ -666,45 +884,28 @@ namespace Meg.Networking
                 case "vertran_heat_r":
                     return GliderErrorData.vertran_heat_r.ToString("n1") + "°c";
                 case "thruster_l_status":
-                    if (GliderErrorData.thruster_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.thruster_heat_l > 85) ? "WARNING" : "OK";
                 case "thruster_r_status":
-                    if (GliderErrorData.thruster_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.thruster_heat_r > 85) ? "WARNING" : "OK";
                 case "vertran_l_status":
-                    if (GliderErrorData.vertran_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.vertran_heat_l > 85) ? "WARNING" : "OK";
                 case "vertran_r_status":
-                    if (GliderErrorData.vertran_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.vertran_heat_r > 85) ? "WARNING" : "OK";
                 case "jet_l_status":
-                    if (GliderErrorData.jet_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.jet_heat_l > 85) ? "WARNING" : "OK";
                 case "jet_r_status":
-                    if (GliderErrorData.jet_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
-                case "vesselMovementsActive":
+                    return (GliderErrorData.jet_heat_r > 85) ? "WARNING" : "OK";
+                case "vesselmovementsactive":
                     return VesselMovements.Active.ToString();
-                case "timeToIntercept":
+                case "timetointercept":
                     return VesselMovements.TimeToIntercept.ToString();
-                case "megSpeed":
+                case "megspeed":
                     return SonarData.MegSpeed.ToString("n1");
-                case "megTurnSpeed":
+                case "megturnspeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
                 default:
-                    return "no value";
+                    var value = GetServerData(valueName);
+                    return (value == Unknown) ? "no value" : value.ToString("n1");
             }
         }
 

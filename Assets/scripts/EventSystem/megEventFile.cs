@@ -69,6 +69,23 @@ namespace Meg.EventSystem
         public megEvent selectedEvent { get; set; }
 
 
+        // Events
+        // ------------------------------------------------------------
+
+        /** General signature for file events. */
+        public delegate void megEventFileHandler(megEventFile file);
+
+        /** Event fired when file is loaded. */
+        public megEventFileHandler Loaded;
+
+        /** Event fired when file is saved. */
+        public megEventFileHandler SavedToFile;
+
+        /** Event fired when file is cleared. */
+        public megEventFileHandler Cleared;
+
+
+
         // Structures
         // ------------------------------------------------------------
 
@@ -118,7 +135,7 @@ namespace Meg.EventSystem
                 groups[i].Start();
 
             // Register with event manager for updates.
-            megEventManager.Instance.AddFile(this);
+            megEventManager.Instance.StartUpdating(this);
         }
 
         /** Update this event file as time passes. */
@@ -166,7 +183,7 @@ namespace Meg.EventSystem
             running = false;
 
             // Stop receiving updates.
-            megEventManager.Instance.RemoveFile(this);
+            megEventManager.Instance.StopUpdating(this);
         }
 
         /** Rewind the file to start time. */
@@ -221,12 +238,20 @@ namespace Meg.EventSystem
         /** Remove an group from the group. */
         public void RemoveGroup(megEventGroup group)
         {
-            // Ensure the group has been stopped.
             group.Stop();
-
-            // Remove group from the file.
             groups.Remove(group);
         }
+
+        /** Clear the file of all groups. */
+        public void Clear()
+        {
+            Stop();
+            groups.Clear();
+
+            if (Cleared != null)
+                Cleared(this);
+        }
+
 
         // Server values
         // ------------------------------------------------------------
@@ -277,7 +302,6 @@ namespace Meg.EventSystem
                 groupsJson.Add(g.Save());
 
             json.AddField("groups", groupsJson);
-
             return json;
         }
 
@@ -295,6 +319,9 @@ namespace Meg.EventSystem
                 if (running)
                     group.Start();
             }
+
+            if (Loaded != null)
+                Loaded(this);
         }
 
         /** Load state from a JSON file. */
@@ -311,7 +338,15 @@ namespace Meg.EventSystem
             var json = Save();
             var text = json.Print(true);
 
+            var info = new FileInfo(path);
+            var folder = info.DirectoryName;
+            if (folder != null && !Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
             File.WriteAllText(path, text);
+
+            if (SavedToFile != null)
+                SavedToFile(this);
         }
 
     }
