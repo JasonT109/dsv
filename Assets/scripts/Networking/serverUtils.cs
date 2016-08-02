@@ -169,8 +169,8 @@ namespace Meg.Networking
             return ServerObject != null;
         }
 
-        /** The set of all possible server data values. */
-        public static readonly HashSet<string> Values = new HashSet<string>
+        /** The set of all server data parameters that can be set or read. */
+        public static readonly HashSet<string> Parameters = new HashSet<string>
         {
             "b1",
             "b2",

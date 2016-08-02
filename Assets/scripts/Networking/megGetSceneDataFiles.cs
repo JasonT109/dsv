@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using System.Collections;
 using System.IO;
-using Meg.JSON;
+using Meg.Scene;
 
-public class megGetSceneDataFiles : MonoBehaviour {
+public class megGetSceneDataFiles : MonoBehaviour
+{
 
     public string filePath = @"C:\meg\";
     public string[] dataFiles;
@@ -109,10 +109,8 @@ public class megGetSceneDataFiles : MonoBehaviour {
             canPress = false;
             StartCoroutine(wait(0.2f));
 
-            if (fileToLoad != "")
-            {
-                jsonData.megLoadJSONData(fileToLoad);
-            }
+            if (!string.IsNullOrEmpty(fileToLoad))
+                megSceneFile.LoadFromFile(fileToLoad);
         }
     }
 }

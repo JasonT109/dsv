@@ -16,6 +16,9 @@ namespace Meg.EventSystem
         /** The camera event manager. */
         public megMapCameraEventManager MapCamera;
 
+        /** The current event file (if any). */
+        public megEventFile File { get; private set; }
+
 
         // Unity Methods
         // ------------------------------------------------------------
@@ -31,12 +34,16 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Set an event file as the current one. */
+        public void SetCurrentFile(megEventFile file)
+            { File = file; }
+
         /** Start updating an event file. */
-        public void AddFile(megEventFile file)
+        public void StartUpdating(megEventFile file)
             { megEventRunner.Instance.AddFile(file); }
 
         /** Stop updating an event file. */
-        public void RemoveFile(megEventFile file)
+        public void StopUpdating(megEventFile file)
             { megEventRunner.Instance.RemoveFile(file); }
 
         /** Look up the sonar event manager. */

@@ -93,19 +93,18 @@ public class gameInputs : NetworkBehaviour
         // Rewired is configured with a single input player per client.
         _input = Rewired.ReInput.players.GetPlayer(0);
 
-        DebugInput();
+        // Print out some input configuration info to the console.
+        LogInputConfiguration();
     }
 
     /** Updating */
     private void Update()
     {
-        if (!isLocalPlayer)
+        // Only update inputs for this client's local player.
+        if (!isLocalPlayer || !localPlayerAuthority)
             return;
 
-        if (!localPlayerAuthority)
-            return;
-
-        /** If we have changed the current screen ID update it with the server */
+        // If we have changed the current screen ID, update it with the server.
         if (glScreenManager.HasInstance)
             UpdateGliderScreenState();
 
@@ -179,7 +178,7 @@ public class gameInputs : NetworkBehaviour
     private void UpdateInput()
     {
         // Check if there are any joysticks attached to this client.
-        if (_input.controllers.joystickCount <= 0)
+        if (_input == null || _input.controllers.joystickCount <= 0)
             return;
 
         // If so, sample the current input state.
@@ -204,7 +203,7 @@ public class gameInputs : NetworkBehaviour
     }
 
     /** Outputs debugging information about the Rewired input setup. */
-    private void DebugInput()
+    private void LogInputConfiguration()
     {
         // Log assigned Joystick information for all joysticks regardless of whether or not they've been assigned
         Debug.Log("Rewired found " + ReInput.controllers.joystickCount + " joysticks attached.");

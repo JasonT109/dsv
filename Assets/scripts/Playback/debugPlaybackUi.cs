@@ -23,6 +23,13 @@ public class debugPlaybackUi : MonoBehaviour
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Initialization. */
+    private void Awake()
+    {
+        // Inform event manager about the current event file.
+        megEventManager.Instance.SetCurrentFile(EventFileUi.File);
+    }
+
 
     // Public Methods
     // ------------------------------------------------------------

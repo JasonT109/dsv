@@ -244,14 +244,16 @@ namespace Meg.EventSystem
                 json.AddField("paused", paused);
             if (looping)
                 json.AddField("looping", looping);
+            if (canLoop)
+                json.AddField("canLoop", canLoop);
+            if (minimized)
+                json.AddField("minimized", minimized);
             if (pauseOnComplete)
                 json.AddField("pauseOnComplete", pauseOnComplete);
             if (hideTimeline)
                 json.AddField("hideTimeline", hideTimeline);
             if (hideTriggers)
                 json.AddField("hideTriggers", hideTriggers);
-            if (canLoop)
-                json.AddField("canLoop", canLoop);
 
             json.AddField("events", eventsJson);
 
