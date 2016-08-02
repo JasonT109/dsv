@@ -2,9 +2,22 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Linq;
+using Rewired;
 
 public class gameInputs : NetworkBehaviour
 {
+
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Interval for sending input updates to the server (seconds). */
+    private const float ServerSendInterval = 0.05f;
+
+
+    // Synchronization
+    // ------------------------------------------------------------
+
+    /** Current input state on this player. */
     [SyncVar]
     public float output = 0.0f;
     [SyncVar]
@@ -15,11 +28,15 @@ public class gameInputs : NetworkBehaviour
     public float outputX2 = 0.0f;
     [SyncVar]
     public float outputY2 = 0.0f;
+
+    /** Whether this player is regarded as a 'pilot' (has an active joystick). */
     [SyncVar]
     public bool pilot = false;
+
     /** which GLIDER screen this client is controlling (left = 2, middle = 1, right = 0) */
     [SyncVar]
     public int glScreenID = 0;
+
     /** what GLIDER screen content this client is viewing */
     [SyncVar]
     public int activeScreen = 0;
@@ -36,55 +53,61 @@ public class gameInputs : NetworkBehaviour
     public bool mapLabelState;
     private bool prevLabelState;
 
-    /** list of all active joysticks plugged in */
-    public string[] joysticks;
 
-    /** server data object */
-    private GameObject sData;
+    // Members
+    // ------------------------------------------------------------
 
-    /** this client has windows focus, if joystick is plugged in this client will be setting input that the server can then use */
-    private bool focused = false;
+    /** The player's input source. */
+    private Rewired.Player _input;
 
-    /** debug text mesh object so we can see if a screen has focus */
-    private GameObject status;
+    /** Timestamp for sending next input to server. */
+    private float _nextSendTime;
 
-    /** used to restrict updates to a set time tick */
-    private bool canSendData = true;
 
-    /** input axis */
-    private float x1;
-    private float y1;
-    private float z1;
-    private float x2;
-    private float y2;
+    // Unity Methods
+    // ------------------------------------------------------------
 
     /** initialisation */
     void Start()
     {
-        if (!isLocalPlayer)
-            return;
-
-        joysticks = Input.GetJoystickNames();
-        focused = true;
-        status = GameObject.FindWithTag("Status");
-        if (status)
-        {
-            status.GetComponent<TextMesh>().text = "Strong";
-        }
-
         glScreenManager.EnsureInstanceExists();
     }
 
-    /** when app gets windows focus sets the focus state */
-    void OnApplicationFocus(bool focusStatus)
+    /** Called on the client who has authority over this player. */
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        // Retrieve the player input source from Rewired.
+        // Rewired is configured with a single input player per client.
+        _input = Rewired.ReInput.players.GetPlayer(0);
+
+        DebugInput();
+    }
+
+    /** Updating */
+    private void Update()
     {
         if (!isLocalPlayer)
             return;
 
-        focused = focusStatus;
+        if (!localPlayerAuthority)
+            return;
+
+        /** If we have changed the current screen ID update it with the server */
+        if (glScreenManager.HasInstance)
+            UpdateGliderScreenState();
+
+        // Update input if this is the local player.
+        if (_input != null)
+            UpdateInput();
     }
 
-    /** updates the syncvars with the input */
+
+    // Server Commands
+    // ------------------------------------------------------------
+
+    /** Updates this player's syncvars from the current input state. */
     [Command]
     void CmdChangeInput(bool state, float xAxis1, float yAxis1, float zAxis1, float xAxis2, float yAxis2)
     {
@@ -137,129 +160,126 @@ public class gameInputs : NetworkBehaviour
         //Debug.Log("Toggling map labels.");
     }
 
-    /** update */
-    void Update()
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Update input from the local player, and send it to the server. */
+    private void UpdateInput()
     {
-        if (!isLocalPlayer)
+        // Check if there are any joysticks attached to this client.
+        if (_input.controllers.joystickCount <= 0)
             return;
 
-        if (!localPlayerAuthority)
+        // If so, sample the current input state.
+        var z1 = _input.GetAxis("Throttle") * 2 - 1;
+        var x1 = _input.GetAxis("Horizontal");
+        var y1 = _input.GetAxis("Vertical");
+        var x2 = _input.GetAxis("X2");
+        var y2 = _input.GetAxis("Y2");
+
+        // Check if it's time to send inputs to the server.
+        if (Time.realtimeSinceStartup < _nextSendTime)
             return;
 
-        /** If we have changed the current screen ID update it with the server */
-        if (glScreenManager.HasInstance)
-        {
-            if (glScreenManager.Instance.hasChanged)
-            {
-                CmdChangeScreenID(glScreenManager.Instance.screenID);
-                glScreenManager.Instance.hasChanged = false;
+        // Send data to the server.
+        CmdChangeInput(true, x1, y1, z1, x2, y2);
 
-                /** If we have changed the right screen content update it with the server */
-                if (glScreenManager.Instance.screenID == 0)
+        // Schedule next server send.
+        _nextSendTime = Time.realtimeSinceStartup + ServerSendInterval;
+    }
+
+    /** Outputs debugging information about the Rewired input setup. */
+    private void DebugInput()
+    {
+        // Log assigned Joystick information for all joysticks regardless of whether or not they've been assigned
+        Debug.Log("Rewired found " + ReInput.controllers.joystickCount + " joysticks attached.");
+        for (int i = 0; i < ReInput.controllers.joystickCount; i++)
+        {
+            Joystick j = ReInput.controllers.Joysticks[i];
+            Debug.Log(
+                "[" + i + "] Joystick: " + j.name + "\n" +
+                "Hardware Name: " + j.hardwareName + "\n" +
+                "Is Recognized: " + (j.hardwareTypeGuid != System.Guid.Empty ? "Yes" : "No") + "\n" +
+                "Is Assigned: " + (ReInput.controllers.IsControllerAssigned(j.type, j) ? "Yes" : "No")
+            );
+        }
+
+        // Log assigned Joystick information for each Player
+        foreach (var p in ReInput.players.Players)
+        {
+            Debug.Log("PlayerId = " + p.id + " is assigned " + p.controllers.joystickCount + " joysticks.");
+
+            // Log information for each Joystick assigned to this Player
+            foreach (var j in p.controllers.Joysticks)
+            {
+                Debug.Log(
+                  "Joystick: " + j.name + "\n" +
+                  "Is Recognized: " + (j.hardwareTypeGuid != System.Guid.Empty ? "Yes" : "No")
+                );
+
+                // Log information for each Controller Map for this Joystick
+                var mapsForJoystick = p.controllers.maps.GetMaps(j.type, j.id);
+                foreach (var map in mapsForJoystick)
                 {
-                    CmdChangeScreenContent(glScreenManager.Instance.rightScreenID);
+                    Debug.Log("Controller Map:\n" +
+                        "Category = " +
+                        ReInput.mapping.GetMapCategory(map.categoryId).name + "\n" +
+                        "Layout = " +
+                        ReInput.mapping.GetJoystickLayout(map.layoutId).name + "\n" +
+                        "enabled = " + map.enabled
+                    );
+                    foreach (var aem in map.GetElementMaps())
+                    {
+                        var action = ReInput.mapping.GetAction(aem.actionId);
+                        if (action == null) continue; // invalid Action
+                        Debug.Log("Action \"" + action.name + "\" is bound to \"" +
+                            aem.elementIdentifierName
+                        );
+                    }
                 }
-
-                glScreenManager.Instance.hasChanged = false;
-            }
-
-            //if map 3d state has changed
-            if (glScreenManager.Instance.map3dButton.pressed != prev3dState)
-            {
-                prev3dState = glScreenManager.Instance.map3dButton.pressed;
-                CmdSetMap3dState(prev3dState);
-            }
-
-            //if centre button pressed
-            if (glScreenManager.Instance.mapCenterButton.pressed != prevCentreState)
-            {
-                prevCentreState = glScreenManager.Instance.mapCenterButton.pressed;
-                CmdSetMapCenterState(prevCentreState);
-            }
-
-            //labels toggled
-            if (glScreenManager.Instance.mapLabelButton.pressed != prevLabelState)
-            {
-                prevLabelState = glScreenManager.Instance.mapLabelButton.pressed;
-                CmdSetMapLabelState(prevLabelState);
-            }
-        }
-
-        GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
-        if(Root)
-        {
-            if(Root.GetComponent<serverData>().IsJoystickSwapped == false)
-            {
-                z1 = Input.GetAxis("Throttle");
-                x1 = Input.GetAxis("Horizontal");
-                y1 = Input.GetAxis("Vertical");
-                x2 = Input.GetAxis("X2");
-                y2 = Input.GetAxis("Y2");
-            }
-            else
-            {
-                z1 = -(Input.GetAxis("Throttle2"));
-                x1 = Input.GetAxis("Horizontal2");
-                y1 = Input.GetAxis("Vertical2");
-                x2 = Input.GetAxis("X2");
-                y2 = Input.GetAxis("Y2");
-            }
-        }
-        else
-        {
-            z1 = Input.GetAxis("Throttle");
-            x1 = Input.GetAxis("Horizontal");
-            y1 = Input.GetAxis("Vertical");
-            x2 = Input.GetAxis("X2");
-            y2 = Input.GetAxis("Y2");
-        }
-
-        if (sData != null)
-        {
-            if (focused)
-            {
-                if (status)
-                {
-                    status.GetComponent<TextMesh>().text = "Strong";
-                }
-            }
-            else
-            {
-                if (status)
-                {
-                    status.GetComponent<TextMesh>().text = "Weak";
-                }
-            }
-        }
-        else
-        {
-            sData = GameObject.FindWithTag("ServerData");
-        }
-
-        if (joysticks.Length > 0 && focused)
-        {
-            if (canSendData)
-            {
-                CmdChangeInput(true, x1, y1, z1, x2, y2);
-                canSendData = false;
-                StartCoroutine(Wait(0.1f));
-            }
-        }
-        else
-        {
-            if (canSendData)
-            {
-                CmdChangeInput(false, x1, y1, z1, x2, y2);
-                canSendData = false;
-                StartCoroutine(Wait(0.2f));
             }
         }
     }
 
-    /** wait co-routine so we don't spam the server */
-    IEnumerator Wait(float waitTime)
+    /** Update glider screen state. */
+    private void UpdateGliderScreenState()
     {
-        yield return new WaitForSeconds(waitTime);
-        canSendData = true;
+        if (glScreenManager.Instance.hasChanged)
+        {
+            CmdChangeScreenID(glScreenManager.Instance.screenID);
+            glScreenManager.Instance.hasChanged = false;
+
+            /** If we have changed the right screen content update it with the server */
+            if (glScreenManager.Instance.screenID == 0)
+            {
+                CmdChangeScreenContent(glScreenManager.Instance.rightScreenID);
+            }
+
+            glScreenManager.Instance.hasChanged = false;
+        }
+
+        //if map 3d state has changed
+        if (glScreenManager.Instance.map3dButton.pressed != prev3dState)
+        {
+            prev3dState = glScreenManager.Instance.map3dButton.pressed;
+            CmdSetMap3dState(prev3dState);
+        }
+
+        //if centre button pressed
+        if (glScreenManager.Instance.mapCenterButton.pressed != prevCentreState)
+        {
+            prevCentreState = glScreenManager.Instance.mapCenterButton.pressed;
+            CmdSetMapCenterState(prevCentreState);
+        }
+
+        //labels toggled
+        if (glScreenManager.Instance.mapLabelButton.pressed != prevLabelState)
+        {
+            prevLabelState = glScreenManager.Instance.mapLabelButton.pressed;
+            CmdSetMapLabelState(prevLabelState);
+        }
     }
+
+
 }
