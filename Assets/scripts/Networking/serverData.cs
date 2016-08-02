@@ -239,6 +239,9 @@ public class serverData : NetworkBehaviour
             case "waterTemp":
                 waterTemp = newValue;
                 break;
+            case "disableInput":
+                disableInput = newValue > 0;
+                break;
             case "battery":
                 BatteryData.battery = newValue;
                 break;

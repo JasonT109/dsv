@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Meg.EventSystem;
 using Meg.Graphics;
@@ -10,6 +10,13 @@ namespace Meg.Networking
 {
     public class serverUtils : MonoBehaviour
     {
+
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Return value representing an unknown server data value. */
+        public const float Unknown = -1;
+
 
         // Static Properties
         // ------------------------------------------------------------
@@ -162,11 +169,180 @@ namespace Meg.Networking
             return ServerObject != null;
         }
 
+        /** The set of all possible server data values. */
+        public static readonly HashSet<string> Values = new HashSet<string>
+        {
+            "b1",
+            "b2",
+            "b3",
+            "b4",
+            "b5",
+            "b6",
+            "b7",
+            "ballastPressure",
+            "battery",
+            "batteryTemp",
+            "cabinHumidity",
+            "cabinOxygen",
+            "cabinPressure",
+            "cabinPressurePsi",
+            "cabinTemp",
+            "Co2",
+            "Co2Ppm",
+            "commsSignalStrength",
+            "crewBodyTemp1",
+            "crewBodyTemp2",
+            "crewBodyTemp3",
+            "crewBodyTemp4",
+            "crewBodyTemp5",
+            "crewBodyTemp6",
+            "crewHeartRate1",
+            "crewHeartRate2",
+            "crewHeartRate3",
+            "crewHeartRate4",
+            "crewHeartRate5",
+            "crewHeartRate6",
+            "depth",
+            "disableInput",
+            "divertPowerToThrusters",
+            "diveTime",
+            "dueTime",
+            "error_ballastTank",
+            "error_batteryLeak",
+            "error_bilgeLeak",
+            "error_bowLights",
+            "error_bowThruster",
+            "error_cpu",
+            "error_datahd",
+            "error_depthSonar",
+            "error_doppler",
+            "error_electricLeak",
+            "error_forwardSonar",
+            "error_gps",
+            "error_hydraulicPump",
+            "error_hyrdaulicRes",
+            "error_jet_l",
+            "error_jet_r",
+            "error_oxygenExt",
+            "error_oxygenPump",
+            "error_portLights",
+            "error_radar",
+            "error_runningLights",
+            "error_starboardLights",
+            "error_sternLights",
+            "error_thruster_l",
+            "error_thruster_r",
+            "error_tow",
+            "error_vertran_l",
+            "error_vertran_r",
+            "error_vhf",
+            "error_vidhd",
+            "floorDistance",
+            "heading",
+            "horizontalVelocity",
+            "hydraulicPressure",
+            "hydraulicTemp",
+            "initiateMapEvent",
+            "inputXaxis",
+            "inputXaxis2",
+            "inputYaxis",
+            "inputYaxis2",
+            "inputZaxis",
+            "intercept1posX",
+            "intercept1posY",
+            "intercept1posZ",
+            "intercept1velocity",
+            "intercept1Vis",
+            "intercept1Warning",
+            "jet_heat_l",
+            "jet_heat_r",
+            "latitude",
+            "longitude",
+            "meg1posX",
+            "meg1posY",
+            "meg1posZ",
+            "meg1velocity",
+            "meg1Vis",
+            "meg1Warning",
+            "megSpeed",
+            "megTurnSpeed",
+            "o1",
+            "o2",
+            "o3",
+            "o4",
+            "o5",
+            "o6",
+            "o7",
+            "oxygen",
+            "oxygenFlow",
+            "pitchAngle",
+            "pressure",
+            "rollAngle",
+            "thruster_heat_l",
+            "thruster_heat_r",
+            "timeToIntercept",
+            "towWinchLoad",
+            "v1posX",
+            "v1posY",
+            "v1posZ",
+            "v1depth",
+            "v1velocity",
+            "v2posX",
+            "v2posY",
+            "v2posZ",
+            "v2depth",
+            "v2velocity",
+            "v3posX",
+            "v3posY",
+            "v3posZ",
+            "v3depth",
+            "v3velocity",
+            "v4posX",
+            "v4posY",
+            "v4posZ",
+            "v4depth",
+            "v4velocity",
+            "v5posX",
+            "v5posY",
+            "v5posZ",
+            "v5depth",
+            "v5velocity",
+            "v6posX",
+            "v6posY",
+            "v6posZ",
+            "v6depth",
+            "v5velocity",
+            "variableBallastPressure",
+            "variableBallastTemp",
+            "velocity",
+            "verticalVelocity",
+            "vertran_heat_l",
+            "vertran_heat_r",
+            "vessel1Vis",
+            "vessel1Warning",
+            "vessel2Vis",
+            "vessel2Warning",
+            "vessel3Vis",
+            "vessel3Warning",
+            "vessel4Vis",
+            "vessel4Warning",
+            "vessel5Vis",
+            "vessel5Warning",
+            "vessel6Vis",
+            "vessel6Warning",
+            "vesselMovementsActive",
+            "waterTemp",
+            "xPos",
+            "yawAngle",
+            "zPos",
+        };
+
+
         /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName)
         {
             if (!ServerObject)
-                return -1;
+                return Unknown;
 
             switch (valueName)
             {
@@ -196,6 +372,8 @@ namespace Meg.Networking
                     return ServerData.dueTime;
                 case "waterTemp":
                     return ServerData.waterTemp;
+                case "disableInput":
+                    return ServerData.disableInput ? 1 : 0;
                 case "b1":
                     return ServerData.batteries[0];
                 case "b2":
@@ -361,35 +539,47 @@ namespace Meg.Networking
                 case "v1posY":
                     return MapData.vessel1Pos.y;
                 case "v1posZ":
+                case "v1depth":
                     return MapData.vessel1Pos.z;
                 case "v2posX":
                     return MapData.vessel2Pos.x;
                 case "v2posY":
                     return MapData.vessel2Pos.y;
                 case "v2posZ":
+                case "v2depth":
                     return MapData.vessel2Pos.z;
                 case "v3posX":
                     return MapData.vessel3Pos.x;
                 case "v3posY":
                     return MapData.vessel3Pos.y;
                 case "v3posZ":
+                case "v3depth":
                     return MapData.vessel3Pos.z;
                 case "v4posX":
                     return MapData.vessel4Pos.x;
                 case "v4posY":
                     return MapData.vessel4Pos.y;
                 case "v4posZ":
+                case "v4depth":
                     return MapData.vessel4Pos.z;
+                case "v5posX":
                 case "meg1posX":
                     return MapData.meg1Pos.x;
+                case "v5posY":
                 case "meg1posY":
                     return MapData.meg1Pos.y;
+                case "v5posZ":
+                case "v5depth":
                 case "meg1posZ":
                     return MapData.meg1Pos.z;
+                case "v6posX":
                 case "intercept1posX":
                     return MapData.intercept1Pos.x;
+                case "v6posY":
                 case "intercept1posY":
                     return MapData.intercept1Pos.y;
+                case "v6posZ":
+                case "v6depth":
                 case "intercept1posZ":
                     return MapData.intercept1Pos.z;
                 case "v1velocity":
@@ -400,8 +590,10 @@ namespace Meg.Networking
                     return MapData.vessel3Velocity;
                 case "v4velocity":
                     return MapData.vessel4Velocity;
+                case "v5velocity":
                 case "meg1velocity":
                     return MapData.meg1Velocity;
+                case "v6velocity":
                 case "intercept1velocity":
                     return MapData.intercept1Velocity;
                 case "vessel1Vis":
@@ -412,8 +604,10 @@ namespace Meg.Networking
                     return MapData.vessel3Vis ? 1.0f : 0.0f;
                 case "vessel4Vis":
                     return MapData.vessel4Vis ? 1.0f : 0.0f;
+                case "vessel5Vis":
                 case "meg1Vis":
                     return MapData.meg1Vis ? 1.0f : 0.0f;
+                case "vessel6Vis":
                 case "intercept1Vis":
                     return MapData.intercept1Vis ? 1.0f : 0.0f;
                 case "vessel1Warning":
@@ -424,8 +618,10 @@ namespace Meg.Networking
                     return MapData.vessel3Warning ? 1.0f : 0.0f;
                 case "vessel4Warning":
                     return MapData.vessel4Warning ? 1.0f : 0.0f;
+                case "vessel5Warning":
                 case "meg1Warning":
                     return MapData.meg1Warning ? 1.0f : 0.0f;
+                case "vessel6Warning":
                 case "intercept1Warning":
                     return MapData.intercept1Warning ? 1.0f : 0.0f;
                 case "initiateMapEvent":
@@ -459,7 +655,7 @@ namespace Meg.Networking
                 case "megTurnSpeed":
                     return SonarData.MegTurnSpeed;
                 default:
-                    return -2;
+                    return Unknown;
             }
         }
 
@@ -595,8 +791,10 @@ namespace Meg.Networking
                     return MapData.vessel3Pos.z.ToString("n0");
                 case "v4depth":
                     return MapData.vessel4Pos.z.ToString("n0");
+                case "v5depth":
                 case "meg1depth":
                     return MapData.meg1Pos.z.ToString("n0");
+                case "v6depth":
                 case "intercept1depth":
                     return MapData.intercept1Pos.z.ToString("n0");
                 case "v1velocity":
@@ -607,8 +805,10 @@ namespace Meg.Networking
                     return MapData.vessel3Velocity.ToString("n1");
                 case "v4velocity":
                     return MapData.vessel4Velocity.ToString("n1");
+                case "v5velocity":
                 case "meg1velocity":
                     return MapData.meg1Velocity.ToString("n1");
+                case "v6velocity":
                 case "intercept1velocity":
                     return MapData.intercept1Velocity.ToString("n1");
                 case "mapEventName":
@@ -621,8 +821,10 @@ namespace Meg.Networking
                     return MapData.vessel3Vis.ToString();
                 case "vessel4Vis":
                     return MapData.vessel4Vis.ToString();
+                case "vessel5Vis":
                 case "meg1Vis":
                     return MapData.meg1Vis.ToString();
+                case "vessel6Vis":
                 case "intercept1Vis":
                     return MapData.intercept1Vis.ToString();
                 case "vessel1Warning":
@@ -633,8 +835,10 @@ namespace Meg.Networking
                     return MapData.vessel3Warning.ToString();
                 case "vessel4Warning":
                     return MapData.vessel4Warning.ToString();
+                case "vessel5Warning":
                 case "meg1Warning":
                     return MapData.meg1Warning.ToString();
+                case "vessel6Warning":
                 case "intercept1Warning":
                     return MapData.intercept1Warning.ToString();
                 case "latitude":
@@ -666,35 +870,17 @@ namespace Meg.Networking
                 case "vertran_heat_r":
                     return GliderErrorData.vertran_heat_r.ToString("n1") + "°c";
                 case "thruster_l_status":
-                    if (GliderErrorData.thruster_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.thruster_heat_l > 85) ? "WARNING" : "OK";
                 case "thruster_r_status":
-                    if (GliderErrorData.thruster_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.thruster_heat_r > 85) ? "WARNING" : "OK";
                 case "vertran_l_status":
-                    if (GliderErrorData.vertran_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.vertran_heat_l > 85) ? "WARNING" : "OK";
                 case "vertran_r_status":
-                    if (GliderErrorData.vertran_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.vertran_heat_r > 85) ? "WARNING" : "OK";
                 case "jet_l_status":
-                    if (GliderErrorData.jet_heat_l > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.jet_heat_l > 85) ? "WARNING" : "OK";
                 case "jet_r_status":
-                    if (GliderErrorData.jet_heat_r > 85)
-                        return "WARNING";
-                    else
-                        return "OK";
+                    return (GliderErrorData.jet_heat_r > 85) ? "WARNING" : "OK";
                 case "vesselMovementsActive":
                     return VesselMovements.Active.ToString();
                 case "timeToIntercept":
@@ -704,7 +890,8 @@ namespace Meg.Networking
                 case "megTurnSpeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
                 default:
-                    return "no value";
+                    var value = GetServerData(valueName);
+                    return (value == Unknown) ? "no value" : value.ToString("n1");
             }
         }
 
