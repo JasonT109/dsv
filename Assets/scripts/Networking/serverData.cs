@@ -27,6 +27,8 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float floorDistance;
     [SyncVar]
+    public float floorDepth = mapData.DefaultFloorDepth;
+    [SyncVar]
     public float heading;
     [SyncVar]
     public float pitchAngle;
@@ -45,8 +47,12 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float diveTime;
     [SyncVar]
+    public bool diveTimeActive = true;
+    [SyncVar]
     public float dueTime;
-    
+    [SyncVar]
+    public bool dueTimeActive = true;
+
     #endregion
     #region PublicVars
 
@@ -230,11 +236,17 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
                 break;
+            case "floordepth":
+                floorDepth = newValue;
+                break;
             case "duetime":
                 dueTime = newValue;
                 break;
             case "divetime":
                 diveTime = newValue;
+                break;
+            case "divetimeenabled":
+                diveTimeActive = newValue > 0;
                 break;
             case "watertemp":
                 waterTemp = newValue;
@@ -605,6 +617,12 @@ public class serverData : NetworkBehaviour
     {
         switch (boolName.ToLower())
         {
+            case "divetimeactive":
+                diveTimeActive = newValue;
+                break;
+            case "duetimeactive":
+                dueTimeActive = newValue;
+                break;
             case "disableinput":
                 disableInput = newValue;
                 break;
@@ -690,20 +708,6 @@ public class serverData : NetworkBehaviour
         return oxyTotal;
     }
 
-    public float GetFloorDistance()
-    {
-        /*
-        // Delegate to navigation map for sub depths.
-        if (NavSubPins.Instance)
-        {
-            var playerVessel = serverUtils.GetPlayerVessel();
-            return NavSubPins.Instance.GetVesselFloorDistance(playerVessel);
-        }
-        */
-        
-        return Mathf.Max(0, mapData.DefaultFloorDepth - depth);
-    }
-
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
@@ -732,9 +736,10 @@ public class serverData : NetworkBehaviour
 
     #endregion
     #region UnityMethods
+
+    /** Initialize clientside values. */
     public override void OnStartClient()
     {
-        //vDescent = descent;
         BatteryData.bank1 = batteries[0];
         BatteryData.bank2 = batteries[1];
         BatteryData.bank3 = batteries[2];
@@ -752,20 +757,30 @@ public class serverData : NetworkBehaviour
         OxygenData.oxygenTank7 = oxygenTanks[6];
     }
 
-
-    // Use this for initialization
+    /** Initialization. */
     void Start ()
     {
         rb = gameObject.GetComponent<Rigidbody>();
     }
 	
-    // Server only update loop
+    /** Updating. */
     void Update ()
     {
-        //get a list of all the players
+        // Update clientside values.
+        UpdateOnClient();
+
+        // Update serverside values.
+        if (isServer)
+            UpdateOnServer();
+    }
+
+    /** Update data values on the local client. */
+    private void UpdateOnClient()
+    {
+        // Determine the current pilot.
         pilot = GetPilot();
 
-        // Get oxygen data from server
+        // Get oxygen data from server.
         oxygenTanks[0] = OxygenData.oxygenTank1;
         oxygenTanks[1] = OxygenData.oxygenTank2;
         oxygenTanks[2] = OxygenData.oxygenTank3;
@@ -774,7 +789,7 @@ public class serverData : NetworkBehaviour
         oxygenTanks[5] = OxygenData.oxygenTank6;
         oxygenTanks[6] = OxygenData.oxygenTank7;
 
-        //get battery data from server
+        // Get battery data from server.
         batteries[0] = BatteryData.bank1;
         batteries[1] = BatteryData.bank2;
         batteries[2] = BatteryData.bank3;
@@ -782,35 +797,38 @@ public class serverData : NetworkBehaviour
         batteries[4] = BatteryData.bank5;
         batteries[5] = BatteryData.bank6;
         batteries[6] = BatteryData.bank7;
+    }
 
-        //server only
-        if (!isServer)
-            return;
-
-        //Debug.Log("Executing on this client host...");
+    /** Update data values only on the server. */
+    [Server]
+    private void UpdateOnServer()
+    {
         heading = yawResult;
         pitchAngle = -pitchResult;
         yawAngle = yawResult;
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = GetFloorDistance();
+        floorDistance = Mathf.Max(0, floorDepth - depth);
         BatteryData.battery = GetBatteryTotal();
         OxygenData.oxygen = GetOxygenTotal();
 
         // Update ETA timer.
-        dueTime = Mathf.Max(0, dueTime - Time.deltaTime);
+        if (dueTimeActive)
+            dueTime = Mathf.Max(0, dueTime - Time.deltaTime);
 
         // Update dive timer.
-        diveTime += Time.deltaTime;
+        if (diveTimeActive)
+            diveTime += Time.deltaTime;
 
         verticalVelocity = rb.velocity.y;
         horizontalVelocity = rb.velocity.x;
     }
 
+    /** Physics update. */
     void FixedUpdate()
     {
-        this.GetComponent<SubControl>().SubController();
+        GetComponent<SubControl>().SubController();
 
         //if (!disableInput)
         //{
@@ -834,10 +852,8 @@ public class serverData : NetworkBehaviour
         //transform.rotation = Quaternion.Euler(rotation);
 
         //server only
-        if (!isServer)
-            return;
-        GetRollPitchYaw(transform.rotation);
-
+        if (isServer)
+            GetRollPitchYaw(transform.rotation);
     }
 
     IEnumerator wait(float waitTime)
