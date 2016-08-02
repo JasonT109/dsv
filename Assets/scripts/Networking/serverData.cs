@@ -224,28 +224,28 @@ public class serverData : NetworkBehaviour
     {
         //Debug.Log("Setting server data: " + valueName + " to: " + newValue);
 
-        switch (valueName)
+        switch (valueName.ToLower())
         {
             case "depth":
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
                 break;
-            case "dueTime":
+            case "duetime":
                 dueTime = newValue;
                 break;
-            case "diveTime":
+            case "divetime":
                 diveTime = newValue;
                 break;
-            case "waterTemp":
+            case "watertemp":
                 waterTemp = newValue;
                 break;
-            case "disableInput":
+            case "disableinput":
                 disableInput = newValue > 0;
                 break;
             case "battery":
                 BatteryData.battery = newValue;
                 break;
-            case "batteryTemp":
+            case "batterytemp":
                 BatteryData.batteryTemp = newValue;
                 break;
             case "b1":
@@ -290,37 +290,37 @@ public class serverData : NetworkBehaviour
             case "o7":
                 OxygenData.oxygenTank7 = newValue;
                 break;
-            case "Co2":
+            case "co2":
                 OxygenData.Co2 = newValue;
                 break;
-            case "cabinPressure":
+            case "cabinpressure":
                 OxygenData.cabinPressure = newValue;
                 break;
-            case "cabinTemp":
+            case "cabintemp":
                 OxygenData.cabinTemp = newValue;
                 break;
-            case "cabinHumidity":
+            case "cabinhumidity":
                 OxygenData.cabinHumidity = newValue;
                 break;
-            case "error_bilgeLeak":
+            case "error_bilgeleak":
                 ErrorData.error_bilgeLeak = newValue;
                 break;
-            case "error_batteryLeak":
+            case "error_batteryleak":
                 ErrorData.error_batteryLeak = newValue;
                 break;
-            case "error_electricLeak":
+            case "error_electricleak":
                 ErrorData.error_electricLeak = newValue;
                 break;
-            case "error_oxygenExt":
+            case "error_oxygenext":
                 ErrorData.error_oxygenExt = newValue;
                 break;
             case "error_vhf":
                 ErrorData.error_vhf = newValue;
                 break;
-            case "error_forwardSonar":
+            case "error_forwardsonar":
                 ErrorData.error_forwardSonar = newValue;
                 break;
-            case "error_depthSonar":
+            case "error_depthsonar":
                 ErrorData.error_depthSonar = newValue;
                 break;
             case "error_doppler":
@@ -344,60 +344,60 @@ public class serverData : NetworkBehaviour
             case "error_radar":
                 ErrorData.error_radar = newValue;
                 break;
-            case "error_sternLights":
+            case "error_sternlights":
                 ErrorData.error_sternLights = newValue;
                 break;
-            case "error_bowLights":
+            case "error_bowlights":
                 ErrorData.error_bowLights = newValue;
                 break;
-            case "error_portLights":
+            case "error_portlights":
                 ErrorData.error_portLights = newValue;
                 break;
-            case "error_bowThruster":
+            case "error_bowthruster":
                 ErrorData.error_bowThruster = newValue;
                 break;
-            case "error_hyrdaulicRes":
+            case "error_hyrdaulicres":
                 ErrorData.error_hyrdaulicRes = newValue;
                 break;
-            case "error_starboardLights":
+            case "error_starboardlights":
                 ErrorData.error_starboardLights = newValue;
                 break;
-            case "error_runningLights":
+            case "error_runninglights":
                 ErrorData.error_runningLights = newValue;
                 break;
-            case "error_ballastTank":
+            case "error_ballasttank":
                 ErrorData.error_ballastTank = newValue;
                 break;
-            case "error_hydraulicPump":
+            case "error_hydraulicpump":
                 ErrorData.error_hydraulicPump = newValue;
                 break;
-            case "error_oxygenPump":
+            case "error_oxygenpump":
                 ErrorData.error_oxygenPump = newValue;
                 break;
-            case "inputXaxis":
+            case "inputxaxis":
                 inputXaxis = newValue;
                 break;
-            case "inputYaxis":
+            case "inputyaxis":
                 inputYaxis = newValue;
                 break;
-            case "inputZaxis":
+            case "inputzaxis":
                 inputZaxis = newValue;
                 break;
-            case "inputXaxis2":
+            case "inputxaxis2":
                 inputXaxis2 = newValue;
                 break;
-            case "inputYaxis2":
+            case "inputyaxis2":
                 inputYaxis2 = newValue;
                 break;
-            case "pitchAngle":
+            case "pitchangle":
                 Quaternion qPitch = Quaternion.Euler(newValue, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
                 transform.rotation = qPitch;
                 break;
-            case "yawAngle":
+            case "yawangle":
                 Quaternion qYaw = Quaternion.Euler(transform.rotation.eulerAngles.x, newValue, transform.rotation.eulerAngles.z);
                 transform.rotation = qYaw;
                 break;
-            case "rollAngle":
+            case "rollangle":
                 Quaternion qRoll = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, newValue);
                 transform.rotation = qRoll;
                 break;
@@ -405,49 +405,49 @@ public class serverData : NetworkBehaviour
                 velocity = newValue;
                 rb.velocity = transform.forward * newValue;
                 break;
-            case "crewHeartRate1":
+            case "crewheartrate1":
                 CrewData.crewHeartRate1 = newValue;
                 break;
-            case "crewHeartRate2":
+            case "crewheartrate2":
                 CrewData.crewHeartRate2 = newValue;
                 break;
-            case "crewHeartRate3":
+            case "crewheartrate3":
                 CrewData.crewHeartRate3 = newValue;
                 break;
-            case "crewHeartRate4":
+            case "crewheartrate4":
                 CrewData.crewHeartRate4 = newValue;
                 break;
-            case "crewHeartRate5":
+            case "crewheartrate5":
                 CrewData.crewHeartRate5 = newValue;
                 break;
-            case "crewHeartRate6":
+            case "crewheartrate6":
                 CrewData.crewHeartRate6 = newValue;
                 break;
-            case "crewBodyTemp1":
+            case "crewbodytemp1":
                 CrewData.crewBodyTemp1 = newValue;
                 break;
-            case "crewBodyTemp2":
+            case "crewbodytemp2":
                 CrewData.crewBodyTemp2 = newValue;
                 break;
-            case "crewBodyTemp3":
+            case "crewbodytemp3":
                 CrewData.crewBodyTemp3 = newValue;
                 break;
-            case "crewBodyTemp4":
+            case "crewbodytemp4":
                 CrewData.crewBodyTemp4 = newValue;
                 break;
-            case "crewBodyTemp5":
+            case "crewbodytemp5":
                 CrewData.crewBodyTemp5 = newValue;
                 break;
-            case "crewBodyTemp6":
+            case "crewbodytemp6":
                 CrewData.crewBodyTemp6 = newValue;
                 break;
-            case "posX":
+            case "posx":
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
                 break;
-            case "posY":
+            case "posy":
                 transform.position = new Vector3(transform.position.x, newValue, transform.position.z);
                 break;
-            case "posZ":
+            case "posz":
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
             case "latitude":
@@ -456,79 +456,79 @@ public class serverData : NetworkBehaviour
             case "longitude":
                 MapData.longitude = newValue;
                 break;
-            case "vessel1Vis":
+            case "vessel1vis":
                 MapData.vessel1Vis = newValue > 0;
                 break;
-            case "vessel2Vis":
+            case "vessel2vis":
                 MapData.vessel2Vis = newValue > 0;
                 break;
-            case "vessel3Vis":
+            case "vessel3vis":
                 MapData.vessel3Vis = newValue > 0;
                 break;
-            case "vessel4Vis":
+            case "vessel4vis":
                 MapData.vessel4Vis = newValue > 0;
                 break;
-            case "meg1Vis":
+            case "meg1vis":
                 MapData.meg1Vis = newValue > 0;
                 break;
-            case "intercept1Vis":
+            case "intercept1vis":
                 MapData.intercept1Vis = newValue > 0;
                 break;
-            case "vessel1Warning":
+            case "vessel1warning":
                 MapData.vessel1Warning = newValue > 0;
                 break;
-            case "vessel2Warning":
+            case "vessel2warning":
                 MapData.vessel2Warning = newValue > 0;
                 break;
-            case "vessel3Warning":
+            case "vessel3warning":
                 MapData.vessel3Warning = newValue > 0;
                 break;
-            case "vessel4Warning":
+            case "vessel4warning":
                 MapData.vessel4Warning = newValue > 0;
                 break;
-            case "meg1Warning":
+            case "meg1warning":
                 MapData.meg1Warning = newValue > 0;
                 break;
-            case "intercept1Warning":
+            case "intercept1warning":
                 MapData.intercept1Warning = newValue > 0;
                 break;
-            case "initiateMapEvent":
+            case "initiatemapevent":
                 MapData.initiateMapEvent = newValue;
                 break;
-            case "towWinchLoad":
+            case "towwinchload":
                 OperatingData.towWinchLoad = newValue;
                 break;
-            case "hydraulicTemp":
+            case "hydraulictemp":
                 OperatingData.hydraulicTemp = newValue;
                 break;
-            case "hydraulicPressure":
+            case "hydraulicpressure":
                 OperatingData.hydraulicPressure = newValue;
                 break;
-            case "ballastPressure":
+            case "ballastpressure":
                 OperatingData.ballastPressure = newValue;
                 break;
-            case "variableBallastTemp":
+            case "variableballasttemp":
                 OperatingData.variableBallastTemp = newValue;
                 break;
-            case "variableBallastPressure":
+            case "variableballastpressure":
                 OperatingData.variableBallastPressure = newValue;
                 break;
-            case "commsSignalStrength":
+            case "commssignalstrength":
                 OperatingData.commsSignalStrength = newValue;
                 break;
-            case "divertPowerToThrusters":
+            case "divertpowertothrusters":
                 OperatingData.divertPowerToThrusters = newValue;
                 break;
-            case "vesselMovementsActive":
+            case "vesselmovementsactive":
                 VesselMovements.Active = newValue > 0;
                 break;
-            case "timeToIntercept":
+            case "timetointercept":
                 VesselMovements.TimeToIntercept = newValue;
                 break;
-            case "megSpeed":
+            case "megspeed":
                 SonarData.MegSpeed = newValue;
                 break;
-            case "megTurnSpeed":
+            case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
                 break;
         }
@@ -539,9 +539,9 @@ public class serverData : NetworkBehaviour
 
     public void OnValueChanged(string valueName, string newValue)
     {
-        switch (valueName)
+        switch (valueName.ToLower())
         {
-            case "mapEventName":
+            case "mapeventname":
                 MapData.mapEventName = newValue;
                 break;
 
@@ -603,45 +603,45 @@ public class serverData : NetworkBehaviour
 
     public void OnChangeBool(string boolName, bool newValue)
     {
-        switch (boolName)
+        switch (boolName.ToLower())
         {
-            case "disableInput":
+            case "disableinput":
                 disableInput = newValue;
                 break;
-            case "vessel1Vis":
+            case "vessel1vis":
                 MapData.vessel1Vis = newValue;
                 break;
-            case "vessel2Vis":
+            case "vessel2vis":
                 MapData.vessel2Vis = newValue;
                 break;
-            case "vessel3Vis":
+            case "vessel3vis":
                 MapData.vessel3Vis = newValue;
                 break;
-            case "vessel4Vis":
+            case "vessel4vis":
                 MapData.vessel4Vis = newValue;
                 break;
-            case "meg1Vis":
+            case "meg1vis":
                 MapData.meg1Vis = newValue;
                 break;
-            case "intercept1Vis":
+            case "intercept1vis":
                 MapData.intercept1Vis = newValue;
                 break;
-            case "vessel1Warning":
+            case "vessel1warning":
                 MapData.vessel1Warning = newValue;
                 break;
-            case "vessel2Warning":
+            case "vessel2warning":
                 MapData.vessel2Warning = newValue;
                 break;
-            case "vessel3Warning":
+            case "vessel3warning":
                 MapData.vessel3Warning = newValue;
                 break;
-            case "vessel4Warning":
+            case "vessel4warning":
                 MapData.vessel4Warning = newValue;
                 break;
-            case "meg1Warning":
+            case "meg1warning":
                 MapData.meg1Warning = newValue;
                 break;
-            case "intercept1Warning":
+            case "intercept1warning":
                 MapData.intercept1Warning = newValue;
                 break;
         }
