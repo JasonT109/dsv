@@ -141,6 +141,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private SonarData _sonarData;
+    public SonarData SonarData
+    {
+        get
+        {
+            if (!_sonarData)
+                _sonarData = GetComponent<SonarData>();
+            return _sonarData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -510,6 +521,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "timeToIntercept":
                 VesselMovements.TimeToIntercept = newValue;
+                break;
+            case "megSpeed":
+                SonarData.MegSpeed = newValue;
+                break;
+            case "megTurnSpeed":
+                SonarData.MegTurnSpeed = newValue;
                 break;
         }
 

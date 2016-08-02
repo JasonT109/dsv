@@ -134,6 +134,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the sonar data object (contains shared sonar state values.) */
+        private static SonarData _sonarData;
+        public static SonarData SonarData
+        {
+            get
+            {
+                if (!_sonarData && ServerObject)
+                    _sonarData = ServerObject.GetComponent<SonarData>();
+                return _sonarData;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
         {
@@ -442,6 +454,10 @@ namespace Meg.Networking
                     return VesselMovements.Active ? 1 : 0;
                 case "timeToIntercept":
                     return VesselMovements.TimeToIntercept;
+                case "megSpeed":
+                    return SonarData.MegSpeed;
+                case "megTurnSpeed":
+                    return SonarData.MegTurnSpeed;
                 default:
                     return -2;
             }
@@ -683,6 +699,10 @@ namespace Meg.Networking
                     return VesselMovements.Active.ToString();
                 case "timeToIntercept":
                     return VesselMovements.TimeToIntercept.ToString();
+                case "megSpeed":
+                    return SonarData.MegSpeed.ToString("n1");
+                case "megTurnSpeed":
+                    return SonarData.MegTurnSpeed.ToString("n1");
                 default:
                     return "no value";
             }

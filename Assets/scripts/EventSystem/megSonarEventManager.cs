@@ -77,7 +77,6 @@ namespace Meg.SonarEvent
         public void megPlayMegSonarEvent(megEventSonar m)
         {
             Vector3[] wps = new Vector3[m.waypoints.Length];
-            megSetVisualMarkers(m);
 
             for (int i = 0; i < m.waypoints.Length; i++)
             {
@@ -154,6 +153,7 @@ namespace Meg.SonarEvent
                 if (triggerScript.pressed && canPress)
                 {
                     megPlayMegSonarEvent(sonarEvents[m]);
+                    megSetVisualMarkers(sonarEvents[m]);
                     canPress = false;
                     StartCoroutine(wait(0.2f));
                 }

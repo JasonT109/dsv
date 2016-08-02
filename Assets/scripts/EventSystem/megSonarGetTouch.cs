@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using TouchScript.Gestures;
@@ -190,7 +190,9 @@ public class megSonarGetTouch : MonoBehaviour {
             //start the event
             if (playEvent.waypoints.Length > 0)
             {
-                gameObject.GetComponent<megSonarEventManager>().megPlayMegSonarEvent(playEvent);
+                var sonarManager = gameObject.GetComponent<megSonarEventManager>();
+                sonarManager.megPlayMegSonarEvent(playEvent);
+                sonarManager.megSetVisualMarkers(playEvent);
             }
 
             //make sure that this event is only done once
