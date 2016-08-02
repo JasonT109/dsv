@@ -32,6 +32,9 @@ namespace Meg.EventSystem
         private megMapCameraEventManager Manager
             { get { return megEventManager.Instance.MapCamera; } }
 
+        /** Whether camera event has a custom state applied. */
+        private bool hasState
+            { get { return toPosition.sqrMagnitude > 0 || toOrientation.sqrMagnitude > 0 || toZoom != 0; } }
 
 
         // Members
@@ -190,10 +193,10 @@ namespace Meg.EventSystem
         /** Trigger a map camera event on the server. */
         private void TriggerMapCameraEvent()
         {
-            if (!string.IsNullOrEmpty(eventName))
-                serverUtils.PostMapCameraEvent(eventName);
-            else
+            if (hasState)
                 serverUtils.PostMapCameraState(GetState());
+            else
+                serverUtils.PostMapCameraEvent(eventName);
         }
 
         /** Capture initial camera state. */

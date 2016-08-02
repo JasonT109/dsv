@@ -159,10 +159,10 @@ public class serverPlayer : NetworkBehaviour
         if (!Sonar)
             return;
 
-        if (!string.IsNullOrEmpty(sonar.eventName))
-            Sonar.megPlayMegSonarEventByName(sonar.eventName);
-        else
+        if (sonar.hasWaypoints)
             Sonar.megPlayMegSonarEvent(sonar);
+        else
+            Sonar.megPlayMegSonarEventByName(sonar.eventName);
     }
 
     /** Clear sonar on the server. */

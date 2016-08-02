@@ -17,6 +17,9 @@ namespace Meg.EventSystem
         public Vector3[] waypoints = { };
         public bool destroyOnEnd = true;
 
+        /** Whether any sonar waypoints are defined. */
+        public bool hasWaypoints { get { return waypoints != null && waypoints.Length > 0; } }
+
 
         // Lifecycle
         // ------------------------------------------------------------
@@ -24,6 +27,36 @@ namespace Meg.EventSystem
         /** Constructor for a sonar event. */
         public megEventSonar(megEventGroup group = null) 
             : base(megEventType.Sonar, group) { }
+
+
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** Add a waypoint. */
+        public void AddWaypoint(Vector3 p)
+        {
+            var list = waypoints.ToList();
+            list.Add(p);
+            waypoints = list.ToArray();
+        }
+
+        /** Remove the last waypoint. */
+        public void RemoveLastWaypoint()
+        {
+            var n = waypoints.Length;
+            if (n <= 0)
+                return;
+
+            var list = waypoints.ToList();
+            list.RemoveAt(n - 1);
+            waypoints = list.ToArray();
+        }
+
+        /** Remove all waypoints. */
+        public void RemoveAllWaypoints()
+        {
+            waypoints = new Vector3[] { };
+        }
 
 
         // Load / Save

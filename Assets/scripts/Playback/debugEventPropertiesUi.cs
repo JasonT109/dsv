@@ -127,6 +127,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Input text for sonar event name. */
     public InputField SonarEventNameInput;
 
+    /** Sonar waypoint ui. */
+    public debugEventSonarWaypointsUi SonarWaypointsUi;
+
 
     [Header("Vessels Event Components")]
 
@@ -292,15 +295,15 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateBaseProperties();
 
         if (_event is megEventValue)
-            UpdateValueProperties();
+            InitValueProperties();
         else if (_event is megEventPhysics)
-            UpdatePhysicsProperties();
+            InitPhysicsProperties();
         else if (_event is megEventMapCamera)
-            UpdateMapCameraProperties();
+            InitMapCameraProperties();
         else if (_event is megEventSonar)
-            UpdateSonarProperties();
+            InitSonarProperties();
         else if (_event is megEventVessels)
-            UpdateVesselsProperties();
+            InitVesselsProperties();
 
         _initializing = false;
     }
@@ -323,9 +326,6 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !minimized);
         SonarProperties.gameObject.SetActive(_event is megEventSonar && !minimized);
         VesselsProperties.gameObject.SetActive(_event is megEventVessels && !minimized);
-
-        if (MapCameraEvent != null)
-            MapCameraStateGroup.gameObject.SetActive(string.IsNullOrEmpty(MapCameraEvent.eventName));
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
 
@@ -431,7 +431,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Value Event Interface
     // ------------------------------------------------------------
 
-    private void UpdateValueProperties()
+    private void InitValueProperties()
     {
         UpdateServerParamInput();
         UpdateServerValueSlider();
@@ -489,7 +489,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Physics Event Interface
     // ------------------------------------------------------------
 
-    private void UpdatePhysicsProperties()
+    private void InitPhysicsProperties()
     {
         UpdatePhysicsDirectionInputs();
         UpdatePhysicsMagnitudeSlider();
@@ -577,7 +577,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Map Camera Event Interface
     // ------------------------------------------------------------
 
-    private void UpdateMapCameraProperties()
+    private void InitMapCameraProperties()
     {
         UpdateMapCameraEventNameInput();
         UpdateMapCameraPositionInputs();
@@ -758,8 +758,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Sonar Event Interface
     // ------------------------------------------------------------
 
-    private void UpdateSonarProperties()
+    private void InitSonarProperties()
     {
+        SonarWaypointsUi.Event = SonarEvent;
         UpdateSonarEventNameInput();
     }
 
@@ -780,7 +781,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Vessels Event Interface
     // ------------------------------------------------------------
 
-    private void UpdateVesselsProperties()
+    private void InitVesselsProperties()
     {
     }
 
