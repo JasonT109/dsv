@@ -14,8 +14,19 @@ public class gameInputs : NetworkBehaviour
     private const float ServerSendInterval = 0.05f;
 
 
+    // Properties
+    // ------------------------------------------------------------
+
+    [Header("Configuration")]
+
+    /** Throttle response curve. */
+    public AnimationCurve ThrottleResponse;
+
+
     // Synchronization
     // ------------------------------------------------------------
+
+    [Header("Synchronization")]
 
     /** Current input state on this player. */
     [SyncVar]
@@ -172,11 +183,14 @@ public class gameInputs : NetworkBehaviour
             return;
 
         // If so, sample the current input state.
-        var z1 = _input.GetAxis("Throttle") * 2 - 1;
+        var z1 = _input.GetAxis("Throttle");
         var x1 = _input.GetAxis("Horizontal");
         var y1 = _input.GetAxis("Vertical");
         var x2 = _input.GetAxis("X2");
         var y2 = _input.GetAxis("Y2");
+
+        // Apply throttle response curve to determine final output.
+        z1 = ThrottleResponse.Evaluate(z1);
 
         // Check if it's time to send inputs to the server.
         if (Time.realtimeSinceStartup < _nextSendTime)
