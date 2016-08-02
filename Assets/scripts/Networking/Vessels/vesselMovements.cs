@@ -233,7 +233,7 @@ public class vesselMovements : NetworkBehaviour
 
     /** Save both movement and vessel state to JSON. */
     [Server]
-    public JSONObject SaveWithState()
+    public JSONObject SaveFullState()
         { return Save(true); }
 
     /** Save movement state to JSON. */
@@ -244,12 +244,14 @@ public class vesselMovements : NetworkBehaviour
         json.AddField("Active", Active);
         json.AddField("TimeToIntercept", TimeToIntercept);
 
+        // Save out active movements for each vessel.
         var movementsJson = new JSONObject(JSONObject.Type.ARRAY);
         foreach (var m in _movements)
             if (m.Count > 0)
                 movementsJson.Add(m[0].Save());
         json.AddField("Movements", movementsJson);
 
+        // Save full vessel states (position, visibility etc.) if needed.
         if (saveVesselState)
         {
             var vesselsJson = new JSONObject(JSONObject.Type.ARRAY);
@@ -257,7 +259,6 @@ public class vesselMovements : NetworkBehaviour
                 vesselsJson.Add(SaveVesselState(i + 1));
             json.AddField("Vessels", vesselsJson);
         }
-
 
         return json;
     }
@@ -392,6 +393,10 @@ public class vesselMovements : NetworkBehaviour
             var position = Vector3.zero;
             json.GetField(ref position, "Position");
             serverUtils.SetVesselPosition(vessel, position);
+
+            // If this is the player vessel, reset its world velocity.
+            if (vessel == MapData.playerVessel)
+                serverUtils.SetPlayerWorldVelocity(Vector3.zero);
         }
         if (json.HasField("Velocity"))
         {

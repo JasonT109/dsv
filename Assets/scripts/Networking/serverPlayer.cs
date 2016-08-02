@@ -1,6 +1,6 @@
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Collections;
 using Meg.EventSystem;
 using Meg.Networking;
 using Meg.SonarEvent;
@@ -102,6 +102,15 @@ public class serverPlayer : NetworkBehaviour
             CmdTriggerMapCameraState(state);
     }
 
+    /** Post vessel movements state to the server. */
+    public void PostVesselMovementsState(JSONObject json)
+    {
+        if (isServer)
+            ServerSetVesselMovementsState(json);
+        else
+            CmdSetVesselMovementsState(json.Print(true));
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -148,6 +157,21 @@ public class serverPlayer : NetworkBehaviour
     public void CmdTriggerMapCameraState(megMapCameraEventManager.State state)
         { ServerTriggerMapCameraState(state); }
 
+    /** Command to set vessel movements state on the server. */
+    [Command]
+    public void CmdSetVesselMovementsState(string state)
+    {
+        try
+        {
+            var json = new JSONObject(state);
+            ServerSetVesselMovementsState(json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("CmdSetVesselMovementsState(): Failed to apply vessels state from client: " + ex);
+        }
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -187,6 +211,13 @@ public class serverPlayer : NetworkBehaviour
     {
         // Forward trigger command to all clients.
         RpcTriggerMapCameraState(state);
+    }
+
+    /** Set vessel movements state on the server. */
+    [Server]
+    public void ServerSetVesselMovementsState(JSONObject json)
+    {
+        serverUtils.VesselMovements.Load(json);
     }
 
 

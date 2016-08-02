@@ -187,22 +187,31 @@ namespace Meg.EventSystem
         /** Add an group of a given type. */
         public megEventGroup AddGroup()
         {
-            var e = CreateGroup();
-            groups.Add(e);
-            return e;
+            var group = CreateGroup();
+            groups.Add(group);
+
+            // Start the group if file is running.
+            if (running)
+                group.Start();
+
+            return group;
         }
 
         /** Insert an group of a given type after the given group. */
         public megEventGroup InsertGroup(megEventGroup insertAfter)
         {
-            var e = CreateGroup();
+            var group = CreateGroup();
             var insertIndex = groups.IndexOf(insertAfter);
             if (insertIndex >= 0)
-                groups.Insert(insertIndex + 1, e);
+                groups.Insert(insertIndex + 1, group);
             else
-                groups.Add(e);
+                groups.Add(group);
 
-            return e;
+            // Start the group if file is running.
+            if (running)
+                group.Start();
+
+            return group;
         }
 
         /** Create an group of a given type. */
@@ -210,9 +219,13 @@ namespace Meg.EventSystem
             { return new megEventGroup(this); }
 
         /** Remove an group from the group. */
-        public void RemoveGroup(megEventGroup e)
+        public void RemoveGroup(megEventGroup group)
         {
-            groups.Remove(e);
+            // Ensure the group has been stopped.
+            group.Stop();
+
+            // Remove group from the file.
+            groups.Remove(group);
         }
 
         // Server values

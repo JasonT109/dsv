@@ -452,7 +452,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerValueInput()
     {
-        ServerValueInput.text = string.Format("{0:N1}", ValueEvent.serverValue);
+        ServerValueInput.text = string.Format("{0:N2}", ValueEvent.serverValue);
     }
 
     public void ServerParamInputChanged(string value)

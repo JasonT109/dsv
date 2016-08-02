@@ -37,7 +37,17 @@ namespace Meg.EventSystem
         /** Capture current vessel simulation state. */
         public void Capture()
         {
-            vesselMovements = serverUtils.VesselMovements.SaveWithState();
+            // Capture the full state of all vessels (movements, position, visibility).
+            vesselMovements = serverUtils.VesselMovements.SaveFullState();
+        }
+
+        /** String representation. */
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(triggerLabel))
+                return triggerLabel;
+
+            return "Vessels State";
         }
 
 
@@ -71,9 +81,9 @@ namespace Meg.EventSystem
                 return;
 
             if (_initialState == null)
-                _initialState = serverUtils.VesselMovements.Save();
+                _initialState = serverUtils.VesselMovements.SaveFullState();
 
-            serverUtils.VesselMovements.Load(vesselMovements);
+            serverUtils.PostVesselMovementsState(vesselMovements);
         }
 
         /** Update this event internally. */
@@ -92,8 +102,9 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
+            // Restore initial vessel movements state (including position and visibility).
             if (_initialState != null)
-                serverUtils.VesselMovements.Load(_initialState);
+                serverUtils.PostVesselMovementsState(_initialState);
         }
 
     }

@@ -88,14 +88,14 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Start this event group. */
-        public void Start()
+        public void Start(float t = 0)
         {
             if (running)
                 return;
 
+            time = t;
             running = true;
             completed = false;
-            time = 0;
 
             // Initialize event list if needed.
             if (events == null)

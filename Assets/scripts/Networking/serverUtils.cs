@@ -767,25 +767,32 @@ namespace Meg.Networking
                 LocalPlayer.PostSonarEvent(sonarEvent);
         }
 
-        /** Clear the sonar of all traces (works on both clients and host). */
+        /** Clear the sonar of all active objects (works on both clients and host). */
         public static void PostSonarClear(megEventSonar sonarEvent)
         {
             if (LocalPlayer)
                 LocalPlayer.PostSonarClear(sonarEvent);
         }
 
-        /** Post a custom camera event by name. */
+        /** Post a custom camera event by name (works on both clients and host). */
         public static void PostMapCameraEvent(string eventName)
         {
             if (LocalPlayer)
                 LocalPlayer.PostMapCameraEvent(eventName);
         }
 
-        /** Post a custom camera event by supplying the target state. */
+        /** Post a custom camera event by supplying the target state (works on both clients and host). */
         public static void PostMapCameraState(megMapCameraEventManager.State state)
         {
             if (LocalPlayer)
                 LocalPlayer.PostMapCameraState(state);
+        }
+
+        /** Post vessel movements state to the server (works on both clients and host). */
+        public static void PostVesselMovementsState(JSONObject json)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselMovementsState(json);
         }
 
         /** Set a battery bank value (only works on host). */
