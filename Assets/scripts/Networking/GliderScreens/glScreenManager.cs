@@ -10,11 +10,11 @@ public class glScreenManager : Singleton<glScreenManager> {
     power (12)          thrusters (8)           controls (0)
     power (12)          map (9)                 nav map (1)
     power (12)          tcas (10)               nav tcas (2)
-    power (12)          map (9)                 nav sonar (3)
-    power (12)          map (9)                 nav radar (4)
+    power (12)          sonar (14)              nav sonar (3)
+    power (12)          radar (15)              nav radar (4)
     power (12)          towing (11)             towing (5)
     power (12)          thrusters (8)           comms (6)
-    diagnostics (13)    thrusters (8)           systems (7)
+    power (12)          thrusters (8)           systems (7)
     */
 
     public int screenID;
@@ -30,7 +30,11 @@ public class glScreenManager : Singleton<glScreenManager> {
     public GameObject tcasScreen;
     public GameObject towingScreen;
     public GameObject powerScreen;
+    public GameObject sonarScreen;
+    public GameObject radarScreen;
 
+
+    //these buttons are monitored to set map events
     public buttonControl map3dButton;
     public buttonControl mapCenterButton;
     public buttonControl mapLabelButton;
@@ -73,7 +77,8 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                //diagnosticsScreen.SetActive(false);
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
                 break;
             case 9: //map
                 thrusterScreen.SetActive(false);
@@ -81,7 +86,8 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                //diagnosticsScreen.SetActive(false);
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
                 break;
             case 10: //tcas
                 thrusterScreen.SetActive(false);
@@ -89,7 +95,8 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(true);         //<---
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(false);
-                //diagnosticsScreen.SetActive(false);
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
                 break;
             case 11: //towing
                 thrusterScreen.SetActive(false);
@@ -97,7 +104,8 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(true);       //<---
                 powerScreen.SetActive(false);
-                //diagnosticsScreen.SetActive(false);
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
                 break;
             case 12: //power
                 thrusterScreen.SetActive(false);
@@ -105,15 +113,35 @@ public class glScreenManager : Singleton<glScreenManager> {
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
                 powerScreen.SetActive(true);        //<---
-                //diagnosticsScreen.SetActive(false);
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
                 break;
             case 13: //diagnostics
                 thrusterScreen.SetActive(false);
                 mapScreen.SetActive(false);
                 tcasScreen.SetActive(false);
                 towingScreen.SetActive(false);
-                powerScreen.SetActive(true);        //<--- power screen and diagnostics are the same
-                //diagnosticsScreen.SetActive(false);
+                powerScreen.SetActive(true);        //<---
+                sonarScreen.SetActive(false);
+                radarScreen.SetActive(false);
+                break;
+            case 14: //sonar
+                thrusterScreen.SetActive(false);
+                mapScreen.SetActive(false);
+                tcasScreen.SetActive(false);
+                towingScreen.SetActive(false);
+                powerScreen.SetActive(false);
+                sonarScreen.SetActive(true);       //<---
+                radarScreen.SetActive(false);
+                break;
+            case 15: //radar
+                thrusterScreen.SetActive(false);
+                mapScreen.SetActive(false);
+                tcasScreen.SetActive(false);
+                towingScreen.SetActive(false);
+                powerScreen.SetActive(false);
+                sonarScreen.SetActive(false);       
+                radarScreen.SetActive(true);        //<---
                 break;
         }
     }

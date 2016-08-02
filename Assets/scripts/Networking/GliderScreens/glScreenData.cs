@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
 
-/** Sets the screen matrix for the glider screens. The right hand screen determins the content of the other 2 screens. */
+/** Sets the screen matrix for the glider screens. The right hand screen determines the content of the other 2 screens. */
 public class glScreenData : NetworkBehaviour
 {
     /**
@@ -10,7 +10,7 @@ public class glScreenData : NetworkBehaviour
     power (12)          thrusters (8)           controls (0)
     power (12)          map (9)                 nav map (1)
     power (12)          tcas (10)               nav tcas (2)
-    power (12)          map (9)                 nav sonar (3)
+    power (12)          sonar (14)              nav sonar (3)
     power (12)          map (9)                 nav radar (4)
     power (12)          towing (11)             towing (5)
     power (12)          thrusters (8)           comms (6)
@@ -41,8 +41,10 @@ public class glScreenData : NetworkBehaviour
             case 1:
                 if (screenMatrixID == 0 || screenMatrixID == 6 || screenMatrixID == 7) 
                     screenOutID = 8; //thrusters
-                else if (screenMatrixID == 1 || screenMatrixID == 3 || screenMatrixID == 4)
+                else if (screenMatrixID == 1 || screenMatrixID == 4)
                     screenOutID = 9; //map
+                else if (screenMatrixID == 3)
+                    screenOutID = 14; //sonar
                 else if (screenMatrixID == 2)
                     screenOutID = 10; //tcas
                 else if (screenMatrixID == 5)
