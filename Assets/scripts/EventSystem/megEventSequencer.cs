@@ -35,7 +35,7 @@ public class megEventSequencer : MonoBehaviour {
 	void Update ()
     {
         //if trigger is active
-        if (megEvents.trigger.GetComponent<buttonControl>().active && !megEvents.running)
+        if (megEvents.trigger && megEvents.trigger.GetComponent<buttonControl>().active && !megEvents.running)
         {
             megEvents.running = true;
         }

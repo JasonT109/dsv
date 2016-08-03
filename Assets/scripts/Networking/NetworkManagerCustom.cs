@@ -110,14 +110,15 @@ public class NetworkManagerCustom : MonoBehaviour
             return;
 
         // Check if we should start a client or server session immediately.
+        // If we're not in the login screen and no session exists, must be in the editor.
+        // In that case we should start up a local server automatically.
         var attempted = false;
-        if (Configuration.Has("client"))
+        var role = Configuration.Get("network-role", "").ToLower();
+        if (!IsLoginScreen())
+            attempted = StartServer();
+        if (role == "client")
             attempted = StartClient();
-        else if (Configuration.Has("server"))
-            attempted = StartServer();
-        else if (Configuration.Has("host"))
-            attempted = StartServer();
-        else if (!IsLoginScreen())
+        else if (role == "server" || role == "host")
             attempted = StartServer();
 
         // Schedule the next auto-attempt (if we made one.)
@@ -133,6 +134,7 @@ public class NetworkManagerCustom : MonoBehaviour
         
         Debug.Log(string.Format("Starting client session - connecting to host at {0}:{1}..", Host, Port));
         UNet.StartClient();
+
         ScheduleNextAttempt();
         return true;
     }
@@ -146,6 +148,7 @@ public class NetworkManagerCustom : MonoBehaviour
         Debug.Log("Starting server session..");
         EnsureServerObjectExists();
         UNet.StartHost();
+
         ScheduleNextAttempt();
         return true;
     }

@@ -17,27 +17,27 @@ public class Configuration : AutoSingleton<Configuration>
     // ------------------------------------------------------------
 
     /** Return a configuration value for the given key. */
-    public static T Get<T>(string key, T defaultValue = default(T))
-        { return Instance.GetField<T>(key, defaultValue); }
+    public static T Get<T>(string key, T defaultValue = default(T), string configId = null)
+        { return Instance.GetField(key, defaultValue, configId); }
 
     /** Return a configuration value for the given key. */
-    public static JSONObject GetJson(string key)
-        { return Instance.GetField(key); }
+    public static JSONObject GetJson(string key, string configId = null)
+        { return Instance.GetField(key, configId); }
 
     /** Return whether a configuration value exists for the given key. */
-    public static bool Has(string key)
-        { return Instance.HasField(key); }
+    public static bool Has(string key, string configId = null)
+        { return Instance.HasField(key, configId); }
 
 
     // Public Properties
     // ------------------------------------------------------------
 
     /** Return the configuration ID for this program instance. */
-    public string Id
+    public string CurrentId
         { get { return GetConfigId(); } }
 
     /** Configuration data. */
-    public JSONObject Data
+    public JSONObject DataForAllIds
     {
         get
         {
@@ -48,34 +48,22 @@ public class Configuration : AutoSingleton<Configuration>
         }
     }
 
-    /** Configuration data for the current id. */
-    public JSONObject DataForId
+    /** Return configuration data for a given id. */
+    public JSONObject DataForId(string id)
     {
-        get
+        if (string.IsNullOrEmpty(id))
+            return new JSONObject();
+
+        if (_dataForId == null)
         {
-            if (!_dataForId)
-                _dataForId = Data.GetField(Id);
-
-            if (!_dataForId)
-                _dataForId = DataDefault;
-
-            return _dataForId;
+            _dataForId = new Dictionary<string, JSONObject>();
+            foreach (var key in DataForAllIds.keys)
+                _dataForId[key.ToLower()] = DataForAllIds.GetField(key);
         }
-    }
 
-    /** Configuration data for the current id. */
-    public JSONObject DataDefault
-    {
-        get
-        {
-            if (!_dataDefault)
-                _dataDefault = Data.GetField(DefaultId);
-
-            if (!_dataDefault)
-                _dataDefault = new JSONObject();
-
-            return _dataDefault;
-        }
+        JSONObject result;
+        return _dataForId.TryGetValue(id.ToLower(), out result)
+            ? result : new JSONObject();
     }
 
 
@@ -83,57 +71,48 @@ public class Configuration : AutoSingleton<Configuration>
     // ------------------------------------------------------------
 
     /** Retrieve a configuration value by key. */
-    public T GetField<T>(string key, T defaultValue)
+    public T GetField<T>(string key, T defaultValue, string id = null)
     {
+        // Check if command line explictly specifies the value.
         if (CommandLine.HasParameter(key))
             return CommandLine.GetParameter(key, defaultValue);
 
-        if (!DataForId.HasField(key))
-            return GetDefault(key, defaultValue);
+        // Use the current config id if one isn't explicitly given.
+        if (string.IsNullOrEmpty(id))
+            id = CurrentId;
 
-        var json = DataForId.GetField(key);
-        var str = json.IsString ? json.str : json.ToString();
-
-        return Parsing.Parse(str, defaultValue);
+        // Look up config value using the given id.
+        return GetFieldFromId(key, defaultValue, id);
     }
 
     /** Retrieve a configuration JSON value by key. */
-    public JSONObject GetField(string key)
+    public JSONObject GetField(string key, string id = null)
     {
+        // Check if command line explictly specifies the value.
         if (CommandLine.HasParameter(key))
             return new JSONObject(CommandLine.GetParameter(key));
 
-        if (!DataForId.HasField(key))
-            return GetDefault(key);
+        // Use the current config id if one isn't explicitly given.
+        if (string.IsNullOrEmpty(id))
+            id = CurrentId;
 
-        return DataForId.GetField(key);
-    }
-
-    /** Retrieve a default configuration value by key. */
-    public T GetDefault<T>(string key, T defaultValue)
-    {
-        if (!DataDefault.HasField(key))
-            return defaultValue;
-
-        var json = DataDefault.GetField(key);
-        var str = json.IsString ? json.str : json.ToString();
-
-        return Parsing.Parse(str, defaultValue);
-    }
-
-    /** Retrieve a default configuration JSON value by key. */
-    public JSONObject GetDefault(string key)
-    {
-        if (!DataDefault.HasField(key))
-            return new JSONObject();
-
-        return DataDefault.GetField(key);
+        // Look up config value using the given id.
+        return GetJsonFromId(key, id);
     }
 
     /** Return whether a configuration value exists for the given key. */
-    public bool HasField(string key)
+    public bool HasField(string key, string id = null)
     {
-        return DataForId.HasField(key) || CommandLine.HasParameter(key);
+        // Check if command line explictly specifies the value.
+        if (CommandLine.HasParameter(key))
+            return true;
+
+        // Use the current config id if one isn't explicitly given.
+        if (string.IsNullOrEmpty(id))
+            id = CurrentId;
+
+        // Look up config value using the given id.
+        return HasFieldFromId(key, id);
     }
 
 
@@ -146,11 +125,8 @@ public class Configuration : AutoSingleton<Configuration>
     /** Configuration data. */
     private JSONObject _data;
 
-    /** Configuration data for the current id. */
-    private JSONObject _dataForId;
-
-    /** Configuration data for the default id. */
-    private JSONObject _dataDefault;
+    /** Lookup table for config data, indexed by config id. */
+    private Dictionary<string, JSONObject> _dataForId;
 
 
     // Unity Methods
@@ -184,20 +160,31 @@ public class Configuration : AutoSingleton<Configuration>
     /** Load data from configuration file. */
     private void LoadData()
     {
-        // Determine the config file location (next to executable).
-        var folder = Application.dataPath + "/../";
-        var config = folder + CommandLine.GetParameter("config", "config.json");
-        var path = Path.GetFullPath(config);
+        // Get the name of the config file we'd like to load.
+        var config = CommandLine.GetParameter("config", "config.json");
+        if (!config.EndsWith(".json"))
+            config += ".json";
+
+        // Firstly, look for a config right next to the executable.
+        var path = Path.GetFullPath(Application.dataPath + "/../" + config);
+
+        // If that fails, look for one in the streaming assets folder.
+        if (!File.Exists(path))
+            path = Path.GetFullPath(Application.streamingAssetsPath + "/" + config);
 
         // Check if config exists.
         if (!File.Exists(path))
+        {
+            Debug.Log("No configuration file found.");
             _data = new JSONObject();
+            return;
+        }
 
         // Load configuration JSON data.
         try
         {
             _data = Load(path);
-            Debug.Log("Loaded configuration file: " + path + ", using ID '" + Id + "'.");
+            Debug.Log("Loaded configuration file: " + path + ", using ID '" + CurrentId + "'.");
         }
         catch (Exception ex)
         {
@@ -211,8 +198,75 @@ public class Configuration : AutoSingleton<Configuration>
     {
         var text = File.ReadAllText(path);
         var json = new JSONObject(text);
-
         return json;
     }
+
+    /** Retrieve a configuration value by key, using the specified config ID. */
+    private T GetFieldFromId<T>(string key, T defaultValue, string configId)
+    {
+        // Search through the config hierarchy for the given field.
+        while (!string.IsNullOrEmpty(configId))
+        {
+            var data = DataForId(configId);
+            if (data.HasField(key))
+            {
+                var json = data.GetField(key);
+                var str = json.IsString ? json.str : json.ToString();
+                return Parsing.Parse(str, defaultValue);
+            }
+
+            configId = GetParentForId(configId);
+        }
+
+        // Value was not found.
+        return defaultValue;
+    }
+
+    /** Retrieve a configuration JSON object by key, using the specified config ID. */
+    private JSONObject GetJsonFromId(string key, string configId)
+    {
+        // Search through the config hierarchy for the given field.
+        while (!string.IsNullOrEmpty(configId))
+        {
+            var data = DataForId(configId);
+            if (data.HasField(key))
+                return data.GetField(key);
+
+            configId = GetParentForId(configId);
+        }
+
+        // Value was not found.
+        return new JSONObject();
+    }
+
+    /** Determine if config has a field for the given key. */
+    private bool HasFieldFromId(string key, string configId)
+    {
+        // Search through the config hierarchy for the given field.
+        while (!string.IsNullOrEmpty(configId))
+        {
+            var data = DataForId(configId);
+            if (data.HasField(key))
+                return true;
+
+            configId = GetParentForId(configId);
+        }
+
+        // Value was not found.
+        return false;
+    }
+
+    /** Return a parent configuration to use if the given id doesn't contain a key. */
+    private string GetParentForId(string configId)
+    {
+        // Check if we are no longer able to parent.
+        if (string.IsNullOrEmpty(configId) || configId == DefaultId)
+            return null;
+
+        // Get parent ID from the given id's data section.
+        DataForId(configId).GetField(out configId, "parent", DefaultId);
+        return configId;
+    }
+
 
 }

@@ -1,0 +1,71 @@
+{
+	"default" :
+	{
+		"aspect-from" : 1.77777778,
+		"aspect-to" : 1.77777778,
+		"aspect-scaling" : false,
+		"network-role" : "",
+		"server-ip" : "localhost",
+		"server-port" : 25001,
+	},
+
+
+
+	"bigSub" :
+	{
+		"parent" : "default",
+		"network-role" : "client",
+		"screen-mode" : "16_9",
+		"screen-scene" : "screen_subs",
+	},
+
+	"bigSubServer" :
+	{
+		"parent" : "bigSub",
+		"network-role" : "server",
+	},
+	
+
+	"pilotBigSub" :
+	{
+		"parent" : "bigSub",
+	},
+
+	"pilotBigSubLeft" :
+	{
+		"parent" : "bigSub",
+		"screen-position-x" : -1920,
+	},
+
+	"pilotBigSubMid" :
+	{
+		"parent" : "bigSub",
+		"screen-position-x" : 0,
+	},
+
+	"pilotBigSubRight" :
+	{
+		"parent" : "bigSub",
+		"screen-position-x" : 1920,
+	},
+
+
+
+	"glider" :
+	{
+		"parent" : "default",
+		"aspect-from" : 1.6,
+		"aspect-to" : 1.77777778,
+		"aspect-scaling" : true,
+		"network-role" : "client",
+		"screen-mode" : "16_10",
+		"screen-scene" : "screen_gliders",
+	},
+
+	"gliderServer" :
+	{
+		"parent" : "glider",
+		"network-role" : "server",
+	},
+
+}
