@@ -261,7 +261,11 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** Add an event of a given type to the group. */
     public void AddEvent(megEventType type)
-        { _group.InsertEvent(type, File.selectedEvent); }
+    {
+        var e = _group.InsertEvent(type, File.selectedEvent);
+        File.selectedEvent = e;
+        ExpandEvent(e);
+    }
 
     /** Remove an event from the group. */
     public void RemoveEvent()

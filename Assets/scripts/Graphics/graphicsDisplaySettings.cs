@@ -47,6 +47,20 @@ public class graphicsDisplaySettings : MonoBehaviour
     // Unity Methods
     // ------------------------------------------------------------
 
+    void Awake()
+    {
+        if (!mainPanel)
+            mainPanel = ObjectFinder.LocateUiByName("Scene");
+        if (!panelLeftSmall)
+            panelLeftSmall = ObjectFinder.LocateUiByRegex(".*PanelLeftSmall", "Panels_21x9");
+        if (!panelRightSmall)
+            panelRightSmall = ObjectFinder.LocateUiByRegex(".*PanelRightSmall", "Panels_21x9");
+        if (!panelLeftLarge)
+            panelLeftLarge = ObjectFinder.LocateUiByRegex(".*PanelLeftLarge", "Panels_21x9");
+        if (!panelRightLarge)
+            panelRightLarge = ObjectFinder.LocateUiByRegex(".*PanelRightLarge", "Panels_21x9");
+    }
+
     /** Updating. */
     private void Update()
     {

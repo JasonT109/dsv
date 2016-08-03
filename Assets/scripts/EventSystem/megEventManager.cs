@@ -11,10 +11,10 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** The sonar event manager. */
-        public megSonarEventManager Sonar;
+        public megSonarEventManager Sonar { get; private set; }
 
         /** The camera event manager. */
-        public megMapCameraEventManager MapCamera;
+        public megMapCameraEventManager MapCamera { get; private set; }
 
         /** The current event file (if any). */
         public megEventFile File { get; private set; }
@@ -28,6 +28,12 @@ namespace Meg.EventSystem
         {
             // Ensure that the event manager instance is populated.
             EnsureInstanceExists();
+
+            // Resolve links to other managers.
+            if (!Sonar)
+                Sonar = ObjectFinder.Locate<megSonarEventManager>();
+            if (!MapCamera)
+                MapCamera = ObjectFinder.Locate<megMapCameraEventManager>();
         }
 
 
