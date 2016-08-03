@@ -69,8 +69,8 @@ public class NetworkManagerCustom : MonoBehaviour
     private void Awake()
     {
         // Get default connection state.
-        Host = CommandLine.GetParameter("server-ip", Network.player.ipAddress);
-        Port = CommandLine.GetParameter("server-port", Port);
+        Host = Configuration.Get("server-ip", Network.player.ipAddress);
+        Port = Configuration.Get("server-port", Port);
 
         // Configure UNET network manager with default connection.
         UNet = GetComponent<NetworkManager>();
@@ -111,11 +111,11 @@ public class NetworkManagerCustom : MonoBehaviour
 
         // Check if we should start a client or server session immediately.
         var attempted = false;
-        if (CommandLine.HasParameter("client"))
+        if (Configuration.Has("client"))
             attempted = StartClient();
-        else if (CommandLine.HasParameter("server"))
+        else if (Configuration.Has("server"))
             attempted = StartServer();
-        else if (CommandLine.HasParameter("host"))
+        else if (Configuration.Has("host"))
             attempted = StartServer();
         else if (!IsLoginScreen())
             attempted = StartServer();

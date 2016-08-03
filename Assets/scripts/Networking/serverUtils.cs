@@ -156,34 +156,15 @@ namespace Meg.Networking
 
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
-        {
-            get { return GetVesselMovements(); }
-        }
-
+            { get { return GetVesselMovements(); } }
 
         /** A unique identifier for this game instance (supplied on the commandline). */
-        private static string _id;
         public static string Id
-        {
-            get
-            {
-                // Check if we already have an id assigned.
-                if (!string.IsNullOrEmpty(_id))
-                    return _id;
-
-                // Parse the commandline to look for a specified ID.
-                // For example, "dsv.exe -id pilotLeft" would result in an id of 'pilotLeft'.
-                _id = CommandLine.GetParameterByRegex(@"-id[\s|=]+(\w+)", "Default");
-
-                return _id;
-            }
-        }
+            { get { return Configuration.Instance.Id; } }
 
         /** Whether the server object is available for use yet. */
         public static bool IsReady()
-        {
-            return ServerObject != null;
-        }
+            { return ServerObject != null; }
 
         /** The set of all server data parameters that can be set or read. */
         public static readonly HashSet<string> Parameters = new HashSet<string>
