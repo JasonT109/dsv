@@ -10,13 +10,22 @@ public class NetworkManagerCustom : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Timeout for interactive startup attempts (seconds). */
-    private const float DefaultStartupTimeout = 2;
+    public const float DefaultStartupTimeout = 2;
 
     /** Timeout for automatic session startup attempts (seconds). */
-    private const float AutoStartupTimeout = 10;
+    public const float AutoStartupTimeout = 10;
 
     /** Name of the password screen. */
-    private const string LoginScreenScene = "offline_scene";
+    public const string LoginScene = "offline_scene";
+
+    /** Name of the gliders screen. */
+    public const string GliderScene = "screen_gliders";
+
+    /** Name of the main submarine screen. */
+    public const string BigSubScene = "screen_subs";
+
+    /** Name of the scene containing DCC screens. */
+    public const string DccScene = "screen_subs";
 
 
     // Properties
@@ -35,17 +44,20 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** Server port to connect to. */
     public int Port = 25001;
-    
-    /** The UNET networking manager. */
-    public NetworkManager UNet { get; private set; }
+
+    /** Scene to start up in when hosting/joining a session. */
+    public string Scene = BigSubScene;
 
 
     // Private Properties
     // ------------------------------------------------------------
 
+    /** The UNET networking manager. */
+    private NetworkManager _manager;
+
     /** Whether a network session is active for this instance. */
     private bool HasSession
-        { get { return NetworkClient.active || NetworkServer.active || UNet.matchMaker != null; } }
+        { get { return NetworkClient.active || NetworkServer.active || _manager.matchMaker != null; } }
 
     /** Whether this instance is acting as a host. */
     private static bool IsHost
@@ -71,11 +83,12 @@ public class NetworkManagerCustom : MonoBehaviour
         // Get default connection state.
         Host = Configuration.Get("server-ip", Network.player.ipAddress);
         Port = Configuration.Get("server-port", Port);
+        Scene = Configuration.Get("network-scene", Scene);
 
         // Configure UNET network manager with default connection.
-        UNet = GetComponent<NetworkManager>();
-        UNet.networkAddress = Host;
-        UNet.networkPort = Port;
+        _manager = GetComponent<NetworkManager>();
+        _manager.networkAddress = Host;
+        _manager.networkPort = Port;
     }
 
     /** Startup. */
@@ -96,6 +109,39 @@ public class NetworkManagerCustom : MonoBehaviour
         // Periodically attempt automatic startup.
         if (!HasSession && CanAttemptStartup())
             AttemptAutoStartup();
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Attempt to start up a client session. */
+    public bool StartClient()
+    {
+        if (!CanAttemptStartup())
+            return false;
+
+        Debug.Log(string.Format("Starting client session - connecting to host at {0}:{1}, scene '{2}'..", Host, Port, Scene));
+        _manager.onlineScene = Scene;
+        _manager.StartClient();
+
+        ScheduleNextAttempt();
+        return true;
+    }
+
+    /** Attempt to start up a server (host) session. */
+    public bool StartServer()
+    {
+        if (!CanAttemptStartup())
+            return false;
+
+        Debug.Log(string.Format("Starting server session - scene '{0}'..", Scene));
+        EnsureServerObjectExists();
+        _manager.onlineScene = Scene;
+        _manager.StartHost();
+
+        ScheduleNextAttempt();
+        return true;
     }
 
 
@@ -126,33 +172,6 @@ public class NetworkManagerCustom : MonoBehaviour
             ScheduleNextAttempt(AutoStartupTimeout);
     }
 
-    /** Start up a client session. */
-    public bool StartClient()
-    {
-        if (!CanAttemptStartup())
-            return false;
-        
-        Debug.Log(string.Format("Starting client session - connecting to host at {0}:{1}..", Host, Port));
-        UNet.StartClient();
-
-        ScheduleNextAttempt();
-        return true;
-    }
-
-    /** Start up a server (host) session. */
-    public bool StartServer()
-    {
-        if (!CanAttemptStartup())
-            return false;
-
-        Debug.Log("Starting server session..");
-        EnsureServerObjectExists();
-        UNet.StartHost();
-
-        ScheduleNextAttempt();
-        return true;
-    }
-
     /** Whether a startup attempt can be made at present. */
     private bool CanAttemptStartup()
         { return Time.time >= _nextStartTime; }
@@ -167,7 +186,7 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** Check if we're in the initial password screen. */
     private bool IsLoginScreen()
-        { return SceneManager.GetActiveScene().name == LoginScreenScene; }
+        { return SceneManager.GetActiveScene().name == LoginScene; }
 
     /** Try to ensure the server object exists. */
     private void EnsureServerObjectExists()

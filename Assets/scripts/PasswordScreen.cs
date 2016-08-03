@@ -32,10 +32,6 @@ public class PasswordScreen : MonoBehaviour
     public bool IsPasswordCorrect = false;
     public bool IsPasswordPin = false;
 
-    public string GliderLevel = "screen_gliders";
-    public string BigSubLevel = "screen_01";
-    public string DCCLevel = "screen_gliders";
-
 
     // Members
     // ------------------------------------------------------------
@@ -100,7 +96,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.white;
         BigSubButtonImg.color = Color.grey;
         DCCButtonImg.color = Color.grey;
-        _manager.UNet.onlineScene = GliderLevel;
+        _manager.Scene = NetworkManagerCustom.GliderScene;
     }
 
     public void ToggleBigSub()
@@ -108,7 +104,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.white;;
         DCCButtonImg.color = Color.grey;
-        _manager.UNet.onlineScene = BigSubLevel;
+        _manager.Scene = NetworkManagerCustom.BigSubScene;
     }
 
     public void ToggleDCC()
@@ -116,7 +112,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.grey;;
         DCCButtonImg.color = Color.white;
-        _manager.UNet.onlineScene = DCCLevel;
+        _manager.Scene = NetworkManagerCustom.DccScene;
     }
 
     public void PasswordLiveInput(string value)
