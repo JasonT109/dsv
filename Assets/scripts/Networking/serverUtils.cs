@@ -153,7 +153,10 @@ namespace Meg.Networking
             get
             {
                 if (!_graphicsColourHolder && ServerData)
+                {
                     _graphicsColourHolder = ServerData.GetComponent<graphicsColourHolder>();
+                    Debug.Log("Looking up Colour holder: " + _graphicsColourHolder);
+                }
 
                 return _graphicsColourHolder;
             }
@@ -1282,7 +1285,7 @@ namespace Meg.Networking
         /** Returns the current vessel color theme. */
         public static megColorTheme GetColorTheme()
         {
-            var  theme = new megColorTheme();
+            var theme = new megColorTheme();
             if (ColourHolder)
                 theme = ColourHolder.theme;
 
