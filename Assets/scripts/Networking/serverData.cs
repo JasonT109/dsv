@@ -52,6 +52,8 @@ public class serverData : NetworkBehaviour
     public float dueTime;
     [SyncVar]
     public bool dueTimeActive = true;
+    [SyncVar]
+    public bool disableInput = false;
 
     #endregion
     #region PublicVars
@@ -65,7 +67,7 @@ public class serverData : NetworkBehaviour
     public float pitchSpeed = 0.1f;
     public float rollSpeed = 0.1f;
     public GameObject[] players;
-    public bool disableInput = false;
+    //public bool disableInput = false;
 
     private Vector3 rotation;
     #endregion
@@ -111,6 +113,17 @@ public class serverData : NetworkBehaviour
             if (!_errorData)
                 _errorData = GetComponent<errorData>();
             return _errorData;
+        }
+    }
+
+    private gliderErrorData _gliderErrorData;
+    public gliderErrorData GliderErrorData
+    {
+        get
+        {
+            if (!_gliderErrorData)
+                _gliderErrorData = GetComponent<gliderErrorData>();
+            return _gliderErrorData;
         }
     }
 
@@ -386,6 +399,9 @@ public class serverData : NetworkBehaviour
             case "error_oxygenpump":
                 ErrorData.error_oxygenPump = newValue;
                 break;
+            case "genericerror":
+                ErrorData.genericerror = newValue;
+                break;
             case "inputxaxis":
                 inputXaxis = newValue;
                 break;
@@ -542,6 +558,24 @@ public class serverData : NetworkBehaviour
                 break;
             case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
+                break;
+            case "vertran_heat_l":
+                GliderErrorData.vertran_heat_l = newValue;
+                break;
+            case "vertran_heat_r":
+                GliderErrorData.vertran_heat_r = newValue;
+                break;
+            case "thruster_heat_l":
+                GliderErrorData.thruster_heat_l = newValue;
+                break;
+            case "thruster_heat_r":
+                GliderErrorData.thruster_heat_r = newValue;
+                break;
+            case "jet_heat_l":
+                GliderErrorData.jet_heat_l = newValue;
+                break;
+            case "jet_heat_r":
+                GliderErrorData.jet_heat_r = newValue;
                 break;
         }
 

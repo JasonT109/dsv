@@ -8,6 +8,9 @@ public class widgetThrusterPowerOutput : MonoBehaviour
     public DynamicText t;
     public widgetThrusterControl.ThrusterId Thruster;
 
+    private float updateTick = 0.2f;
+    private float updateTime = 0;
+
     void Start ()
     {
         if (!thrusterControl)
@@ -19,6 +22,13 @@ public class widgetThrusterPowerOutput : MonoBehaviour
 	
 	void Update ()
     {
-        t.SetText(thrusterControl.GetThrusterPowerOutput(Thruster).ToString("N0"));
+        string valueText = thrusterControl.GetThrusterPowerOutput(Thruster).ToString("N0");
+        
+        if (Time.time > updateTime)
+        {
+            updateTime = Time.time + updateTick;
+            t.SetText(valueText);
+        }
+        
 	}
 }

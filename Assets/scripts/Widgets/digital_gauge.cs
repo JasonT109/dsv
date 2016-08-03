@@ -272,7 +272,7 @@ public class digital_gauge : MonoBehaviour {
             }
             else
             {
-                tickRange = (maxValue - minValue) / (numTicks - 1);
+                tickRange = (maxValue - minValue) / (numTicks);
                 for (int i = 0; i < numTicks; i++)
                 {
                     if ((float)value >= (float)(i * tickRange) && value != 0)

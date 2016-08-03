@@ -241,6 +241,7 @@ namespace Meg.Networking
             "error_vidhd",
             "floordepth",
             "floordistance",
+            "genericerror",
             "heading",
             "horizontalvelocity",
             "hydraulicpressure",
@@ -481,6 +482,8 @@ namespace Meg.Networking
                     return ErrorData.error_hydraulicPump;
                 case "error_oxygenpump":
                     return ErrorData.error_oxygenPump;
+                case "genericerror":
+                    return ErrorData.genericerror;
                 case "error_thruster_l":
                     return GliderErrorData.error_thruster_l;
                 case "error_thruster_r":

@@ -118,7 +118,7 @@ public class widgetThrusterControl : MonoBehaviour
         //get the current input
         inX = serverUtils.GetServerData("inputXaxis") * 100f;
         inY = serverUtils.GetServerData("inputYaxis") * 100f;
-        inZ = serverUtils.GetServerData("inputZaxis") * 100f;
+        inZ = (serverUtils.GetServerData("inputZaxis") * 100f) * (1 - serverUtils.GetServerData("disableinput"));
         inX2 = serverUtils.GetServerData("inputXaxis2") * 100f;
 
         //calculate the thruster power based on inputs
@@ -321,7 +321,7 @@ public class widgetThrusterControl : MonoBehaviour
             case ThrusterId.SideR3:
                 return graphicsMaths.remapValue(Mathf.Abs(thrusterSideR3), 0, 100, sideThrusterOutputMin, sideThrusterOutputMax);
             case ThrusterId.MainShared:
-                return Mathf.Max(graphicsMaths.remapValue(Mathf.Abs(thrusterMainL), -100, 100, mainThrusterOutputMin, mainThrusterOutputMax), graphicsMaths.remapValue(thrusterMainR, -100, 100, mainThrusterOutputMin, mainThrusterOutputMax));
+                return Mathf.Max(graphicsMaths.remapValue(Mathf.Abs(thrusterMainL), 0, 100, mainThrusterOutputMin, mainThrusterOutputMax), graphicsMaths.remapValue(thrusterMainR, 0, 100, mainThrusterOutputMin, mainThrusterOutputMax));
             default:
                 return 0;
         }

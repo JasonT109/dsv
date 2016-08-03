@@ -33,6 +33,7 @@ public class buttonControl : MonoBehaviour
     public float autoWarningValue = 0f;
     public string autoWarningServerName = "depth";
     public bool autoWarningGreaterThan = false;
+    public bool useUniversalSync = false;
 
     [Header("Server")]
     public bool observeServerState;
@@ -50,6 +51,7 @@ public class buttonControl : MonoBehaviour
     public event buttonEventHandler onPressed;
     public event buttonEventHandler onReleased;
 
+    private GameObject syncNode;
     private megColorTheme colorScheme;
     private Renderer r;
     private Material m;
@@ -84,6 +86,11 @@ public class buttonControl : MonoBehaviour
         if (gliderButton)
         {
             transition = gliderButtonOnMesh.GetComponent<widgetHighLightOnActive>();
+        }
+
+        if (useUniversalSync)
+        {
+            syncNode = GameObject.FindWithTag("WarningSync");
         }
     }
 
@@ -381,23 +388,45 @@ public class buttonControl : MonoBehaviour
         }
         if (warning)
         {
-            timeIndex += Time.deltaTime * warningFlashSpeed;
-            float sinWave = Mathf.Sin(timeIndex);
-            if (timeIndex > 1.0f)
+            float sinWave;
+            if (!useUniversalSync || !syncNode)
             {
-                timeIndex = warningFlashPause;
-            }
-            if (active)
-            {
-                m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
+                timeIndex += Time.deltaTime * warningFlashSpeed;
+                sinWave = Mathf.Sin(timeIndex);
+                if (timeIndex > 1.0f)
+                {
+                    timeIndex = warningFlashPause;
+                }
+
+                if (active)
+                {
+                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
+                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
+                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
+                }
+                else
+                {
+                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
+                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
+                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
+                }
             }
             else
             {
-                m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
+                sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex);
+
+                if (active)
+                {
+                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
+                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
+                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
+                }
+                else
+                {
+                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
+                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
+                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
+                }
             }
         }
         else

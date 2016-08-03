@@ -52,4 +52,6 @@ public class errorData : NetworkBehaviour
     public float error_hydraulicPump = 1f;
     [SyncVar]
     public float error_oxygenPump = 1f;
+    [SyncVar]
+    public float genericerror = 1f;
 }
