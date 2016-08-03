@@ -35,18 +35,26 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the server object (contains all data objects.) */
+        private static GameObject _serverObject;
+        public static GameObject ServerObject
+        {
+            get
+            {
+                if (!_serverObject)
+                    _serverObject = GameObject.FindWithTag("ServerData");
+                return _serverObject;
+            }
+        }
+
         /** Return the server data object (contains shared core state values.) */
         private static serverData _serverData;
         public static serverData ServerData
         {
             get
             {
-                if (!_serverData)
-                {
-                    _serverData = ObjectFinder.Find<serverData>();
-                    Debug.Log("Locating server data: " + _serverData);
-                }
-
+                if (!_serverData && ServerObject)
+                    _serverData = ServerObject.GetComponent<serverData>();
                 return _serverData;
             }
         }
@@ -57,8 +65,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_errorData && ServerData)
-                    _errorData = ServerData.GetComponent<errorData>();
+                if (!_errorData && ServerObject)
+                    _errorData = ServerObject.GetComponent<errorData>();
                 return _errorData;
             }
         }
@@ -68,8 +76,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_gliderErrorData && ServerData)
-                    _gliderErrorData = ServerData.GetComponent<gliderErrorData>();
+                if (!_gliderErrorData && ServerObject)
+                    _gliderErrorData = ServerObject.GetComponent<gliderErrorData>();
                 return _gliderErrorData;
             }
         }
@@ -80,8 +88,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_mapData && ServerData)
-                    _mapData = ServerData.GetComponent<mapData>();
+                if (!_mapData && ServerObject)
+                    _mapData = ServerObject.GetComponent<mapData>();
                 return _mapData;
             }
         }
@@ -92,8 +100,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_crewData && ServerData)
-                    _crewData = ServerData.GetComponent<crewData>();
+                if (!_crewData && ServerObject)
+                    _crewData = ServerObject.GetComponent<crewData>();
                 return _crewData;
             }
         }
@@ -104,8 +112,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_oxygenData && ServerData)
-                    _oxygenData = ServerData.GetComponent<oxygenData>();
+                if (!_oxygenData && ServerObject)
+                    _oxygenData = ServerObject.GetComponent<oxygenData>();
                 return _oxygenData;
             }
         }
@@ -116,8 +124,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_batteryData && ServerData)
-                    _batteryData = ServerData.GetComponent<batteryData>();
+                if (!_batteryData && ServerObject)
+                    _batteryData = ServerObject.GetComponent<batteryData>();
                 return _batteryData;
             }
         }
@@ -128,8 +136,8 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_operatingData && ServerData)
-                    _operatingData = ServerData.GetComponent<operatingData>();
+                if (!_operatingData && ServerObject)
+                    _operatingData = ServerObject.GetComponent<operatingData>();
                 return _operatingData;
             }
         }
@@ -140,25 +148,9 @@ namespace Meg.Networking
         {
             get
             {
-                if (!_sonarData && ServerData)
-                    _sonarData = ServerData.GetComponent<SonarData>();
+                if (!_sonarData && ServerObject)
+                    _sonarData = ServerObject.GetComponent<SonarData>();
                 return _sonarData;
-            }
-        }
-
-        /** Return the graphics theme component. */
-        private static graphicsColourHolder _graphicsColourHolder;
-        public static graphicsColourHolder ColourHolder
-        {
-            get
-            {
-                if (!_graphicsColourHolder && ServerData)
-                {
-                    _graphicsColourHolder = ServerData.GetComponent<graphicsColourHolder>();
-                    Debug.Log("Looking up Colour holder: " + _graphicsColourHolder);
-                }
-
-                return _graphicsColourHolder;
             }
         }
 
@@ -172,7 +164,7 @@ namespace Meg.Networking
 
         /** Whether the server object is available for use yet. */
         public static bool IsReady()
-            { return ServerData != null; }
+            { return ServerObject != null; }
 
         /** The set of all server data parameters that can be set or read. */
         public static readonly HashSet<string> Parameters = new HashSet<string>
@@ -350,7 +342,7 @@ namespace Meg.Networking
         /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName)
         {
-            if (!ServerData)
+            if (!ServerObject)
                 return Unknown;
 
             switch (valueName.ToLower())
@@ -358,9 +350,9 @@ namespace Meg.Networking
                 case "depth":
                     return ServerData.depth;
                 case "xpos":
-                    return ServerData.transform.position.x;
+                    return ServerObject.transform.position.x;
                 case "zpos":
-                    return ServerData.transform.position.z;
+                    return ServerObject.transform.position.z;
                 case "pressure":
                     return ServerData.pressure;
                 case "heading":
@@ -679,7 +671,7 @@ namespace Meg.Networking
         /** Return a string representation of a shared state value, indexed by name. */
         public static string GetServerDataAsText(string valueName)
         {
-            if (!ServerData)
+            if (!ServerObject)
                 return "no value";
 
             switch (valueName.ToLower())
@@ -920,7 +912,7 @@ namespace Meg.Networking
         /** Set the current value of a shared boolean state value by name (only works on host). */
         public static void SetServerBool(string boolName, bool value)
         {
-            if (ServerData == null)
+            if (ServerObject == null)
             {
                 Debug.Log("Server object missing");
             }
@@ -1204,21 +1196,21 @@ namespace Meg.Networking
         /** Return the vessel movements manager. */
         public static vesselMovements GetVesselMovements()
         {
-            return ServerData ? ServerData.GetComponent<vesselMovements>() : null;
+            return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null;
         }
 
         /** Sets which vessel is controlled by the player (1-based index). */
         public static void SetPlayerVessel(int vessel)
         {
             //Debug.Log("Setting player vessel to: " + vessel);
-            if (ServerData != null)
+            if (ServerObject != null)
                 ServerData.SetPlayerVessel(vessel);
         }
 
         /** Returns which vessel is controlled by the player (1-based index). */
         public static int GetPlayerVessel()
         {
-            if (!ServerData)
+            if (!ServerObject)
                 return 0;
 
             return MapData.playerVessel;
@@ -1227,14 +1219,14 @@ namespace Meg.Networking
         /** Sets the player vessel's velocity in world space. */
         public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
-            if (ServerData != null)
+            if (ServerObject != null)
                 ServerData.SetPlayerWorldVelocity(velocity);
         }
 
         /** Return a vessel's visibility on the navigation map (1-based index). */
         public static bool GetVesselVis(int vessel)
         {
-            if (ServerData == null)
+            if (ServerObject == null)
                 return false;
 
             bool vesselVis = true;
@@ -1273,21 +1265,21 @@ namespace Meg.Networking
         /** Set the current vessel color theme. */
         public static void SetColorTheme(megColorTheme theme)
         {
-            if (ServerData == null)
+            if (ServerObject == null)
                 return;
 
-            ColourHolder.themeName = theme.name;
-            ColourHolder.backgroundColor = theme.backgroundColor;
-            ColourHolder.highlightColor = theme.highlightColor;
-            ColourHolder.keyColor = theme.keyColor;
+            ServerObject.GetComponent<graphicsColourHolder>().themeName = theme.name;
+            ServerObject.GetComponent<graphicsColourHolder>().backgroundColor = theme.backgroundColor;
+            ServerObject.GetComponent<graphicsColourHolder>().highlightColor = theme.highlightColor;
+            ServerObject.GetComponent<graphicsColourHolder>().keyColor = theme.keyColor;
         }
 
         /** Returns the current vessel color theme. */
         public static megColorTheme GetColorTheme()
         {
-            var theme = new megColorTheme();
-            if (ColourHolder)
-                theme = ColourHolder.theme;
+            megColorTheme theme = new megColorTheme();
+            if (ServerObject)
+                theme = ServerObject.GetComponent<graphicsColourHolder>().theme;
 
             return theme;
         }
@@ -1313,7 +1305,7 @@ namespace Meg.Networking
         /** Set the desired map event name (indicates a camera transition, only works on host). */
         public static void SetMapEventName(string eventName)
         {
-            ServerData.GetComponent<mapData>().mapEventName = eventName;
+            ServerObject.GetComponent<mapData>().mapEventName = eventName;
         }
 
         /** Get an ID for the given glider screen. */
@@ -1321,9 +1313,9 @@ namespace Meg.Networking
         {
             int outID = 0;
 
-            if (ServerData)
+            if (ServerObject)
             {
-                outID = ServerData.GetComponent<glScreenData>().getScreen(screenID);
+                outID = ServerObject.GetComponent<glScreenData>().getScreen(screenID);
             }
 
             return outID;
@@ -1338,15 +1330,15 @@ namespace Meg.Networking
             {
                 case 0:
                     //elevation
-                    buttonState = ServerData.GetComponent<glScreenData>().mapElevation;
+                    buttonState = ServerObject.GetComponent<glScreenData>().mapElevation;
                     break;
                 case 1:
                     //recentre
-                    buttonState = ServerData.GetComponent<glScreenData>().recentreMap;
+                    buttonState = ServerObject.GetComponent<glScreenData>().recentreMap;
                     break;
                 case 2:
                     //labels
-                    buttonState = ServerData.GetComponent<glScreenData>().objectLabelsOn;
+                    buttonState = ServerObject.GetComponent<glScreenData>().objectLabelsOn;
                     break;
             }
 
