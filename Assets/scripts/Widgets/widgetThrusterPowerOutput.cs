@@ -14,7 +14,7 @@ public class widgetThrusterPowerOutput : MonoBehaviour
     void Start ()
     {
         if (!thrusterControl)
-            thrusterControl = GameObject.FindWithTag("Inputs").GetComponent<widgetThrusterControl>();
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
 
         if (!t)
             t = GetComponent<DynamicText>();

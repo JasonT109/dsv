@@ -36,6 +36,9 @@ public class ThrusterConduits : MonoBehaviour
 
     private void Start()
     {
+        if (!Control)
+            Control = ObjectFinder.Find<widgetThrusterControl>();
+
         UpdateConduits(false);
     }
 

@@ -19,6 +19,9 @@ public class ThrusterLight : MonoBehaviour
 
     public void Start()
     {
+        if (!Control)
+            Control = ObjectFinder.Find<widgetThrusterControl>();
+
         if (!Light)
             Light = GetComponent<Light>();
 

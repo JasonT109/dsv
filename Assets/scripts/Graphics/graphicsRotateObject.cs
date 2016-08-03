@@ -3,7 +3,7 @@ using UnityEngine;
 public class graphicsRotateObject : MonoBehaviour
 {
 
-    public GameObject thrusterControl;
+    public widgetThrusterControl thrusterControl;
     public bool mainL;
     public bool mainR;
     public bool sideL1;
@@ -19,47 +19,52 @@ public class graphicsRotateObject : MonoBehaviour
     public int axis = 0;
     public bool local;
 
+    void Start ()
+    {
+        thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+    }
+
 	void Update ()
     {
         if (mainL)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterMainL;
+            value = thrusterControl.thrusterMainL;
         }
         if (mainR)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterMainR;
+            value = thrusterControl.thrusterMainR;
         }
         if (sideL1)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideL1;
+            value = thrusterControl.thrusterSideL1;
         }
         if (sideL2)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideL2;
+            value = thrusterControl.thrusterSideL2;
         }
         if (sideL3)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideL3;
+            value = thrusterControl.thrusterSideL3;
         }
         if (sideR1)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideR1;
+            value = thrusterControl.thrusterSideR1;
         }
         if (sideR2)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideR2;
+            value = thrusterControl.thrusterSideR2;
         }
         if (sideR3)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterSideR3;
+            value = thrusterControl.thrusterSideR3;
         }
         if (mainLVector)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterVectorAngleL;
+            value = thrusterControl.thrusterVectorAngleL;
         }
         if (mainRVector)
         {
-            value = thrusterControl.GetComponent<widgetThrusterControl>().thrusterVectorAngleR;
+            value = thrusterControl.thrusterVectorAngleR;
         }
 
         if (mainLVector)

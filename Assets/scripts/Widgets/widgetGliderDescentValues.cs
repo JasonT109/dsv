@@ -59,6 +59,13 @@ public class widgetGliderDescentValues : MonoBehaviour
         flowText.Text = flowRate.ToString("N0");
     }
 
+    void OnEnable()
+    {
+        p1Emission = p1.emission;
+        p2Emission = p2.emission;
+        updateValues();
+    }
+
     void Start()
     {
         p1Emission = p1.emission;

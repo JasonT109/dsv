@@ -40,6 +40,9 @@ public class graphicsColorFromServerValue : MonoBehaviour
 
     void OnEnable()
     {
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+
         r = gameObject.GetComponent<Renderer>();
         m = r.material;
         SetColor();
@@ -48,6 +51,9 @@ public class graphicsColorFromServerValue : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+
         r = gameObject.GetComponent<Renderer>();
         m = r.material;
         SetColor();

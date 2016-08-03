@@ -11,7 +11,7 @@ public class mapData : NetworkBehaviour
     public const int VesselCount = 6;
 
     /** Default floor depth to assume. */
-    public const float DefaultFloorDepth = 10994;
+    public const float DefaultFloorDepth = 11050;
 
 
     [Header("Coordinates")]
