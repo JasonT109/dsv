@@ -764,6 +764,7 @@ public class serverData : NetworkBehaviour
     void Start ()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        Debug.Log("serverData.Start(): Client ID: " + serverUtils.Id);
     }
 	
     /** Updating. */

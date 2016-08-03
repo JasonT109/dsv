@@ -205,10 +205,10 @@ public class gameInputs : NetworkBehaviour
             _nextSendTime = Time.realtimeSinceStartup + ServerSendInterval;
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Keep on going even if joystick input fails.
-            Debug.LogWarning("Failed to get input data: " + ex);
+            // Debug.LogWarning("Failed to get input data: " + ex);
         }
     }
 
