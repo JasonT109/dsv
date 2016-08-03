@@ -3,11 +3,10 @@
 	{
 		"server-ip" : "localhost",
 		"server-port" : 25001,
-		"screen-position-x" : 1920,
-		"screen-mode" : "21_9_mid",
+		"screen-position-x" : 0,
 		"aspect-from" : 1.777778,
 		"aspect-to" : 1.777778,
-		"aspect-scaling" : true
+		"aspect-scaling" : false
 	},
 
 	"pilotLeft" :

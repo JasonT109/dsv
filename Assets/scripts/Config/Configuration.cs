@@ -92,7 +92,9 @@ public class Configuration : AutoSingleton<Configuration>
             return GetDefault(key, defaultValue);
 
         var json = DataForId.GetField(key);
-        return Parsing.Parse(json.ToString(), defaultValue);
+        var str = json.IsString ? json.str : json.ToString();
+
+        return Parsing.Parse(str, defaultValue);
     }
 
     /** Retrieve a configuration JSON value by key. */
@@ -114,7 +116,9 @@ public class Configuration : AutoSingleton<Configuration>
             return defaultValue;
 
         var json = DataDefault.GetField(key);
-        return Parsing.Parse(json.ToString(), defaultValue);
+        var str = json.IsString ? json.str : json.ToString();
+
+        return Parsing.Parse(str, defaultValue);
     }
 
     /** Retrieve a default configuration JSON value by key. */
@@ -180,16 +184,20 @@ public class Configuration : AutoSingleton<Configuration>
     /** Load data from configuration file. */
     private void LoadData()
     {
+        // Determine the config file location (next to executable).
         var folder = Application.dataPath + "/../";
-        var path = folder + CommandLine.GetParameter("config", "config.json");
+        var config = folder + CommandLine.GetParameter("config", "config.json");
+        var path = Path.GetFullPath(config);
 
+        // Check if config exists.
         if (!File.Exists(path))
             _data = new JSONObject();
 
+        // Load configuration JSON data.
         try
         {
             _data = Load(path);
-            Debug.Log("Loaded configuration file: " + path);
+            Debug.Log("Loaded configuration file: " + path + ", using ID '" + Id + "'.");
         }
         catch (Exception ex)
         {
