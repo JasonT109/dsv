@@ -1,11 +1,13 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
-using UnityEngine.Networking;
 
 public class PasswordScreen : MonoBehaviour 
 {
-    bool IsClient = true;
+
+    // Properties
+    // ------------------------------------------------------------
+
+    [Header("Components")]
     public GameObject HostIPObject;
     public GameObject LocalIP;
 
@@ -19,43 +21,44 @@ public class PasswordScreen : MonoBehaviour
     public Image GliderButtonImg;
     public Image BigSubButtonImg;
     public Image DCCButtonImg;
-    // int ID = 0; // ID of system, in this case it's set to Glider
-
-    //public NetworkManagerCustom CustomNetMan;
-    NetworkManagerCustom CustomNetMan;
-    public NetworkManager manager;
 
     public GameObject ZhangLogo;
     public GameObject StartButtonObj;
+    public GameObject PasswordRoot;
 
+    [Header("Configuration")]
     public string Password = "EnglishBreakfast";
     public string Password2 = "EarlGrey";
-
     public bool IsPasswordCorrect = false;
     public bool IsPasswordPin = false;
-
-    public GameObject PasswordRoot;
 
     public string GliderLevel = "screen_gliders";
     public string BigSubLevel = "screen_01";
     public string DCCLevel = "screen_gliders";
 
 
-	// Use this for initialization
-	void Start () 
+    // Members
+    // ------------------------------------------------------------
+
+    private bool _client = true;
+    private NetworkManagerCustom _manager;
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    private void Start() 
     {
-        CustomNetMan = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerCustom>();
+        _manager = ObjectFinder.Find<NetworkManagerCustom>();
 
         ToggleHost();
-        HostIP.text = Network.player.ipAddress;
-        HostIPTextPlaceholder.text = Network.player.ipAddress;
 
-        CustomNetMan.connectionInfo = Network.player.ipAddress;
-        CustomNetMan.connectionList[0] = Network.player.ipAddress;
-     
+        HostIP.text = _manager.Host;
+        HostIPTextPlaceholder.text = _manager.Host;
+
         ToggleBigSub();
 
-        if(IsPasswordCorrect)
+        if (IsPasswordCorrect)
         {
             ZhangLogo.SetActive(true);
             StartButtonObj.SetActive(true);
@@ -68,16 +71,14 @@ public class PasswordScreen : MonoBehaviour
             PasswordRoot.SetActive(true);
         }
 	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
 
-	}
+
+    // Public Methods
+    // ------------------------------------------------------------
 
     public void ToggleHost()
     {
-        IsClient = false;
+        _client = false;
         HostIPObject.SetActive(false);
         LocalIP.SetActive(true);
         HostButtonImg.color = Color.white;
@@ -87,7 +88,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleClient()
     {
-        IsClient = true;
+        _client = true;
         HostIPObject.SetActive(true);
         LocalIP.SetActive(false);
         HostButtonImg.color = Color.grey;
@@ -96,91 +97,78 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleGlider()
     {
-        // ID = 0;
         GliderButtonImg.color = Color.white;
         BigSubButtonImg.color = Color.grey;
         DCCButtonImg.color = Color.grey;
-        manager.onlineScene = GliderLevel;
-
+        _manager.UNet.onlineScene = GliderLevel;
     }
 
     public void ToggleBigSub()
     {
-        // ID = 2;
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.white;;
         DCCButtonImg.color = Color.grey;
-        manager.onlineScene = BigSubLevel;
+        _manager.UNet.onlineScene = BigSubLevel;
     }
 
     public void ToggleDCC()
     {
-        // ID = 3;
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.grey;;
         DCCButtonImg.color = Color.white;
-        manager.onlineScene = DCCLevel;
+        _manager.UNet.onlineScene = DCCLevel;
     }
 
-    public void PasswordLiveInput(string _PasswordInput)
+    public void PasswordLiveInput(string value)
     {
-        if(IsPasswordPin)
+        if (IsPasswordPin)
+            PasswordInputChanged(value);
+    }
+
+    public void PasswordInputChanged(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return;
+
+        if (value == Password)
         {
-            PasswordInputChanged(_PasswordInput);
+            IsPasswordCorrect = true;
+            if(ZhangLogo)
+            {
+                ZhangLogo.SetActive(true);
+                PasswordRoot.SetActive(false);
+            }
+            StartButtonObj.SetActive(true);
+        }
+        else if (value == Password2)
+        {
+            IsPasswordCorrect = true;
+            if(ZhangLogo)
+            {
+                ZhangLogo.SetActive(true);
+                PasswordRoot.SetActive(false);
+            }
+            StartButtonObj.SetActive(true);
+        }
+        else
+        {
+            IsPasswordCorrect = false;
+            ZhangLogo.SetActive(false);
+            StartButtonObj.SetActive(false);
         }
     }
 
-    public void PasswordInputChanged(string _PasswordInput)
+    public void HostIPChanged(string value)
     {
-        if(_PasswordInput != "")
-        {
-            if(_PasswordInput == Password)
-            {
-                IsPasswordCorrect = true;
-                if(ZhangLogo)
-                {
-                    ZhangLogo.SetActive(true);
-                    PasswordRoot.SetActive(false);
-                }
-                StartButtonObj.SetActive(true);
-            }
-            else if(_PasswordInput == Password2)
-            {
-                IsPasswordCorrect = true;
-                if(ZhangLogo)
-                {
-                    ZhangLogo.SetActive(true);
-                    PasswordRoot.SetActive(false);
-                }
-                StartButtonObj.SetActive(true);
-            }
-            else
-            {
-                IsPasswordCorrect = false;
-                ZhangLogo.SetActive(false);
-                StartButtonObj.SetActive(false);
-            }
-        }
-    }
-
-    public void HostIPChanged(string _HostIP)
-    {
-        if(_HostIP != "")
-        {
-            CustomNetMan.connectionInfo = _HostIP;
-            CustomNetMan.connectionList[0] = _HostIP;
-        }
+        if (!string.IsNullOrEmpty(value))
+            _manager.Host = value;
     }
 
     public void StartButton()
     {
-        if(IsClient)
-        {
-            CustomNetMan.StartClient();
-        }
+        if (_client)
+            _manager.StartClient();
         else
-        {
-            CustomNetMan.StartServer();
-        }
+            _manager.StartServer();
     }
 }

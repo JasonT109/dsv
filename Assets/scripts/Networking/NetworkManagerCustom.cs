@@ -1,188 +1,206 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class NetworkManagerCustom : MonoBehaviour
 {
-    public NetworkManager manager;
+    
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Timeout for interactive startup attempts (seconds). */
+    private const float DefaultStartupTimeout = 2;
+
+    /** Timeout for automatic session startup attempts (seconds). */
+    private const float AutoStartupTimeout = 10;
+
+    /** Name of the password screen. */
+    private const string LoginScreenScene = "offline_scene";
+
+
+    // Properties
+    // ------------------------------------------------------------
+
+    [Header("Components")]
+
+    /** The server data object. */
     public GameObject ServerObject;
-    public GameObject serverButton;
-    public GameObject clientButton;
-    public TextMesh connectionText;
-    public TextMesh numConsText;
-    public TextMesh ip;
-    public string connectionInfo = "localHost";
-    public string[] connectionList = { "192.168.3.137", "192.168.7.83" };
-    public int connectionPort = 25001;
-
-    public GameObject cycleIpUpButton;
-    public GameObject cycleIpDownButton;
-
-    private buttonControl sb;
-    private buttonControl cb;
-    private GameObject g;
-    private bool canChangeValue = true;
-    private int conListNum;
-
-    private debugObject debugObject;
 
 
-    void Awake()
+    [Header("Configuration")]
+
+    /** Server host to connect to. */
+    public string Host = "localhost";
+
+    /** Server port to connect to. */
+    public int Port = 25001;
+    
+    /** The UNET networking manager. */
+    public NetworkManager UNet { get; private set; }
+
+
+    // Private Properties
+    // ------------------------------------------------------------
+
+    /** Whether a network session is active for this instance. */
+    private bool HasSession
+        { get { return NetworkClient.active || NetworkServer.active || UNet.matchMaker != null; } }
+
+    /** Whether this instance is acting as a host. */
+    private static bool IsHost
+        { get { return NetworkServer.active && NetworkServer.localClientActive; } }
+
+
+    // Members
+    // ------------------------------------------------------------
+
+    /** Time at which next start attempt can be made. */
+    private float _nextStartTime;
+
+    /** The server game object instance. */
+    private GameObject _serverObject;
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Preinitialization. */
+    private void Awake()
     {
-        manager = GetComponent<NetworkManager>();
-        manager.networkAddress = connectionInfo;
-        manager.networkPort = connectionPort;
+        // Get default connection state.
+        Host = CommandLine.GetParameter("server-ip", Network.player.ipAddress);
+        Port = CommandLine.GetParameter("server-port", Port);
 
-        if (!debugObject)
-            debugObject = ObjectFinder.Find<debugObject>();
+        // Configure UNET network manager with default connection.
+        UNet = GetComponent<NetworkManager>();
+        UNet.networkAddress = Host;
+        UNet.networkPort = Port;
     }
 
-    void Start()
+    /** Startup. */
+    private void Start()
     {
-        if (!debugObject)
+        // Perform an inital automatic startup attempt.
+        if (!HasSession && CanAttemptStartup())
+            AttemptAutoStartup();
+    }
+
+    /** Updating. */
+    private void Update()
+    {
+        // Spawn server object if needed.
+        if (IsHost)
+            EnsureServerObjectExists();
+
+        // Periodically attempt automatic startup.
+        if (!HasSession && CanAttemptStartup())
+            AttemptAutoStartup();
+    }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Attempt automatic session startup. */
+    private void AttemptAutoStartup()
+    {
+        // Check if we have an existing session.
+        if (HasSession || !CanAttemptStartup())
             return;
 
-        serverButton = debugObject.serverButton;
-        clientButton = debugObject.clientButton;
-        connectionText = debugObject.connectionText;
-        numConsText = debugObject.numConsText;
-        ip = debugObject.ipText;
-        ip.text = (connectionInfo + " : " + connectionPort);
-        sb = serverButton.GetComponent<buttonControl>();
-        cb = clientButton.GetComponent<buttonControl>();
-        connectionText.text = "Disconnected";
-        cycleIpUpButton = debugObject.ipUpButton;
-        cycleIpDownButton = debugObject.ipDownButton;
+        // Check if we should start a client or server session immediately.
+        var attempted = false;
+        if (CommandLine.HasParameter("client"))
+            attempted = StartClient();
+        else if (CommandLine.HasParameter("server"))
+            attempted = StartServer();
+        else if (CommandLine.HasParameter("host"))
+            attempted = StartServer();
+        else if (!IsLoginScreen())
+            attempted = StartServer();
+
+        // Schedule the next auto-attempt (if we made one.)
+        if (attempted)
+            ScheduleNextAttempt(AutoStartupTimeout);
     }
 
-    void Update()
+    /** Start up a client session. */
+    public bool StartClient()
     {
-        if (!debugObject)
+        if (!CanAttemptStartup())
+            return false;
+        
+        Debug.Log(string.Format("Starting client session - connecting to host at {0}:{1}..", Host, Port));
+        UNet.StartClient();
+        ScheduleNextAttempt();
+        return true;
+    }
+
+    /** Start up a server (host) session. */
+    public bool StartServer()
+    {
+        if (!CanAttemptStartup())
+            return false;
+
+        Debug.Log("Starting server session..");
+        EnsureServerObjectExists();
+        UNet.StartHost();
+        ScheduleNextAttempt();
+        return true;
+    }
+
+    /** Whether a startup attempt can be made at present. */
+    private bool CanAttemptStartup()
+        { return Time.time >= _nextStartTime; }
+
+    /** Schedule the next possible time for a startup attempt. */
+    private void ScheduleNextAttempt()
+        { _nextStartTime = Time.time + DefaultStartupTimeout; }
+
+    /** Schedule the next possible time for a startup attempt. */
+    private void ScheduleNextAttempt(float timeout)
+        { _nextStartTime = Time.time + timeout; }
+
+    /** Check if we're in the initial password screen. */
+    private bool IsLoginScreen()
+        { return SceneManager.GetActiveScene().name == LoginScreenScene; }
+
+    /** Try to ensure the server object exists. */
+    private void EnsureServerObjectExists()
+    {
+        // Check if we're acting as the host.
+        if (!IsHost)
             return;
 
-        connectionText = debugObject.connectionText;
-        numConsText = debugObject.numConsText;
-        ip = debugObject.ipText;
+        // Check if server object exists.
+        if (_serverObject)
+            return;
 
-        if (cycleIpDownButton.GetComponent<buttonControl>().pressed && canChangeValue)
-        {
-            conListNum--;
-            if (conListNum < 0)
-            {
-                conListNum = connectionList.Length - 1;
-            }
-            canChangeValue = false;
-            StartCoroutine(Wait(0.2f));
-        }
-
-        if (cycleIpUpButton.GetComponent<buttonControl>().pressed && canChangeValue)
-        {
-            conListNum++;
-            if (conListNum > connectionList.Length - 1)
-            {
-                conListNum = 0;
-            }
-            canChangeValue = false;
-            StartCoroutine(Wait(0.2f));
-        }
-
-        connectionInfo = connectionList[conListNum];
-        manager.networkAddress = connectionInfo;
-        ip.text = (connectionInfo + " : " + connectionPort);
-        connectionText = debugObject.connectionText;
-        numConsText = debugObject.numConsText;
-
-        if (clientButton && serverButton)
-        {
-            if (!NetworkClient.active && !NetworkServer.active && manager.matchMaker == null)
-            {
-               if (cb.active && canChangeValue)
-               {
-                   // Debug.Log("Starting client");
-                   canChangeValue = false;
-                   manager.StartClient();
-                   StartCoroutine(Wait(1.0f));
-               }
-               if (sb.active && canChangeValue)
-               {
-                   // Debug.Log("Starting server");
-                   canChangeValue = false;
-                   manager.StartHost();
-                   StartCoroutine(Wait(1.0f));
-               }
-            }
-            if (NetworkServer.active && NetworkServer.localClientActive)
-            {
-                g = GameObject.FindWithTag("ServerData");
-                if (g == null)
-                {
-                    Spawn();
-                }
-                if (NetworkServer.localClientActive)
-                {
-                    connectionText.text = ("Hosting: " + manager.networkAddress + " : " + manager.networkPort);
-                    numConsText.text = manager.numPlayers.ToString();
-                }
-            }
-            if (NetworkClient.active)
-            {
-                connectionText.text = ("Client: " + manager.networkAddress + " : " + manager.networkPort);
-                numConsText.text = manager.numPlayers.ToString();
-            }
-        }
+        // Look for server object in scene, and spawn it if needed.
+        _serverObject = GameObject.FindWithTag("ServerData");
+        if (_serverObject == null)
+            SpawnServerObject();
     }
 
-    IEnumerator Wait(float waitTime)
+    /** Spawn the server object from the host. */
+    private void SpawnServerObject()
     {
-        yield return new WaitForSeconds(waitTime);
-        canChangeValue = true;
-    }
+        // Check if we're acting as the host.
+        if (!IsHost)
+            return;
 
-    public void Spawn()
-    {
-        // As this is spawned only once by the host we can assume there will only be one player in the scene.
+        // As this is spawned only once by the host, we can assume there will only be one player in the scene.
         var player = GameObject.FindWithTag("Player");
-        
-        if (player != null)
-        {
-            var toId = player.GetComponent<NetworkIdentity>();
-            var conn = toId.connectionToClient;
-            var sd = (GameObject) Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
-            NetworkServer.SpawnWithClientAuthority(sd, conn);
-        }
+        if (!player)
+            return;
 
+        // Spawn the server object.
+        Debug.Log("Spawning server object.");
+        var toId = player.GetComponent<NetworkIdentity>();
+        var conn = toId.connectionToClient;
+        var sd = (GameObject) Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
+        NetworkServer.SpawnWithClientAuthority(sd, conn);
     }
 
-    public void StartClient()
-    {
-        Debug.Log("Starting client");
-        canChangeValue = false;
-        manager.StartClient();
-
-        if (canChangeValue)
-        {
-            Debug.Log("Starting client");
-            canChangeValue = false;
-            manager.StartClient();
-        }
-    }
-
-    public void StartServer()
-    {
-        if (NetworkServer.active && NetworkServer.localClientActive)
-        {
-            g = GameObject.FindWithTag("ServerData");
-            if (g == null)
-            {
-                Spawn();
-            }
-        }
-        
-        if (canChangeValue)
-        {
-            Debug.Log("Starting Server");
-            canChangeValue = false;
-            manager.StartHost();
-        }
-    }
 }

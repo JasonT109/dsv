@@ -50,7 +50,7 @@ public class SubControl : MonoBehaviour
 
 
 	// Use this for initialization
-	void Start () 
+	void Awake() 
     {
         rb = gameObject.GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0,0,0);

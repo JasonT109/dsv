@@ -33,7 +33,7 @@ public class WindowManager : MonoBehaviour
             var hWnd = GetForegroundWindow();
             Debug.Log(string.Format("WindowManager.MoveWindow({0}, {1}, {2}, {3}): hWnd = {4}", x, y, resX, resY, hWnd));
             var success = SetWindowPos(hWnd, 0, x, y, resX, resY, resX * resY == 0 ? 1 : 0);
-            Debug.Log(string.Format("WindowManager.MoveWindow({0}, {1}, {2}, {3}): Succes: {4}", x, y, resX, resY, success));
+            Debug.Log(string.Format("WindowManager.MoveWindow({0}, {1}, {2}, {3}): Success: {4}", x, y, resX, resY, success));
         #endif
     }
 
