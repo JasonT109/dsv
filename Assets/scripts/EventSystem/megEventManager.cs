@@ -31,9 +31,9 @@ namespace Meg.EventSystem
 
             // Resolve links to other managers.
             if (!Sonar)
-                Sonar = ObjectFinder.Locate<megSonarEventManager>();
+                Sonar = ObjectFinder.Find<megSonarEventManager>();
             if (!MapCamera)
-                MapCamera = ObjectFinder.Locate<megMapCameraEventManager>();
+                MapCamera = ObjectFinder.Find<megMapCameraEventManager>();
         }
 
 

@@ -29,9 +29,8 @@ public static class TransformExtensions
         return child;
     }
 
-
     /** Recursively search a transform's children for a named child. */
-    public static Transform FindChildRecursiveRegex(this Transform transform, Regex regex)
+    public static Transform FindChildByRegexRecursive(this Transform transform, Regex regex)
     {
         Transform child = null;
         foreach (Transform t in transform)
@@ -43,7 +42,7 @@ public static class TransformExtensions
             }
             if (t.childCount > 0)
             {
-                child = t.FindChildRecursiveRegex(regex);
+                child = t.FindChildByRegexRecursive(regex);
                 if (child)
                 {
                     return child;
@@ -53,5 +52,40 @@ public static class TransformExtensions
 
         return child;
     }
+
+    /** Search a transform's direct children for a given tag. */
+    public static Transform FindChildByTag(this Transform transform, string tag)
+    {
+        foreach (Transform t in transform)
+            if (t.tag == tag)
+                return t;
+
+        return null;
+    }
+
+    /** Recursively search a transform's children for a child with a given tag. */
+    public static Transform FindChildByTagRecursive(this Transform transform, string tag)
+    {
+        Transform child = null;
+        foreach (Transform t in transform)
+        {
+            if (t.tag == tag)
+            {
+                child = t;
+                return child;
+            }
+            if (t.childCount > 0)
+            {
+                child = t.FindChildByTagRecursive(tag);
+                if (child)
+                {
+                    return child;
+                }
+            }
+        }
+
+        return child;
+    }
+
 
 }

@@ -11,7 +11,7 @@ public class LiveSetSlot : MonoBehaviour {
     void Awake()
     {
         if (!cameraManager)
-            cameraManager = ObjectFinder.LocateGameObject<CustomLiveFeedManager>();
+            cameraManager = ObjectFinder.FindGameObject<CustomLiveFeedManager>();
     }
 
 	// Use this for initialization

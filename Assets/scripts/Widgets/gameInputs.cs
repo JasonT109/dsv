@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
@@ -177,29 +178,38 @@ public class gameInputs : NetworkBehaviour
     /** Update input from the local player, and send it to the server. */
     private void UpdateInput()
     {
-        // Check if there are any joysticks attached to this client.
-        if (_input == null || _input.controllers.joystickCount <= 0)
-            return;
+        try
+        {
+            // Check if there are any joysticks attached to this client.
+            if (_input == null || _input.controllers.joystickCount <= 0)
+                return;
 
-        // If so, sample the current input state.
-        var z1 = _input.GetAxis("Throttle");
-        var x1 = _input.GetAxis("Horizontal");
-        var y1 = _input.GetAxis("Vertical");
-        var x2 = _input.GetAxis("X2");
-        var y2 = _input.GetAxis("Y2");
+            // If so, sample the current input state.
+            var z1 = _input.GetAxis("Throttle");
+            var x1 = _input.GetAxis("Horizontal");
+            var y1 = _input.GetAxis("Vertical");
+            var x2 = _input.GetAxis("X2");
+            var y2 = _input.GetAxis("Y2");
 
-        // Apply throttle response curve to determine final output.
-        z1 = ThrottleResponse.Evaluate(z1);
+            // Apply throttle response curve to determine final output.
+            z1 = ThrottleResponse.Evaluate(z1);
 
-        // Check if it's time to send inputs to the server.
-        if (Time.realtimeSinceStartup < _nextSendTime)
-            return;
+            // Check if it's time to send inputs to the server.
+            if (Time.realtimeSinceStartup < _nextSendTime)
+                return;
 
-        // Send data to the server.
-        CmdChangeInput(true, x1, y1, z1, x2, y2);
+            // Send data to the server.
+            CmdChangeInput(true, x1, y1, z1, x2, y2);
 
-        // Schedule next server send.
-        _nextSendTime = Time.realtimeSinceStartup + ServerSendInterval;
+            // Schedule next server send.
+            _nextSendTime = Time.realtimeSinceStartup + ServerSendInterval;
+
+        }
+        catch (Exception ex)
+        {
+            // Keep on going even if joystick input fails.
+            Debug.LogWarning("Failed to get input data: " + ex);
+        }
     }
 
     /** Outputs debugging information about the Rewired input setup. */

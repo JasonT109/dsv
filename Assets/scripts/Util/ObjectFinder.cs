@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Object = UnityEngine.Object;
 
 public class ObjectFinder
 {
@@ -13,36 +14,88 @@ public class ObjectFinder
     /** Lookup table to accelerate Locate() calls. */
     private static readonly Dictionary<Type, Component> ComponentLookup = new Dictionary<Type, Component>();
 
-    /** Lookup table to accelerate LocateUiObject() calls. */
+    /** Lookup table to accelerate repeated LocateUi() calls. */
     private static readonly Dictionary<string, GameObject> UiObjectLookup = new Dictionary<string, GameObject>();
+
+    /** Lookup table to accelerate repeated LocateUiByTag() calls. */
+    private static readonly Dictionary<string, GameObject> UiTagLookup = new Dictionary<string, GameObject>();
 
 
     // Static Methods
     // ------------------------------------------------------------
 
     /** Locate all instances of a component in the scene (including inactive objects). */
-    public static IEnumerable<T> LocateAll<T>() where T : Component
+    public static IEnumerable<T> FindAll<T>() where T : Component
         { return Resources.FindObjectsOfTypeAll<T>(); }
 
     /** Locate the first instance of a component in the scene. */
-    public static T Locate<T>() where T : Component
+    public static T Find<T>() where T : Component
     {
+        // Check if we have the object cached already.
+        var type = typeof (T);
         Component result;
-        if (ComponentLookup.TryGetValue(typeof(T), out result) && result)
+        if (ComponentLookup.TryGetValue(type, out result) && result)
             return result as T;
 
-        result = LocateAll<T>().FirstOrDefault();
-        if (result)
-            ComponentLookup[typeof(T)] = result;
+        // First, try finding an active object in the scene.
+        result = Object.FindObjectOfType<T>();
+        
+        // If that fails, fall back to a way that works for inactive objects.
+        if (!result)
+            result = FindAll<T>().FirstOrDefault();
 
+        // If we located the object, store a lookup entry for it.
+        if (result)
+            ComponentLookup[type] = result;
+
+        // Return the located object.
         return (T) result;
     }
 
     /** Locate the first instance of a game object containing the given component type in the scene. */
-    public static GameObject LocateGameObject<T>() where T : Component
+    public static GameObject FindGameObject<T>() where T : Component
     {
-        var component = Locate<T>();
+        var component = Find<T>();
         return component ? component.gameObject : null;
+    }
+
+    /** Locate a UI gameobject by tag, optionally including inactive objects in the search. */
+    public static GameObject FindUiByTag(string tag, string startingPath = null)
+    {
+        if (string.IsNullOrEmpty(tag))
+            return null;
+
+        // Check if we have the object locally cached.
+        GameObject result;
+        if (UiTagLookup.TryGetValue(tag, out result) && result)
+            return result;
+
+        // Try to use built-in tag method if possible.
+        result = GameObject.FindWithTag(tag);
+        if (result)
+        {
+            UiTagLookup[tag] = result;
+            return result;
+        }
+
+        // Determine where to start the search.
+        var ui = Camera.main.transform;
+        if (!string.IsNullOrEmpty(startingPath))
+        {
+            var from = ui.Find(startingPath);
+            if (from)
+                ui = from;
+        }
+
+        // Search in the given subtree for a matching tag.
+        var t = ui.FindChildByTagRecursive(tag);
+        if (!t)
+            return result;
+
+        // Update the lookup table.
+        result = t.gameObject;
+        UiTagLookup[tag] = result;
+        return result;
     }
 
     /** 
@@ -51,8 +104,11 @@ public class ObjectFinder
      * You can optionally specify an starting path in the UI scene such as 'Screens/Screen_Navigation'.
      * If the starting path doesn't exist, search will look through the whole UI subtree.
      */
-    public static GameObject LocateUiByName(string name, string startingPath = null)
+    public static GameObject FindUiByName(string name, string startingPath = null)
     {
+        if (string.IsNullOrEmpty(name))
+            return null;
+
         GameObject result;
         if (UiObjectLookup.TryGetValue(name, out result) && result)
             return result;
@@ -78,17 +134,23 @@ public class ObjectFinder
      * Locate a gameobject in the UI hierarchy via regex. 
      * Very expensive - don't call this on a per-frame basis.
      */
-    public static GameObject LocateUiByRegex(string pattern, string startingPath = null)
+    public static GameObject FindUiByRegex(string pattern, string startingPath = null)
     {
-        return LocateUiByRegex(new Regex(pattern), startingPath);
+        if (string.IsNullOrEmpty(pattern))
+            return null;
+
+        return FindUiByRegex(new Regex(pattern), startingPath);
     }
 
     /** 
      * Locate a gameobject in the UI hierarchy via regex. 
      * Very expensive - don't call this on a per-frame basis.
      */
-    public static GameObject LocateUiByRegex(Regex regex, string startingPath = null)
+    public static GameObject FindUiByRegex(Regex regex, string startingPath = null)
     {
+        if (regex == null)
+            return null;
+
         var key = regex.ToString();
         GameObject result;
         if (UiObjectLookup.TryGetValue(key, out result) && result)
@@ -102,7 +164,7 @@ public class ObjectFinder
                 ui = from;
         }
 
-        var t = ui.FindChildRecursiveRegex(regex);
+        var t = ui.FindChildByRegexRecursive(regex);
         if (!t)
             return result;
 

@@ -6,7 +6,7 @@ using Meg.Networking;
 
 public class debugChangeValue : NetworkBehaviour {
 
-    public GameObject debugObject;
+    public debugObject debugObject;
     public GameObject subSystemDebug;
 
     private GameObject valueUp10k;
@@ -105,28 +105,29 @@ public class debugChangeValue : NetworkBehaviour {
 
     void Start ()
     {
-        //get game objects
-        debugObject = GameObject.FindWithTag("Debug");
-        subSystemDebug = GameObject.FindWithTag("SubSystemDebug");
-        batteryObject = debugObject.GetComponent<debugObject>().batteryGroup;
-        oxygenObject = debugObject.GetComponent<debugObject>().oxygenGroup;
+        // get game objects
+        debugObject = ObjectFinder.Find<debugObject>();
+        subSystemDebug = ObjectFinder.FindUiByTag("SubSystemDebug");
+
+        batteryObject = debugObject.batteryGroup;
+        oxygenObject = debugObject.oxygenGroup;
 
         //get components
-        valueUp10k = debugObject.GetComponent<debugObject>().valueUp10k;
-        valueUp1k = debugObject.GetComponent<debugObject>().valueUp1k;
-        valueUp100 = debugObject.GetComponent<debugObject>().valueUp100;
-        valueUp10 = debugObject.GetComponent<debugObject>().valueUp10;
-        valueUp1 = debugObject.GetComponent<debugObject>().valueUp1;
-        valueDown10k = debugObject.GetComponent<debugObject>().valueDown10k;
-        valueDown1k = debugObject.GetComponent<debugObject>().valueDown1k;
-        valueDown100 = debugObject.GetComponent<debugObject>().valueDown100;
-        valueDown10 = debugObject.GetComponent<debugObject>().valueDown10;
-        valueDown1 = debugObject.GetComponent<debugObject>().valueDown1;
-        text10k = debugObject.GetComponent<debugObject>().text10k;
-        text1k = debugObject.GetComponent<debugObject>().text1k;
-        text100 = debugObject.GetComponent<debugObject>().text100;
-        text10 = debugObject.GetComponent<debugObject>().text10;
-        text1 = debugObject.GetComponent<debugObject>().text1;
+        valueUp10k = debugObject.valueUp10k;
+        valueUp1k = debugObject.valueUp1k;
+        valueUp100 = debugObject.valueUp100;
+        valueUp10 = debugObject.valueUp10;
+        valueUp1 = debugObject.valueUp1;
+        valueDown10k = debugObject.valueDown10k;
+        valueDown1k = debugObject.valueDown1k;
+        valueDown100 = debugObject.valueDown100;
+        valueDown10 = debugObject.valueDown10;
+        valueDown1 = debugObject.valueDown1;
+        text10k = debugObject.text10k;
+        text1k = debugObject.text1k;
+        text100 = debugObject.text100;
+        text10 = debugObject.text10;
+        text1 = debugObject.text1;
 
         //get values
         valueString = (text10k.text.ToString() + text1k.text.ToString() + text100.text.ToString() + text10.text.ToString() + text1.text.ToString());
@@ -134,7 +135,9 @@ public class debugChangeValue : NetworkBehaviour {
 
         //get button and slider group objects
         buttons = debugObject.GetComponent<buttonGroup>().buttons;
+
         subSystemButtons = subSystemDebug.GetComponent<buttonGroup>().buttons;
+
         if (batteryObject != null)
         {
             batterySliders = batteryObject.GetComponent<sliderGroup>().sliders;
