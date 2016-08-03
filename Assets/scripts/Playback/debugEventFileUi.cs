@@ -172,7 +172,9 @@ public class debugEventFileUi : MonoBehaviour
             return;
 
         var group = _file.InsertGroup(_file.selectedGroup);
-        AddGroupUi(group);
+        var ui = AddGroupUi(group);
+
+        HandleGroupSelected(ui);
     }
 
     /** Remove the selected group from the file. */
@@ -313,7 +315,7 @@ public class debugEventFileUi : MonoBehaviour
     }
 
     /** Add UI for an event group. */
-    private void AddGroupUi(megEventGroup group)
+    private debugEventGroupUi AddGroupUi(megEventGroup group)
     {
         var ui = Instantiate(EventGroupUiPrefab);
         ui.transform.SetParent(Groups, false);
@@ -321,9 +323,10 @@ public class debugEventFileUi : MonoBehaviour
         ui.OnSelected += HandleGroupSelected;
 
         _groups.Add(ui);
+        return ui;
     }
 
-    private void HandleGroupSelected(debugEventGroupUi groupUi, debugEventUi eventUi)
+    private void HandleGroupSelected(debugEventGroupUi groupUi, debugEventUi eventUi = null)
     {
         var g = groupUi.Group;
         var e = eventUi ? eventUi.Event : null;

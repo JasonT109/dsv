@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class LiveSetSlot : MonoBehaviour {
@@ -7,6 +7,12 @@ public class LiveSetSlot : MonoBehaviour {
     public GameObject buttonGrp;
 
     public buttonGroup b;
+
+    void Awake()
+    {
+        if (!cameraManager)
+            cameraManager = ObjectFinder.FindGameObject<CustomLiveFeedManager>();
+    }
 
 	// Use this for initialization
 	void Start ()

@@ -255,10 +255,13 @@ public class serverData : NetworkBehaviour
             case "duetime":
                 dueTime = newValue;
                 break;
+            case "duetimeactive":
+                dueTimeActive = newValue > 0;
+                break;
             case "divetime":
                 diveTime = newValue;
                 break;
-            case "divetimeenabled":
+            case "divetimeactive":
                 diveTimeActive = newValue > 0;
                 break;
             case "watertemp":
@@ -795,6 +798,7 @@ public class serverData : NetworkBehaviour
     void Start ()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        Debug.Log("serverData.Start(): Client ID: " + serverUtils.Id);
     }
 	
     /** Updating. */

@@ -6,14 +6,13 @@ public class NetworkManagerCustom : MonoBehaviour
 {
     public NetworkManager manager;
     public GameObject ServerObject;
-    public GameObject debugObj;
     public GameObject serverButton;
     public GameObject clientButton;
     public TextMesh connectionText;
     public TextMesh numConsText;
     public TextMesh ip;
     public string connectionInfo = "localHost";
-    public string[] connectionList = new string[] { "192.168.3.137", "192.168.7.83" };
+    public string[] connectionList = { "192.168.3.137", "192.168.7.83" };
     public int connectionPort = 25001;
 
     public GameObject cycleIpUpButton;
@@ -23,57 +22,47 @@ public class NetworkManagerCustom : MonoBehaviour
     private buttonControl cb;
     private GameObject g;
     private bool canChangeValue = true;
-    private int conListNum = 0;
+    private int conListNum;
 
-    // Runtime variable
-    // bool showServer = false;
+    private debugObject debugObject;
+
 
     void Awake()
     {
         manager = GetComponent<NetworkManager>();
         manager.networkAddress = connectionInfo;
         manager.networkPort = connectionPort;
-        
+
+        if (!debugObject)
+            debugObject = ObjectFinder.Find<debugObject>();
     }
 
     void Start()
     {
-        debugObj = GameObject.FindWithTag("Debug");
+        if (!debugObject)
+            return;
 
-        if (debugObj)
-        {
-            serverButton = debugObj.GetComponent<debugObject>().serverButton;
-            clientButton = debugObj.GetComponent<debugObject>().clientButton;
-            connectionText = debugObj.GetComponent<debugObject>().connectionText;
-            numConsText = debugObj.GetComponent<debugObject>().numConsText;
-            ip = debugObj.GetComponent<debugObject>().ipText;
-            ip.text = (connectionInfo + " : " + connectionPort.ToString());
-            sb = serverButton.GetComponent<buttonControl>();
-            cb = clientButton.GetComponent<buttonControl>();
-            connectionText.text = "Disconnected";
-            cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
-            cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
-        }
+        serverButton = debugObject.serverButton;
+        clientButton = debugObject.clientButton;
+        connectionText = debugObject.connectionText;
+        numConsText = debugObject.numConsText;
+        ip = debugObject.ipText;
+        ip.text = (connectionInfo + " : " + connectionPort);
+        sb = serverButton.GetComponent<buttonControl>();
+        cb = clientButton.GetComponent<buttonControl>();
+        connectionText.text = "Disconnected";
+        cycleIpUpButton = debugObject.ipUpButton;
+        cycleIpDownButton = debugObject.ipDownButton;
     }
 
     void Update()
     {
-        if (debugObj == null)
-        {
-            debugObj = GameObject.FindWithTag("Debug");
-            if (debugObj)
-            {
-                serverButton = debugObj.GetComponent<debugObject>().serverButton;
-                clientButton = debugObj.GetComponent<debugObject>().clientButton;
-                connectionText = debugObj.GetComponent<debugObject>().connectionText;
-                numConsText = debugObj.GetComponent<debugObject>().numConsText;
-                ip = debugObj.GetComponent<debugObject>().ipText;
-                cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
-                cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
-                cycleIpUpButton = debugObj.GetComponent<debugObject>().ipUpButton;
-                cycleIpDownButton = debugObj.GetComponent<debugObject>().ipDownButton;
-            }
-        }
+        if (!debugObject)
+            return;
+
+        connectionText = debugObject.connectionText;
+        numConsText = debugObject.numConsText;
+        ip = debugObject.ipText;
 
         if (cycleIpDownButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
@@ -85,6 +74,7 @@ public class NetworkManagerCustom : MonoBehaviour
             canChangeValue = false;
             StartCoroutine(Wait(0.2f));
         }
+
         if (cycleIpUpButton.GetComponent<buttonControl>().pressed && canChangeValue)
         {
             conListNum++;
@@ -95,38 +85,27 @@ public class NetworkManagerCustom : MonoBehaviour
             canChangeValue = false;
             StartCoroutine(Wait(0.2f));
         }
+
         connectionInfo = connectionList[conListNum];
         manager.networkAddress = connectionInfo;
-        ip.text = (connectionInfo + " : " + connectionPort.ToString());
+        ip.text = (connectionInfo + " : " + connectionPort);
+        connectionText = debugObject.connectionText;
+        numConsText = debugObject.numConsText;
 
-        if (!debugObj)
-        {
-            debugObj = GameObject.FindWithTag("Debug");
-            if (debugObj)
-            {
-                serverButton = debugObj.GetComponent<debugObject>().serverButton;
-                clientButton = debugObj.GetComponent<debugObject>().clientButton;
-                connectionText = debugObj.GetComponent<debugObject>().connectionText;
-                numConsText = debugObj.GetComponent<debugObject>().numConsText;
-                sb = serverButton.GetComponent<buttonControl>();
-                cb = clientButton.GetComponent<buttonControl>();
-            }
-        }
-        else if (debugObj && clientButton && serverButton)
+        if (clientButton && serverButton)
         {
             if (!NetworkClient.active && !NetworkServer.active && manager.matchMaker == null)
             {
-                //connectionText.text = "Disconnected";
                if (cb.active && canChangeValue)
                {
-                   //Debug.Log("Starting client");
+                   // Debug.Log("Starting client");
                    canChangeValue = false;
                    manager.StartClient();
                    StartCoroutine(Wait(1.0f));
                }
                if (sb.active && canChangeValue)
                {
-                   //Debug.Log("Starting server");
+                   // Debug.Log("Starting server");
                    canChangeValue = false;
                    manager.StartHost();
                    StartCoroutine(Wait(1.0f));
@@ -159,18 +138,16 @@ public class NetworkManagerCustom : MonoBehaviour
         canChangeValue = true;
     }
 
-
     public void Spawn()
     {
-        //as this is spawned only once by the host we can assume there will only be one player in the scene
-        GameObject player = GameObject.FindWithTag("Player");
+        // As this is spawned only once by the host we can assume there will only be one player in the scene.
+        var player = GameObject.FindWithTag("Player");
         
         if (player != null)
         {
-            NetworkIdentity toId = player.GetComponent<NetworkIdentity>();
+            var toId = player.GetComponent<NetworkIdentity>();
             var conn = toId.connectionToClient;
-            GameObject sd = (GameObject)Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
-            //NetworkServer.Spawn(sd);
+            var sd = (GameObject) Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
             NetworkServer.SpawnWithClientAuthority(sd, conn);
         }
 
@@ -181,18 +158,17 @@ public class NetworkManagerCustom : MonoBehaviour
         Debug.Log("Starting client");
         canChangeValue = false;
         manager.StartClient();
-        if(canChangeValue)
+
+        if (canChangeValue)
         {
             Debug.Log("Starting client");
             canChangeValue = false;
             manager.StartClient();
-            //StartCoroutine(Wait(1.0f));
         }
     }
 
     public void StartServer()
     {
-
         if (NetworkServer.active && NetworkServer.localClientActive)
         {
             g = GameObject.FindWithTag("ServerData");
@@ -202,12 +178,11 @@ public class NetworkManagerCustom : MonoBehaviour
             }
         }
         
-        if(canChangeValue)
+        if (canChangeValue)
         {
             Debug.Log("Starting Server");
             canChangeValue = false;
             manager.StartHost();
-            //StartCoroutine(Wait(1.0f));
         }
     }
 }

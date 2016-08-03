@@ -31,7 +31,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     public static void EnsureInstanceExists()
     {
         if (!_instance)
-            _instance = (T) FindObjectOfType(typeof(T));
+            _instance = ObjectFinder.Find<T>();
     }
 
 
