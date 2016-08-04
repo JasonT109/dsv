@@ -49,7 +49,7 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** Whether session will be automatically started. */
     public bool AutoStart
-        { get { return CanAutoStart(); } }
+        { get { return ShouldAutoStart(); } }
 
 
     // Private Properties
@@ -174,11 +174,11 @@ public class NetworkManagerCustom : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Whether autostartup can be attempted. */
-    private bool CanAutoStart()
+    private bool ShouldAutoStart()
     {
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
-            return false;
+            return !IsLoginScreen();
 
         // Can't autoload more than once.
         if (_loadCount > 1)
@@ -191,7 +191,7 @@ public class NetworkManagerCustom : MonoBehaviour
     private void AttemptAutoStartup()
     {
         // Check if we have an existing session.
-        if (HasSession || !CanAutoStart() || !CanAttemptStartup())
+        if (HasSession || _loadCount > 1 || !CanAttemptStartup())
             return;
 
         // Check if we should start a client or server session immediately.
