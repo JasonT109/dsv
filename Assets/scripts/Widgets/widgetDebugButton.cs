@@ -96,6 +96,13 @@ public class widgetDebugButton : MonoBehaviour
         _presses = 0;
     }
 
+    /** Deactivate the debug screen. */
+    public void Deactivate()
+    {
+        debugVisGroup.SetActive(false);
+        _presses = 0;
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------

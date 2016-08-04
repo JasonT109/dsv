@@ -60,6 +60,10 @@ public class InitialSubScreenSelector : MonoBehaviour
                 break;
         }
 
+        // Ensure debug screen is deactivated if needed.
+        if (initial != "debug")
+            Debug.GetComponent<widgetDebugButton>().Deactivate();
+
         // Set up initial screen scaling state.
         graphicsDisplaySettings.Instance.Initialize();
     }

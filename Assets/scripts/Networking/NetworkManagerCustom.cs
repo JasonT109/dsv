@@ -49,7 +49,7 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** Whether session will be automatically started. */
     public bool AutoStart
-        { get { return !string.IsNullOrEmpty(Configuration.Get("network-role", "")); } }
+        { get { return ShouldAutoStart(); } }
 
 
     // Private Properties
@@ -57,6 +57,9 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** The UNET networking manager. */
     private NetworkManager _manager;
+
+    /** Number of previous scene loads. */
+    private static int _loadCount;
 
     /** Whether a network session is active for this instance. */
     private bool HasSession
@@ -95,6 +98,9 @@ public class NetworkManagerCustom : MonoBehaviour
         _manager.networkAddress = Host;
         _manager.networkPort = Port;
         _manager.onlineScene = Scene;
+        
+        // Modify UNET configuration to better tolerate packet loss, etc.
+        _manager.connectionConfig.NetworkDropThreshold = 95;
     }
 
     /** Startup. */
@@ -115,6 +121,12 @@ public class NetworkManagerCustom : MonoBehaviour
         // Periodically attempt automatic startup.
         if (!HasSession && CanAttemptStartup())
             AttemptAutoStartup();
+    }
+
+    /** Called when a level load occurs. */
+    private void OnLevelWasLoaded()
+    {
+        _loadCount++;
     }
 
 
@@ -161,11 +173,25 @@ public class NetworkManagerCustom : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
+    /** Whether autostartup can be attempted. */
+    private bool ShouldAutoStart()
+    {
+        var role = Configuration.Get("network-role", "");
+        if (string.IsNullOrEmpty(role))
+            return !IsLoginScreen();
+
+        // Can't autoload more than once.
+        if (_loadCount > 1)
+            return false;
+
+        return true;
+    }
+
     /** Attempt automatic session startup. */
     private void AttemptAutoStartup()
     {
         // Check if we have an existing session.
-        if (HasSession || !CanAttemptStartup())
+        if (HasSession || _loadCount > 1 || !CanAttemptStartup())
             return;
 
         // Check if we should start a client or server session immediately.
