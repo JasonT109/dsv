@@ -176,9 +176,6 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Whether autostartup can be attempted. */
     private bool CanAutoStart()
     {
-        if (HasSession)
-            return false;
-
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
             return false;
@@ -194,7 +191,7 @@ public class NetworkManagerCustom : MonoBehaviour
     private void AttemptAutoStartup()
     {
         // Check if we have an existing session.
-        if (!CanAutoStart() || !CanAttemptStartup())
+        if (HasSession || !CanAutoStart() || !CanAttemptStartup())
             return;
 
         // Check if we should start a client or server session immediately.
