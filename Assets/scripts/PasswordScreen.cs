@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,9 @@ public class PasswordScreen : MonoBehaviour
     // ------------------------------------------------------------
 
     [Header("Components")]
+
+    public CanvasGroup ConnectRoot;
+
     public GameObject HostIPObject;
     public GameObject LocalIP;
 
@@ -22,15 +26,17 @@ public class PasswordScreen : MonoBehaviour
     public Image BigSubButtonImg;
     public Image DCCButtonImg;
 
-    public GameObject ZhangLogo;
     public GameObject StartButtonObj;
-    public GameObject PasswordRoot;
+    public Text StartButtonText;
 
-    [Header("Configuration")]
-    public string Password = "EnglishBreakfast";
-    public string Password2 = "EarlGrey";
-    public bool IsPasswordCorrect = false;
-    public bool IsPasswordPin = false;
+
+    [Header("Configuraiton")]
+
+    public Color SelectedColor = Color.white;
+    public Color UnselectedColor = Color.grey;
+
+    public float DefaultFadeDelay = 1.5f;
+    public float AutoStartFadeDelay = 5.0f;
 
 
     // Members
@@ -51,10 +57,10 @@ public class PasswordScreen : MonoBehaviour
         var host = _manager.Host;
         var role = Configuration.Get("network-role", "").ToLower();
 
-        if (role == "client")
-            ToggleClient();
-        else
+        if (role == "host" || role == "server")
             ToggleHost();
+        else
+            ToggleClient();
 
         HostIP.text = host;
         HostIPTextPlaceholder.text = host;
@@ -68,22 +74,15 @@ public class PasswordScreen : MonoBehaviour
         else
             ToggleBigSub();
 
-        if (IsPasswordCorrect)
-        {
-            ZhangLogo.SetActive(true);
-            StartButtonObj.SetActive(true);
-            PasswordRoot.SetActive(false);
-        }
-        else
-        {
-            ZhangLogo.SetActive(false);
+        var isAutoStarting = _manager.AutoStart;
+        if (isAutoStarting)
             StartButtonObj.SetActive(false);
-            PasswordRoot.SetActive(true);
-        }
 
-        if (_manager.AutoStart)
-            StartButtonObj.SetActive(false);
-	}
+        // Fade in the UI after a brief delay.
+        var delay = isAutoStarting ? AutoStartFadeDelay : DefaultFadeDelay;
+        ConnectRoot.DOFade(0.0f, 1.0f).From().SetDelay(delay);
+        ConnectRoot.transform.DOScale(0.0f, 0.5f).From().SetDelay(delay);
+    }
 
 
     // Public Methods
@@ -94,9 +93,10 @@ public class PasswordScreen : MonoBehaviour
         _client = false;
         HostIPObject.SetActive(false);
         LocalIP.SetActive(true);
-        HostButtonImg.color = Color.white;
-        ClientButtonImg.color = Color.grey;
+        HostButtonImg.color = SelectedColor;
+        ClientButtonImg.color = UnselectedColor;
         thisIP.text = Network.player.ipAddress;
+        StartButtonText.text = "START HOST";
     }
 
     public void ToggleClient()
@@ -104,71 +104,33 @@ public class PasswordScreen : MonoBehaviour
         _client = true;
         HostIPObject.SetActive(true);
         LocalIP.SetActive(false);
-        HostButtonImg.color = Color.grey;
-        ClientButtonImg.color = Color.white;
+        HostButtonImg.color = UnselectedColor;
+        ClientButtonImg.color = SelectedColor;
+        StartButtonText.text = "CONNECT TO HOST";
     }
 
     public void ToggleGlider()
     {
-        GliderButtonImg.color = Color.white;
-        BigSubButtonImg.color = Color.grey;
-        DCCButtonImg.color = Color.grey;
+        GliderButtonImg.color = SelectedColor;
+        BigSubButtonImg.color = UnselectedColor;
+        DCCButtonImg.color = UnselectedColor;
         _manager.SetScene(NetworkManagerCustom.GliderScene);
     }
 
     public void ToggleBigSub()
     {
-        GliderButtonImg.color = Color.grey;;
-        BigSubButtonImg.color = Color.white;;
-        DCCButtonImg.color = Color.grey;
+        GliderButtonImg.color = UnselectedColor;
+        BigSubButtonImg.color = SelectedColor;
+        DCCButtonImg.color = UnselectedColor;
         _manager.SetScene(NetworkManagerCustom.BigSubScene);
     }
 
     public void ToggleDCC()
     {
-        GliderButtonImg.color = Color.grey;;
-        BigSubButtonImg.color = Color.grey;;
-        DCCButtonImg.color = Color.white;
+        GliderButtonImg.color = UnselectedColor;
+        BigSubButtonImg.color = UnselectedColor;
+        DCCButtonImg.color = SelectedColor;
         _manager.SetScene(NetworkManagerCustom.DccScene);
-    }
-
-    public void PasswordLiveInput(string value)
-    {
-        if (IsPasswordPin)
-            PasswordInputChanged(value);
-    }
-
-    public void PasswordInputChanged(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return;
-
-        if (value == Password)
-        {
-            IsPasswordCorrect = true;
-            if(ZhangLogo)
-            {
-                ZhangLogo.SetActive(true);
-                PasswordRoot.SetActive(false);
-            }
-            StartButtonObj.SetActive(true);
-        }
-        else if (value == Password2)
-        {
-            IsPasswordCorrect = true;
-            if(ZhangLogo)
-            {
-                ZhangLogo.SetActive(true);
-                PasswordRoot.SetActive(false);
-            }
-            StartButtonObj.SetActive(true);
-        }
-        else
-        {
-            IsPasswordCorrect = false;
-            ZhangLogo.SetActive(false);
-            StartButtonObj.SetActive(false);
-        }
     }
 
     public void HostIPChanged(string value)
