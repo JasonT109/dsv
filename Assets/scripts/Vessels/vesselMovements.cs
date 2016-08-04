@@ -81,10 +81,12 @@ public class vesselMovements : NetworkBehaviour
     }
 
     /** Update the vessel movement module. */
+    [ServerCallback]
     protected virtual void LateUpdate()
     {
         // Update active state on all vessels.
-        SetActive(Active);
+        if (isServer)
+            SetActive(Active);
 
         // Update the vessel's movement.
         if (Active && isServer)
