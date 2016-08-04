@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 
@@ -46,7 +45,7 @@ public class NetworkManagerCustom : MonoBehaviour
     public int Port = 25001;
 
     /** Scene to start up in when hosting/joining a session. */
-    public string Scene = BigSubScene;
+    public string Scene { get; private set; }
 
     /** Whether session will be automatically started. */
     public bool AutoStart
@@ -84,13 +83,15 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Preinitialization. */
     private void Awake()
     {
+        // Get default scene from the UNET network manager.
+        _manager = GetComponent<NetworkManager>();
+
         // Get default connection state.
         Host = Configuration.Get("server-ip", Network.player.ipAddress);
         Port = Configuration.Get("server-port", Port);
-        Scene = Configuration.Get("network-scene", Scene);
+        Scene = Configuration.Get("network-scene", _manager.onlineScene);
 
         // Configure UNET network manager with default connection.
-        _manager = GetComponent<NetworkManager>();
         _manager.networkAddress = Host;
         _manager.networkPort = Port;
         _manager.onlineScene = Scene;
@@ -119,6 +120,13 @@ public class NetworkManagerCustom : MonoBehaviour
 
     // Public Methods
     // ------------------------------------------------------------
+
+    /** Set the scene to start when joining a session. */
+    public void SetScene(string value)
+    {
+        Scene = value;
+        _manager.onlineScene = Scene;
+    }
 
     /** Attempt to start up a client session. */
     public bool StartClient()

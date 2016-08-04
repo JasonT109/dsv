@@ -113,7 +113,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.white;
         BigSubButtonImg.color = Color.grey;
         DCCButtonImg.color = Color.grey;
-        _manager.Scene = NetworkManagerCustom.GliderScene;
+        _manager.SetScene(NetworkManagerCustom.GliderScene);
     }
 
     public void ToggleBigSub()
@@ -121,7 +121,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.white;;
         DCCButtonImg.color = Color.grey;
-        _manager.Scene = NetworkManagerCustom.BigSubScene;
+        _manager.SetScene(NetworkManagerCustom.BigSubScene);
     }
 
     public void ToggleDCC()
@@ -129,7 +129,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = Color.grey;;
         BigSubButtonImg.color = Color.grey;;
         DCCButtonImg.color = Color.white;
-        _manager.Scene = NetworkManagerCustom.DccScene;
+        _manager.SetScene(NetworkManagerCustom.DccScene);
     }
 
     public void PasswordLiveInput(string value)

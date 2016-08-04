@@ -1,14 +1,7 @@
 {
 	"default" :
 	{
-		"network-role" : "",
-		"network-scene" : "screen_subs",
-		"screen-scaling" : false,
-		"server-ip" : "localhost",
-		"server-port" : 25001,
 	},
-
-
 
 	"sub" :
 	{
