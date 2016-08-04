@@ -341,18 +341,12 @@ public class debugEventFileUi : MonoBehaviour
             Properties.ExpandEvent(e);
 
         _file.selectedGroup = g;
-        _file.selectedEvent = e;
     }
 
     private void HandlePropertiesSelected(debugEventGroupPropertiesUi groupUi, debugEventPropertiesUi eventUi)
     {
         var e = eventUi ? eventUi.Event : null;
         Properties.ToggleEvent(e);
-
-        if (e == _file.selectedEvent)
-            e = null;
-
-        _file.selectedEvent = e;
     }
 
 }

@@ -200,31 +200,24 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     }
 
     /** Toggle an event's minimized state. */
-    public void ToggleEvent(megEvent toToggle, bool minimizeOthers = true)
+    public void ToggleEvent(megEvent toToggle)
     {
-        foreach (var e in _eventProperties)
-            if (e.Event == toToggle)
-                e.Minimized = !e.Minimized;
-            else if (minimizeOthers)
-                e.Minimized = true;
+        if (toToggle == File.selectedEvent)
+            File.selectedEvent = null;
+        else
+            File.selectedEvent = toToggle;
     }
 
     /** Expand an event. */
-    public void ExpandEvent(megEvent toExpand, bool minimizeOthers = true)
+    public void ExpandEvent(megEvent toExpand)
     {
-        foreach (var e in _eventProperties)
-            if (e.Event == toExpand)
-                e.Minimized = false;
-            else if (minimizeOthers)
-                e.Minimized = true;
+        File.selectedEvent = toExpand;
     }
 
     /** Minimize an event. */
     public void MinimizeEvent(megEvent toExpand)
     {
-        var eventProperties = _eventProperties.FirstOrDefault(e => e.Event == toExpand);
-        if (eventProperties)
-            eventProperties.Minimized = true;
+        File.selectedEvent = null;
     }
 
     /** Select an event. */

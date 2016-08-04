@@ -53,67 +53,37 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Basic properties panel. */
     public Transform BaseProperties;
-
-    /** Trigger time slider. */
     public Slider TriggerTimeSlider;
-
-    /** Trigger time input text. */
     public InputField TriggerTimeInput;
-
-    /** Completion time slider. */
     public Slider CompleteTimeSlider;
-
-    /** Completion time input text. */
     public InputField CompleteTimeInput;
 
 
     [Header("Value Event Components")]
 
-    /** Properties panel for value events. */
     public Transform ValueProperties;
-
-    /** Server parameter input text. */
     public InputField ServerParamInput;
-
-    /** Server value slider. */
-    public Slider ServerValueSlider;
-
-    /** Server value input text. */
-    public InputField ServerValueInput;
-
-    /** Container for server parameter entries. */
+    public Button ServerParamClearButton;
     public Transform ServerParamEntriesContainer;
-
-    /** Scroll view for server parameter entries. */
     public megScrollRect ServerParamEntriesScrollView;
+    public Slider ServerValueSlider;
+    public InputField ServerValueInput;
 
 
     [Header("Physics Event Components")]
 
-    /** Properties panel for physics events. */
     public Transform PhysicsProperties;
-
-    /** Input text for physics direction components. */
     public InputField PhysicsDirectionXInput;
     public InputField PhysicsDirectionYInput;
     public InputField PhysicsDirectionZInput;
-
-    /** Physics magnitude slider. */
     public Slider PhysicsMagnitudeSlider;
-
-    /** Server value input text. */
     public InputField PhysicsMagnitudeInput;
 
 
     [Header("Map Camera Event Components")]
 
-    /** Properties panel for map camera events. */
     public Transform MapCameraProperties;
-
-    /** Input text for map camera event name. */
     public InputField MapCameraEventNameInput;
-
-    /** Camera state component UI. */
     public CanvasGroup MapCameraStateGroup;
     public InputField MapCameraXInput;
     public InputField MapCameraYInput;
@@ -124,29 +94,19 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField MapCameraYawInput;
     public Slider MapCameraDistanceSlider;
     public InputField MapCameraDistanceInput;
-
-    /** Button to capture current map camera state. */
     public Button MapCameraCaptureButton;
 
 
     [Header("Sonar Event Components")]
 
-    /** Properties panel for sonar events. */
     public Transform SonarProperties;
-
-    /** Input text for sonar event name. */
     public InputField SonarEventNameInput;
-
-    /** Sonar waypoint ui. */
     public debugEventSonarWaypointsUi SonarWaypointsUi;
 
 
     [Header("Vessels Event Components")]
 
-    /** Properties panel for vessel simulation events. */
     public Transform VesselsProperties;
-
-    /** Button to capture current state. */
     public Button VesselsCaptureButton;
 
 
@@ -192,10 +152,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Whether event is minimized. */
     public bool Minimized
-    {
-        get { return _event.minimized; }
-        set { SetMinimized(value); }
-    }
+        { get { return _event.minimized; } }
 
 
     // Events
@@ -253,24 +210,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         if (OnSelected != null)
             OnSelected(this);
-    }
-
-    /** Toggle event's minimized state. */
-    public void ToggleMinimized()
-    {
-        if (_initializing || _updating)
-            return;
-
-        Minimized = !Minimized;
-    }
-
-    /** Set timeline's minimized state. */
-    public void SetMinimized(bool value)
-    {
-        if (_initializing || _updating)
-            return;
-
-        _event.minimized = value;
     }
 
 
@@ -381,6 +320,11 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
         BaseProperties.gameObject.SetActive(!minimized);
+        ValueProperties.gameObject.SetActive(!minimized && ValueEvent != null);
+        PhysicsProperties.gameObject.SetActive(!minimized && PhysicsEvent != null);
+        MapCameraProperties.gameObject.SetActive(!minimized && MapCameraEvent != null);
+        SonarProperties.gameObject.SetActive(!minimized && SonarEvent != null);
+        VesselsProperties.gameObject.SetActive(!minimized && VesselsEvent != null);
     }
 
     private void UpdateTriggerTimeSlider()
@@ -465,32 +409,29 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerParamInput();
         UpdateServerValueSlider();
         UpdateServerValueInput();
-        UpdateServerParamList();
     }
-
-    private float _serverParamFocusTimeout;
-    private const float ServerParamListTimeout = 2;
 
     private void UpdateValueProperties()
     {
-        ValueProperties.gameObject.SetActive(_event is megEventValue && !_event.minimized);
+        // ServerParamClearButton.interactable = !string.IsNullOrEmpty(ValueEvent.serverParam);
 
-        // TODO: FIX THIS!
+        // Update the state of the server parameter list UI.
         if (_event.minimized)
         {
             HideServerParamList();
+            DeselectServerParamInput();
+        }
+        else if (ServerParamInput.isFocused)
+            ShowServerParamList();
+    }
 
-            if (ServerParamInput.isFocused)
-            {
-                var myEventSystem = GameObject.Find("EventSystem");
-                myEventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
-            }
-        }
-        else if (ServerParamInput.isFocused || ServerParamEntriesScrollView.Dragging)
-        {
-            _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
-            ServerParamEntriesScrollView.gameObject.SetActive(Time.time < _serverParamFocusTimeout);
-        }
+    private void DeselectServerParamInput()
+    {
+        if (!ServerParamInput.isFocused)
+            return;
+
+        var eventSystem = GameObject.Find("EventSystem");
+        eventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
     }
 
     private void UpdateServerParamInput()
@@ -516,7 +457,6 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         UpdateServerParamList(value);
-        UpdateSelectedServerParam();
     }
 
     public void ServerParamInputEndEdit(string value)
@@ -526,7 +466,20 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         ValueEvent.serverParam = value;
         UpdateServerParamList(value);
-        UpdateSelectedServerParam();
+    }
+
+    public void ServerParamClear()
+    {
+        if (_initializing)
+            return;
+
+        if (!string.IsNullOrEmpty(ValueEvent.serverParam))
+        {
+            ValueEvent.serverParam = "";
+            UpdateServerParamInput();
+        }
+        else
+            HideServerParamList();
     }
 
     public void ServerValueSliderChanged(float value)
@@ -553,18 +506,31 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerParamList(string value = null)
     {
+        var current = ValueEvent.serverParam;
+        var prefix = (value ?? current);
         var index = 0;
-        var prefix =  value ?? ValueEvent.serverParam;
-        var matching = string.IsNullOrEmpty(prefix)
-            ? serverUtils.Parameters
-            : serverUtils.Parameters.Where(p => p.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase));
+        var focus = 0;
+        foreach (var param in serverUtils.Parameters)
+        {
+            var entry = GetServerParamEntry(index);
+            var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);
+            entry.Text.text = param;
+            entry.On.gameObject.SetActive(on);
+            if (string.CompareOrdinal(prefix, param) >= 0)
+                focus = index;
 
-        foreach (var param in matching)
-            GetServerParamEntry(index++).Text.text = param;
+            index++;
+        }
 
         for (var i = 0; i < _serverParams.Count; i++)
             _serverParams[i].gameObject.SetActive(i < index);
+
+        ServerParamEntriesScrollView.CenterOnItem(
+            GetServerParamEntry(focus).GetComponent<RectTransform>());
     }
+
+    private bool IsParameterPrefixed(string param, string prefix)
+        { return param.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase); }
 
     private debugServerParamEntryUi GetServerParamEntry(int i)
     {
@@ -572,7 +538,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         {
             var ui = Instantiate(ServerParamEntryPrefab);
             ui.transform.SetParent(ServerParamEntriesContainer, false);
-            ui.Toggle.onValueChanged.AddListener(on => { if (on) HandleServerParamSelected(ui); });
+            ui.Button.onClick.AddListener(() => HandleServerParamSelected(ui));
             _serverParams.Add(ui);
         }
 
@@ -594,26 +560,15 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void ShowServerParamList()
     {
+        if (ServerParamEntriesScrollView.gameObject.activeSelf)
+            return;
+
         ServerParamEntriesScrollView.gameObject.SetActive(true);
-        _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
+        UpdateServerParamList();
     }
 
     private void HideServerParamList()
-    {
-        ServerParamEntriesScrollView.gameObject.SetActive(false);
-        ServerParamEntriesScrollView.Dragging = false;
-        _serverParamFocusTimeout = Time.time;
-    }
-
-    private void UpdateSelectedServerParam()
-    {
-        _initializing = true;
-
-        foreach (var ui in _serverParams)
-            ui.Toggle.isOn = (ui.Text.text == ValueEvent.serverParam);
-
-        _initializing = false;
-    }
+        { ServerParamEntriesScrollView.gameObject.SetActive(false); }
 
 
     // Physics Event Interface
@@ -628,7 +583,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePhysicsProperties()
     {
-        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !_event.minimized);
     }
 
     private void UpdatePhysicsDirectionInputs()
@@ -727,7 +681,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateMapCameraProperties()
     {
-        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !_event.minimized);
     }
 
     private void UpdateMapCameraEventNameInput()
@@ -907,7 +860,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateSonarProperties()
     {
-        SonarProperties.gameObject.SetActive(_event is megEventSonar && !_event.minimized);
     }
 
     private void UpdateSonarEventNameInput()
@@ -933,7 +885,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateVesselsProperties()
     {
-        VesselsProperties.gameObject.SetActive(_event is megEventVessels && !_event.minimized);
     }
 
     public void VesselsCapture()

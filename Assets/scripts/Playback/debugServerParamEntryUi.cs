@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class debugServerParamEntryUi : MonoBehaviour
 {
-    public Toggle Toggle;
+    public Button Button;
+    public Graphic On;
     public Text Text;
 }
