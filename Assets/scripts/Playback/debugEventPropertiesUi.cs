@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Meg.EventSystem;
 using Meg.Networking;
 using Meg.UI;
+using UnityEngine.EventSystems;
 
 public class debugEventPropertiesUi : MonoBehaviour
 {
@@ -73,6 +74,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     [Header("Physics Event Components")]
 
     public Transform PhysicsProperties;
+    public Slider PhysicsDirectionXSlider;
+    public Slider PhysicsDirectionYSlider;
+    public Slider PhysicsDirectionZSlider;
     public InputField PhysicsDirectionXInput;
     public InputField PhysicsDirectionYInput;
     public InputField PhysicsDirectionZInput;
@@ -421,8 +425,6 @@ public class debugEventPropertiesUi : MonoBehaviour
             HideServerParamList();
             DeselectServerParamInput();
         }
-        else if (ServerParamInput.isFocused)
-            ShowServerParamList();
     }
 
     private void DeselectServerParamInput()
@@ -430,9 +432,11 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (!ServerParamInput.isFocused)
             return;
 
-        var eventSystem = GameObject.Find("EventSystem");
-        eventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
+        EventSystem.SetSelectedGameObject(null);
     }
+
+    private EventSystem EventSystem
+        { get { return GameObject.Find("EventSystem").GetComponent<EventSystem>(); } }
 
     private void UpdateServerParamInput()
     {
@@ -456,7 +460,22 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_initializing)
             return;
 
+        ShowServerParamList();
         UpdateServerParamList(value);
+    }
+
+    public void ServerParamInputClicked()
+    {
+        if (_initializing)
+            return;
+
+        if (ServerParamEntriesScrollView.gameObject.activeSelf)
+            HideServerParamList();
+        else
+        {
+            ShowServerParamList();
+            EventSystem.SetSelectedGameObject(ServerParamEntriesScrollView.gameObject);
+        }
     }
 
     public void ServerParamInputEndEdit(string value)
@@ -473,13 +492,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_initializing)
             return;
 
-        if (!string.IsNullOrEmpty(ValueEvent.serverParam))
-        {
-            ValueEvent.serverParam = "";
-            UpdateServerParamInput();
-        }
-        else
-            HideServerParamList();
+        ValueEvent.serverParam = "";
+        UpdateServerParamInput();
     }
 
     public void ServerValueSliderChanged(float value)
@@ -504,7 +518,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerValueSlider();
     }
 
-    private void UpdateServerParamList(string value = null)
+    private void UpdateServerParamList(string value = null, bool recenter = true)
     {
         var current = ValueEvent.serverParam;
         var prefix = (value ?? current);
@@ -525,8 +539,9 @@ public class debugEventPropertiesUi : MonoBehaviour
         for (var i = 0; i < _serverParams.Count; i++)
             _serverParams[i].gameObject.SetActive(i < index);
 
-        ServerParamEntriesScrollView.CenterOnItem(
-            GetServerParamEntry(focus).GetComponent<RectTransform>());
+        if (recenter)
+            ServerParamEntriesScrollView.CenterOnItem(
+                GetServerParamEntry(focus).GetComponent<RectTransform>(), 0.25f);
     }
 
     private bool IsParameterPrefixed(string param, string prefix)
@@ -551,10 +566,10 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         ValueEvent.serverParam = selected.Text.text;
-        HideServerParamList();
 
         _initializing = true;
         UpdateServerParamInput();
+        UpdateServerParamList(null, false);
         _initializing = false;
     }
 
@@ -576,6 +591,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void InitPhysicsProperties()
     {
+        UpdatePhysicsDirectionSliders();
         UpdatePhysicsDirectionInputs();
         UpdatePhysicsMagnitudeSlider();
         UpdatePhysicsMagnitudeInput();
@@ -583,6 +599,13 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePhysicsProperties()
     {
+    }
+
+    private void UpdatePhysicsDirectionSliders()
+    {
+        PhysicsDirectionXSlider.value = PhysicsEvent.physicsDirection.x;
+        PhysicsDirectionYSlider.value = PhysicsEvent.physicsDirection.y;
+        PhysicsDirectionZSlider.value = PhysicsEvent.physicsDirection.z;
     }
 
     private void UpdatePhysicsDirectionInputs()
@@ -604,6 +627,33 @@ public class debugEventPropertiesUi : MonoBehaviour
         PhysicsMagnitudeInput.text = string.Format("{0:N1}", PhysicsEvent.physicsMagnitude);
     }
 
+    public void PhysicsDirectionXSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(value, d.y, d.z));
+    }
+
+    public void PhysicsDirectionYSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(d.x, value, d.z));
+    }
+
+    public void PhysicsDirectionZSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(d.x, d.y, value));
+    }
+
+    private void PhysicsDirectionChanged(Vector3 v)
+    {
+        if (_initializing)
+            return;
+        
+        PhysicsEvent.physicsDirection = v;
+        UpdatePhysicsDirectionInputs();
+    }
+
     public void PhysicsDirectionXInputChanged(string value)
     {
         if (_initializing)
@@ -614,6 +664,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.x = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsDirectionYInputChanged(string value)
@@ -626,6 +677,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.y = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsDirectionZInputChanged(string value)
@@ -638,6 +690,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.z = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsMagnitudeSliderChanged(float value)

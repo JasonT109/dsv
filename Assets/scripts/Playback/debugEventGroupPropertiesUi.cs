@@ -64,7 +64,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** The event file. */
     public megEventFile File
-        { get { return _group.file; } }
+        { get { return _group != null ? _group.file : null; } }
 
     /** Whether group can be made to loop. */
     public bool CanLoop
@@ -202,6 +202,9 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Toggle an event's minimized state. */
     public void ToggleEvent(megEvent toToggle)
     {
+        if (File == null)
+            return;
+
         if (toToggle == File.selectedEvent)
             File.selectedEvent = null;
         else
@@ -211,13 +214,15 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Expand an event. */
     public void ExpandEvent(megEvent toExpand)
     {
-        File.selectedEvent = toExpand;
+        if (File != null)
+            File.selectedEvent = toExpand;
     }
 
     /** Minimize an event. */
     public void MinimizeEvent(megEvent toExpand)
     {
-        File.selectedEvent = null;
+        if (File != null)
+            File.selectedEvent = null;
     }
 
     /** Select an event. */

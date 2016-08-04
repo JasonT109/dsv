@@ -65,13 +65,16 @@ namespace Meg.UI
 
         public void CenterOnItem(RectTransform target, float smoothTime = 0)
         {
+            if (!target || !_rectTransform)
+                return;
+
             // Item is here
             var itemCenterPositionInScroll = GetWorldPointInWidget(_rectTransform, GetWidgetWorldPoint(target));
-            Debug.Log("Item Anchor Pos In Scroll: " + itemCenterPositionInScroll);
+            // Debug.Log("Item Anchor Pos In Scroll: " + itemCenterPositionInScroll);
             
             // But must be here
             var targetPositionInScroll = GetWorldPointInWidget(_rectTransform, GetWidgetWorldPoint(_maskTransform));
-            Debug.Log("Target Anchor Pos In Scroll: " + targetPositionInScroll);
+            // Debug.Log("Target Anchor Pos In Scroll: " + targetPositionInScroll);
 
             // So it has to move this distance
             var difference = targetPositionInScroll - itemCenterPositionInScroll;
@@ -83,29 +86,19 @@ namespace Meg.UI
             if (!vertical)
                 difference.y = 0f;
 
-            /*
-            // This is the wanted new position for the content.
-            Vector2 newAnchoredPosition = content.anchoredPosition3D + difference;
-
-            if (smoothTime <= 0)
-                content.anchoredPosition3D = newAnchoredPosition;
-            else
-                DOTween.To(() => content.anchoredPosition, x => content.anchoredPosition = x, newAnchoredPosition, smoothTime);
-            */
-
             var normalizedDifference = new Vector2(
                 difference.x / (content.rect.size.x - _rectTransform.rect.size.x),
                 difference.y / (content.rect.size.y - _rectTransform.rect.size.y));
-
-            Debug.Log("Normalized difference: " + normalizedDifference);
+            // Debug.Log("Normalized difference: " + normalizedDifference);
 
             var newNormalizedPosition = normalizedPosition - normalizedDifference;
-            Debug.Log("New normalized position: " + newNormalizedPosition);
+            // Debug.Log("New normalized position: " + newNormalizedPosition);
+
             if (movementType != MovementType.Unrestricted)
             {
                 newNormalizedPosition.x = Mathf.Clamp01(newNormalizedPosition.x);
                 newNormalizedPosition.y = Mathf.Clamp01(newNormalizedPosition.y);
-                Debug.Log("Clamped normalized position: " + newNormalizedPosition);
+                // Debug.Log("Clamped normalized position: " + newNormalizedPosition);
             }
 
             if (smoothTime <= 0)
