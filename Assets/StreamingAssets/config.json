@@ -1,11 +1,9 @@
 {
 	"default" :
 	{
-		"aspect-from" : 1.77777778,
-		"aspect-to" : 1.77777778,
-		"aspect-scaling" : false,
 		"network-role" : "",
 		"network-scene" : "screen_subs",
+		"screen-scaling" : false,
 		"server-ip" : "localhost",
 		"server-port" : 25001,
 	},
@@ -17,7 +15,7 @@
 		"parent" : "default",
 		"network-role" : "client",
 		"network-scene" : "screen_subs",
-		"screen-mode" : "16_9",
+		"screen-mode" : "16x9",
 	},
 
 	"subServer" :
@@ -59,12 +57,10 @@
 	"glider" :
 	{
 		"parent" : "default",
-		"aspect-from" : 1.6,
-		"aspect-to" : 1.77777778,
-		"aspect-scaling" : true,
 		"network-role" : "client",
 		"network-scene" : "screen_gliders",
-		"screen-mode" : "16_10",
+		"screen-mode" : "16x10",
+		"screen-scaling" : true,
 	},
 
 	"gliderServer" :
@@ -74,19 +70,19 @@
 		"screen-initial" : "debug",
 	},
 
-	"gliderPilotLeft" :
+	"gliderLeft" :
 	{
 		"parent" : "glider",
 		"screen-position-x" : -1920,
 	},
 
-	"gliderPilotMid" :
+	"gliderMid" :
 	{
 		"parent" : "glider",
 		"screen-position-x" : 0,
 	},
 
-	"gliderPilotRight" :
+	"gliderRight" :
 	{
 		"parent" : "glider",
 		"screen-position-x" : 1920,

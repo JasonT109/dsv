@@ -59,6 +59,9 @@ public class InitialSubScreenSelector : MonoBehaviour
                 ScreenButtons.toggleButtonOn(Rov.gameObject);
                 break;
         }
+
+        // Set up initial screen scaling state.
+        graphicsDisplaySettings.Instance.Initialize();
     }
 
 }

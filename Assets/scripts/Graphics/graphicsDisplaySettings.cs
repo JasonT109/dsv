@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class graphicsDisplaySettings : MonoBehaviour
+public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
 {
 
     // Constants
@@ -47,18 +47,10 @@ public class graphicsDisplaySettings : MonoBehaviour
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Initialization. */
     void Awake()
     {
-        if (!mainPanel)
-            mainPanel = ObjectFinder.FindUiByName("Scene");
-        if (!panelLeftSmall)
-            panelLeftSmall = ObjectFinder.FindUiByRegex(".*PanelLeftSmall", "Panels_21x9");
-        if (!panelRightSmall)
-            panelRightSmall = ObjectFinder.FindUiByRegex(".*PanelRightSmall", "Panels_21x9");
-        if (!panelLeftLarge)
-            panelLeftLarge = ObjectFinder.FindUiByRegex(".*PanelLeftLarge", "Panels_21x9");
-        if (!panelRightLarge)
-            panelRightLarge = ObjectFinder.FindUiByRegex(".*PanelRightLarge", "Panels_21x9");
+        Initialize();
     }
 
     /** Updating. */
@@ -109,6 +101,38 @@ public class graphicsDisplaySettings : MonoBehaviour
         // Update camera scaling state.
         if (scaling)
             SetScaled(scaling.GetComponent<buttonControl>().active);
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Set up the initial screen scaling state. */
+    public void Initialize()
+    {
+        if (!mainPanel)
+            mainPanel = ObjectFinder.FindUiByName("Scene");
+        if (!panelLeftSmall)
+            panelLeftSmall = ObjectFinder.FindUiByRegex(".*PanelLeftSmall", "Panels_21x9");
+        if (!panelRightSmall)
+            panelRightSmall = ObjectFinder.FindUiByRegex(".*PanelRightSmall", "Panels_21x9");
+        if (!panelLeftLarge)
+            panelLeftLarge = ObjectFinder.FindUiByRegex(".*PanelLeftLarge", "Panels_21x9");
+        if (!panelRightLarge)
+            panelRightLarge = ObjectFinder.FindUiByRegex(".*PanelRightLarge", "Panels_21x9");
+
+        var screenMode = Configuration.Get("screen-mode", "16x9").ToLower();
+        b16x9.GetComponent<buttonControl>().active = (screenMode == "16x9");
+        b16x10.GetComponent<buttonControl>().active = (screenMode == "16x10");
+        b21x9l.GetComponent<buttonControl>().active = (screenMode == "21x9l");
+        b21x9c.GetComponent<buttonControl>().active = (screenMode == "21x9c");
+        b21x9r.GetComponent<buttonControl>().active = (screenMode == "21x9r");
+
+        var screenScaling = Configuration.Get("screen-scaling", false);
+        scaling.GetComponent<buttonControl>().active = screenScaling;
+
+        // Perform an initial update to set things up.
+        Update();
     }
 
 

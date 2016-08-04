@@ -1,5 +1,5 @@
-START dsv.exe -id gliderPilotLeft
+START dsv.exe -id gliderLeft
 sleep 1
-START dsv.exe -id gliderPilotMid
+START dsv.exe -id gliderMid
 sleep 1
-START dsv.exe -id gliderPilotRight
+START dsv.exe -id gliderRight
