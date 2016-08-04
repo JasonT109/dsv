@@ -24,7 +24,7 @@ public class NetworkManagerCustom : MonoBehaviour
     public const string BigSubScene = "screen_subs";
 
     /** Name of the scene containing DCC screens. */
-    public const string DccScene = "screen_subs";
+    public const string DccScene = "screen_dcc";
 
 
     // Properties
