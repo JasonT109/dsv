@@ -48,6 +48,10 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Scene to start up in when hosting/joining a session. */
     public string Scene = BigSubScene;
 
+    /** Whether session will be automatically started. */
+    public bool AutoStart
+        { get { return !string.IsNullOrEmpty(Configuration.Get("network-role", "")); } }
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -89,6 +93,7 @@ public class NetworkManagerCustom : MonoBehaviour
         _manager = GetComponent<NetworkManager>();
         _manager.networkAddress = Host;
         _manager.networkPort = Port;
+        _manager.onlineScene = Scene;
     }
 
     /** Startup. */
@@ -162,7 +167,7 @@ public class NetworkManagerCustom : MonoBehaviour
         var role = Configuration.Get("network-role", "").ToLower();
         if (!IsLoginScreen())
             attempted = StartServer();
-        if (role == "client")
+        else if (role == "client")
             attempted = StartClient();
         else if (role == "server" || role == "host")
             attempted = StartServer();

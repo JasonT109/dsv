@@ -85,6 +85,18 @@ public class widgetDebugButton : MonoBehaviour
     }
 
 
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Activate the debug screen. */
+    public void Activate()
+    {
+        navButtonGroup.toggleButtons(debugButton.gameObject);
+        debugVisGroup.SetActive(true);
+        _presses = 0;
+    }
+
+
     // Private Methods
     // ------------------------------------------------------------
 

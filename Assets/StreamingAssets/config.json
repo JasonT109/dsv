@@ -12,7 +12,7 @@
 
 
 
-	"bigSub" :
+	"sub" :
 	{
 		"parent" : "default",
 		"network-role" : "client",
@@ -20,33 +20,37 @@
 		"screen-mode" : "16_9",
 	},
 
-	"bigSubServer" :
+	"subServer" :
 	{
-		"parent" : "bigSub",
+		"parent" : "sub",
 		"network-role" : "server",
+		"screen-initial" : "debug",
 	},
 	
 
-	"bigSubPilot" :
+	"subPilot" :
 	{
-		"parent" : "bigSub",
+		"parent" : "sub",
 	},
 
-	"bigSubPilotLeft" :
+	"subPilotLeft" :
 	{
-		"parent" : "bigSub",
+		"parent" : "sub",
+		"screen-initial" : "thrusters",
 		"screen-position-x" : -1920,
 	},
 
-	"bigSubPilotMid" :
+	"subPilotMid" :
 	{
-		"parent" : "bigSub",
+		"parent" : "sub",
+		"screen-initial" : "instruments",
 		"screen-position-x" : 0,
 	},
 
-	"bigSubPilotRight" :
+	"subPilotRight" :
 	{
-		"parent" : "bigSub",
+		"parent" : "sub",
+		"screen-initial" : "navigation",
 		"screen-position-x" : 1920,
 	},
 
@@ -67,6 +71,7 @@
 	{
 		"parent" : "glider",
 		"network-role" : "server",
+		"screen-initial" : "debug",
 	},
 
 	"gliderPilotLeft" :

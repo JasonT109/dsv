@@ -47,12 +47,26 @@ public class PasswordScreen : MonoBehaviour
     {
         _manager = ObjectFinder.Find<NetworkManagerCustom>();
 
-        ToggleHost();
+        var scene = _manager.Scene;
+        var host = _manager.Host;
+        var role = Configuration.Get("network-role", "").ToLower();
 
-        HostIP.text = _manager.Host;
-        HostIPTextPlaceholder.text = _manager.Host;
+        if (role == "client")
+            ToggleClient();
+        else
+            ToggleHost();
 
-        ToggleBigSub();
+        HostIP.text = host;
+        HostIPTextPlaceholder.text = host;
+
+        if (scene == NetworkManagerCustom.BigSubScene)
+            ToggleBigSub();
+        else if (scene == NetworkManagerCustom.GliderScene)
+            ToggleGlider();
+        else if (scene == NetworkManagerCustom.DccScene)
+            ToggleDCC();
+        else
+            ToggleBigSub();
 
         if (IsPasswordCorrect)
         {
@@ -66,6 +80,9 @@ public class PasswordScreen : MonoBehaviour
             StartButtonObj.SetActive(false);
             PasswordRoot.SetActive(true);
         }
+
+        if (_manager.AutoStart)
+            StartButtonObj.SetActive(false);
 	}
 
 

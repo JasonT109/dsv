@@ -6,17 +6,20 @@ public class buttonGroup : MonoBehaviour {
     public GameObject[] buttons;
     public bool changed = false;
 
-    public void toggleButtons(GameObject b)
+    public void toggleButtons(GameObject b, bool forceOn = false)
     {
         changed = true;
 
         foreach (var button in buttons)
         {
             var bScript = button.GetComponent<buttonControl>();
-            bScript.toggleButton(b);
+            bScript.toggleButton(b, forceOn);
             Resources.UnloadUnusedAssets();
         }
     }
+
+    public void toggleButtonOn(GameObject b)
+        { toggleButtons(b, true); }
 
     public bool anyButtonActive()
     {

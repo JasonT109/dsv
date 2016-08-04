@@ -261,11 +261,11 @@ public class buttonControl : MonoBehaviour
         }
     }
 
-    public void toggleButton(GameObject b)
+    public void toggleButton(GameObject b, bool forceOn = false)
     {
         if (b == gameObject) //quick check to see if this is the button being pressed, this function can be called by a button group
         {
-            if (toggleType && !active)
+            if (toggleType && (!active || forceOn))
             {
                 pressed = false;
                 active = true;
