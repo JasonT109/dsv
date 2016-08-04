@@ -29,6 +29,9 @@ public class PasswordScreen : MonoBehaviour
     public GameObject StartButtonObj;
     public Text StartButtonText;
 
+    public Graphic InitialSpinner;
+    public Graphic ConnectingSpinner;
+
 
     [Header("Configuraiton")]
 
@@ -82,6 +85,10 @@ public class PasswordScreen : MonoBehaviour
         var delay = isAutoStarting ? AutoStartFadeDelay : DefaultFadeDelay;
         ConnectRoot.DOFade(0.0f, 1.0f).From().SetDelay(delay);
         ConnectRoot.transform.DOScale(0.0f, 0.5f).From().SetDelay(delay);
+        InitialSpinner.gameObject.SetActive(true);
+        InitialSpinner.DOFade(0.0f, 0.25f).SetDelay(delay);
+
+        ConnectingSpinner.gameObject.SetActive(false);
     }
 
 
@@ -145,5 +152,9 @@ public class PasswordScreen : MonoBehaviour
             _manager.StartClient();
         else
             _manager.StartServer();
+
+        ConnectingSpinner.gameObject.SetActive(true);
+        ConnectingSpinner.DOKill();
+        ConnectingSpinner.DOFade(0.0f, 0.25f).From();
     }
 }
