@@ -18,12 +18,20 @@ public class InitialSubScreenSelector : MonoBehaviour
     public buttonControl Piloting;
     public buttonControl Rov;
 
+    /** Whether selector is active in the editor. */
+    public bool ActiveInEditor = false;
+
     /** Default startup screen. */
     public string DefaultScreen = "instruments";
 
     /** Initialization. */
     private void Awake()
     {
+        #if UNITY_EDITOR
+        if (!ActiveInEditor)
+            return;
+        #endif
+
         // Determine the initial screen to display.
         var initial = Configuration.Get("screen-initial", DefaultScreen).ToLower();
 

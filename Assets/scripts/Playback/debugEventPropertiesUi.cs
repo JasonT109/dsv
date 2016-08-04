@@ -1,9 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Meg.EventSystem;
+using Meg.Networking;
+using Meg.UI;
 
 public class debugEventPropertiesUi : MonoBehaviour
 {
@@ -77,6 +81,12 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Server value input text. */
     public InputField ServerValueInput;
 
+    /** Container for server parameter entries. */
+    public Transform ServerParamEntriesContainer;
+
+    /** Scroll view for server parameter entries. */
+    public megScrollRect ServerParamEntriesScrollView;
+
 
     [Header("Physics Event Components")]
 
@@ -138,6 +148,12 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Button to capture current state. */
     public Button VesselsCaptureButton;
+
+
+    [Header("Prefabs")]
+
+    /** Server param entry UI. */
+    public debugServerParamEntryUi ServerParamEntryPrefab;
 
 
     // Properties
@@ -203,6 +219,9 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Whether UI is being updated. */
     private bool _updating;
+
+    /** List of server param UI entries. */
+    private readonly List<debugServerParamEntryUi> _serverParams = new List<debugServerParamEntryUi>();
 
 
     // Unity Methods
@@ -292,7 +311,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     {
         _initializing = true;
 
-        UpdateBaseProperties();
+        InitBaseProperties();
 
         if (_event is megEventValue)
             InitValueProperties();
@@ -315,19 +334,18 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         _updating = true;
 
-        var minimized = _event.minimized;
-        MinimizeToggle.isOn = !minimized;
-        HeaderToggle.isOn = !minimized;
+        UpdateBaseProperties();
 
-        Name.text = _event.name;
-        BaseProperties.gameObject.SetActive(!minimized);
-        ValueProperties.gameObject.SetActive(_event is megEventValue && !minimized);
-        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !minimized);
-        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !minimized);
-        SonarProperties.gameObject.SetActive(_event is megEventSonar && !minimized);
-        VesselsProperties.gameObject.SetActive(_event is megEventVessels && !minimized);
-
-        CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
+        if (_event is megEventValue)
+            UpdateValueProperties();
+        else if (_event is megEventPhysics)
+            UpdatePhysicsProperties();
+        else if (_event is megEventMapCamera)
+            UpdateMapCameraProperties();
+        else if (_event is megEventSonar)
+            UpdateSonarProperties();
+        else if (_event is megEventVessels)
+            UpdateVesselsProperties();
 
         _updating = false;
     }
@@ -346,12 +364,23 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Base Event Interface
     // ------------------------------------------------------------
 
-    private void UpdateBaseProperties()
+    private void InitBaseProperties()
     {
         UpdateTriggerTimeSlider();
         UpdateTriggerTimeInput();
         UpdateCompleteTimeSlider();
         UpdateCompleteTimeInput();
+    }
+
+    private void UpdateBaseProperties()
+    {
+        var minimized = _event.minimized;
+        MinimizeToggle.isOn = !minimized;
+        HeaderToggle.isOn = !minimized;
+        Name.text = _event.name;
+
+        CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
+        BaseProperties.gameObject.SetActive(!minimized);
     }
 
     private void UpdateTriggerTimeSlider()
@@ -436,6 +465,32 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerParamInput();
         UpdateServerValueSlider();
         UpdateServerValueInput();
+        UpdateServerParamList();
+    }
+
+    private float _serverParamFocusTimeout;
+    private const float ServerParamListTimeout = 2;
+
+    private void UpdateValueProperties()
+    {
+        ValueProperties.gameObject.SetActive(_event is megEventValue && !_event.minimized);
+
+        // TODO: FIX THIS!
+        if (_event.minimized)
+        {
+            HideServerParamList();
+
+            if (ServerParamInput.isFocused)
+            {
+                var myEventSystem = GameObject.Find("EventSystem");
+                myEventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
+            }
+        }
+        else if (ServerParamInput.isFocused || ServerParamEntriesScrollView.Dragging)
+        {
+            _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
+            ServerParamEntriesScrollView.gameObject.SetActive(Time.time < _serverParamFocusTimeout);
+        }
     }
 
     private void UpdateServerParamInput()
@@ -460,7 +515,18 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_initializing)
             return;
 
+        UpdateServerParamList(value);
+        UpdateSelectedServerParam();
+    }
+
+    public void ServerParamInputEndEdit(string value)
+    {
+        if (_initializing)
+            return;
+
         ValueEvent.serverParam = value;
+        UpdateServerParamList(value);
+        UpdateSelectedServerParam();
     }
 
     public void ServerValueSliderChanged(float value)
@@ -485,6 +551,70 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerValueSlider();
     }
 
+    private void UpdateServerParamList(string value = null)
+    {
+        var index = 0;
+        var prefix =  value ?? ValueEvent.serverParam;
+        var matching = string.IsNullOrEmpty(prefix)
+            ? serverUtils.Parameters
+            : serverUtils.Parameters.Where(p => p.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase));
+
+        foreach (var param in matching)
+            GetServerParamEntry(index++).Text.text = param;
+
+        for (var i = 0; i < _serverParams.Count; i++)
+            _serverParams[i].gameObject.SetActive(i < index);
+    }
+
+    private debugServerParamEntryUi GetServerParamEntry(int i)
+    {
+        if (i >= _serverParams.Count)
+        {
+            var ui = Instantiate(ServerParamEntryPrefab);
+            ui.transform.SetParent(ServerParamEntriesContainer, false);
+            ui.Toggle.onValueChanged.AddListener(on => { if (on) HandleServerParamSelected(ui); });
+            _serverParams.Add(ui);
+        }
+
+        return _serverParams[i];
+    }
+
+    private void HandleServerParamSelected(debugServerParamEntryUi selected)
+    {
+        if (_initializing)
+            return;
+
+        ValueEvent.serverParam = selected.Text.text;
+        HideServerParamList();
+
+        _initializing = true;
+        UpdateServerParamInput();
+        _initializing = false;
+    }
+
+    private void ShowServerParamList()
+    {
+        ServerParamEntriesScrollView.gameObject.SetActive(true);
+        _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
+    }
+
+    private void HideServerParamList()
+    {
+        ServerParamEntriesScrollView.gameObject.SetActive(false);
+        ServerParamEntriesScrollView.Dragging = false;
+        _serverParamFocusTimeout = Time.time;
+    }
+
+    private void UpdateSelectedServerParam()
+    {
+        _initializing = true;
+
+        foreach (var ui in _serverParams)
+            ui.Toggle.isOn = (ui.Text.text == ValueEvent.serverParam);
+
+        _initializing = false;
+    }
+
 
     // Physics Event Interface
     // ------------------------------------------------------------
@@ -494,6 +624,11 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdatePhysicsDirectionInputs();
         UpdatePhysicsMagnitudeSlider();
         UpdatePhysicsMagnitudeInput();
+    }
+
+    private void UpdatePhysicsProperties()
+    {
+        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !_event.minimized);
     }
 
     private void UpdatePhysicsDirectionInputs()
@@ -587,6 +722,12 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateMapCameraYawInput();
         UpdateMapCameraDistanceSlider();
         UpdateMapCameraDistanceInput();
+    }
+
+
+    private void UpdateMapCameraProperties()
+    {
+        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !_event.minimized);
     }
 
     private void UpdateMapCameraEventNameInput()
@@ -764,6 +905,11 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateSonarEventNameInput();
     }
 
+    private void UpdateSonarProperties()
+    {
+        SonarProperties.gameObject.SetActive(_event is megEventSonar && !_event.minimized);
+    }
+
     private void UpdateSonarEventNameInput()
     {
         SonarEventNameInput.text = SonarEvent.eventName;
@@ -783,6 +929,11 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void InitVesselsProperties()
     {
+    }
+
+    private void UpdateVesselsProperties()
+    {
+        VesselsProperties.gameObject.SetActive(_event is megEventVessels && !_event.minimized);
     }
 
     public void VesselsCapture()
