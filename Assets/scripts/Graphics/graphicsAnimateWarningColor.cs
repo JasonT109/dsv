@@ -14,6 +14,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     public bool autoWarningGreaterThan = false;
     public bool useUniversalSync = true;
     public bool usingTintColor = false;
+    public float phase = 0f;
 
     private GameObject syncNode;
     private float timeIndex;
@@ -89,28 +90,27 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 
     void OnEnable()
     {
-        r = gameObject.GetComponent<Renderer>();
-        m = r.material;
-
-        if (usingTintColor)
-            originalColor = m.GetColor("_TintColor");
-        else
-            originalColor = m.GetColor("_Color");
+        if (!r)
+            r = gameObject.GetComponent<Renderer>();
+        if (!m)
+            m = r.material;
 
         if (useUniversalSync)
         {
             syncNode = GameObject.FindWithTag("WarningSync");
         }
 
-        SetColor();
+        //SetColor();
     }
 
     // Use this for initialization
-    void Start ()
+    void Awake ()
     {
         r = gameObject.GetComponent<Renderer>();
         m = r.material;
-        
+
+        timeIndex += phase;
+
         if (usingTintColor)
             originalColor = m.GetColor("_TintColor");
         else
