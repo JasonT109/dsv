@@ -35,11 +35,8 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Footer area. */
     public CanvasGroup Footer;
 
-    /** Event typ dropdown. */
-    public Dropdown EventTypeDropdown;
-
-    /** Event add button. */
-    public Button AddEventButton;
+    /** Event execute button. */
+    public Button ExecuteEventButton;
 
     /** Event removal button. */
     public Button RemoveEventButton;
@@ -233,10 +230,6 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
             OnSelected(this, eventProperties);
     }
 
-    /** Add an event to the group. */
-    public void AddEvent()
-        { AddEvent((megEventType)EventTypeDropdown.value); }
-
     /** Add a value event to the group. */
     public void AddValueEvent()
         {  AddEvent(megEventType.Value); }
@@ -275,6 +268,13 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         File.selectedEvent = e;
         ExpandEvent(e);
         return e;
+    }
+
+    /** Execute the selected event. */
+    public void ExecuteSelectedEvent()
+    {
+        if (File.selectedEvent != null)
+            File.selectedEvent.Execute();
     }
 
     /** Remove an event from the group. */
@@ -327,6 +327,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         ShowTriggersToggle.isOn = !_group.hideTriggers;
 
         Footer.interactable = !File.playing;
+        ExecuteEventButton.interactable = File.selectedEvent != null && !File.playing;
         RemoveEventButton.interactable = File.selectedEvent != null && !File.playing;
 
         // Update event properties.

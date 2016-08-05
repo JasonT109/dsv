@@ -51,6 +51,13 @@ namespace Meg.EventSystem
             return string.Format("{0}: {1:N1} ({2:N1})", serverParam, serverValue, value);
         }
 
+        /** Execute this event's effect, regardless of timing. */
+        public override void Execute()
+        {
+            base.Execute();
+            PostServerData(serverParam, serverValue);
+        }
+
 
         // Load / Save
         // ------------------------------------------------------------

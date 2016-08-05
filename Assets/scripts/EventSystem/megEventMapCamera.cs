@@ -55,6 +55,17 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Execute this event's effect, regardless of timing. */
+        public override void Execute()
+        {
+            base.Execute();
+
+            if (hasState)
+                file.PostMapCameraState(GetState());
+            else
+                file.PostMapCameraEvent(eventName);
+        }
+
         /** Capture current map camera state. */
         public void Capture()
         {
@@ -149,10 +160,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            if (hasState)
-                file.PostMapCameraState(GetState());
-            else
-                file.PostMapCameraEvent(eventName);
+            Execute();
         }
 
         /** Update this event internally. */

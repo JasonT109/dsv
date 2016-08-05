@@ -30,6 +30,13 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Execute this event's effect, regardless of timing. */
+        public override void Execute()
+        {
+            base.Execute();
+            serverUtils.PostImpact(physicsDirection * physicsMagnitude);
+        }
+
         /** String representation. */
         public override string ToString()
         {
@@ -67,7 +74,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            serverUtils.PostImpact(physicsDirection * physicsMagnitude);
+            Execute();
         }
 
         /** Update this event internally. */

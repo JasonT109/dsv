@@ -116,6 +116,11 @@ namespace Meg.EventSystem
             Start();
         }
 
+        /** Execute this event's effect, regardless of timing. */
+        public virtual void Execute()
+        {
+        }
+
         /** Update this event over time from an event group. */
         public void UpdateFromGroup(float t, float dt)
         {

@@ -32,6 +32,13 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Execute this event's effect, regardless of timing. */
+        public override void Execute()
+        {
+            base.Execute();
+            file.PostSonarEvent(this);
+        }
+
         /** Add a waypoint. */
         public void AddWaypoint(Vector3 p)
         {
@@ -120,7 +127,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            file.PostSonarEvent(this);
+            Execute();
         }
 
         /** Update this event internally. */
