@@ -17,10 +17,6 @@ public abstract class vesselMovement : NetworkBehaviour
     [SyncVar]
     public int Vessel;
 
-    /** Whether interception is active. */
-    [SyncVar]
-    public bool Active;
-
     /** Vessel's current velocity (map space). */
     [SyncVar]
     public Vector3 Velocity;
@@ -28,6 +24,10 @@ public abstract class vesselMovement : NetworkBehaviour
     /** Vessel's current velocity (world space). */
     public Vector3 WorldVelocity
         { get { return new Vector3(Velocity.x, -Velocity.z, Velocity.y); } }
+
+    /** Whether interception is active. */
+    public bool Active
+        { get { return Movements.Active; } }
 
 
     // Computed Properties
@@ -103,7 +103,6 @@ public abstract class vesselMovement : NetworkBehaviour
     {
         var json = new JSONObject();
         json.AddField("Vessel", Vessel);
-        json.AddField("Active", Active);
         json.AddField("Type", GetSaveKey());
 
         return json;
@@ -113,8 +112,6 @@ public abstract class vesselMovement : NetworkBehaviour
     public virtual void Load(JSONObject json, mapData mapData)
     {
         json.GetField(ref Vessel, "Vessel");
-        json.GetField(ref Active, "Active");
-
         Configure(Vessel, Active);
     }
 
@@ -134,7 +131,6 @@ public abstract class vesselMovement : NetworkBehaviour
     public virtual void Configure(int vessel, bool active)
     {
         Vessel = vessel;
-        Active = active;
 
         // Spawn this movement module on remote clients.
         NetworkServer.Spawn(gameObject);

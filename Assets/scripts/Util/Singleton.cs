@@ -28,10 +28,12 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         { get { return _instance != null; } }
 
     /** Ensures the singleton instance exists. */
-    public static void EnsureInstanceExists()
+    public static bool EnsureInstanceExists()
     {
         if (!_instance)
             _instance = ObjectFinder.Find<T>();
+
+        return _instance != null;
     }
 
 

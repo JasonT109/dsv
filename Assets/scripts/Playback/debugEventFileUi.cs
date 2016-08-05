@@ -244,6 +244,7 @@ public class debugEventFileUi : MonoBehaviour
     /** Initialize the file UI. */
     private void InitUi()
     {
+        Properties.Group = null;
         AddGroupUis(_file);
 
         // Force a UI reflow to ensure group layouts are correct.
@@ -341,18 +342,12 @@ public class debugEventFileUi : MonoBehaviour
             Properties.ExpandEvent(e);
 
         _file.selectedGroup = g;
-        _file.selectedEvent = e;
     }
 
     private void HandlePropertiesSelected(debugEventGroupPropertiesUi groupUi, debugEventPropertiesUi eventUi)
     {
         var e = eventUi ? eventUi.Event : null;
         Properties.ToggleEvent(e);
-
-        if (e == _file.selectedEvent)
-            e = null;
-
-        _file.selectedEvent = e;
     }
 
 }

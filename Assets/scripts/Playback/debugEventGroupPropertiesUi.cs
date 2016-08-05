@@ -64,7 +64,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** The event file. */
     public megEventFile File
-        { get { return _group.file; } }
+        { get { return _group != null ? _group.file : null; } }
 
     /** Whether group can be made to loop. */
     public bool CanLoop
@@ -200,31 +200,29 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     }
 
     /** Toggle an event's minimized state. */
-    public void ToggleEvent(megEvent toToggle, bool minimizeOthers = true)
+    public void ToggleEvent(megEvent toToggle)
     {
-        foreach (var e in _eventProperties)
-            if (e.Event == toToggle)
-                e.Minimized = !e.Minimized;
-            else if (minimizeOthers)
-                e.Minimized = true;
+        if (File == null)
+            return;
+
+        if (toToggle == File.selectedEvent)
+            File.selectedEvent = null;
+        else
+            File.selectedEvent = toToggle;
     }
 
     /** Expand an event. */
-    public void ExpandEvent(megEvent toExpand, bool minimizeOthers = true)
+    public void ExpandEvent(megEvent toExpand)
     {
-        foreach (var e in _eventProperties)
-            if (e.Event == toExpand)
-                e.Minimized = false;
-            else if (minimizeOthers)
-                e.Minimized = true;
+        if (File != null)
+            File.selectedEvent = toExpand;
     }
 
     /** Minimize an event. */
     public void MinimizeEvent(megEvent toExpand)
     {
-        var eventProperties = _eventProperties.FirstOrDefault(e => e.Event == toExpand);
-        if (eventProperties)
-            eventProperties.Minimized = true;
+        if (File != null)
+            File.selectedEvent = null;
     }
 
     /** Select an event. */
@@ -253,18 +251,30 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** Add a map camera event to the group. */
     public void AddMapCameraEvent()
-        { AddEvent(megEventType.MapCamera); }
+    {
+        var cameraEvent = AddEvent(megEventType.MapCamera) as megEventMapCamera;
+        if (cameraEvent != null)
+            cameraEvent.Capture();
+    }
 
     /** Add a vessel simulation event to the group. */
     public void AddVesselsEvent()
-        { AddEvent(megEventType.Vessels); }
+    {
+        var vesselEvent = AddEvent(megEventType.VesselMovement) as megEventVesselMovement;
+        if (vesselEvent != null)
+        {
+            vesselEvent.Vessel = debugVessels.Instance.activeVessel;
+            vesselEvent.Capture();
+        }
+    }
 
     /** Add an event of a given type to the group. */
-    public void AddEvent(megEventType type)
+    public megEvent AddEvent(megEventType type)
     {
         var e = _group.InsertEvent(type, File.selectedEvent);
         File.selectedEvent = e;
         ExpandEvent(e);
+        return e;
     }
 
     /** Remove an event from the group. */

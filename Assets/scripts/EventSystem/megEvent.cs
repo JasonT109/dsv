@@ -13,7 +13,7 @@ namespace Meg.EventSystem
         Physics = 1,
         Sonar = 2,
         MapCamera = 3,
-        Vessels = 4
+        VesselMovement = 4
     }
 
 
@@ -66,8 +66,11 @@ namespace Meg.EventSystem
         /** Whether event should be manually triggered by a button. */
         public bool hasTrigger { get { return !string.IsNullOrEmpty(triggerLabel); } }
 
+        /** Whether event is selected. */
+        public bool selected { get { return group != null && group.file.selectedEvent == this; } }
+
         /** Whether event is minimized. */
-        public bool minimized { get; set; }
+        public bool minimized { get { return !selected; } }
 
         /** Id for this event. */
         public virtual string name
@@ -88,7 +91,6 @@ namespace Meg.EventSystem
         protected megEvent(megEventType type, megEventGroup group = null)
         {
             this.type = type;
-            minimized = true;
             _group = group;
         }
 

@@ -50,7 +50,7 @@ public class vesselPursue : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-        { return "Pursue"; }
+        { return vesselMovements.PursueType; }
 
 
     // Protected Methods

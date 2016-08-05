@@ -1,4 +1,5 @@
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.SonarEvent
 {
@@ -18,15 +19,18 @@ namespace Meg.SonarEvent
         public float visualXOffset = 36.295f;
         public float visualYOffset = 21.69f;
         public GameObject sonarObject;
+
         public float scale = 1f;
-        public GameObject dsvObject;
         public GameObject playButton;
         public GameObject recordButton;
         public GameObject customButtonGroup;
+
         private buttonControl[] customButtons;
+        private bool sonarObjectRegistered;
 
         //use this as an anchor for the shark. In this case it's set as the Sonar's camera
-        public GameObject Anchor;
+        public GameObject Anchor { get; private set; }
+        public GameObject dsvObject { get; private set; }
 
         private bool canPress = true;
         private Vector3[] wps;
@@ -76,6 +80,22 @@ namespace Meg.SonarEvent
 
         public void megPlayMegSonarEvent(megEventSonar m)
         {
+            if (!sonarObjectRegistered)
+            {
+                ClientScene.RegisterPrefab(sonarObject);
+                sonarObjectRegistered = true;
+            }
+
+            // Make our best effort to locate the sonar root.
+            if (!Anchor)
+                Anchor = GameObject.FindWithTag("SonarRoot");
+            if (!Anchor && SonarRoot.EnsureInstanceExists())
+                Anchor = SonarRoot.Instance.gameObject;
+
+            // Emit a warning if sonar root could not be found.
+            if (!Anchor)
+                Debug.LogWarning("Could not find Sonar root in scene! Add a SonarRoot behaviour to fix this.");
+
             Vector3[] wps = new Vector3[m.waypoints.Length];
 
             for (int i = 0; i < m.waypoints.Length; i++)
@@ -132,16 +152,11 @@ namespace Meg.SonarEvent
 
         void Start()
         {
-            //get our sub so we know where to spawn the sonar object
-            dsvObject = GameObject.FindWithTag("ServerData");
-
-            if (!Anchor)
+            if (!sonarObjectRegistered)
             {
-                Anchor = GameObject.FindWithTag("SonarRoot");
+                ClientScene.RegisterPrefab(sonarObject);
+                sonarObjectRegistered = true;
             }
-
-            //register the prefab so it can be spawned
-            ClientScene.RegisterPrefab(sonarObject);
         }
 
         void Update()

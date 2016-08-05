@@ -61,7 +61,7 @@ public class vesselHoldingPattern : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-        { return "Holding"; }
+        { return vesselMovements.HoldingType; }
 
 
     // Protected Methods

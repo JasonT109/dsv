@@ -550,8 +550,8 @@ public class serverData : NetworkBehaviour
             case "divertpowertothrusters":
                 OperatingData.divertPowerToThrusters = newValue;
                 break;
-            case "vesselmovementsactive":
-                VesselMovements.Active = newValue > 0;
+            case "vesselmovementenabled":
+                VesselMovements.Enabled = newValue > 0;
                 break;
             case "timetointercept":
                 VesselMovements.TimeToIntercept = newValue;
@@ -605,14 +605,9 @@ public class serverData : NetworkBehaviour
     public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
     {
         if (vessel == MapData.playerVessel)
-        {
-            //convert from map space to world space
             gameObject.transform.position = new Vector3(pos.x * 1000, -pos.z, pos.y * 1000);
-        }
-        else
-        {
-            MapData.SetVesselState(vessel, pos, vesselVelocity);
-        }
+
+        MapData.SetVesselState(vessel, pos, vesselVelocity);
     }
 
     public void SetPlayerWorldVelocity(Vector3 velocity)
@@ -698,6 +693,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "intercept1warning":
                 MapData.intercept1Warning = newValue;
+                break;
+            case "vesselmovementenabled":
+                VesselMovements.Enabled = newValue;
                 break;
         }
     }

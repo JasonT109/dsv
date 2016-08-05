@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Meg.EventSystem;
 using Meg.Networking;
 using Meg.UI;
+using UnityEngine.EventSystems;
 
 public class debugEventPropertiesUi : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Default phyiscs magnitude slider length. */
     public const float DefaultMapCameraDistanceSliderLength = 1000.0f;
+
 
 
     // Configuration
@@ -53,67 +55,40 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Basic properties panel. */
     public Transform BaseProperties;
-
-    /** Trigger time slider. */
     public Slider TriggerTimeSlider;
-
-    /** Trigger time input text. */
     public InputField TriggerTimeInput;
-
-    /** Completion time slider. */
     public Slider CompleteTimeSlider;
-
-    /** Completion time input text. */
     public InputField CompleteTimeInput;
 
 
     [Header("Value Event Components")]
 
-    /** Properties panel for value events. */
     public Transform ValueProperties;
-
-    /** Server parameter input text. */
     public InputField ServerParamInput;
-
-    /** Server value slider. */
-    public Slider ServerValueSlider;
-
-    /** Server value input text. */
-    public InputField ServerValueInput;
-
-    /** Container for server parameter entries. */
+    public Button ServerParamClearButton;
     public Transform ServerParamEntriesContainer;
-
-    /** Scroll view for server parameter entries. */
     public megScrollRect ServerParamEntriesScrollView;
+    public Slider ServerValueSlider;
+    public InputField ServerValueInput;
 
 
     [Header("Physics Event Components")]
 
-    /** Properties panel for physics events. */
     public Transform PhysicsProperties;
-
-    /** Input text for physics direction components. */
+    public Slider PhysicsDirectionXSlider;
+    public Slider PhysicsDirectionYSlider;
+    public Slider PhysicsDirectionZSlider;
     public InputField PhysicsDirectionXInput;
     public InputField PhysicsDirectionYInput;
     public InputField PhysicsDirectionZInput;
-
-    /** Physics magnitude slider. */
     public Slider PhysicsMagnitudeSlider;
-
-    /** Server value input text. */
     public InputField PhysicsMagnitudeInput;
 
 
     [Header("Map Camera Event Components")]
 
-    /** Properties panel for map camera events. */
     public Transform MapCameraProperties;
-
-    /** Input text for map camera event name. */
     public InputField MapCameraEventNameInput;
-
-    /** Camera state component UI. */
     public CanvasGroup MapCameraStateGroup;
     public InputField MapCameraXInput;
     public InputField MapCameraYInput;
@@ -124,31 +99,37 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField MapCameraYawInput;
     public Slider MapCameraDistanceSlider;
     public InputField MapCameraDistanceInput;
-
-    /** Button to capture current map camera state. */
     public Button MapCameraCaptureButton;
 
 
     [Header("Sonar Event Components")]
 
-    /** Properties panel for sonar events. */
     public Transform SonarProperties;
-
-    /** Input text for sonar event name. */
     public InputField SonarEventNameInput;
-
-    /** Sonar waypoint ui. */
     public debugEventSonarWaypointsUi SonarWaypointsUi;
 
 
     [Header("Vessels Event Components")]
 
-    /** Properties panel for vessel simulation events. */
-    public Transform VesselsProperties;
-
-    /** Button to capture current state. */
-    public Button VesselsCaptureButton;
-
+    public Transform VesselProperties;
+    public Toggle[] VesselToggles;
+    public Toggle[] VesselTypeToggles;
+    public Transform VesselStateProperties;
+    public Toggle VesselAutoSpeedToggle;
+    public CanvasGroup VesselSpeedGroup;
+    public Slider VesselSpeedSlider;
+    public InputField VesselSpeedInput;
+    public Slider VesselHeadingSlider;
+    public InputField VesselHeadingInput;
+    public Slider VesselDiveAngleSlider;
+    public InputField VesselDiveAngleInput;
+    public Slider VesselPeriodSlider;
+    public InputField VesselPeriodInput;
+    public Text VesselTargetLabel;
+    public Transform VesselTargets;
+    public Toggle[] VesselTargetToggles;
+    public Button VesselCaptureButton;
+    
 
     [Header("Prefabs")]
 
@@ -187,15 +168,12 @@ public class debugEventPropertiesUi : MonoBehaviour
         { get { return _event as megEventSonar; } }
 
     /** Event interpreted as a vessels event. */
-    public megEventVessels VesselsEvent
-        { get { return _event as megEventVessels; } }
+    public megEventVesselMovement VesselEvent
+        { get { return _event as megEventVesselMovement; } }
 
     /** Whether event is minimized. */
     public bool Minimized
-    {
-        get { return _event.minimized; }
-        set { SetMinimized(value); }
-    }
+        { get { return _event.minimized; } }
 
 
     // Events
@@ -222,6 +200,13 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** List of server param UI entries. */
     private readonly List<debugServerParamEntryUi> _serverParams = new List<debugServerParamEntryUi>();
+
+    /** Types of vessel movement. */
+    private readonly string[] _vesselMovementTypes = {
+        vesselMovements.InterceptType,
+        vesselMovements.PursueType,
+        vesselMovements.SetVectorType,
+        vesselMovements.HoldingType };
 
 
     // Unity Methods
@@ -255,24 +240,6 @@ public class debugEventPropertiesUi : MonoBehaviour
             OnSelected(this);
     }
 
-    /** Toggle event's minimized state. */
-    public void ToggleMinimized()
-    {
-        if (_initializing || _updating)
-            return;
-
-        Minimized = !Minimized;
-    }
-
-    /** Set timeline's minimized state. */
-    public void SetMinimized(bool value)
-    {
-        if (_initializing || _updating)
-            return;
-
-        _event.minimized = value;
-    }
-
 
     // Private Methods
     // ------------------------------------------------------------
@@ -297,6 +264,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     {
         ServerParamInput.onValidateInput += ValidateIdentifierInput;
         MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
+        ConfigureVesselsProperties();
     }
 
     private char ValidateIdentifierInput(string text, int index, char addedChar)
@@ -321,7 +289,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             InitMapCameraProperties();
         else if (_event is megEventSonar)
             InitSonarProperties();
-        else if (_event is megEventVessels)
+        else if (_event is megEventVesselMovement)
             InitVesselsProperties();
 
         _initializing = false;
@@ -344,7 +312,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             UpdateMapCameraProperties();
         else if (_event is megEventSonar)
             UpdateSonarProperties();
-        else if (_event is megEventVessels)
+        else if (_event is megEventVesselMovement)
             UpdateVesselsProperties();
 
         _updating = false;
@@ -357,7 +325,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         ValueProperties.gameObject.SetActive(false);
         PhysicsProperties.gameObject.SetActive(false);
         SonarProperties.gameObject.SetActive(false);
-        VesselsProperties.gameObject.SetActive(false);
+        VesselProperties.gameObject.SetActive(false);
     }
 
 
@@ -381,6 +349,11 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
         BaseProperties.gameObject.SetActive(!minimized);
+        ValueProperties.gameObject.SetActive(!minimized && ValueEvent != null);
+        PhysicsProperties.gameObject.SetActive(!minimized && PhysicsEvent != null);
+        MapCameraProperties.gameObject.SetActive(!minimized && MapCameraEvent != null);
+        SonarProperties.gameObject.SetActive(!minimized && SonarEvent != null);
+        VesselProperties.gameObject.SetActive(!minimized && VesselEvent != null);
     }
 
     private void UpdateTriggerTimeSlider()
@@ -465,33 +438,30 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerParamInput();
         UpdateServerValueSlider();
         UpdateServerValueInput();
-        UpdateServerParamList();
     }
-
-    private float _serverParamFocusTimeout;
-    private const float ServerParamListTimeout = 2;
 
     private void UpdateValueProperties()
     {
-        ValueProperties.gameObject.SetActive(_event is megEventValue && !_event.minimized);
+        // ServerParamClearButton.interactable = !string.IsNullOrEmpty(ValueEvent.serverParam);
 
-        // TODO: FIX THIS!
+        // Update the state of the server parameter list UI.
         if (_event.minimized)
         {
             HideServerParamList();
-
-            if (ServerParamInput.isFocused)
-            {
-                var myEventSystem = GameObject.Find("EventSystem");
-                myEventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
-            }
-        }
-        else if (ServerParamInput.isFocused || ServerParamEntriesScrollView.Dragging)
-        {
-            _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
-            ServerParamEntriesScrollView.gameObject.SetActive(Time.time < _serverParamFocusTimeout);
+            DeselectServerParamInput();
         }
     }
+
+    private void DeselectServerParamInput()
+    {
+        if (!ServerParamInput.isFocused)
+            return;
+
+        EventSystem.SetSelectedGameObject(null);
+    }
+
+    private EventSystem EventSystem
+        { get { return GameObject.Find("EventSystem").GetComponent<EventSystem>(); } }
 
     private void UpdateServerParamInput()
     {
@@ -515,8 +485,22 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_initializing)
             return;
 
+        ShowServerParamList();
         UpdateServerParamList(value);
-        UpdateSelectedServerParam();
+    }
+
+    public void ServerParamInputClicked()
+    {
+        if (_initializing)
+            return;
+
+        if (ServerParamEntriesScrollView.gameObject.activeSelf)
+            HideServerParamList();
+        else
+        {
+            ShowServerParamList();
+            EventSystem.SetSelectedGameObject(ServerParamEntriesScrollView.gameObject);
+        }
     }
 
     public void ServerParamInputEndEdit(string value)
@@ -526,7 +510,15 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         ValueEvent.serverParam = value;
         UpdateServerParamList(value);
-        UpdateSelectedServerParam();
+    }
+
+    public void ServerParamClear()
+    {
+        if (_initializing)
+            return;
+
+        ValueEvent.serverParam = "";
+        UpdateServerParamInput();
     }
 
     public void ServerValueSliderChanged(float value)
@@ -551,20 +543,34 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerValueSlider();
     }
 
-    private void UpdateServerParamList(string value = null)
+    private void UpdateServerParamList(string value = null, bool recenter = true)
     {
+        var current = ValueEvent.serverParam;
+        var prefix = (value ?? current);
         var index = 0;
-        var prefix =  value ?? ValueEvent.serverParam;
-        var matching = string.IsNullOrEmpty(prefix)
-            ? serverUtils.Parameters
-            : serverUtils.Parameters.Where(p => p.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase));
+        var focus = 0;
+        foreach (var param in serverUtils.Parameters)
+        {
+            var entry = GetServerParamEntry(index);
+            var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);
+            entry.Text.text = param;
+            entry.On.gameObject.SetActive(on);
+            if (string.CompareOrdinal(prefix, param) >= 0)
+                focus = index;
 
-        foreach (var param in matching)
-            GetServerParamEntry(index++).Text.text = param;
+            index++;
+        }
 
         for (var i = 0; i < _serverParams.Count; i++)
             _serverParams[i].gameObject.SetActive(i < index);
+
+        if (recenter)
+            ServerParamEntriesScrollView.CenterOnItem(
+                GetServerParamEntry(focus).GetComponent<RectTransform>(), 0.25f);
     }
+
+    private bool IsParameterPrefixed(string param, string prefix)
+        { return param.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase); }
 
     private debugServerParamEntryUi GetServerParamEntry(int i)
     {
@@ -572,7 +578,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         {
             var ui = Instantiate(ServerParamEntryPrefab);
             ui.transform.SetParent(ServerParamEntriesContainer, false);
-            ui.Toggle.onValueChanged.AddListener(on => { if (on) HandleServerParamSelected(ui); });
+            ui.Button.onClick.AddListener(() => HandleServerParamSelected(ui));
             _serverParams.Add(ui);
         }
 
@@ -585,35 +591,24 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         ValueEvent.serverParam = selected.Text.text;
-        HideServerParamList();
 
         _initializing = true;
         UpdateServerParamInput();
+        UpdateServerParamList(null, false);
         _initializing = false;
     }
 
     private void ShowServerParamList()
     {
+        if (ServerParamEntriesScrollView.gameObject.activeSelf)
+            return;
+
         ServerParamEntriesScrollView.gameObject.SetActive(true);
-        _serverParamFocusTimeout = Time.time + ServerParamListTimeout;
+        UpdateServerParamList();
     }
 
     private void HideServerParamList()
-    {
-        ServerParamEntriesScrollView.gameObject.SetActive(false);
-        ServerParamEntriesScrollView.Dragging = false;
-        _serverParamFocusTimeout = Time.time;
-    }
-
-    private void UpdateSelectedServerParam()
-    {
-        _initializing = true;
-
-        foreach (var ui in _serverParams)
-            ui.Toggle.isOn = (ui.Text.text == ValueEvent.serverParam);
-
-        _initializing = false;
-    }
+        { ServerParamEntriesScrollView.gameObject.SetActive(false); }
 
 
     // Physics Event Interface
@@ -621,6 +616,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void InitPhysicsProperties()
     {
+        UpdatePhysicsDirectionSliders();
         UpdatePhysicsDirectionInputs();
         UpdatePhysicsMagnitudeSlider();
         UpdatePhysicsMagnitudeInput();
@@ -628,7 +624,13 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePhysicsProperties()
     {
-        PhysicsProperties.gameObject.SetActive(_event is megEventPhysics && !_event.minimized);
+    }
+
+    private void UpdatePhysicsDirectionSliders()
+    {
+        PhysicsDirectionXSlider.value = PhysicsEvent.physicsDirection.x;
+        PhysicsDirectionYSlider.value = PhysicsEvent.physicsDirection.y;
+        PhysicsDirectionZSlider.value = PhysicsEvent.physicsDirection.z;
     }
 
     private void UpdatePhysicsDirectionInputs()
@@ -650,6 +652,33 @@ public class debugEventPropertiesUi : MonoBehaviour
         PhysicsMagnitudeInput.text = string.Format("{0:N1}", PhysicsEvent.physicsMagnitude);
     }
 
+    public void PhysicsDirectionXSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(value, d.y, d.z));
+    }
+
+    public void PhysicsDirectionYSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(d.x, value, d.z));
+    }
+
+    public void PhysicsDirectionZSliderChanged(float value)
+    {
+        var d = PhysicsEvent.physicsDirection;
+        PhysicsDirectionChanged(new Vector3(d.x, d.y, value));
+    }
+
+    private void PhysicsDirectionChanged(Vector3 v)
+    {
+        if (_initializing)
+            return;
+        
+        PhysicsEvent.physicsDirection = v;
+        UpdatePhysicsDirectionInputs();
+    }
+
     public void PhysicsDirectionXInputChanged(string value)
     {
         if (_initializing)
@@ -660,6 +689,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.x = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsDirectionYInputChanged(string value)
@@ -672,6 +702,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.y = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsDirectionZInputChanged(string value)
@@ -684,6 +715,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PhysicsEvent.physicsDirection.z = result;
+        UpdatePhysicsDirectionSliders();
     }
 
     public void PhysicsMagnitudeSliderChanged(float value)
@@ -714,6 +746,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void InitMapCameraProperties()
     {
+        _initializing = true;
         UpdateMapCameraEventNameInput();
         UpdateMapCameraPositionInputs();
         UpdateMapCameraPitchSlider();
@@ -722,12 +755,12 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateMapCameraYawInput();
         UpdateMapCameraDistanceSlider();
         UpdateMapCameraDistanceInput();
+        _initializing = false;
     }
 
 
     private void UpdateMapCameraProperties()
     {
-        MapCameraProperties.gameObject.SetActive(_event is megEventMapCamera && !_event.minimized);
     }
 
     private void UpdateMapCameraEventNameInput()
@@ -907,7 +940,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateSonarProperties()
     {
-        SonarProperties.gameObject.SetActive(_event is megEventSonar && !_event.minimized);
     }
 
     private void UpdateSonarEventNameInput()
@@ -927,21 +959,247 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Vessels Event Interface
     // ------------------------------------------------------------
 
+    private void ConfigureVesselsProperties()
+    {
+        for (var i = 0; i < VesselToggles.Length; i++)
+        {
+            var vessel = i + 1;
+            VesselToggles[i].onValueChanged.AddListener(
+                on => OnVesselToggled(vessel, on));
+        }
+
+        for (var i = 0; i < VesselTypeToggles.Length; i++)
+        {
+            var type = _vesselMovementTypes[i];
+            VesselTypeToggles[i].onValueChanged.AddListener(
+                on => OnVesselTypeToggled(type, on));
+        }
+
+        VesselAutoSpeedToggle.onValueChanged.AddListener(OnVesselAutoSpeedToggleChanged);
+        VesselSpeedSlider.onValueChanged.AddListener(OnVesselSpeedSliderChanged);
+        VesselSpeedInput.onEndEdit.AddListener(OnVesselSpeedInputChanged);
+        VesselHeadingSlider.onValueChanged.AddListener(OnVesselHeadingSliderChanged);
+        VesselHeadingInput.onEndEdit.AddListener(OnVesselHeadingInputChanged);
+        VesselDiveAngleSlider.onValueChanged.AddListener(OnVesselDiveAngleSliderChanged);
+        VesselDiveAngleInput.onEndEdit.AddListener(OnVesselDiveAngleInputChanged);
+        VesselPeriodSlider.onValueChanged.AddListener(OnVesselPeriodSliderChanged);
+        VesselPeriodInput.onEndEdit.AddListener(OnVesselPeriodInputChanged);
+        
+        for (var i = 0; i < VesselTargetToggles.Length; i++)
+        {
+            var vessel = i + 1;
+            VesselTargetToggles[i].onValueChanged.AddListener(
+                on => OnVesselTargetToggled(vessel, on));
+        }
+    }
+
     private void InitVesselsProperties()
     {
+        _initializing = true;
+
+        UpdateVesselToggles();
+        UpdateVesselTypeToggles();
+        UpdateVesselTargetToggles();
+
+        var v = VesselEvent;
+        VesselAutoSpeedToggle.isOn = v.AutoSpeed;
+        VesselSpeedSlider.value = v.Speed;
+        VesselSpeedSlider.maxValue = Mathf.Max(VesselSpeedSlider.maxValue, v.Speed);
+        VesselSpeedInput.text = string.Format("{0:N1}", v.Speed);
+        VesselHeadingSlider.value = v.Heading;
+        VesselHeadingInput.text = string.Format("{0:N1}", v.Heading);
+        VesselDiveAngleSlider.value = v.DiveAngle;
+        VesselDiveAngleInput.text = string.Format("{0:N1}", v.DiveAngle);
+        VesselPeriodSlider.value = v.Period;
+        VesselPeriodInput.text = string.Format("{0:N1}", v.Period);
+
+        _initializing = false;
     }
 
     private void UpdateVesselsProperties()
     {
-        VesselsProperties.gameObject.SetActive(_event is megEventVessels && !_event.minimized);
+        var v = VesselEvent;
+        VesselStateProperties.gameObject.SetActive(!v.IsNone);
+        VesselAutoSpeedToggle.gameObject.SetActive(v.IsIntercept);
+        VesselSpeedGroup.interactable = !VesselAutoSpeedToggle.isOn;
+        VesselSpeedGroup.alpha = VesselAutoSpeedToggle.isOn ? 0.5f : 1;
+        VesselHeadingSlider.transform.parent.gameObject.SetActive(v.IsSetVector);
+        VesselDiveAngleSlider.transform.parent.gameObject.SetActive(v.IsSetVector);
+        VesselPeriodSlider.transform.parent.gameObject.SetActive(v.IsHolding);
+        VesselTargetLabel.gameObject.SetActive(v.IsPursue);
+        VesselTargets.transform.gameObject.SetActive(v.IsPursue);
     }
 
+    private void UpdateVesselToggles()
+    {
+        for (var i = 0; i < VesselToggles.Length; i++)
+        {
+            var toggle = VesselToggles[i];
+            toggle.isOn = VesselEvent.Vessel == i + 1;
+            toggle.interactable = !toggle.isOn;
+        }
+    }
+
+    private void OnVesselToggled(int vessel, bool value)
+    {
+        if (_initializing || !value)
+            return;
+
+        VesselEvent.Vessel = vessel;
+
+        _initializing = true;
+        UpdateVesselToggles();
+        _initializing = false;
+    }
+
+    private void UpdateVesselTypeToggles()
+    {
+        var type = VesselEvent.Type;
+        for (var i = 0; i < VesselTypeToggles.Length; i++)
+        {
+            var toggle = VesselTypeToggles[i];
+            toggle.isOn = _vesselMovementTypes[i] == type;
+        }
+    }
+
+    private void OnVesselTypeToggled(string type, bool value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Type = value ? type : "None";
+
+        _initializing = true;
+        UpdateVesselTypeToggles();
+        _initializing = false;
+    }
+
+    private void UpdateVesselTargetToggles()
+    {
+        for (var i = 0; i < VesselTargetToggles.Length; i++)
+        {
+            var toggle = VesselTargetToggles[i];
+            toggle.isOn = VesselEvent.TargetVessel == i + 1;
+            toggle.interactable = !toggle.isOn;
+        }
+    }
+
+    private void OnVesselTargetToggled(int vessel, bool value)
+    {
+        if (_initializing || !value)
+            return;
+
+        VesselEvent.TargetVessel = vessel;
+
+        _initializing = true;
+        UpdateVesselTargetToggles();
+        _initializing = false;
+    }
+
+    private void OnVesselAutoSpeedToggleChanged(bool on)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.AutoSpeed = on;
+    }
+
+    private void OnVesselSpeedSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Speed = value;
+        VesselSpeedInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselSpeedInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Speed = result;
+        VesselSpeedSlider.maxValue = Mathf.Max(VesselSpeedSlider.maxValue, result);
+        VesselSpeedSlider.value = result;
+    }
+
+    private void OnVesselHeadingSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Heading = value;
+        VesselHeadingInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselHeadingInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Heading = result;
+        VesselHeadingSlider.value = result;
+    }
+
+    private void OnVesselDiveAngleSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.DiveAngle = value;
+        VesselDiveAngleInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselDiveAngleInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.DiveAngle = result;
+        VesselDiveAngleSlider.value = result;
+    }
+
+    private void OnVesselPeriodSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Period = value;
+        VesselPeriodInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselPeriodInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Period = result;
+        VesselPeriodSlider.value = result;
+    }
+    
     public void VesselsCapture()
     {
         if (_initializing)
             return;
 
-        VesselsEvent.Capture();
+        VesselEvent.Capture();
+        InitVesselsProperties();
     }
 
 }

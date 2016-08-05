@@ -88,7 +88,7 @@ public class vesselIntercept : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-        { return "Intercept"; }
+        { return vesselMovements.InterceptType; }
 
 
     // Protected Methods

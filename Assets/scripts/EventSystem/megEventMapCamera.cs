@@ -37,16 +37,6 @@ namespace Meg.EventSystem
             { get { return toPosition.sqrMagnitude > 0 || toOrientation.sqrMagnitude > 0 || toZoom != 0; } }
 
 
-        // Members
-        // ------------------------------------------------------------
-
-        /** Initial camera state. */
-        private megMapCameraEventManager.State _initialState;
-
-        /** Whether initial camera state is known. */
-        private bool _initialStateKnown;
-
-
         // Lifecycle
         // ------------------------------------------------------------
 
@@ -159,11 +149,10 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            // Capture current camera state if possible.
-            if (!_initialStateKnown)
-                _initialStateKnown = CaptureInitialState();
-
-            TriggerMapCameraEvent();
+            if (hasState)
+                file.PostMapCameraState(GetState());
+            else
+                file.PostMapCameraEvent(eventName);
         }
 
         /** Update this event internally. */
@@ -182,41 +171,6 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
-            if (_initialStateKnown)
-                ResetToInitialState();
-        }
-
-
-        // Private Methods
-        // ------------------------------------------------------------
-
-        /** Trigger a map camera event on the server. */
-        private void TriggerMapCameraEvent()
-        {
-            if (hasState)
-                serverUtils.PostMapCameraState(GetState());
-            else
-                serverUtils.PostMapCameraEvent(eventName);
-        }
-
-        /** Capture initial camera state. */
-        private bool CaptureInitialState()
-        {
-            if (!Manager)
-                return false;
-
-            Manager.Capture(ref _initialState);
-            return true;
-        }
-
-        /** Reset camera state. */
-        private bool ResetToInitialState()
-        {
-            if (!Manager)
-                return false;
-
-            serverUtils.PostMapCameraState(_initialState);
-            return true;
         }
 
     }
