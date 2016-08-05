@@ -79,11 +79,29 @@ public class vesselMovements : NetworkBehaviour
     public float TimeToIntercept = 120;
 
 
+    // Structures
+    // ------------------------------------------------------------
+
+    /** Time to intercept initial state. */
+    private float _initialTimeToIntercept;
+
+    /** Tracking data for a vessel. */
+    private struct VesselState
+    {
+        public Vector3 position;
+        public float velocity;
+        public bool visible;
+    }
+
+
     // Members
     // ------------------------------------------------------------
 
     /** The set of current vessel movement modes. */
     private readonly List<List<vesselMovement>> _movements = new List<List<vesselMovement>>();
+
+    /** Initial position of each vessel. */
+    private readonly List<VesselState> _initialVesselStates = new List<VesselState>();
 
 
     // Unity Methods
@@ -285,6 +303,7 @@ public class vesselMovements : NetworkBehaviour
     }
 
     /** Load a single vessel's movement state to JSON. */
+    [Server]
     public void LoadVessel(JSONObject json)
     {
         var vessel = 0;
@@ -297,6 +316,49 @@ public class vesselMovements : NetworkBehaviour
 
         SetVesselMovement(vessel, movement);
     }
+
+    /** Capture the initial state of all vessels. */
+    public void CaptureInitialState()
+    {
+        _initialTimeToIntercept = TimeToIntercept;
+
+        _initialVesselStates.Clear();
+        var n = serverUtils.GetVesselCount();
+        for (var i = 0; i < n; i++)
+        {
+            var vessel = i + 1;
+            _initialVesselStates.Add(new VesselState
+            {
+                position = serverUtils.GetVesselPosition(vessel),
+                velocity = serverUtils.GetVesselVelocity(vessel),
+                visible = serverUtils.GetVesselVis(vessel)
+            });
+        }
+    }
+
+    /** Reset vessel states to initial values. */
+    public void ResetToInitialState()
+    {
+        // Reset vessels to the recorded state.
+        var n = serverUtils.GetVesselCount();
+        for (var i = 0; i < n; i++)
+        {
+            var state = _initialVesselStates[i];
+            var vessel = i + 1;
+
+            serverUtils.SetVesselPosition(vessel, state.position);
+            serverUtils.SetVesselVelocity(vessel, state.velocity);
+            serverUtils.SetVesselVis(vessel, state.visible);
+        }
+
+        // Reset player's world velocity.
+        serverUtils.SetPlayerWorldVelocity(Vector3.zero);
+
+        // Update due time to match interception time.
+        SetTimeToIntercept(_initialTimeToIntercept);
+        serverUtils.SetServerData("dueTime", TimeToIntercept);
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------

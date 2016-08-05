@@ -130,8 +130,11 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     }
 
     /** Capture the map camera's current state into a camera event.  */
-    public void Capture(ref State state)
+    public bool Capture(ref State state)
     {
+        if (!mapCameraRoot)
+            return false;
+
         state.toPosition = mapCameraRoot.transform.localPosition;
 
         var camY = mapCameraRoot.transform.rotation.eulerAngles.y;
@@ -140,6 +143,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
 
         var camZ = mapCameraObject.transform.localPosition.z;
         state.toZoom = camZ;
+        return true;
     }
 
 
