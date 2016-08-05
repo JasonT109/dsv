@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.Networking;
 
@@ -14,6 +15,21 @@ public class vesselMovements : NetworkBehaviour
 
     // Constants
     // ------------------------------------------------------------
+
+    /** Type id for intercept movements. */
+    public const string InterceptType = "Intercept";
+
+    /** Type id for pursuit movements. */
+    public const string PursueType = "Pursue";
+
+    /** Type id for holding pattern movements. */
+    public const string HoldingType = "Holding";
+
+    /** Type id for set vector movements. */
+    public const string SetVectorType = "SetVector";
+
+    /** Type id for no movement. */
+    public const string NoType = "None";
 
     /** The maximum number of vessels to consider. */
     private const int MaxVessels = 10;
@@ -50,7 +66,11 @@ public class vesselMovements : NetworkBehaviour
 
     [Header("Synchronization")]
 
-    /** Whether movement simulation is active. */
+    /** Whether movement simulation is enabled. */
+    [SyncVar]
+    public bool Enabled = true;
+
+    /** Whether movement simulation is currently active. */
     [SyncVar]
     public bool Active;
 
@@ -84,9 +104,9 @@ public class vesselMovements : NetworkBehaviour
     [ServerCallback]
     protected virtual void LateUpdate()
     {
-        // Update active state on all vessels.
+        // Update active state.
         if (isServer)
-            SetActive(Active);
+            Active = Enabled && megEventManager.Instance.Playing;
 
         // Update the vessel's movement.
         if (Active && isServer)
@@ -159,16 +179,6 @@ public class vesselMovements : NetworkBehaviour
         RemoveVesselMovement(vessel);
     }
 
-    /** Set all movements to active or inactive. */
-    [Server]
-    public void SetActive(bool value)
-    {
-        Active = value;
-        foreach (var vessel in _movements)
-            foreach (var movement in vessel)
-                movement.Active = value;
-    }
-
 
     // Public Methods
     // ------------------------------------------------------------
@@ -233,12 +243,8 @@ public class vesselMovements : NetworkBehaviour
     // Load / Save
     // ------------------------------------------------------------
 
-    /** Save both movement and vessel state to JSON. */
-    public JSONObject SaveFullState()
-        { return Save(true); }
-
     /** Save movement state to JSON. */
-    public JSONObject Save(bool saveVesselState = false)
+    public JSONObject Save()
     {
         var json = new JSONObject();
         json.AddField("Active", Active);
@@ -251,16 +257,14 @@ public class vesselMovements : NetworkBehaviour
                 movementsJson.Add(m[0].Save());
         json.AddField("Movements", movementsJson);
 
-        // Save full vessel states (position, visibility etc.) if needed.
-        if (saveVesselState)
-        {
-            var vesselsJson = new JSONObject(JSONObject.Type.ARRAY);
-            for (var i = 0; i < serverUtils.GetVesselCount(); i++)
-                vesselsJson.Add(SaveVesselState(i + 1));
-            json.AddField("Vessels", vesselsJson);
-        }
-
         return json;
+    }
+
+    /** Save a single vessel's movement state to JSON. */
+    public JSONObject SaveVessel(int vessel)
+    {
+        var m = _movements[vessel].FirstOrDefault();
+        return m ? m.Save() : new JSONObject();
     }
 
     /** Load movement state from JSON. */
@@ -273,33 +277,26 @@ public class vesselMovements : NetworkBehaviour
         // Load in movements from data.
         var movementsJson = json.GetField("Movements");
         for (var i = 0; i < movementsJson.Count; i++)
-        {
-            var movementJson = movementsJson[i];
-            string type = null;
-            movementJson.GetField(ref type, "Type");
-            var movement = CreateVesselMovement(type);
-            movement.Load(movementJson, MapData);
-            SetVesselMovement(movement.Vessel, movement);
-        }
+            LoadVessel(movementsJson[i]);
 
-        // Load in vessel states from data.
-        var vesselsJson = json.GetField("Vessels");
-        if (vesselsJson != null)
-        {
-            for (var i = 0; i < vesselsJson.Count; i++)
-                LoadVesselState(i + 1, vesselsJson[i]);
-        }
-
-        // Load simulation active state.
-        var active = true;
-        json.GetField(ref active, "Active");
-        serverUtils.SetServerData("simulating", active ? 1 : 0);
-        
         float tti = 0;
         json.GetField(ref tti, "TimeToIntercept");
         SetTimeToIntercept(tti);
     }
 
+    /** Load a single vessel's movement state to JSON. */
+    public void LoadVessel(JSONObject json)
+    {
+        var vessel = 0;
+        string type = null;
+        json.GetField(ref type, "Type");
+        json.GetField(ref vessel, "Vessel");
+        var movement = CreateVesselMovement(type);
+        if (movement)
+            movement.Load(json, MapData);
+
+        SetVesselMovement(vessel, movement);
+    }
 
     // Private Methods
     // ------------------------------------------------------------
@@ -309,6 +306,9 @@ public class vesselMovements : NetworkBehaviour
     private void SetVesselMovement(int vessel, vesselMovement movement)
     {
         RemoveVesselMovement(vessel);
+        if (!movement)
+            return;
+
         _movements[vessel].Add(movement);
     }
 
@@ -336,13 +336,13 @@ public class vesselMovements : NetworkBehaviour
     {
         switch (type)
         {
-            case "Holding":
+            case HoldingType:
                 return CreateVesselMovement(HoldingPatternPrefab);
-            case "Intercept":
+            case InterceptType:
                 return CreateVesselMovement(InterceptPrefab);
-            case "SetVector":
+            case SetVectorType:
                 return CreateVesselMovement(SetVectorPrefab);
-            case "Pursue":
+            case PursueType:
                 return CreateVesselMovement(PursuePrefab);
             default:
                 return null;
@@ -374,43 +374,5 @@ public class vesselMovements : NetworkBehaviour
         // Update due time to match interception time.
         serverUtils.SetServerData("dueTime", TimeToIntercept);
     }
-
-    /** Save vessel state to JSON. */
-    private JSONObject SaveVesselState(int vessel)
-    {
-        var json = new JSONObject();
-        json.AddField("Position", serverUtils.GetVesselPosition(vessel));
-        json.AddField("Velocity", serverUtils.GetVesselVelocity(vessel));
-        json.AddField("Visible", serverUtils.GetVesselVis(vessel));
-        return json;
-    }
-
-    /** Load vessel state from JSON. */
-    private void LoadVesselState(int vessel, JSONObject json)
-    {
-        if (json.HasField("Position"))
-        {
-            var position = Vector3.zero;
-            json.GetField(ref position, "Position");
-            serverUtils.SetVesselPosition(vessel, position);
-
-            // If this is the player vessel, reset its world velocity.
-            if (vessel == MapData.playerVessel)
-                serverUtils.SetPlayerWorldVelocity(Vector3.zero);
-        }
-        if (json.HasField("Velocity"))
-        {
-            var velocity = 0.0f;
-            json.GetField(ref velocity, "Velocity");
-            serverUtils.SetVesselVelocity(vessel, velocity);
-        }
-        if (json.HasField("Visible"))
-        {
-            var visible = false;
-            json.GetField(ref visible, "Visible");
-            serverUtils.SetVesselVis(vessel, visible);
-        }
-    }
-
 
 }

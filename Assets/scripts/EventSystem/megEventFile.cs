@@ -45,10 +45,10 @@ namespace Meg.EventSystem
         public bool empty { get { return groups.Count == 0; } }
 
         /** Whether file can be played. */
-        public bool canPlay { get { return !empty; } }
+        public bool canPlay { get { return true; } }
 
         /** Whether file can be rewound. */
-        public bool canRewind { get { return !empty && !playing && running; } }
+        public bool canRewind { get { return running && !playing; } }
 
         /** Whether file can be added to. */
         public bool canAdd { get { return !playing; } }
@@ -84,24 +84,49 @@ namespace Meg.EventSystem
         /** Event fired when file is cleared. */
         public megEventFileHandler Cleared;
 
-
-
+    
         // Structures
         // ------------------------------------------------------------
 
-        /** Tracking data for a server value. */
-        private struct ServerValue
+        /** Tracking data for a triggered event. */
+        private struct EventRecord<T>
         {
             public float time;
-            public float initial;
+            public T value;
         }
 
+        /** Tracking data for a vessel. */
+        private struct VesselRecord
+        {
+            public Vector3 position;
+            public float velocity;
+            public bool visible;
+        }
 
         // Members
         // ------------------------------------------------------------
 
         /** Tracking data for server values. */
-        private readonly Dictionary<string, ServerValue> _values = new Dictionary<string, ServerValue>();
+        private readonly Dictionary<string, EventRecord<float>> _values = new Dictionary<string, EventRecord<float>>();
+
+        /** Triggered vessel movements. */
+        private readonly Dictionary<int, EventRecord<JSONObject>> _movements = new Dictionary<int, EventRecord<JSONObject>>();
+
+        /** Whether sonar events have been triggered. */
+        private bool _sonarEventsTriggered;
+
+        /** Whether initial camera state is known .*/
+        private bool _cameraEventsTriggered;
+
+        /** Whether vessel movements have been altered. */
+        private bool _movementEventsTriggered;
+
+        /** Initial camera state. */
+        private megMapCameraEventManager.State _initialCamera;
+
+        /** Initial position of each vessel. */
+        private readonly List<VesselRecord> _initialVesselStates = new List<VesselRecord>();
+
 
 
         // Public Methods
@@ -120,14 +145,20 @@ namespace Meg.EventSystem
             if (running && completed)
                 Stop();
 
+            // Check if file is already running.
             if (running)
                 return;
 
+            // Capture initial state.
+            CaptureServerState();
+
+            // Update file state to running.
             running = true;
             completed = false;
             paused = false;
             time = 0;
 
+            // Initialize event groups.
             if (groups == null)
                 groups = new List<megEventGroup>();
 
@@ -177,7 +208,7 @@ namespace Meg.EventSystem
                 groups[i].Stop();
 
             // Restore initial values for server data.
-            ResetServerData();
+            ResetServerState();
 
             time = 0;
             running = false;
@@ -253,7 +284,7 @@ namespace Meg.EventSystem
         }
 
 
-        // Server values
+        // Server State
         // ------------------------------------------------------------
 
         /** Set a server float value. */
@@ -262,34 +293,59 @@ namespace Meg.EventSystem
             // Record initial value if this is the first time we've set it.
             // This will be used to reset the value when file playback stops.
             if (!_values.ContainsKey(key))
-                _values[key] = new ServerValue
-                {
-                    initial = serverUtils.GetServerData(key),
-                    time = time
-                };
+                _values[key] = new EventRecord<float>
+                    { time = time, value = serverUtils.GetServerData(key) };
 
             // Set the server data value.
             serverUtils.PostServerData(key, value);
         }
 
-        /** Set a server string value. */
-        public void PostServerData(string key, string value)
-            { serverUtils.PostServerData(key, value); }
-
         /** Return a server value. */
         public float GetServerData(string key)
             { return serverUtils.GetServerData(key); }
 
-        /** Reset all server values to initial settings. */
-        private void ResetServerData()
+        /** Set a server string value. */
+        public void PostServerData(string key, string value)
+            { serverUtils.PostServerData(key, value); }
+
+        /** Post vessel movement state to the server (works on both clients and host). */
+        public void PostVesselMovementState(int vessel, JSONObject json)
         {
-            foreach (var e in _values)
-                serverUtils.PostServerData(e.Key, e.Value.initial);
-            
-            _values.Clear();
+            // Record initial value if this is the first time we've set it.
+            if (!_movements.ContainsKey(vessel))
+                _movements[vessel] = new EventRecord<JSONObject>
+                    { time = time, value = serverUtils.VesselMovements.SaveVessel(vessel) };
+
+            _movementEventsTriggered = true;
+            serverUtils.PostVesselMovementState(json);
         }
 
+        /** Post a sonar event to the server. */
+        public void PostSonarEvent(megEventSonar sonar)
+        {
+            _sonarEventsTriggered = true;
+            serverUtils.PostSonarEvent(sonar);
+        }
 
+        /** Post a sonar clear to the server. */
+        public void PostSonarClear()
+            { serverUtils.PostSonarClear(); }
+
+        /** Post a custom camera event by name. */
+        public void PostMapCameraEvent(string eventName)
+        {
+            _cameraEventsTriggered = true;
+            serverUtils.PostMapCameraEvent(eventName);
+        }
+
+        /** Post a custom camera event by supplying the target state. */
+        public void PostMapCameraState(megMapCameraEventManager.State state)
+        {
+            _cameraEventsTriggered = true;
+            serverUtils.PostMapCameraState(state);
+        }
+
+        
         // Load / Save
         // ------------------------------------------------------------
 
@@ -349,6 +405,89 @@ namespace Meg.EventSystem
                 SavedToFile(this);
         }
 
-    }
 
+        // Private Methods
+        // ------------------------------------------------------------
+
+        /** Capture initial server state. */
+        private void CaptureServerState()
+        {
+            // Capture initial camera state.
+            MapCamera.Capture(ref _initialCamera);
+
+            // Capture initial vessel states.
+            CaptureVesselStates();
+        }
+
+        /** Reset server state to initial settings. */
+        private void ResetServerState()
+        {
+            // Reset data values from events.
+            foreach (var e in _values)
+                serverUtils.PostServerData(e.Key, e.Value.value);
+
+            if (_movementEventsTriggered)
+                foreach (var e in _movements)
+                    serverUtils.PostVesselMovementState(e.Value.value);
+
+            if (_sonarEventsTriggered)
+                serverUtils.PostSonarClear();
+
+            if (_cameraEventsTriggered)
+                serverUtils.PostMapCameraState(_initialCamera);
+
+            // Reset all vessels to their original state.
+            // Only do this on the server, though.
+            if (serverUtils.IsServer())
+                ResetVesselStates();
+
+            // Clear all tracking data.
+            _values.Clear();
+            _movements.Clear();
+            _sonarEventsTriggered = false;
+            _cameraEventsTriggered = false;
+            _movementEventsTriggered = false;
+        }
+
+        /** The camera event manager. */
+        private megMapCameraEventManager MapCamera
+            { get { return megEventManager.Instance.MapCamera; } }
+
+        /** Capture initial vessel states. */
+        private void CaptureVesselStates()
+        {
+            _initialVesselStates.Clear();
+            var n = serverUtils.GetVesselCount();
+            for (var i = 0; i < n; i++)
+            {
+                var vessel = i + 1;
+                _initialVesselStates.Add(new VesselRecord
+                {
+                    position = serverUtils.GetVesselPosition(vessel),
+                    velocity = serverUtils.GetVesselVelocity(vessel),
+                    visible = serverUtils.GetVesselVis(vessel)
+                });
+            }
+        }
+
+        /** Reset vessel states to initial values. */
+        private void ResetVesselStates()
+        {
+            // Reset vessels to the recorded state.
+            var n = serverUtils.GetVesselCount();
+            for (var i = 0; i < n; i++)
+            {
+                var state = _initialVesselStates[i];
+                var vessel = i + 1;
+
+                serverUtils.SetVesselPosition(vessel, state.position);
+                serverUtils.SetVesselVelocity(vessel, state.velocity);
+                serverUtils.SetVesselVis(vessel, state.visible);
+            }
+
+            // Reset player's world velocity.
+            serverUtils.SetPlayerWorldVelocity(Vector3.zero);
+        }
+
+    }
 }

@@ -244,6 +244,7 @@ public class debugEventFileUi : MonoBehaviour
     /** Initialize the file UI. */
     private void InitUi()
     {
+        Properties.Group = null;
         AddGroupUis(_file);
 
         // Force a UI reflow to ensure group layouts are correct.

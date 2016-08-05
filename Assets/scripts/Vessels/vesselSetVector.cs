@@ -56,7 +56,7 @@ public class vesselSetVector : vesselMovement
 
     /** Return the movement save type. */
     protected override string GetSaveKey()
-        { return "SetVector"; }
+        { return vesselMovements.SetVectorType; }
 
 
     // Protected Methods

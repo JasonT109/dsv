@@ -120,7 +120,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            serverUtils.PostSonarEvent(this);
+            file.PostSonarEvent(this);
         }
 
         /** Update this event internally. */
@@ -139,7 +139,7 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
-            serverUtils.PostSonarClear(this);
+            file.PostSonarClear();
         }
 
     }

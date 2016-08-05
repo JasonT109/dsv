@@ -19,6 +19,9 @@ namespace Meg.EventSystem
         /** The current event file (if any). */
         public megEventFile File { get; private set; }
 
+        /** Whether a file is currently playing. */
+        public bool Playing { get { return File != null && File.playing; } }
+
 
         // Unity Methods
         // ------------------------------------------------------------

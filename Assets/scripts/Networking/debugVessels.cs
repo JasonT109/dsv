@@ -7,7 +7,7 @@ using Meg.Networking;
 using TouchScript.Hit;
 using TouchScript.Gestures;
 
-public class debugVessels : MonoBehaviour
+public class debugVessels : Singleton<debugVessels>
 {
     public const float DepthIncrement = 5;
 
@@ -358,7 +358,7 @@ public class debugVessels : MonoBehaviour
         pursueButton.active = pursue != null;
         
         // Update simulation active button state.
-        activeButton.active = Movements.IsActive();
+        activeButton.active = serverUtils.GetServerBool("vesselmovementenabled");
 
         // Update velocity slider.
         velocitySlider.SetActive(holding || setVector || pursue || intercept);
@@ -500,7 +500,7 @@ public class debugVessels : MonoBehaviour
 
     void OnActiveButtonReleased()
     {
-        Movements.SetActive(activeButton.active);
+        serverUtils.SetServerBool("vesselmovementenabled", activeButton.active);
     }
 
     void OnAutoSpeedButtonReleased()

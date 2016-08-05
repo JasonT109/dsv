@@ -166,6 +166,10 @@ namespace Meg.Networking
         public static bool IsReady()
             { return ServerObject != null; }
 
+        /** Whether this machine is the server. */
+        public static bool IsServer()
+            { return ServerData && ServerData.isServer; }
+
         /** The set of all server data parameters that can be set or read. */
         public static readonly HashSet<string> Parameters = new HashSet<string>
         {
@@ -331,7 +335,7 @@ namespace Meg.Networking
             "vessel5warning",
             "vessel6vis",
             "vessel6warning",
-            "vesselmovementsactive",
+            "vesselmovementenabled",
             "watertemp",
             "xpos",
             "yawangle",
@@ -655,8 +659,8 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength;
                 case "divertpowertothrusters":
                     return OperatingData.divertPowerToThrusters;
-                case "vesselmovementsactive":
-                    return VesselMovements.Active ? 1 : 0;
+                case "vesselmovementenabled":
+                    return VesselMovements.Enabled ? 1 : 0;
                 case "timetointercept":
                     return VesselMovements.TimeToIntercept;
                 case "megspeed":
@@ -895,8 +899,8 @@ namespace Meg.Networking
                     return (GliderErrorData.jet_heat_l > 85) ? "WARNING" : "OK";
                 case "jet_r_status":
                     return (GliderErrorData.jet_heat_r > 85) ? "WARNING" : "OK";
-                case "vesselmovementsactive":
-                    return VesselMovements.Active.ToString();
+                case "vesselmovementenabled":
+                    return VesselMovements.Enabled.ToString();
                 case "timetointercept":
                     return VesselMovements.TimeToIntercept.ToString();
                 case "megspeed":
@@ -921,6 +925,50 @@ namespace Meg.Networking
                 ServerData.OnChangeBool(boolName, value);
             }
         }
+
+        /** Return the current value of a shared boolean state value by name. */
+        public static bool GetServerBool(string boolName)
+        {
+            switch (boolName.ToLower())
+            {
+                case "divetimeactive":
+                    return ServerData.diveTimeActive;
+                case "duetimeactive":
+                    return ServerData.dueTimeActive;
+                case "disableinput":
+                    return ServerData.disableInput;
+                case "vessel1vis":
+                    return MapData.vessel1Vis;
+                case "vessel2vis":
+                    return MapData.vessel2Vis;
+                case "vessel3vis":
+                    return MapData.vessel3Vis;
+                case "vessel4vis":
+                    return MapData.vessel4Vis;
+                case "meg1vis":
+                    return MapData.meg1Vis;
+                case "intercept1vis":
+                    return MapData.intercept1Vis;
+                case "vessel1warning":
+                    return MapData.vessel1Warning;
+                case "vessel2warning":
+                    return MapData.vessel2Warning;
+                case "vessel3warning":
+                    return MapData.vessel3Warning;
+                case "vessel4warning":
+                    return MapData.vessel4Warning;
+                case "meg1warning":
+                    return MapData.meg1Warning;
+                case "intercept1warning":
+                    return MapData.intercept1Warning;
+                case "vesselmovementenabled":
+                    return VesselMovements.Enabled;
+                default:
+                    var value = GetServerData(boolName);
+                    return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
+            }
+        }
+
 
         /** Set the current value of a shared numeric state value by name (only works on host). */
         public static void SetServerData(string valueName, float value)
@@ -969,10 +1017,10 @@ namespace Meg.Networking
         }
 
         /** Clear the sonar of all active objects (works on both clients and host). */
-        public static void PostSonarClear(megEventSonar sonarEvent)
+        public static void PostSonarClear()
         {
             if (LocalPlayer)
-                LocalPlayer.PostSonarClear(sonarEvent);
+                LocalPlayer.PostSonarClear();
         }
 
         /** Post a custom camera event by name (works on both clients and host). */
@@ -990,10 +1038,10 @@ namespace Meg.Networking
         }
 
         /** Post vessel movements state to the server (works on both clients and host). */
-        public static void PostVesselMovementsState(JSONObject json)
+        public static void PostVesselMovementState(JSONObject json)
         {
             if (LocalPlayer)
-                LocalPlayer.PostVesselMovementsState(json);
+                LocalPlayer.PostVesselMovementState(json);
         }
 
         /** Set a battery bank value (only works on host). */

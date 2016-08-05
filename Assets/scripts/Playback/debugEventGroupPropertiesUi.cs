@@ -251,18 +251,30 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** Add a map camera event to the group. */
     public void AddMapCameraEvent()
-        { AddEvent(megEventType.MapCamera); }
+    {
+        var cameraEvent = AddEvent(megEventType.MapCamera) as megEventMapCamera;
+        if (cameraEvent != null)
+            cameraEvent.Capture();
+    }
 
     /** Add a vessel simulation event to the group. */
     public void AddVesselsEvent()
-        { AddEvent(megEventType.Vessels); }
+    {
+        var vesselEvent = AddEvent(megEventType.VesselMovement) as megEventVesselMovement;
+        if (vesselEvent != null)
+        {
+            vesselEvent.Vessel = debugVessels.Instance.activeVessel;
+            vesselEvent.Capture();
+        }
+    }
 
     /** Add an event of a given type to the group. */
-    public void AddEvent(megEventType type)
+    public megEvent AddEvent(megEventType type)
     {
         var e = _group.InsertEvent(type, File.selectedEvent);
         File.selectedEvent = e;
         ExpandEvent(e);
+        return e;
     }
 
     /** Remove an event from the group. */

@@ -76,7 +76,7 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post a sonar cleanup command. */
-    public void PostSonarClear(megEventSonar sonar)
+    public void PostSonarClear()
     {
         if (isServer)
             ServerSonarClear();
@@ -103,12 +103,12 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post vessel movements state to the server. */
-    public void PostVesselMovementsState(JSONObject json)
+    public void PostVesselMovementState(JSONObject json)
     {
         if (isServer)
-            ServerSetVesselMovementsState(json);
+            ServerSetVesselMovementState(json);
         else
-            CmdSetVesselMovementsState(json.Print(true));
+            CmdSetVesselMovementState(json.Print(true));
     }
 
 
@@ -159,12 +159,12 @@ public class serverPlayer : NetworkBehaviour
 
     /** Command to set vessel movements state on the server. */
     [Command]
-    public void CmdSetVesselMovementsState(string state)
+    public void CmdSetVesselMovementState(string state)
     {
         try
         {
             var json = new JSONObject(state);
-            ServerSetVesselMovementsState(json);
+            ServerSetVesselMovementState(json);
         }
         catch (Exception ex)
         {
@@ -215,9 +215,9 @@ public class serverPlayer : NetworkBehaviour
 
     /** Set vessel movements state on the server. */
     [Server]
-    public void ServerSetVesselMovementsState(JSONObject json)
+    public void ServerSetVesselMovementState(JSONObject json)
     {
-        serverUtils.VesselMovements.Load(json);
+        serverUtils.VesselMovements.LoadVessel(json);
     }
 
 

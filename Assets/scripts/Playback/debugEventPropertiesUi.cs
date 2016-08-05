@@ -32,6 +32,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public const float DefaultMapCameraDistanceSliderLength = 1000.0f;
 
 
+
     // Configuration
     // ------------------------------------------------------------
 
@@ -110,9 +111,25 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     [Header("Vessels Event Components")]
 
-    public Transform VesselsProperties;
-    public Button VesselsCaptureButton;
-
+    public Transform VesselProperties;
+    public Toggle[] VesselToggles;
+    public Toggle[] VesselTypeToggles;
+    public Transform VesselStateProperties;
+    public Toggle VesselAutoSpeedToggle;
+    public CanvasGroup VesselSpeedGroup;
+    public Slider VesselSpeedSlider;
+    public InputField VesselSpeedInput;
+    public Slider VesselHeadingSlider;
+    public InputField VesselHeadingInput;
+    public Slider VesselDiveAngleSlider;
+    public InputField VesselDiveAngleInput;
+    public Slider VesselPeriodSlider;
+    public InputField VesselPeriodInput;
+    public Text VesselTargetLabel;
+    public Transform VesselTargets;
+    public Toggle[] VesselTargetToggles;
+    public Button VesselCaptureButton;
+    
 
     [Header("Prefabs")]
 
@@ -151,8 +168,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         { get { return _event as megEventSonar; } }
 
     /** Event interpreted as a vessels event. */
-    public megEventVessels VesselsEvent
-        { get { return _event as megEventVessels; } }
+    public megEventVesselMovement VesselEvent
+        { get { return _event as megEventVesselMovement; } }
 
     /** Whether event is minimized. */
     public bool Minimized
@@ -183,6 +200,13 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** List of server param UI entries. */
     private readonly List<debugServerParamEntryUi> _serverParams = new List<debugServerParamEntryUi>();
+
+    /** Types of vessel movement. */
+    private readonly string[] _vesselMovementTypes = {
+        vesselMovements.InterceptType,
+        vesselMovements.PursueType,
+        vesselMovements.SetVectorType,
+        vesselMovements.HoldingType };
 
 
     // Unity Methods
@@ -240,6 +264,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     {
         ServerParamInput.onValidateInput += ValidateIdentifierInput;
         MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
+        ConfigureVesselsProperties();
     }
 
     private char ValidateIdentifierInput(string text, int index, char addedChar)
@@ -264,7 +289,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             InitMapCameraProperties();
         else if (_event is megEventSonar)
             InitSonarProperties();
-        else if (_event is megEventVessels)
+        else if (_event is megEventVesselMovement)
             InitVesselsProperties();
 
         _initializing = false;
@@ -287,7 +312,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             UpdateMapCameraProperties();
         else if (_event is megEventSonar)
             UpdateSonarProperties();
-        else if (_event is megEventVessels)
+        else if (_event is megEventVesselMovement)
             UpdateVesselsProperties();
 
         _updating = false;
@@ -300,7 +325,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         ValueProperties.gameObject.SetActive(false);
         PhysicsProperties.gameObject.SetActive(false);
         SonarProperties.gameObject.SetActive(false);
-        VesselsProperties.gameObject.SetActive(false);
+        VesselProperties.gameObject.SetActive(false);
     }
 
 
@@ -328,7 +353,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         PhysicsProperties.gameObject.SetActive(!minimized && PhysicsEvent != null);
         MapCameraProperties.gameObject.SetActive(!minimized && MapCameraEvent != null);
         SonarProperties.gameObject.SetActive(!minimized && SonarEvent != null);
-        VesselsProperties.gameObject.SetActive(!minimized && VesselsEvent != null);
+        VesselProperties.gameObject.SetActive(!minimized && VesselEvent != null);
     }
 
     private void UpdateTriggerTimeSlider()
@@ -721,6 +746,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void InitMapCameraProperties()
     {
+        _initializing = true;
         UpdateMapCameraEventNameInput();
         UpdateMapCameraPositionInputs();
         UpdateMapCameraPitchSlider();
@@ -729,6 +755,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateMapCameraYawInput();
         UpdateMapCameraDistanceSlider();
         UpdateMapCameraDistanceInput();
+        _initializing = false;
     }
 
 
@@ -932,20 +959,247 @@ public class debugEventPropertiesUi : MonoBehaviour
     // Vessels Event Interface
     // ------------------------------------------------------------
 
+    private void ConfigureVesselsProperties()
+    {
+        for (var i = 0; i < VesselToggles.Length; i++)
+        {
+            var vessel = i + 1;
+            VesselToggles[i].onValueChanged.AddListener(
+                on => OnVesselToggled(vessel, on));
+        }
+
+        for (var i = 0; i < VesselTypeToggles.Length; i++)
+        {
+            var type = _vesselMovementTypes[i];
+            VesselTypeToggles[i].onValueChanged.AddListener(
+                on => OnVesselTypeToggled(type, on));
+        }
+
+        VesselAutoSpeedToggle.onValueChanged.AddListener(OnVesselAutoSpeedToggleChanged);
+        VesselSpeedSlider.onValueChanged.AddListener(OnVesselSpeedSliderChanged);
+        VesselSpeedInput.onEndEdit.AddListener(OnVesselSpeedInputChanged);
+        VesselHeadingSlider.onValueChanged.AddListener(OnVesselHeadingSliderChanged);
+        VesselHeadingInput.onEndEdit.AddListener(OnVesselHeadingInputChanged);
+        VesselDiveAngleSlider.onValueChanged.AddListener(OnVesselDiveAngleSliderChanged);
+        VesselDiveAngleInput.onEndEdit.AddListener(OnVesselDiveAngleInputChanged);
+        VesselPeriodSlider.onValueChanged.AddListener(OnVesselPeriodSliderChanged);
+        VesselPeriodInput.onEndEdit.AddListener(OnVesselPeriodInputChanged);
+        
+        for (var i = 0; i < VesselTargetToggles.Length; i++)
+        {
+            var vessel = i + 1;
+            VesselTargetToggles[i].onValueChanged.AddListener(
+                on => OnVesselTargetToggled(vessel, on));
+        }
+    }
+
     private void InitVesselsProperties()
     {
+        _initializing = true;
+
+        UpdateVesselToggles();
+        UpdateVesselTypeToggles();
+        UpdateVesselTargetToggles();
+
+        var v = VesselEvent;
+        VesselAutoSpeedToggle.isOn = v.AutoSpeed;
+        VesselSpeedSlider.value = v.Speed;
+        VesselSpeedSlider.maxValue = Mathf.Max(VesselSpeedSlider.maxValue, v.Speed);
+        VesselSpeedInput.text = string.Format("{0:N1}", v.Speed);
+        VesselHeadingSlider.value = v.Heading;
+        VesselHeadingInput.text = string.Format("{0:N1}", v.Heading);
+        VesselDiveAngleSlider.value = v.DiveAngle;
+        VesselDiveAngleInput.text = string.Format("{0:N1}", v.DiveAngle);
+        VesselPeriodSlider.value = v.Period;
+        VesselPeriodInput.text = string.Format("{0:N1}", v.Period);
+
+        _initializing = false;
     }
 
     private void UpdateVesselsProperties()
     {
+        var v = VesselEvent;
+        VesselStateProperties.gameObject.SetActive(!v.IsNone);
+        VesselAutoSpeedToggle.gameObject.SetActive(v.IsIntercept);
+        VesselSpeedGroup.interactable = !VesselAutoSpeedToggle.isOn;
+        VesselSpeedGroup.alpha = VesselAutoSpeedToggle.isOn ? 0.5f : 1;
+        VesselHeadingSlider.transform.parent.gameObject.SetActive(v.IsSetVector);
+        VesselDiveAngleSlider.transform.parent.gameObject.SetActive(v.IsSetVector);
+        VesselPeriodSlider.transform.parent.gameObject.SetActive(v.IsHolding);
+        VesselTargetLabel.gameObject.SetActive(v.IsPursue);
+        VesselTargets.transform.gameObject.SetActive(v.IsPursue);
     }
 
+    private void UpdateVesselToggles()
+    {
+        for (var i = 0; i < VesselToggles.Length; i++)
+        {
+            var toggle = VesselToggles[i];
+            toggle.isOn = VesselEvent.Vessel == i + 1;
+            toggle.interactable = !toggle.isOn;
+        }
+    }
+
+    private void OnVesselToggled(int vessel, bool value)
+    {
+        if (_initializing || !value)
+            return;
+
+        VesselEvent.Vessel = vessel;
+
+        _initializing = true;
+        UpdateVesselToggles();
+        _initializing = false;
+    }
+
+    private void UpdateVesselTypeToggles()
+    {
+        var type = VesselEvent.Type;
+        for (var i = 0; i < VesselTypeToggles.Length; i++)
+        {
+            var toggle = VesselTypeToggles[i];
+            toggle.isOn = _vesselMovementTypes[i] == type;
+        }
+    }
+
+    private void OnVesselTypeToggled(string type, bool value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Type = value ? type : "None";
+
+        _initializing = true;
+        UpdateVesselTypeToggles();
+        _initializing = false;
+    }
+
+    private void UpdateVesselTargetToggles()
+    {
+        for (var i = 0; i < VesselTargetToggles.Length; i++)
+        {
+            var toggle = VesselTargetToggles[i];
+            toggle.isOn = VesselEvent.TargetVessel == i + 1;
+            toggle.interactable = !toggle.isOn;
+        }
+    }
+
+    private void OnVesselTargetToggled(int vessel, bool value)
+    {
+        if (_initializing || !value)
+            return;
+
+        VesselEvent.TargetVessel = vessel;
+
+        _initializing = true;
+        UpdateVesselTargetToggles();
+        _initializing = false;
+    }
+
+    private void OnVesselAutoSpeedToggleChanged(bool on)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.AutoSpeed = on;
+    }
+
+    private void OnVesselSpeedSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Speed = value;
+        VesselSpeedInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselSpeedInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Speed = result;
+        VesselSpeedSlider.maxValue = Mathf.Max(VesselSpeedSlider.maxValue, result);
+        VesselSpeedSlider.value = result;
+    }
+
+    private void OnVesselHeadingSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Heading = value;
+        VesselHeadingInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselHeadingInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Heading = result;
+        VesselHeadingSlider.value = result;
+    }
+
+    private void OnVesselDiveAngleSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.DiveAngle = value;
+        VesselDiveAngleInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselDiveAngleInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.DiveAngle = result;
+        VesselDiveAngleSlider.value = result;
+    }
+
+    private void OnVesselPeriodSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.Period = value;
+        VesselPeriodInput.text = string.Format("{0:N1}", value);
+    }
+
+    private void OnVesselPeriodInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Period = result;
+        VesselPeriodSlider.value = result;
+    }
+    
     public void VesselsCapture()
     {
         if (_initializing)
             return;
 
-        VesselsEvent.Capture();
+        VesselEvent.Capture();
+        InitVesselsProperties();
     }
 
 }
