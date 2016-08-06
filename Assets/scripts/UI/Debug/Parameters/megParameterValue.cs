@@ -1,0 +1,66 @@
+using UnityEngine;
+using Meg.Networking;
+
+namespace Meg.Parameters
+{
+
+    /** An event that manipulates a server data value. */
+    [System.Serializable]
+    public class megParameterValue : megParameter
+    {
+
+        // Properties
+        // ------------------------------------------------------------
+
+        /** The server data value to manipulate. */
+        public string serverParam = "";
+
+        /** Value to apply to server data. */
+        public float serverValue
+        {
+            get { return serverUtils.GetServerData(serverParam); }
+            set { serverUtils.SetServerData(serverParam, value);}
+        }
+
+
+        // Lifecycle
+        // ------------------------------------------------------------
+
+        /** Constructor for an event. */
+        public megParameterValue(megParameterFile file = null) : base(megParameterType.Value, file) { }
+
+
+        // Public Methods
+        // ------------------------------------------------------------
+
+        /** String representation. */
+        public override string ToString()
+        {
+            if (string.IsNullOrEmpty(serverParam))
+                return base.ToString();
+
+            var value = serverUtils.GetServerData(serverParam);
+            return string.Format("{0}: {1:N1} ({2:N1})", serverParam, serverValue, value);
+        }
+
+
+        // Load / Save
+        // ------------------------------------------------------------
+
+        /** Save state to JSON. */
+        public override JSONObject Save()
+        {
+            var json = base.Save();
+            json.AddField("serverParam", serverParam);
+            return json;
+        }
+
+        /** Load state from JSON. */
+        public override void Load(JSONObject json)
+        {
+            base.Load(json);
+            json.GetField(ref serverParam, "serverParam");
+        }
+
+    }
+}
