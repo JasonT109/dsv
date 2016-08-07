@@ -41,9 +41,6 @@ public class megWriteSceneData : MonoBehaviour
 
     void Update()
     {
-        if (serverUtils.IsServer())
-            UpdateSceneData();
-
         fileName = (vesselName.text + "_" + sceneNumber.text + "_" + shotNumber.text + "_" + takeNumber.text + "_UTC.json");
 
         saveText.GetComponent<TextMesh>().text = fileName;
@@ -52,15 +49,14 @@ public class megWriteSceneData : MonoBehaviour
         {
             canPress = false;
             StartCoroutine(wait(0.2f));
+
+            serverUtils.SetServerData("scene", sceneNumber.text);
+            serverUtils.SetServerData("shot", shotNumber.text);
+            serverUtils.SetServerData("take", takeNumber.text);
+
             saveFile(fileName);
         }
     }
 
-    private void UpdateSceneData()
-    {
-        serverUtils.SetServerData("scene", sceneNumber.text);
-        serverUtils.SetServerData("shot", shotNumber.text);
-        serverUtils.SetServerData("take", takeNumber.text);
-    }
 }
 

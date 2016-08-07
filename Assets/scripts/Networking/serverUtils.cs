@@ -301,6 +301,7 @@ namespace Meg.Networking
             "oxygenflow",
             "pitchangle",
             "pitchspeed",
+            "playervessel",
             "pressure",
             "scene",
             "shot",
@@ -390,6 +391,7 @@ namespace Meg.Networking
         /** Metadata about various server parameters. */
         public static readonly Dictionary<string, ParameterInfo> ParameterInfos = new Dictionary<string, ParameterInfo>
         {
+            { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int } },
             { "depth", new ParameterInfo { maxValue = 12000 } },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "duetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
@@ -667,6 +669,8 @@ namespace Meg.Networking
                     return CrewData.crewBodyTemp5;
                 case "crewbodytemp6":
                     return CrewData.crewBodyTemp6;
+                case "playervessel":
+                    return MapData.playerVessel;
                 case "v1posx":
                     return MapData.vessel1Pos.x;
                 case "v1posy":

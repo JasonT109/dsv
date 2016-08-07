@@ -514,6 +514,9 @@ public class serverData : NetworkBehaviour
             case "posz":
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
+            case "playervessel":
+                SetPlayerVessel(Mathf.RoundToInt(newValue));
+                break;
             case "latitude":
                 MapData.latitude = newValue;
                 break;
