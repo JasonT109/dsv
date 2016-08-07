@@ -113,7 +113,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < scaleItems.Length; i++)
         {
-            sScales[i] = scaleItems[i].transform.localScale;
+            sScales[i] = new Vector2(1,1);
         }
     }
 #if UNITY_EDITOR
