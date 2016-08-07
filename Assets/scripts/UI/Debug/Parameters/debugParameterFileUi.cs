@@ -68,9 +68,6 @@ public class debugParameterFileUi : MonoBehaviour
     /** Parameter group UI nodes. */
     private readonly List<debugParameterGroupUi> _groups = new List<debugParameterGroupUi>();
 
-    /** Whether we're updating the UI right now. */
-    private bool _updatingUi;
-
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -224,17 +221,13 @@ public class debugParameterFileUi : MonoBehaviour
     /** Update the file UI. */
     private void UpdateUi()
     {
-        _updatingUi = true;
-
         AddButton.interactable = _file.canAdd;
-        RemoveButton.interactable = _file.canRemove && _file.selectedParameter != null;
+        RemoveButton.interactable = _file.canRemove && _file.selectedGroup != null;
         ClearButton.interactable = _file.canClear;
-        AddParameterButton.interactable = _file.canAdd;
+        AddParameterButton.interactable = _file.canAdd && _file.selectedGroup != null;
         RemoveParameterButton.interactable = _file.canRemove && _file.selectedParameter != null;
-        ClearParametersButton.interactable = _file.canClear;
+        ClearParametersButton.interactable = _file.canClear && _file.selectedGroup != null && !_file.selectedGroup.empty;
         SaveButton.interactable = _file.canSave;
-
-        _updatingUi = false;
     }
 
     /** Remove all event groups. */

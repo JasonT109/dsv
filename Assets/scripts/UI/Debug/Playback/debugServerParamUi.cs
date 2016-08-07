@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
 using Meg.Networking;
 
 public class debugServerParamUi : MonoBehaviour
@@ -21,7 +22,9 @@ public class debugServerParamUi : MonoBehaviour
 	{
 	    var text = Text.text.ToLower();
 	    var valid = serverUtils.Parameters.Contains(text);
-	    var target = valid ? ValidColor : InvalidColor;
+        var prefix = valid || serverUtils.Parameters.Any(p => p.StartsWith(text));
+        var target = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
+
 	    Text.color = Color.Lerp(Text.color, target, Time.deltaTime / SmoothTime);
 	}
 }

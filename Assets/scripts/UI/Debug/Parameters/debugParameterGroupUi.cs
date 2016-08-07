@@ -20,6 +20,9 @@ public class debugParameterGroupUi : MonoBehaviour
     /** Header area. */
     public CanvasGroup Header;
 
+    /** Selected indicator. */
+    public Graphic On;
+
     /** Container for parameter properties. */
     public Transform ParameterContainer;
 
@@ -213,6 +216,7 @@ public class debugParameterGroupUi : MonoBehaviour
 
         _updating = true;
 
+        On.gameObject.SetActive(!_group.minimized);
         MinimizeToggle.isOn = !_group.minimized;
         ParameterContainer.gameObject.SetActive(!_group.minimized);
 

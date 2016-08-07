@@ -15,9 +15,6 @@ public abstract class debugParameterUi : MonoBehaviour
     /** The parameter's backdrop graphic. */
     public Graphic Backdrop;
 
-    /** The parameter's selection indicator graphic. */
-    public Graphic SelectedOn;
-
     /** The parameter name label. */
     public Text Name;
 
@@ -132,8 +129,6 @@ public abstract class debugParameterUi : MonoBehaviour
 
         if (Name)
             Name.text = Parameter.ToString();
-
-        SelectedOn.gameObject.SetActive(isSelected);
 
         UpdateParameterUi();
 
