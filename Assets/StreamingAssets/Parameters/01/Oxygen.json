@@ -1,0 +1,37 @@
+{
+	"groups":[
+		{
+			"id":"OXYGEN",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"o1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o6"
+				},
+				{
+					"type":"Value",
+					"serverParam":"o7"
+				}
+			]
+		},
+	]
+}

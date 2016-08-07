@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine.Events;
 
 public class debugFileListUi : MonoBehaviour
@@ -26,6 +27,9 @@ public class debugFileListUi : MonoBehaviour
         get { return _selectedEntry; }
         set { SetSelectedEntry(value); }
     }
+
+    /** Filter for files. */
+    public string Filter = ".json$";
 
 
     // Members
@@ -91,6 +95,9 @@ public class debugFileListUi : MonoBehaviour
 
         foreach (var f in info)
         {
+            if (!Regex.IsMatch(f.FullName, Filter))
+                continue;
+
             var entry = Instantiate(FileEntryPrefab);
             _entries.Add(entry);
 

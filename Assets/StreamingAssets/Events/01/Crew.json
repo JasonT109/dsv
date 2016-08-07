@@ -1,0 +1,40 @@
+{
+	"groups":[
+		{
+			"id":"Kill Junjie",
+			"paused":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":10,
+					"serverParam":"crewHeartRate3",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":10,
+					"serverParam":"crewBodyTemp3",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"Kill Lori",
+			"paused":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":10,
+					"serverParam":"crewHeartRate1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":10,
+					"serverParam":"crewBodyTemp1",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,105 @@
+{
+	"groups":
+	[
+		{
+			"id" : "Main Oxygen Depletion",
+			"paused" : true,
+			"events" :
+			[
+				{
+					"type" : "Value",
+					"triggerTime" : 2,
+					"completeTime" : 20,
+					"serverParam" : "o1",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 2.5,
+					"completeTime" : 25,
+					"serverParam" : "o2",
+					"serverValue" : 0
+				},
+			]
+		},
+		{
+			"id" : "Oxygen Failure",
+			"paused" : true,
+			"minimized" : true,
+			"events" :
+			[
+				{
+					"type" : "Value",
+					"triggerTime" : 2.5,
+					"completeTime" : 12,
+					"serverParam" : "o3",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 2.2,
+					"completeTime" : 13,
+					"serverParam" : "o4",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 1.6,
+					"completeTime" : 13,
+					"serverParam" : "o5",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 1.4,
+					"completeTime" : 14,
+					"serverParam" : "o6",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 1.1,
+					"completeTime" : 12,
+					"serverParam" : "o7",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 0.8,
+					"completeTime" : 0,
+					"serverParam" : "error_oxygenExt",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 2,
+					"completeTime" : 0,
+					"serverParam" : "error_oxygenPump",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 2.5,
+					"completeTime" : 0,
+					"serverParam" : "error_bowThruster",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 3.2,
+					"completeTime" : 0,
+					"serverParam" : "error_starboardLights",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 2.8,
+					"completeTime" : 0,
+					"serverParam" : "error_radar",
+					"serverValue" : 0
+				},
+
+			]
+		},
+	]
+}

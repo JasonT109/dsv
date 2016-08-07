@@ -154,6 +154,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the sub control data object. */
+        private static SubControl _subControl;
+        public static SubControl SubControl
+        {
+            get
+            {
+                if (!_subControl && ServerObject)
+                    _subControl = ServerObject.GetComponent<SubControl>();
+                return _subControl;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -173,6 +185,7 @@ namespace Meg.Networking
         /** The set of all server data parameters that can be set or read. */
         public static readonly HashSet<string> Parameters = new HashSet<string>
         {
+            "acceleration",
             "b1",
             "b2",
             "b3",
@@ -259,10 +272,16 @@ namespace Meg.Networking
             "intercept1velocity",
             "intercept1vis",
             "intercept1warning",
+            "isautostabilised",
+            "ispitchalsostabilised",
             "jet_heat_l",
             "jet_heat_r",
+            "joystickoverride",
+            "joystickpilot",
             "latitude",
             "longitude",
+            "maxspeed",
+            "minspeed",
             "meg1posx",
             "meg1posy",
             "meg1posz",
@@ -281,8 +300,13 @@ namespace Meg.Networking
             "oxygen",
             "oxygenflow",
             "pitchangle",
+            "pitchspeed",
             "pressure",
+            "scene",
+            "shot",
             "rollangle",
+            "rollspeed",
+            "take",
             "thruster_heat_l",
             "thruster_heat_r",
             "timetointercept",
@@ -339,9 +363,79 @@ namespace Meg.Networking
             "watertemp",
             "xpos",
             "yawangle",
+            "yawspeed",
             "zpos",
         };
 
+        /** Types of parameter value. */
+        public enum ParameterType
+        {
+            Float,
+            Int,
+            Bool
+        }
+
+        /** Configuration data for a parameter. */
+        public class ParameterInfo
+        {
+            public ParameterType type = ParameterType.Float;
+            public float minValue = 0;
+            public float maxValue = 100;
+            public bool readOnly = false;
+        }
+
+        /** Default parameter configuration. */
+        public static readonly ParameterInfo DefaultParameterInfo = new ParameterInfo();
+
+        /** Metadata about various server parameters. */
+        public static readonly Dictionary<string, ParameterInfo> ParameterInfos = new Dictionary<string, ParameterInfo>
+        {
+            { "depth", new ParameterInfo { maxValue = 12000 } },
+            { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "duetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel2vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel3vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel4vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel5vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel6vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "meg1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "intercept1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel2warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel3warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel4warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel5warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel6warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "meg1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "intercept1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "isautostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "inputxaxis", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "inputxaxis2", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
+            { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360 } },
+            { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
+            { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int } },
+            { "shot", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
+            { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
+        };
+        
+        /** Return information about a given parameter. */
+        public static ParameterInfo GetServerDataInfo(string valueName)
+        {
+            var key = valueName.ToLower();
+            if (ParameterInfos.ContainsKey(key))
+                return ParameterInfos[key];
+
+            return DefaultParameterInfo;
+        }
 
         /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName)
@@ -351,6 +445,12 @@ namespace Meg.Networking
 
             switch (valueName.ToLower())
             {
+                case "scene":
+                    return ServerData.scene;
+                case "shot":
+                    return ServerData.shot;
+                case "take":
+                    return ServerData.take;
                 case "depth":
                     return ServerData.depth;
                 case "xpos":
@@ -383,8 +483,6 @@ namespace Meg.Networking
                     return ServerData.dueTimeActive ? 1 : 0;
                 case "watertemp":
                     return ServerData.waterTemp;
-                case "disableinput":
-                    return ServerData.disableInput ? 1 : 0;
                 case "b1":
                     return ServerData.batteries[0];
                 case "b2":
@@ -509,16 +607,38 @@ namespace Meg.Networking
                     return GliderErrorData.jet_heat_l;
                 case "jet_heat_r":
                     return GliderErrorData.jet_heat_r;
+                case "disableinput":
+                    return SubControl.disableInput ? 1 : 0;
                 case "inputxaxis":
-                    return ServerData.inputXaxis;
+                    return SubControl.inputXaxis;
                 case "inputyaxis":
-                    return ServerData.inputYaxis;
+                    return SubControl.inputYaxis;
                 case "inputzaxis":
-                    return ServerData.inputZaxis;
+                    return SubControl.inputZaxis;
                 case "inputxaxis2":
-                    return ServerData.inputXaxis2;
+                    return SubControl.inputXaxis2;
                 case "inputyaxis2":
-                    return ServerData.inputYaxis2;
+                    return SubControl.inputYaxis2;
+                case "isautostabilised":
+                    return SubControl.isAutoStabilised ? 1 : 0;
+                case "ispitchalsostabilised":
+                    return SubControl.IsPitchAlsoStabilised ? 1 : 0;
+                case "joystickoverride":
+                    return SubControl.JoystickOverride ? 1 : 0;
+                case "joystickpilot":
+                    return SubControl.JoystickPilot ? 1 : 0;
+                case "acceleration":
+                    return SubControl.Acceleration;
+                case "yawspeed":
+                    return SubControl.yawSpeed;
+                case "pitchspeed":
+                    return SubControl.pitchSpeed;
+                case "rollspeed":
+                    return SubControl.rollSpeed;
+                case "maxspeed":
+                    return SubControl.MaxSpeed;
+                case "minspeed":
+                    return SubControl.MinSpeed;
                 case "verticalvelocity":
                     return ServerData.verticalVelocity;
                 case "horizontalvelocity":
@@ -680,6 +800,12 @@ namespace Meg.Networking
 
             switch (valueName.ToLower())
             {
+                case "scene":
+                    return ServerData.scene.ToString();
+                case "shot":
+                    return ServerData.shot.ToString();
+                case "take":
+                    return ServerData.take.ToString();
                 case "depth":
                     int dInt = (int)ServerData.depth;
                     return dInt.ToString();
@@ -768,15 +894,15 @@ namespace Meg.Networking
                 case "horizontalvelocity":
                     return ServerData.horizontalVelocity.ToString("n1");
                 case "inputxaxis":
-                    return ServerData.inputXaxis.ToString("n1");
+                    return SubControl.inputXaxis.ToString("n1");
                 case "inputyaxis":
-                    return ServerData.inputYaxis.ToString("n1");
+                    return SubControl.inputYaxis.ToString("n1");
                 case "inputzaxis":
-                    return ServerData.inputZaxis.ToString("n1");
+                    return SubControl.inputZaxis.ToString("n1");
                 case "inputxaxis2":
-                    return ServerData.inputXaxis2.ToString("n1");
+                    return SubControl.inputXaxis2.ToString("n1");
                 case "inputyaxis2":
-                    return ServerData.inputYaxis2.ToString("n1");
+                    return SubControl.inputYaxis2.ToString("n1");
                 case "crewheartrate1":
                     return CrewData.crewHeartRate1.ToString("n1");
                 case "crewheartrate2":
@@ -935,8 +1061,6 @@ namespace Meg.Networking
                     return ServerData.diveTimeActive;
                 case "duetimeactive":
                     return ServerData.dueTimeActive;
-                case "disableinput":
-                    return ServerData.disableInput;
                 case "vessel1vis":
                     return MapData.vessel1Vis;
                 case "vessel2vis":
@@ -963,6 +1087,16 @@ namespace Meg.Networking
                     return MapData.intercept1Warning;
                 case "vesselmovementenabled":
                     return VesselMovements.Enabled;
+                case "disableinput":
+                    return SubControl.disableInput;
+                case "isautostabilised":
+                    return SubControl.isAutoStabilised;
+                case "ispitchalsostabilised":
+                    return SubControl.IsPitchAlsoStabilised;
+                case "joystickoverride":
+                    return SubControl.JoystickOverride;
+                case "joystickpilot":
+                    return SubControl.JoystickPilot;
                 default:
                     var value = GetServerData(boolName);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);

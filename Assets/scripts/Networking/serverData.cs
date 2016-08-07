@@ -7,17 +7,11 @@ public class serverData : NetworkBehaviour
 {
     #region SyncVars
     [SyncVar]
-    public float inputXaxis;
+    public int scene = 1;
     [SyncVar]
-    public float inputYaxis;
+    public int shot = 1;
     [SyncVar]
-    public float inputZaxis;
-    [SyncVar]
-    public float inputXaxis2;
-    [SyncVar]
-    public float inputYaxis2;
-    [SyncVar]
-    public bool IsJoystickSwapped;
+    public int take = 1;
     [SyncVar]
     public float depth;
     [SyncVar]
@@ -52,29 +46,17 @@ public class serverData : NetworkBehaviour
     public float dueTime;
     [SyncVar]
     public bool dueTimeActive = true;
-    [SyncVar]
-    public bool disableInput = false;
 
     #endregion
-    #region PublicVars
 
-    //public float descent;
+    #region PublicVars
     public bool isGlider = false;
     public float[] batteries = new float[7];
     public float[] oxygenTanks = new float[7];
-    public float thrust = 1.0f;
-    public float yawSpeed = 0.1f;
-    public float pitchSpeed = 0.1f;
-    public float rollSpeed = 0.1f;
     public GameObject[] players;
-    //public bool disableInput = false;
-
-    private Vector3 rotation;
     #endregion
+
     #region PrivateVars
-    // private float bankAmount = 1.0f;
-    // private Vector3 bankAxis = new Vector3(0F, 0F, -1F);
-    // private float currentThrust = 0.0f;
     private Rigidbody rb;
     private float rollResult;
     private float pitchResult;
@@ -171,6 +153,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private SubControl _subControl;
+    public SubControl SubControl
+    {
+        get
+        {
+            if (!_subControl)
+                _subControl = GetComponent<SubControl>();
+            return _subControl;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -245,6 +238,15 @@ public class serverData : NetworkBehaviour
 
         switch (valueName.ToLower())
         {
+            case "scene":
+                scene = Mathf.RoundToInt(newValue);
+                break;
+            case "shot":
+                shot = Mathf.RoundToInt(newValue);
+                break;
+            case "take":
+                take = Mathf.RoundToInt(newValue);
+                break;
             case "depth":
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
@@ -268,7 +270,7 @@ public class serverData : NetworkBehaviour
                 waterTemp = newValue;
                 break;
             case "disableinput":
-                disableInput = newValue > 0;
+                SubControl.disableInput = newValue > 0;
                 break;
             case "battery":
                 BatteryData.battery = newValue;
@@ -406,19 +408,49 @@ public class serverData : NetworkBehaviour
                 ErrorData.genericerror = newValue;
                 break;
             case "inputxaxis":
-                inputXaxis = newValue;
+                SubControl.inputXaxis = newValue;
                 break;
             case "inputyaxis":
-                inputYaxis = newValue;
+                SubControl.inputYaxis = newValue;
                 break;
             case "inputzaxis":
-                inputZaxis = newValue;
+                SubControl.inputZaxis = newValue;
                 break;
             case "inputxaxis2":
-                inputXaxis2 = newValue;
+                SubControl.inputXaxis2 = newValue;
                 break;
             case "inputyaxis2":
-                inputYaxis2 = newValue;
+                SubControl.inputYaxis2 = newValue;
+                break;
+            case "isautostabilised":
+                SubControl.isAutoStabilised = newValue > 0;
+                break;
+            case "ispitchalsostabilised":
+                SubControl.IsPitchAlsoStabilised = newValue > 0;
+                break;
+            case "joystickoverride":
+                SubControl.JoystickOverride = newValue > 0;
+                break;
+            case "joystickpilot":
+                SubControl.JoystickPilot = newValue > 0;
+                break;
+            case "acceleration":
+                SubControl.Acceleration = newValue;
+                break;
+            case "yawspeed":
+                SubControl.yawSpeed = newValue;
+                break;
+            case "pitchspeed":
+                SubControl.pitchSpeed = newValue;
+                break;
+            case "rollspeed":
+                SubControl.rollSpeed = newValue;
+                break;
+            case "maxspeed":
+                SubControl.MaxSpeed = newValue;
+                break;
+            case "minspeed":
+                SubControl.MinSpeed = newValue;
                 break;
             case "pitchangle":
                 Quaternion qPitch = Quaternion.Euler(newValue, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
@@ -434,7 +466,8 @@ public class serverData : NetworkBehaviour
                 break;
             case "velocity":
                 velocity = newValue;
-                rb.velocity = transform.forward * newValue;
+                if (rb)
+                    rb.velocity = transform.forward * newValue;
                 break;
             case "crewheartrate1":
                 CrewData.crewHeartRate1 = newValue;
@@ -656,7 +689,7 @@ public class serverData : NetworkBehaviour
                 dueTimeActive = newValue;
                 break;
             case "disableinput":
-                disableInput = newValue;
+                SubControl.disableInput = newValue;
                 break;
             case "vessel1vis":
                 MapData.vessel1Vis = newValue;
@@ -696,6 +729,18 @@ public class serverData : NetworkBehaviour
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;
+                break;
+            case "isautostabilised":
+                SubControl.isAutoStabilised = newValue;
+                break;
+            case "ispitchalsostabilised":
+                SubControl.IsPitchAlsoStabilised = newValue;
+                break;
+            case "joystickoverride":
+                SubControl.JoystickOverride = newValue;
+                break;
+            case "joystickpilot":
+                SubControl.JoystickPilot = newValue;
                 break;
         }
     }

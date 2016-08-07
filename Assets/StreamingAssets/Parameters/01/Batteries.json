@@ -1,0 +1,37 @@
+{
+	"groups":[
+		{
+			"id":"BATTERIES",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"b1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b6"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b7"
+				}
+			]
+		}
+	]
+}

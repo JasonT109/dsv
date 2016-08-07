@@ -1,0 +1,24 @@
+{
+	"groups":[
+		{
+			"id":"Depth and Time",
+			"events":[
+				{
+					"type":"Value",
+					"serverParam":"depth",
+					"serverValue":7500
+				},
+				{
+					"type":"Value",
+					"serverParam":"diveTime",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"serverParam":"divetimeactive",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

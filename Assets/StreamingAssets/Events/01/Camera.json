@@ -1,0 +1,87 @@
+{
+	"groups":
+	[
+		{
+			"id" : "Camera Cycle",
+			"paused" : true,
+			"looping" : true,
+			"canLoop" : true,
+			"minimized" : true,
+			"events" :
+			[
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 4,
+					"completeTime" : 0,
+					"eventName" : "ManaOne"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 8,
+					"completeTime" : 0,
+					"eventName" : "Preset02"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 12,
+					"completeTime" : 0,
+					"eventName" : "Preset03"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 16,
+					"completeTime" : 0,
+					"eventName" : "Preset04"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 20,
+					"completeTime" : 4,
+					"eventName" : "RecenterVessel"
+				},
+			]
+		},
+		{
+			"id" : "Camera Recenter",
+			"paused" : true,
+			"looping" : true,
+			"canLoop" : true,
+			"events" :
+			[
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 0,
+					"completeTime" : 4,
+					"eventName" : "ManaOne"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 8,
+					"completeTime" : 4,
+					"eventName" : "RecenterVessel"
+				},
+			]
+		},
+		{
+			"id" : "Camera 2d / 3d",
+			"paused" : true,
+			"looping" : true,
+			"canLoop" : true,
+			"events" :
+			[
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 0,
+					"completeTime" : 4,
+					"eventName" : "MapContours"
+				},
+				{
+					"type" : "MapCamera",
+					"triggerTime" : 8,
+					"completeTime" : 4,
+					"eventName" : "Map3d"
+				},
+			]
+		}
+	]
+}

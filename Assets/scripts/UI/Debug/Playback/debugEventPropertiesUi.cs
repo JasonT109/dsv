@@ -22,9 +22,6 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Default complete time time slider length. */
     public const float DefaultCompleteTimeSliderLength = 10.0f;
 
-    /** Default server value slider length. */
-    public const float DefaultServerValueSliderLength = 100.0f;
-
     /** Default phyiscs magnitude slider length. */
     public const float DefaultPhysicsMagnitudeSliderLength = 1.0f;
 
@@ -470,9 +467,17 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerValueSlider()
     {
-        var maxValue = Mathf.Max(ValueEvent.serverValue, DefaultServerValueSliderLength);
+        var key = ValueEvent.serverParam;
+        var value = ValueEvent.serverValue;
+        var info = serverUtils.GetServerDataInfo(key);
+        var minValue = Mathf.Min(value, info.minValue);
+        var maxValue = Mathf.Max(value, info.maxValue);
+
+        ServerValueSlider.minValue = minValue;
         ServerValueSlider.maxValue = maxValue;
-        ServerValueSlider.value = ValueEvent.serverValue;
+        ServerValueSlider.value = value;
+        ServerValueSlider.wholeNumbers = (info.type == serverUtils.ParameterType.Bool)
+            || (info.type == serverUtils.ParameterType.Int);
     }
 
     private void UpdateServerValueInput()

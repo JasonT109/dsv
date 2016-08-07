@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using Meg.Networking;
 
-public class serverListener : NetworkBehaviour {
+public class serverListener : NetworkBehaviour
+{
 
     public GameObject sData;
     public GameObject[] players;
 
-    public struct pilot
+    public struct Pilot
     {
         public GameObject pilotObject;
         public string pilotName;
@@ -18,20 +20,20 @@ public class serverListener : NetworkBehaviour {
         public float yinput2;
     }
 
-    pilot thePilot = new pilot();
+    private Pilot thePilot = new Pilot();
     private bool canSendData = true;
 
-    public pilot GetPilot()
+    public Pilot GetPilot()
     {
-        //get a list of all the players
+        // Get a list of all the players
         players = GameObject.FindGameObjectsWithTag("Player");
 
         for (int i = 0; i < players.Length; i++)
         {
-            //if this player is the pilot
+            // if this player is the pilot
             if (players[i].GetComponent<gameInputs>().pilot)
             {
-                pilot p = new pilot();
+                Pilot p = new Pilot();
                 p.pilotObject = players[i];
                 p.pilotName = players[i].name;
                 p.xinput = players[i].GetComponent<gameInputs>().outputX;
@@ -42,20 +44,36 @@ public class serverListener : NetworkBehaviour {
                 return p;
             }
         }
-        pilot nullPilot = new pilot();
+        Pilot nullPilot = new Pilot();
         nullPilot.pilotName = "no pilot found";
         nullPilot.pilotObject = null;
         return nullPilot;
     }
 
-    void ChangeInput()
+    public Pilot GetLocalPilot()
     {
-        //Debug.Log("Updating server with input");
-        sData.GetComponent<serverData>().OnValueChanged("inputXaxis", thePilot.xinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputYaxis" , thePilot.yinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputZaxis", thePilot.zinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputXaxis2", thePilot.xinput2);
-        sData.GetComponent<serverData>().OnValueChanged("inputYaxis2", thePilot.yinput2);
+        players = GameObject.FindGameObjectsWithTag("Player");
+        for (int i = 0; i < players.Length; i++)
+        {
+            var gameInputs = players[i].GetComponent<gameInputs>();
+            if (gameInputs.isLocalPlayer)
+            {
+                Pilot p = new Pilot();
+                p.pilotObject = players[i];
+                p.pilotName = players[i].name;
+                p.xinput = players[i].GetComponent<gameInputs>().outputX;
+                p.yinput = players[i].GetComponent<gameInputs>().outputY;
+                p.zinput = players[i].GetComponent<gameInputs>().output;
+                p.xinput2 = players[i].GetComponent<gameInputs>().outputX2;
+                p.yinput2 = players[i].GetComponent<gameInputs>().outputX2;
+                return p;
+            }
+        }
+
+        Pilot nullPilot = new Pilot();
+        nullPilot.pilotName = "no pilot found";
+        nullPilot.pilotObject = null;
+        return nullPilot;
     }
 
     void ChangePilot()
@@ -69,7 +87,8 @@ public class serverListener : NetworkBehaviour {
         canSendData = true;
     }
 
-    void Update ()
+    [ServerCallback]
+    private void Update()
     {
         if (!isServer)
             return;
@@ -81,12 +100,8 @@ public class serverListener : NetworkBehaviour {
         else
         {
             thePilot = GetPilot();
-
-            //Debug.Log("Pilot name: " + thePilot.pilotName + " pilot object: " + thePilot.pilotObject);
-
             if (thePilot.pilotObject != null && canSendData)
             {
-                
                 ChangeInput();
                 ChangePilot();
                 canSendData = false;
@@ -99,5 +114,27 @@ public class serverListener : NetworkBehaviour {
                 StartCoroutine(Wait(0.02f));
             }
         }
+
 	}
+
+    [Server]
+    void ChangeInput()
+    {
+        // Apply server joystick override if needed.
+        if (serverUtils.GetServerBool("joystickOverride"))
+            UpdateInputFrom(GetLocalPilot());
+        else if (serverUtils.GetServerBool("joystickPilot"))
+            UpdateInputFrom(thePilot);
+    }
+
+    [Server]
+    void UpdateInputFrom(Pilot p)
+    {
+        sData.GetComponent<serverData>().OnValueChanged("inputXaxis", p.xinput);
+        sData.GetComponent<serverData>().OnValueChanged("inputYaxis", p.yinput);
+        sData.GetComponent<serverData>().OnValueChanged("inputZaxis", p.zinput);
+        sData.GetComponent<serverData>().OnValueChanged("inputXaxis2", p.xinput2);
+        sData.GetComponent<serverData>().OnValueChanged("inputYaxis2", p.yinput2);
+    }
+
 }

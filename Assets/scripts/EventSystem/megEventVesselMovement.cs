@@ -43,6 +43,15 @@ namespace Meg.EventSystem
         // Public Methods
         // ------------------------------------------------------------
 
+        /** Execute this event's effect, regardless of timing. */
+        public override void Execute()
+        {
+            base.Execute();
+
+            var json = SaveVesselMovement();
+            file.PostVesselMovementState(Vessel, json);
+        }
+
         /** Capture current vessel simulation state. */
         public void Capture()
         {
@@ -135,8 +144,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            var json = SaveVesselMovement();
-            file.PostVesselMovementState(Vessel, json);
+            Execute();
         }
 
         /** Update this event internally. */

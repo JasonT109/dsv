@@ -1,46 +1,54 @@
 using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using Meg.Networking;
 
-public class SubControl : MonoBehaviour 
+public class SubControl : NetworkBehaviour 
 {
-
-
-    public float inputXaxis;
-
-    public float inputYaxis;
-
-    public float inputZaxis;
-
-    public float inputXaxis2;
-
-    public float inputYaxis2;
-
-    public float depth;
-
-    private Rigidbody rb;
+    /** Whether input to sub is completely disabled. */
+    [SyncVar]
     public bool disableInput = false;
-    private Vector3 rotation;
-    public float currentThrust = 0.0f;
-    public float currentDiveThrust = 0.0f;
 
-    private float thrust = 25.258f;
-    public float Acceleration = 1.0f;
-    public float yawSpeed = 400f;
-    public float pitchSpeed = 100f;
-    public float rollSpeed = 1500f;
-
-    public float MaxSpeed = 200f;
-    public float MinSpeed = -100f;
-
-    public bool isAutoStabilised;
-    public bool IsPitchAlsoStabalised;
+    /** Whether input to sub is overridden by the server. */
+    [SyncVar]
     public bool JoystickOverride;
 
-    public bool IsJoystickSwapped = false;
+    /** Whether input to sub can come from the pilot. */
+    [SyncVar]
+    public bool JoystickPilot = true;
 
-    // private float bankAmount = 1.0f;
-    // private Vector3 bankAxis = new Vector3(0F, 0F, -1F);
+    [SyncVar]
+    public float inputXaxis;
+    [SyncVar]
+    public float inputYaxis;
+    [SyncVar]
+    public float inputZaxis;
+    [SyncVar]
+    public float inputXaxis2;
+    [SyncVar]
+    public float inputYaxis2;
+    [SyncVar]
+    public bool isAutoStabilised;
+    [SyncVar]
+    public bool IsPitchAlsoStabilised;
+    [SyncVar]
+    public float Acceleration = 1.0f;
+    [SyncVar]
+    public float yawSpeed = 400f;
+    [SyncVar]
+    public float pitchSpeed = 100f;
+    [SyncVar]
+    public float rollSpeed = 1500f;
+    [SyncVar]
+    public float MaxSpeed = 200f;
+    [SyncVar]
+    public float MinSpeed = -100f;
+
+
+    private float currentThrust = 0.0f;
+    private Rigidbody rb;
+    private Vector3 rotation;
+    private float thrust = 25.258f;
     private float rollResult;
     private float pitchResult;
     private float yawResult;
@@ -87,113 +95,42 @@ public class SubControl : MonoBehaviour
 
         if (!disableInput)
         {
-            //this.transform.rotation = Quaternion.Euler(this.transform.rotation.x, this.transform.rotation.y, this.transform.rotation.z);
-
-            //apply the orientation forces
+            // Apply the orientation forces
             rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
             rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
             rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
 
-            //adjust mix for pitch when doing a banking turn
+            // Adjust mix for pitch when doing a banking turn.
             rb.AddRelativeTorque(PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
 
-            //apply the thrust forces    
-            if(currentThrust < MaxSpeed && currentThrust > MinSpeed)
-            {
+            // Apply the thrust forces.
+            if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
                 currentThrust = inputZaxis * (Acceleration * thrust);
-            }
             
-            if(currentThrust > MaxSpeed)
-            {
+            if (currentThrust > MaxSpeed)
                 currentThrust = MaxSpeed - 0.01f;
-            }
             
-            if(currentThrust < MinSpeed)
-            {
+            if (currentThrust < MinSpeed)
                 currentThrust = MinSpeed + 0.01f;
-            }
 
             rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
-
-
-            //apply the dive forces    
-            //if(currentDiveThrust < MaxSpeed && currentDiveThrust > MinSpeed)
-            //{
-            //    currentDiveThrust = inputYaxis2 * (Acceleration * thrust);
-            //}
-            //
-            //if(currentDiveThrust > MaxSpeed)
-            //{
-            //    currentDiveThrust = MaxSpeed - 0.01f;
-            //}
-            //
-            //if(currentDiveThrust < MinSpeed)
-            //{
-            //    currentDiveThrust = MinSpeed + 0.01f;
-            //}
-            //
-            //rb.AddRelativeForce(0, currentDiveThrust * thrust * Time.deltaTime, 0);
-
         }
 
-        //if roll is almost right, stop adjusting (PID dampening todo here?)
-        if(roll > 0.09f && roll < 364.91f && isAutoStabilised)
-        {
+        // If roll is almost right, stop adjusting (PID dampening todo here?)
+        if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
             AutoStabilise();
-        }
-        else if(pitch > 0.09f && roll < 364.91f && isAutoStabilised)
-        {
+        else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
             AutoStabilise();
-        }
 
-
-        //ApplyDataChanges();
     }
 
-    //this function 
     public void UpdateData()
     {
         serverData Data;
         Data = this.GetComponent<serverData>();
 
-        if(JoystickOverride)
-        {
-            // axis are update directly from sliders in ship debug. refer to code
-            // coming from debug ship panel object
-        }
-        else
-        {
-            inputXaxis = Data.inputXaxis;
-            inputYaxis = Data.inputYaxis;
-            inputZaxis = Data.inputZaxis;
-            inputXaxis2 = Data.inputXaxis2;
-            inputYaxis2 = Data.inputYaxis2;
-
-            //if(!IsJoystickSwapped)
-            //{
-            //    inputXaxis = Data.inputXaxis;
-            //    inputYaxis = Data.inputYaxis;
-            //    inputZaxis = Data.inputZaxis;
-            //    inputXaxis2 = Data.inputXaxis2;
-            //    inputYaxis2 = Data.inputYaxis2;
-            //}
-            //else
-            //{
-            //    inputXaxis = Data.inputXaxis2;
-            //    inputYaxis = Data.inputYaxis2;
-            //
-            //    inputZaxis = Data.inputYaxis;
-            //
-            //    inputXaxis2 = Data.inputXaxis;
-            //    inputYaxis2 = Data.inputYaxis;
-            //}
-        }
-
-        disableInput = Data.disableInput;
-
         roll = Data.transform.eulerAngles.z;
         pitch = Data.transform.eulerAngles.x;
-
     }
 
     public void ApplyDataChanges()
@@ -211,7 +148,7 @@ public class SubControl : MonoBehaviour
 
         Vector3 torqueVector = Vector3.Cross(predictedUP, Vector3.up);
 
-        if(!IsPitchAlsoStabalised)
+        if(!IsPitchAlsoStabilised)
         {
             torqueVector = Vector3.Project(torqueVector, transform.forward);
         }

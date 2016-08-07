@@ -1,0 +1,42 @@
+{
+	"groups":
+	[
+		{
+			"id" : "Battery Failure",
+			"paused" : true,
+			"minimized" : true,
+			"events" :
+			[
+				{
+					"type" : "Value",
+					"triggerTime" : 3,
+					"completeTime" : 2,
+					"serverParam" : "b1",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 4,
+					"completeTime" : 4,
+					"serverParam" : "b2",
+					"serverValue" : 0
+				},
+								{
+					"type" : "Value",
+					"triggerTime" : 3,
+					"completeTime" : 5,
+					"serverParam" : "b3",
+					"serverValue" : 0
+				},
+				{
+					"type" : "Value",
+					"triggerTime" : 6,
+					"completeTime" : 3,
+					"serverParam" : "b4",
+					"serverValue" : 0
+				},
+
+			]
+		},	
+	]
+}
