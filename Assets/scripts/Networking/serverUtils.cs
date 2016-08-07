@@ -302,8 +302,11 @@ namespace Meg.Networking
             "pitchangle",
             "pitchspeed",
             "pressure",
+            "scene",
+            "shot",
             "rollangle",
             "rollspeed",
+            "take",
             "thruster_heat_l",
             "thruster_heat_r",
             "timetointercept",
@@ -419,6 +422,9 @@ namespace Meg.Networking
             { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
             { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360 } },
             { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
+            { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int } },
+            { "shot", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
+            { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
         };
         
         /** Return information about a given parameter. */
@@ -439,6 +445,12 @@ namespace Meg.Networking
 
             switch (valueName.ToLower())
             {
+                case "scene":
+                    return ServerData.scene;
+                case "shot":
+                    return ServerData.shot;
+                case "take":
+                    return ServerData.take;
                 case "depth":
                     return ServerData.depth;
                 case "xpos":
@@ -788,6 +800,12 @@ namespace Meg.Networking
 
             switch (valueName.ToLower())
             {
+                case "scene":
+                    return ServerData.scene.ToString();
+                case "shot":
+                    return ServerData.shot.ToString();
+                case "take":
+                    return ServerData.take.ToString();
                 case "depth":
                     int dInt = (int)ServerData.depth;
                     return dInt.ToString();

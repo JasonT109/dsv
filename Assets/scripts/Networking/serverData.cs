@@ -7,6 +7,12 @@ public class serverData : NetworkBehaviour
 {
     #region SyncVars
     [SyncVar]
+    public int scene = 1;
+    [SyncVar]
+    public int shot = 1;
+    [SyncVar]
+    public int take = 1;
+    [SyncVar]
     public float depth;
     [SyncVar]
     public float pressure;
@@ -232,6 +238,15 @@ public class serverData : NetworkBehaviour
 
         switch (valueName.ToLower())
         {
+            case "scene":
+                scene = Mathf.RoundToInt(newValue);
+                break;
+            case "shot":
+                shot = Mathf.RoundToInt(newValue);
+                break;
+            case "take":
+                take = Mathf.RoundToInt(newValue);
+                break;
             case "depth":
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;

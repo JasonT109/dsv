@@ -1,0 +1,21 @@
+{
+	"groups":[
+		{
+			"id":"SCENE",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"scene"
+				},
+				{
+					"type":"Value",
+					"serverParam":"shot"
+				},
+				{
+					"type":"Value",
+					"serverParam":"take"
+				}
+			]
+		}
+	]
+}
