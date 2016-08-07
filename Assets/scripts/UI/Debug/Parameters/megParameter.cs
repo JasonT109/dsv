@@ -20,19 +20,22 @@ namespace Meg.Parameters
         // Properties
         // ------------------------------------------------------------
 
-        /** The type of event. */
+        /** The type of parameter. */
         public readonly megParameterType type;
 
-        /** File that this event belongs to. */
-        public megParameterFile file { get { return _file; } }
+        /** Group that this parameter belongs to. */
+        public megParameterFile file { get { return _group.file; } }
 
-        /** Whether event is selected. */
-        public bool selected { get { return file != null && file.selectedParameter == this; } }
+        /** Group that this parameter belongs to. */
+        public megParameterGroup group { get { return _group; } }
 
-        /** Whether event is minimized. */
+        /** Whether parameter is selected. */
+        public bool selected { get { return group != null && file.selectedParameter == this; } }
+
+        /** Whether parameter is minimized. */
         public bool minimized { get { return !selected; } }
 
-        /** Id for this event. */
+        /** Id for this parameter. */
         public virtual string name
             { get { return ToString(); } }
 
@@ -40,18 +43,18 @@ namespace Meg.Parameters
         // Members
         // ------------------------------------------------------------
 
-        /** The file that this event belongs to. */
-        private readonly megParameterFile _file;
+        /** The group that this parameter belongs to. */
+        private readonly megParameterGroup _group;
 
 
         // Lifecycle
         // ------------------------------------------------------------
 
-        /** Constructor for an event. */
-        protected megParameter(megParameterType type, megParameterFile file = null)
+        /** Constructor for an parameter. */
+        protected megParameter(megParameterType type, megParameterGroup group = null)
         {
             this.type = type;
-            _file = file;
+            _group = group;
         }
 
 

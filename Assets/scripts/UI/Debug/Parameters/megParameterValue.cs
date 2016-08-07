@@ -18,8 +18,8 @@ namespace Meg.Parameters
         /** Value to apply to server data. */
         public float serverValue
         {
-            get { return serverUtils.GetServerData(serverParam); }
-            set { serverUtils.SetServerData(serverParam, value);}
+            get { return GetServerData(serverParam); }
+            set { PostServerData(serverParam, value);}
         }
 
 
@@ -27,7 +27,7 @@ namespace Meg.Parameters
         // ------------------------------------------------------------
 
         /** Constructor for an event. */
-        public megParameterValue(megParameterFile file = null) : base(megParameterType.Value, file) { }
+        public megParameterValue(megParameterGroup group = null) : base(megParameterType.Value, group) { }
 
 
         // Public Methods

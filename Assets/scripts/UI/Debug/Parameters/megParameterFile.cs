@@ -18,10 +18,10 @@ namespace Meg.Parameters
         // ------------------------------------------------------------
 
         /** The parameters managed by this file. */
-        public List<megParameter> parameters = new List<megParameter>();
+        public List<megParameterGroup> groups = new List<megParameterGroup>();
 
         /** Whether file is empty. */
-        public bool empty { get { return parameters.Count == 0; } }
+        public bool empty { get { return groups.Count == 0; } }
 
         /** Whether file can be added to. */
         public bool canAdd { get { return true; } }
@@ -34,6 +34,9 @@ namespace Meg.Parameters
 
         /** Whether file can be saved at the moment. */
         public bool canSave { get { return !empty; } }
+
+        /** The selected parameter group (if any). */
+        public megParameterGroup selectedGroup { get; set; }
 
         /** The selected parameter (if any). */
         public megParameter selectedParameter { get; set; }
@@ -76,50 +79,41 @@ namespace Meg.Parameters
         // Public Methods
         // ------------------------------------------------------------
 
-        /** Add an parameter of a given type. */
-        public megParameter AddParameter(megParameterType type)
+        /** Add an group of a given type. */
+        public megParameterGroup AddGroup()
         {
-            var parameter = CreateParameter(type);
-            parameters.Add(parameter);
-            return parameter;
+            var group = CreateGroup();
+            groups.Add(group);
+            return group;
         }
 
-        /** Insert an parameter of a given type after the given parameter. */
-        public megParameter InsertParameter(megParameter insertAfter, megParameterType type)
+        /** Insert an group of a given type after the given group. */
+        public megParameterGroup InsertGroup(megParameterGroup insertAfter)
         {
-            var parameter = CreateParameter(type);
-            var insertIndex = parameters.IndexOf(insertAfter);
+            var group = CreateGroup();
+            var insertIndex = groups.IndexOf(insertAfter);
             if (insertIndex >= 0)
-                parameters.Insert(insertIndex + 1, parameter);
+                groups.Insert(insertIndex + 1, group);
             else
-                parameters.Add(parameter);
+                groups.Add(group);
 
-            return parameter;
+            return group;
         }
 
-        /** Create an event of a given type. */
-        public megParameter CreateParameter(megParameterType type)
+        /** Create an group of a given type. */
+        public megParameterGroup CreateGroup()
+        { return new megParameterGroup(this); }
+
+        /** Remove an group from the group. */
+        public void RemoveGroup(megParameterGroup group)
         {
-            switch (type)
-            {
-                case megParameterType.Value:
-                    return new megParameterValue(this);
-                default:
-                    return new megParameterValue(this);
-            }
+            groups.Remove(group);
         }
 
-        /** Remove an parameter from the parameter. */
-        public void RemoveParameter(megParameter parameter)
-        {
-            parameters.Remove(parameter);
-        }
-
-        /** Clear the file of all parameters. */
+        /** Clear the file of all groups. */
         public void Clear()
         {
-            parameters.Clear();
-
+            groups.Clear();
             if (Cleared != null)
                 Cleared(this);
         }
@@ -162,10 +156,10 @@ namespace Meg.Parameters
         {
             var json = new JSONObject();
             var parametersJson = new JSONObject(JSONObject.Type.ARRAY);
-            foreach (var g in parameters)
+            foreach (var g in groups)
                 parametersJson.Add(g.Save());
 
-            json.AddField("parameters", parametersJson);
+            json.AddField("groups", parametersJson);
             return json;
         }
 
@@ -173,13 +167,11 @@ namespace Meg.Parameters
         public virtual void Load(JSONObject json)
         {
             // Load in value parameters.
-            var parametersJson = json.GetField("parameters");
+            var parametersJson = json.GetField("groups");
             for (var i = 0; i < parametersJson.Count; i++)
             {
-                var s = parametersJson[i]["type"].str;
-                var type = (megParameterType)Enum.Parse(typeof(megParameterType), s, true);
-                var parameter = AddParameter(type);
-                parameter.Load(parametersJson[i]);
+                var group = AddGroup();
+                group.Load(parametersJson[i]);
             }
 
             if (Loaded != null)

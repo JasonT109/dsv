@@ -18,11 +18,20 @@ public class debugParameterFileUi : MonoBehaviour
     /** Header for the current parameters file. */
     public Text Header;
 
-    /** Container for parameters parameters. */
-    public Transform Parameters;
+    /** Container for parameter groups. */
+    public Transform Groups;
 
     /** Load button. */
     public Button LoadButton;
+
+    /** Add group button. */
+    public Button AddButton;
+
+    /** Remove group button. */
+    public Button RemoveButton;
+
+    /** Clear button. */
+    public Button ClearButton;
 
     /** Add group button. */
     public Button AddParameterButton;
@@ -31,22 +40,19 @@ public class debugParameterFileUi : MonoBehaviour
     public Button RemoveParameterButton;
 
     /** Clear button. */
-    public Button ClearButton;
+    public Button ClearParametersButton;
 
     /** Save button. */
     public Button SaveButton;
 
-    /** Parameter properties. */
-    public debugParameterListUi Properties;
-
-    /** Event folder. */
+    /** Parameter folder. */
     public debugSceneFolderUi Folder;
 
 
     [Header("Prefabs")]
 
-    /** Prefab to use for an parameter group UI node. */
-    public debugParameterUi ParameterUiPrefab;
+    /** Prefab to use for a parameter group UI node. */
+    public debugParameterGroupUi ParameterGroupUiPrefab;
 
 
     /** The current file. */
@@ -59,8 +65,8 @@ public class debugParameterFileUi : MonoBehaviour
     /** The current parameter file. */
     private readonly megParameterFile _file = new megParameterFile();
 
-    /** Event group UI nodes. */
-    private readonly List<debugParameterUi> _parameters = new List<debugParameterUi>();
+    /** Parameter group UI nodes. */
+    private readonly List<debugParameterGroupUi> _groups = new List<debugParameterGroupUi>();
 
     /** Whether we're updating the UI right now. */
     private bool _updatingUi;
@@ -113,26 +119,46 @@ public class debugParameterFileUi : MonoBehaviour
     }
 
     /** Add a new group to the file. */
-    public void AddParameter()
+    public void AddGroup()
     {
         if (!_file.canAdd)
             return;
 
-        var group = _file.InsertParameter(_file.selectedParameter, megParameterType.Value);
-        var ui = AddParameterUi(group);
+        var group = _file.InsertGroup(_file.selectedGroup);
+        var ui = AddGroupUi(group);
 
-        HandleParameterSelected(ui);
+        HandleGroupSelected(ui);
     }
 
     /** Remove the selected group from the file. */
-    public void RemoveParameter()
+    public void RemoveGroup()
     {
         if (!_file.canRemove)
             return;
 
-        var group = _file.selectedParameter;
-        _file.RemoveParameter(group);
-        RemoveParameterUi(group);
+        var group = _file.selectedGroup;
+        _file.RemoveGroup(group);
+        RemoveGroupUi(group);
+    }
+
+    public void AddValueParameter()
+    {
+        if (_file.selectedGroup == null)
+            return;
+
+        _file.selectedGroup.AddParameter(megParameterType.Value);
+    }
+
+    public void RemoveParameter()
+    {
+        if (_file.selectedParameter != null)
+            _file.selectedParameter.group.RemoveParameter(_file.selectedParameter);
+    }
+
+    public void ClearParameters()
+    {
+        if (_file.selectedGroup != null)
+            _file.selectedGroup.Clear();
     }
 
     /** Clear the file contents. */
@@ -189,7 +215,7 @@ public class debugParameterFileUi : MonoBehaviour
     /** Initialize the file UI. */
     private void InitUi()
     {
-        AddParameterUis(_file);
+        AddGroupUis(_file);
 
         // Force a UI reflow to ensure group layouts are correct.
         Canvas.ForceUpdateCanvases();
@@ -200,58 +226,71 @@ public class debugParameterFileUi : MonoBehaviour
     {
         _updatingUi = true;
 
+        AddButton.interactable = _file.canAdd;
+        RemoveButton.interactable = _file.canRemove && _file.selectedParameter != null;
+        ClearButton.interactable = _file.canClear;
         AddParameterButton.interactable = _file.canAdd;
         RemoveParameterButton.interactable = _file.canRemove && _file.selectedParameter != null;
-        ClearButton.interactable = _file.canClear;
+        ClearParametersButton.interactable = _file.canClear;
         SaveButton.interactable = _file.canSave;
 
         _updatingUi = false;
     }
 
-    /** Remove all parameter parameters. */
-    private void RemoveParameterUis()
+    /** Remove all event groups. */
+    private void RemoveGroupUis()
     {
-        foreach (var group in _parameters)
+        foreach (var group in _groups)
             Destroy(group.gameObject);
 
-        _parameters.Clear();
+        _groups.Clear();
     }
 
     /** Remove a single group ui. */
-    private void RemoveParameterUi(megParameter group)
+    private void RemoveGroupUi(megParameterGroup group)
     {
-        var ui = _parameters.FirstOrDefault(g => g.Parameter == group);
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
         if (!ui)
             return;
 
-        _parameters.Remove(ui);
+        _groups.Remove(ui);
         Destroy(ui.gameObject);
     }
 
-    /** Add parameter from a file. */
-    private void AddParameterUis(megParameterFile file)
+    /** Add event groups from a file. */
+    private void AddGroupUis(megParameterFile file)
     {
-        RemoveParameterUis();
+        RemoveGroupUis();
 
-        foreach (var group in _file.parameters)
-            AddParameterUi(group);
+        foreach (var group in _file.groups)
+            AddGroupUi(group);
     }
 
-    /** Add UI for an parameter group. */
-    private debugParameterUi AddParameterUi(megParameter group)
+    /** Add UI for an event group. */
+    private debugParameterGroupUi AddGroupUi(megParameterGroup group)
     {
-        var ui = Instantiate(ParameterUiPrefab);
-        ui.transform.SetParent(Parameters, false);
-        ui.Parameter = group;
-        ui.OnSelected += HandleParameterSelected;
+        var ui = Instantiate(ParameterGroupUiPrefab);
+        ui.transform.SetParent(Groups, false);
+        ui.Group = group;
+        ui.OnSelected += HandleGroupSelected;
 
-        _parameters.Add(ui);
+        _groups.Add(ui);
         return ui;
     }
 
-    private void HandleParameterSelected(debugParameterUi ui)
+    private void HandleGroupSelected(debugParameterGroupUi groupUi, debugParameterUi eventUi = null)
     {
-        File.selectedParameter = ui.Parameter;
+        var g = groupUi.Group;
+        var e = eventUi ? eventUi.Parameter : null;
+        if (g == _file.selectedGroup && e == null)
+            g = null;
+
+        if (e == _file.selectedParameter)
+            groupUi.ToggleParameter(e);
+        else
+            groupUi.ExpandParameter(e);
+
+        _file.selectedGroup = g;
     }
 
 }
