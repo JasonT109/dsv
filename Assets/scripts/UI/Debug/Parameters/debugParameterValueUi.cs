@@ -54,6 +54,11 @@ public class debugParameterValueUi : debugParameterUi
 
     protected override void UpdateParameterUi()
     {
+        if (ServerValueInput.isFocused)
+            return;
+
+        UpdateServerValueSlider();
+        UpdateServerValueInput();
     }
 
     private void UpdateServerParamInput()

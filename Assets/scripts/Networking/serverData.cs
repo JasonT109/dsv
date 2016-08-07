@@ -451,7 +451,8 @@ public class serverData : NetworkBehaviour
                 break;
             case "velocity":
                 velocity = newValue;
-                rb.velocity = transform.forward * newValue;
+                if (rb)
+                    rb.velocity = transform.forward * newValue;
                 break;
             case "crewheartrate1":
                 CrewData.crewHeartRate1 = newValue;

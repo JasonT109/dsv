@@ -416,6 +416,9 @@ namespace Meg.Networking
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1 } },
             { "inputxaxis2", new ParameterInfo { minValue = -1, maxValue = 1 } },
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1 } },
+            { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
+            { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360 } },
+            { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90 } },
         };
         
         /** Return information about a given parameter. */
