@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class debugShipPhysics : MonoBehaviour 
@@ -48,7 +48,7 @@ public class debugShipPhysics : MonoBehaviour
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
             if(Root)
             {
-                Root.GetComponent<SubControl>().IsPitchAlsoStabalised = true;
+                Root.GetComponent<SubControl>().IsPitchAlsoStabilised = true;
             }
         }
         else
@@ -56,7 +56,7 @@ public class debugShipPhysics : MonoBehaviour
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
             if(Root)
             {
-                Root.GetComponent<SubControl>().IsPitchAlsoStabalised = false;
+                Root.GetComponent<SubControl>().IsPitchAlsoStabilised = false;
             }
         }
 
@@ -65,8 +65,8 @@ public class debugShipPhysics : MonoBehaviour
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
             if(Root)
             {
-                Root.GetComponent<serverData>().IsJoystickSwapped = true;
-                JoyStickSwitcher.GetComponent<buttonControl>().warning = true;
+                // Root.GetComponent<serverData>().IsJoystickSwapped = true;
+                // JoyStickSwitcher.GetComponent<buttonControl>().warning = true;
             }
         }
         else
@@ -74,8 +74,8 @@ public class debugShipPhysics : MonoBehaviour
             GameObject Root = GameObject.FindGameObjectWithTag("ServerData");
             if(Root)
             {
-                Root.GetComponent<serverData>().IsJoystickSwapped = false;
-                JoyStickSwitcher.GetComponent<buttonControl>().warning = false;
+                // Root.GetComponent<serverData>().IsJoystickSwapped = false;
+                // JoyStickSwitcher.GetComponent<buttonControl>().warning = false;
             } 
         }
 

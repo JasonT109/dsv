@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using Meg.Parameters;
+using Meg.Networking;
 
 public class debugParameterValueUi : debugParameterUi
 {
@@ -26,7 +27,6 @@ public class debugParameterValueUi : debugParameterUi
     /** The value parameter. */
     public megParameterValue ValueParameter
         { get { return Parameter as megParameterValue; } }
-
 
 
     // Private Methods
@@ -63,9 +63,17 @@ public class debugParameterValueUi : debugParameterUi
 
     private void UpdateServerValueSlider()
     {
-        var maxValue = Mathf.Max(ValueParameter.serverValue, DefaultServerValueSliderLength);
+        var key = ValueParameter.serverParam;
+        var value = ValueParameter.serverValue;
+        var info = serverUtils.GetServerDataInfo(key);
+        var minValue = Mathf.Min(value, info.minValue);
+        var maxValue = Mathf.Max(value, info.maxValue);
+
+        ServerValueSlider.minValue = minValue;
         ServerValueSlider.maxValue = maxValue;
         ServerValueSlider.value = ValueParameter.serverValue;
+        ServerValueSlider.wholeNumbers = (info.type == serverUtils.ParameterType.Bool) 
+            || (info.type == serverUtils.ParameterType.Int);
     }
 
     private void UpdateServerValueInput()
