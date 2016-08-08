@@ -1,7 +1,7 @@
 {
 	"groups":[
 		{
-			"id":"BATTERIES",
+			"id":"BATTERY BANKS",
 			"parameters":[
 				{
 					"type":"Value",
@@ -30,6 +30,55 @@
 				{
 					"type":"Value",
 					"serverParam":"b7"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTemp"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryCurrent"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeRemaining"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeEnabled"
+				}
+			]
+		},
+		{
+			"id":"BATTERY STATS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"batteryTemp"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryCurrent"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLife"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLifeMax"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLifeEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeRemaining"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeEnabled"
 				}
 			]
 		}

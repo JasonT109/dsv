@@ -254,6 +254,24 @@ public class serverData : NetworkBehaviour
             case "batterytemp":
                 BatteryData.batteryTemp = newValue;
                 break;
+            case "batterycurrent":
+                BatteryData.batteryCurrent = newValue;
+                break;
+            case "batterylife":
+                BatteryData.batteryLife = newValue;
+                break;
+            case "batterylifeenabled":
+                BatteryData.batteryLifeEnabled = newValue > 0;
+                break;
+            case "batterylifemax":
+                BatteryData.batteryLifeMax = newValue;
+                break;
+            case "batterytimeremaining":
+                BatteryData.batteryTimeRemaining = newValue;
+                break;
+            case "batterytimeenabled":
+                BatteryData.batteryTimeEnabled = newValue > 0;
+                break;
             case "b1":
                 BatteryData.bank1 = newValue;
                 break;
@@ -819,6 +837,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "joystickpilot":
                 SubControl.JoystickPilot = newValue;
+                break;
+            case "batterylifeenabled":
+                BatteryData.batteryLifeEnabled = newValue;
+                break;
+            case "batterytimeenabled":
+                BatteryData.batteryTimeEnabled = newValue;
                 break;
         }
     }

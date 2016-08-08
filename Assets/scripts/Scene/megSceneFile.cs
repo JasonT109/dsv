@@ -107,7 +107,7 @@ namespace Meg.Scene
         private JSONObject SaveParameters()
         {
             var json = new JSONObject();
-            foreach (var parameter in serverUtils.Parameters)
+            foreach (var parameter in serverUtils.WriteableParameters)
                 json.AddField(parameter, serverUtils.GetServerData(parameter));
 
             return json;

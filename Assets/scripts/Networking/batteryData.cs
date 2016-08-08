@@ -12,7 +12,11 @@ public class batteryData : NetworkBehaviour
     /** Sub battery bank configuration. */
     public struct BatteryBankConfig
     {
+        /** Number of battery banks. */
         public int Banks;
+
+        /** Overall capacity in kWh. */
+        public float Life;
     }
 
 
@@ -23,12 +27,14 @@ public class batteryData : NetworkBehaviour
     public static readonly BatteryBankConfig BigSubBatteryConfig = new BatteryBankConfig
     {
         Banks = 7,
+        Life = 128,
     };
 
     /** Battery configuration for a glider. */
     public static readonly BatteryBankConfig GliderBatteryConfig = new BatteryBankConfig
     {
         Banks = 4,
+        Life = 96,
     };
 
 
@@ -40,9 +46,33 @@ public class batteryData : NetworkBehaviour
     [SyncVar]
     public float battery;
 
-    /** Battery temperature (�c). */
+    /** Battery temperature (degrees c). */
     [SyncVar]
     public float batteryTemp = 5.2f;
+
+    /** Battery current (amps). */
+    [SyncVar]
+    public float batteryCurrent = 12.7f;
+
+    /** Battery life remaining (KWh). */
+    [SyncVar]
+    public float batteryLife = 128;
+
+    /** Whether battery life is automatically updated. */
+    [SyncVar]
+    public bool batteryLifeEnabled = true;
+
+    /** Battery life maximum (KWh). */
+    [SyncVar]
+    public float batteryLifeMax = 128;
+
+    /** Battery time remaining (seconds). */
+    [SyncVar]
+    public float batteryTimeRemaining = 4 * 3600 + 13 * 60;
+
+    /** Whether battery time counts down. */
+    [SyncVar]
+    public bool batteryTimeEnabled = true;
 
     [SyncVar]
     public float bank1;
@@ -63,9 +93,17 @@ public class batteryData : NetworkBehaviour
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Startup. */
+    [ServerCallback]
+    private void Start()
+    {
+        // Initialize max battery life.
+        batteryLifeMax = BatteryConfiguration.Life;
+    }
+
     /** Server update. */
     [ServerCallback]
-    public void Update()
+    private void Update()
     {
         var config = BatteryConfiguration;
 
@@ -73,8 +111,15 @@ public class batteryData : NetworkBehaviour
         battery = 0;
         for (var i = 0; i < config.Banks; i++)
             battery += GetMainBatteryTank(i + 1);
-
         battery /= config.Banks;
+
+        // Update battery life remaining.
+        if (batteryLifeEnabled)
+            batteryLife = batteryLifeMax * (battery * 0.01f);
+
+        // Update battery time remaining.
+        if (batteryTimeEnabled)
+            batteryTimeRemaining = Mathf.Max(0, batteryTimeRemaining - Time.deltaTime);
     }
 
 

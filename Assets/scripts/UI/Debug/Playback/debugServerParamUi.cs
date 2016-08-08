@@ -21,8 +21,8 @@ public class debugServerParamUi : MonoBehaviour
 	private void Update()
 	{
 	    var text = Text.text.ToLower();
-	    var valid = serverUtils.Parameters.Contains(text);
-        var prefix = valid || serverUtils.Parameters.Any(p => p.StartsWith(text));
+	    var valid = serverUtils.WriteableParameters.Contains(text);
+        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(text));
         var target = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
 
 	    Text.color = Color.Lerp(Text.color, target, Time.deltaTime / SmoothTime);

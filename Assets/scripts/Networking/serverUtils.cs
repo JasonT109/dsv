@@ -218,8 +218,31 @@ namespace Meg.Networking
         public static bool IsServer()
             { return ServerData && ServerData.isServer; }
 
+        /** The set of all server data parameters that can be written to. */
+        private static HashSet<string> _writeableParameters;
+        public static HashSet<string> WriteableParameters
+        {
+            get
+            {
+                if (_writeableParameters != null)
+                    return _writeableParameters;
+
+                _writeableParameters = new HashSet<string>();
+                foreach (var parameter in Parameters)
+                    if (!GetServerDataInfo(parameter).readOnly)
+                        _writeableParameters.Add(parameter.ToLower());
+
+                return _writeableParameters;
+            }
+        }
+
+        /** The set of all server data parameters. */
+        private static HashSet<string> _parameters;
+        public static HashSet<string> Parameters
+            { get { return _parameters ?? (_parameters = new HashSet<string>(_parameterSet.Select(x => x.ToLower()))); } }
+
         /** The set of all server data parameters that can be set or read. */
-        public static readonly HashSet<string> Parameters = new HashSet<string>
+        private static readonly HashSet<string> _parameterSet = new HashSet<string>
         {
             "acceleration",
             "air",
@@ -236,12 +259,20 @@ namespace Meg.Networking
             "b7",
             "ballastpressure",
             "battery",
+            "batterycurrent",
+            "batterylife",
+            "batterylifeenabled",
+            "batterylifemax",
             "batterytemp",
+            "batterytimeenabled",
+            "batterytimeremaining",
             "cabinhumidity",
             "cabinoxygen",
             "cabinpressure",
+            "cabinpressurepsi",
             "cabintemp",
             "co2",
+            "co2ppm",
             "commssignalstrength",
             "crewbodytemp1",
             "crewbodytemp2",
@@ -440,17 +471,42 @@ namespace Meg.Networking
         public class ParameterInfo
         {
             public ParameterType type = ParameterType.Float;
-            public float minValue = 0;
+            public float minValue;
             public float maxValue = 100;
-            public bool readOnly = false;
+            public bool readOnly;
         }
 
         /** Default parameter configuration. */
         public static readonly ParameterInfo DefaultParameterInfo = new ParameterInfo();
 
-        /** Metadata about various server parameters. */
-        public static readonly Dictionary<string, ParameterInfo> ParameterInfos = new Dictionary<string, ParameterInfo>
+        /** The set of all server data parameter info entries. */
+        private static Dictionary<string, ParameterInfo> _parameterInfos;
+        public static Dictionary<string, ParameterInfo> ParameterInfos
         {
+            get
+            {
+                if (_parameterInfos != null)
+                    return _parameterInfos;
+
+                _parameterInfos = new Dictionary<string, ParameterInfo>();
+                foreach (var info in _parameterData)
+                    _parameterInfos.Add(info.Key.ToLower(), info.Value);
+
+                return _parameterInfos;
+            }
+        }
+
+        /** Metadata about various server parameters. */
+        private static readonly Dictionary<string, ParameterInfo> _parameterData = new Dictionary<string, ParameterInfo>
+        {
+            { "battery", new ParameterInfo { readOnly = true } },
+            { "batterycurrent", new ParameterInfo { maxValue = 30 } },
+            { "batterylife", new ParameterInfo { maxValue = 128 } },
+            { "batterylifemax", new ParameterInfo { maxValue = 128 } },
+            { "batterylifeenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "batterytimeenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "batterytimeremaining", new ParameterInfo { maxValue = 3600 * 12, type = ParameterType.Int } },
+            { "oxygen", new ParameterInfo { readOnly = true } },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int } },
             { "depth", new ParameterInfo { maxValue = 12000 } },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
@@ -494,6 +550,8 @@ namespace Meg.Networking
             { "dccquadscreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
             { "dccfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int } },
             { "co2", new ParameterInfo { maxValue = 5 } },
+            { "co2ppm", new ParameterInfo { readOnly = true } },
+            { "cabinpressurepsi", new ParameterInfo { readOnly = true } },
             { "scrubbedco2", new ParameterInfo { maxValue = 5 } },
             { "cabinpressure", new ParameterInfo { maxValue = 1.25f } },
         };
@@ -554,6 +612,22 @@ namespace Meg.Networking
                     return ServerData.dueTimeActive ? 1 : 0;
                 case "watertemp":
                     return ServerData.waterTemp;
+                case "battery":
+                    return BatteryData.battery;
+                case "batterycurrent":
+                    return BatteryData.batteryCurrent;
+                case "batterylife":
+                    return BatteryData.batteryLife;
+                case "batterylifemax":
+                    return BatteryData.batteryLifeMax;
+                case "batterylifeenabled":
+                    return BatteryData.batteryLifeEnabled ? 1 : 0;
+                case "batterytemp":
+                    return BatteryData.batteryTemp;
+                case "batterytimeremaining":
+                    return BatteryData.batteryTimeRemaining;
+                case "batterytimeenabled":
+                    return BatteryData.batteryTimeEnabled ? 1 : 0;
                 case "b1":
                     return BatteryData.bank1;
                 case "b2":
@@ -659,10 +733,6 @@ namespace Meg.Networking
                     return CabinData.scrubbedHumidity;
                 case "scrubbedoxygen":
                     return CabinData.scrubbedOxygen;
-                case "battery":
-                    return BatteryData.battery;
-                case "batterytemp":
-                    return BatteryData.batteryTemp;
                 case "error_bilgeleak":
                     return ErrorData.error_bilgeLeak;
                 case "error_batteryleak":
@@ -1024,6 +1094,11 @@ namespace Meg.Networking
                     return (BatteryData.battery.ToString("n1") + "%");
                 case "batterytemp":
                     return (BatteryData.batteryTemp.ToString("n1") + "°c");
+                case "batterycurrent":
+                    return (BatteryData.batteryTemp.ToString("n1"));
+                case "batterytimeremaining":
+                    var span = TimeSpan.FromSeconds(BatteryData.batteryTimeRemaining);
+                    return string.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
                 case "pilot":
                     return ServerData.pilot;
                 case "verticalvelocity":
