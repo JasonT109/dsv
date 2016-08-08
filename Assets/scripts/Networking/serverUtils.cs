@@ -255,11 +255,11 @@ namespace Meg.Networking
             "crewheartrate4",
             "crewheartrate5",
             "crewheartrate6",
-            "DCCquadScreen0",
-            "DCCquadScreen1",
-            "DCCquadScreen2",
-            "DCCquadScreen3",
-            "DCCquadScreen4",
+            "dccquadscreen0",
+            "dccquadscreen1",
+            "dccquadscreen2",
+            "dccquadscreen3",
+            "dccquadscreen4",
             "depth",
             "disableinput",
             "divertpowertothrusters",
@@ -487,14 +487,15 @@ namespace Meg.Networking
             { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int } },
             { "shot", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
-            { "DCCquadScreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
-            { "DCCquadScreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
-            { "DCCquadScreen2", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
-            { "DCCquadScreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
-            { "DCCquadScreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
-            { "DCCfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int } },
+            { "dccquadscreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "dccquadscreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "dccquadscreen2", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "dccquadscreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "dccquadscreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "dccfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int } },
             { "co2", new ParameterInfo { maxValue = 5 } },
             { "scrubbedco2", new ParameterInfo { maxValue = 5 } },
+            { "cabinpressure", new ParameterInfo { maxValue = 1.25f } },
         };
         
         /** Return information about a given parameter. */
@@ -644,6 +645,8 @@ namespace Meg.Networking
                     return CabinData.Co2 * Conversions.PercentToPartsPerMillion;
                 case "cabinpressure":
                     return CabinData.cabinPressure;
+                case "cabinpressurepsi":
+                    return CabinData.cabinPressure * Conversions.BarToPsi;
                 case "cabinoxygen":
                     return CabinData.cabinOxygen;
                 case "cabintemp":
