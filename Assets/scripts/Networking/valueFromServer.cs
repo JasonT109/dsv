@@ -19,6 +19,7 @@ public class valueFromServer : MonoBehaviour
 
     void Start()
     {
+        Update();
         nextUpdate = Time.time;
     }
 

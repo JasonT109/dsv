@@ -1358,6 +1358,12 @@ namespace Meg.Networking
             return data[3];
         }
 
+        /** Return a vessel's name (1-based index). */
+        public static string GetVesselName(int vessel)
+        {
+            return ServerData.GetVesselName(vessel);
+        }
+
         /** Return the player vessel's current target vessel (or 0 if there is no target). */
         public static int GetTargetVessel()
         {

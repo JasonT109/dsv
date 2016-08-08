@@ -23,6 +23,12 @@ public class textValueFromServer : widgetText
 
     public ValueRange[] Ranges;
 
+    private void Start()
+    {
+        Update();
+        nextUpdate = Time.time + updateTick;
+    }
+
     private void Update()
     {
         if (Time.time < nextUpdate)
