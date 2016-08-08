@@ -908,6 +908,8 @@ namespace Meg.Networking
 
             switch (valueName.ToLower())
             {
+                case "playervesselname":
+                    return MapData.playerVesselName;
                 case "scene":
                     return ServerData.scene.ToString();
                 case "shot":

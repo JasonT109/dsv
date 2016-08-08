@@ -1,7 +1,8 @@
 {
 	"default" :
 	{
-		"save-folder" : "C:/Meg/"
+		"save-folder" : "C:/Meg/",
+		"vessel-names" : ["Arsenal", "Endurance", "Glider 1", "Glider 2", "Unknown", "Target"]
 	},
 
 	"sub" :

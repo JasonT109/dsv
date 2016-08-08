@@ -23,6 +23,8 @@ public class mapData : NetworkBehaviour
     [Header("Player")]
     [SyncVar]
     public int playerVessel = 1;
+    [SyncVar]
+    public string playerVesselName = "Arsenal";
 
     [Header("Vessel Positions")]
     [SyncVar]

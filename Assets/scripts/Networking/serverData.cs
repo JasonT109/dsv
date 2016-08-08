@@ -652,6 +652,10 @@ public class serverData : NetworkBehaviour
                 MapData.mapEventName = newValue;
                 break;
 
+            case "playervesselname":
+                MapData.playerVesselName = newValue;
+                break;
+
             default:
                 float value;
                 if (float.TryParse(newValue, out value))
@@ -676,6 +680,17 @@ public class serverData : NetworkBehaviour
     public void SetPlayerVessel(int vessel)
     {
         MapData.playerVessel = vessel;
+        MapData.playerVesselName = GetVesselName(vessel);
+    }
+
+    public string GetVesselName(int vessel)
+    {
+        // Retrieve vessel name from configuration.
+        var vesselNames = Configuration.GetJson("vessel-names");
+        if (vesselNames && vesselNames.IsArray && vessel < vesselNames.Count)
+            return vesselNames[vessel - 1].str;
+
+        return "Unknown";
     }
 
     public void SetVesselVis(int vessel, bool state)

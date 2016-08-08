@@ -9,8 +9,10 @@ public class textValueFromServer : widgetText
     public float updateTick = 0.2f;
     private float nextUpdate = 0;
 
-    public string format = "";
+    public bool upperCase;
 
+    public string format = "";
+    
     [System.Serializable]
     public struct ValueRange
     {
@@ -34,6 +36,9 @@ public class textValueFromServer : widgetText
             Text = serverUtils.GetServerDataAsText(linkDataString);
         else
             Text = string.Format(format, value);
+
+        if (upperCase)
+            Text = Text.ToUpper();
 
         // Apply custom formatting for value ranges (if any).
         for (var i = 0; i < Ranges.Length; i++)
