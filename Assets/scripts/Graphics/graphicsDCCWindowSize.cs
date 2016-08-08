@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-[ExecuteInEditMode]
+
 public class graphicsDCCWindowSize : MonoBehaviour
 {
     [Header("Child objects:")]
@@ -43,6 +43,10 @@ public class graphicsDCCWindowSize : MonoBehaviour
         }
     }
 
+    public float scaleTweakFactor = 0.95f;
+
+    public bool resetWidow = false;
+
     private BoxCollider boxCollider;
     private float defaultWidth = 190f;
     private float defaultHeight = 106.875f;
@@ -52,7 +56,20 @@ public class graphicsDCCWindowSize : MonoBehaviour
     private float currentYScale = 1;
     private graphicsSlicedMesh slicer;
     private graphicsSlicedMesh titleBarSlicer;
+    private Vector2[] childPositions = { new Vector2(-94.96f, 53.42f), new Vector2(-94.99f, -53.35f), new Vector2(0, 53.43f) };
 
+    public void ResetWindowSize()
+    {
+        //SetWindowSize(defaultWidth, defaultHeight);
+        windowWidth = defaultWidth;
+        windowHeight = defaultHeight;
+        resetWidow = false;
+
+        for (int i = 0; i < repositionItems.Length; i++)
+        {
+            repositionItems[i].transform.localPosition = childPositions[i];
+        }
+    }
 
     public void SetWindowPosition(Vector3 newWindowPosition)
     {
@@ -79,8 +96,8 @@ public class graphicsDCCWindowSize : MonoBehaviour
         titleBarSlicer.Border = slicer.Border;
         titleBarSlicer.Margin = slicer.Margin;
 
-        currentXScale = (slicer.Width) / (defaultWidth);
-        currentYScale = (slicer.Height) / (defaultHeight);
+        currentXScale = (slicer.Width / defaultWidth);
+        currentYScale = (slicer.Height / defaultHeight);
 
 
         for (int i = 0; i < repositionItems.Length; i++)
@@ -90,7 +107,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < scaleItems.Length; i++)
         {
-            scaleItems[i].transform.localScale = new Vector3(sScales[i].x * currentXScale, sScales[i].y * currentYScale, 1);
+            scaleItems[i].transform.localScale = new Vector3((sScales[i].x * currentXScale) * scaleTweakFactor, (sScales[i].y * currentYScale) * scaleTweakFactor, 1);
         }
 
     }
@@ -116,10 +133,13 @@ public class graphicsDCCWindowSize : MonoBehaviour
             sScales[i] = new Vector2(1,1);
         }
     }
-#if UNITY_EDITOR
     void Update ()
     {
         SetWindowSize(windowWidth, windowHeight);
+
+        if (resetWidow)
+        {
+            ResetWindowSize();
+        }
     }
-#endif
 }

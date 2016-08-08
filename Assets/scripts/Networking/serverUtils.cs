@@ -166,6 +166,17 @@ namespace Meg.Networking
             }
         }
 
+        private static DCCScreenData _DCCScreenControl;
+        public static DCCScreenData DCCScreenData
+        {
+            get
+            {
+                if (!_DCCScreenControl)
+                    _DCCScreenControl = ServerObject.GetComponent<DCCScreenData>();
+                return _DCCScreenControl;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -216,6 +227,11 @@ namespace Meg.Networking
             "crewheartrate4",
             "crewheartrate5",
             "crewheartrate6",
+            "DCCquadScreen0",
+            "DCCquadScreen1",
+            "DCCquadScreen2",
+            "DCCquadScreen3",
+            "DCCquadScreen4",
             "depth",
             "disableinput",
             "divertpowertothrusters",
@@ -425,6 +441,12 @@ namespace Meg.Networking
             { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int } },
             { "shot", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int } },
+            { "DCCquadScreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "DCCquadScreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "DCCquadScreen2", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "DCCquadScreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "DCCquadScreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
+            { "DCCfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int } },
         };
         
         /** Return information about a given parameter. */
@@ -787,6 +809,18 @@ namespace Meg.Networking
                     return SonarData.MegSpeed;
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed;
+                case "dccquadscreen0":
+                    return DCCScreenData.DCCquadScreen0;
+                case "dccquadscreen1":
+                    return DCCScreenData.DCCquadScreen1;
+                case "dccquadscreen2":
+                    return DCCScreenData.DCCquadScreen2;
+                case "dccquadscreen3":
+                    return DCCScreenData.DCCquadScreen3;
+                case "dccquadscreen4":
+                    return DCCScreenData.DCCquadScreen4;
+                case "dccfullscreen":
+                    return DCCScreenData.DCCfullscreen;
                 default:
                     return Unknown;
             }
