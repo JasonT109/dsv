@@ -184,6 +184,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private DCCScreenData _DCCScreenControl;
+    public DCCScreenData DCCScreenData
+    {
+        get
+        {
+            if (!_DCCScreenControl)
+                _DCCScreenControl = GetComponent<DCCScreenData>();
+            return _DCCScreenControl;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -637,6 +648,24 @@ public class serverData : NetworkBehaviour
                 break;
             case "jet_heat_r":
                 GliderErrorData.jet_heat_r = newValue;
+                break;
+            case "dccquadscreen0":
+                DCCScreenData.DCCquadScreen0 = (int)newValue;
+                break;
+            case "dccquadscreen1":
+                DCCScreenData.DCCquadScreen1 = (int)newValue;
+                break;
+            case "dccquadscreen2":
+                DCCScreenData.DCCquadScreen2 = (int)newValue;
+                break;
+            case "dccquadscreen3":
+                DCCScreenData.DCCquadScreen3 = (int)newValue;
+                break;
+            case "dccquadscreen4":
+                DCCScreenData.DCCquadScreen4 = (int)newValue;
+                break;
+            case "dccfullscreen":
+                DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
         }
 
