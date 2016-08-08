@@ -25,7 +25,7 @@ public class NavSubPins : Singleton<NavSubPins>
             _pinLookup[pin.VesselId] = pin;
 
         var mapRoot = GameObject.Find("MapRoot");
-        _mapCamera = mapRoot.GetComponentInChildren<Camera>();
+        _mapCamera = mapRoot.GetComponentInChildren<Camera>(true);
     }
 
     private void LateUpdate()
