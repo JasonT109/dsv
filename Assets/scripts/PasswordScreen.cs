@@ -33,7 +33,7 @@ public class PasswordScreen : MonoBehaviour
     public Graphic ConnectingSpinner;
 
 
-    [Header("Configuraiton")]
+    [Header("Configuration")]
 
     public Color SelectedColor = Color.white;
     public Color UnselectedColor = Color.grey;

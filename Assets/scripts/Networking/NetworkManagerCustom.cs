@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using Meg.Networking;
 
 public class NetworkManagerCustom : MonoBehaviour
 {
@@ -55,8 +56,8 @@ public class NetworkManagerCustom : MonoBehaviour
     // Private Properties
     // ------------------------------------------------------------
 
-    /** The UNET networking manager. */
-    private NetworkManager _manager;
+    /** The underlying networking manager. */
+    private Meg.Networking.NetworkManager _manager;
 
     /** Number of previous scene loads. */
     private static int _loadCount;
@@ -86,8 +87,10 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Preinitialization. */
     private void Awake()
     {
+        Debug.Log(string.Format("NetworkManagerCustom.Awake(id:{0})", Id));
+
         // Get default scene from the UNET network manager.
-        _manager = GetComponent<NetworkManager>();
+        _manager = GetComponent<Meg.Networking.NetworkManager>();
 
         // Get default connection state.
         Host = Configuration.Get("server-ip", Network.player.ipAddress);
@@ -97,7 +100,6 @@ public class NetworkManagerCustom : MonoBehaviour
         // Configure UNET network manager with default connection.
         _manager.networkAddress = Host;
         _manager.networkPort = Port;
-        _manager.onlineScene = Scene;
         
         // Modify UNET configuration to better tolerate packet loss, etc.
         _manager.connectionConfig.NetworkDropThreshold = 95;
@@ -106,6 +108,8 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Startup. */
     private void Start()
     {
+        Debug.Log(string.Format("NetworkManagerCustom.Start(id:{0})", Id));
+
         // Perform an inital automatic startup attempt.
         if (!HasSession && CanAttemptStartup())
             AttemptAutoStartup();
@@ -127,6 +131,7 @@ public class NetworkManagerCustom : MonoBehaviour
     private void OnLevelWasLoaded()
     {
         _loadCount++;
+        Debug.Log(string.Format("NetworkManagerCustom.OnLevelWasLoaded(id:{0}): loadCount is now {1}", Id, _loadCount));
     }
 
 
@@ -136,6 +141,7 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Set the scene to start when joining a session. */
     public void SetScene(string value)
     {
+        Debug.Log(string.Format("NetworkManagerCustom.SetScene(id:{0}, {1}", Id, value));
         Scene = value;
         _manager.onlineScene = Scene;
     }
@@ -146,7 +152,7 @@ public class NetworkManagerCustom : MonoBehaviour
         if (!CanAttemptStartup())
             return false;
 
-        Debug.Log(string.Format("Starting client session - connecting to host at {0}:{1}, scene '{2}'..", Host, Port, Scene));
+        Debug.Log(string.Format("NetworkManagerCustom.StartClient(id:{0}): Starting client session - connecting to host at {1}:{2}, scene '{3}'..", Id, Host, Port, Scene));
         _manager.onlineScene = Scene;
         _manager.StartClient();
 
@@ -160,7 +166,7 @@ public class NetworkManagerCustom : MonoBehaviour
         if (!CanAttemptStartup())
             return false;
 
-        Debug.Log(string.Format("Starting server session - scene '{0}'..", Scene));
+        Debug.Log(string.Format("NetworkManagerCustom.StartClient(id:{0}): Starting server session - scene '{1}'..", Id, Scene));
         EnsureServerObjectExists();
         _manager.onlineScene = Scene;
         _manager.StartHost();
@@ -173,9 +179,15 @@ public class NetworkManagerCustom : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
+    private static string Id
+        { get { return Configuration.Instance.CurrentId; } }
+
     /** Whether autostartup can be attempted. */
     private bool ShouldAutoStart()
     {
+        return !IsLoginScreen();
+
+        /*
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
             return !IsLoginScreen();
@@ -185,6 +197,7 @@ public class NetworkManagerCustom : MonoBehaviour
             return false;
 
         return true;
+        */
     }
 
     /** Attempt automatic session startup. */
@@ -194,6 +207,13 @@ public class NetworkManagerCustom : MonoBehaviour
         if (HasSession || _loadCount > 1 || !CanAttemptStartup())
             return;
 
+        // If we're not in the login screen and no session exists, must be in the editor.
+        // In that case we should start up a local server automatically.
+        var attempted = false;
+        if (!IsLoginScreen())
+            attempted = StartServer();
+
+        /*
         // Check if we should start a client or server session immediately.
         // If we're not in the login screen and no session exists, must be in the editor.
         // In that case we should start up a local server automatically.
@@ -205,6 +225,7 @@ public class NetworkManagerCustom : MonoBehaviour
             attempted = StartClient();
         else if (role == "server" || role == "host")
             attempted = StartServer();
+        */
 
         // Schedule the next auto-attempt (if we made one.)
         if (attempted)
@@ -239,6 +260,7 @@ public class NetworkManagerCustom : MonoBehaviour
             return;
 
         // Look for server object in scene, and spawn it if needed.
+        Debug.Log(string.Format("NetworkManagerCustom.EnsureServerObjectExists(id:{0}): Creating server object.", Id));
         _serverObject = GameObject.FindWithTag("ServerData");
         if (_serverObject == null)
             SpawnServerObject();
@@ -257,7 +279,7 @@ public class NetworkManagerCustom : MonoBehaviour
             return;
 
         // Spawn the server object.
-        Debug.Log("Spawning server object.");
+        Debug.Log(string.Format("NetworkManagerCustom.EnsureServerObjectExists(id:{0}): Spawning server object.", Id));
         var toId = player.GetComponent<NetworkIdentity>();
         var conn = toId.connectionToClient;
         var sd = (GameObject) Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
