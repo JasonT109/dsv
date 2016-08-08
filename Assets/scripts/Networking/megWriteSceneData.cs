@@ -6,7 +6,9 @@ using Meg.Scene;
 
 public class megWriteSceneData : MonoBehaviour
 {
-    public string filePath = @"C:\meg\";
+    public string filePath
+        { get { return Configuration.Get("save-folder", @"C:\meg\"); } }
+
     public string fileName = "arsenal_01_01_03_UTC";
     public GameObject saveButton;
     public GameObject saveText;
