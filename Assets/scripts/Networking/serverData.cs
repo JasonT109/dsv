@@ -51,8 +51,6 @@ public class serverData : NetworkBehaviour
 
     #region PublicVars
     public bool isGlider = false;
-    public float[] batteries = new float[7];
-    public float[] oxygenTanks = new float[7];
     public GameObject[] players;
     #endregion
 
@@ -84,6 +82,28 @@ public class serverData : NetworkBehaviour
             if (!_oxygenData)
                 _oxygenData = GetComponent<oxygenData>();
             return _oxygenData;
+        }
+    }
+
+    private airData _airData;
+    private airData AirData
+    {
+        get
+        {
+            if (!_airData)
+                _airData = GetComponent<airData>();
+            return _airData;
+        }
+    }
+
+    private cabinData _cabinData;
+    private cabinData CabinData
+    {
+        get
+        {
+            if (!_cabinData)
+                _cabinData = GetComponent<cabinData>();
+            return _cabinData;
         }
     }
 
@@ -172,61 +192,6 @@ public class serverData : NetworkBehaviour
     #endregion
 
     #region PublicMethods
-    public void OnBatterySliderChanged(int bank, float newValues)
-    {
-        switch (bank)
-        {
-            case 0:
-                BatteryData.bank1 = newValues;
-                break;
-            case 1:
-                BatteryData.bank2 = newValues;
-                break;
-            case 2:
-                BatteryData.bank3 = newValues;
-                break;
-            case 3:
-                BatteryData.bank4 = newValues;
-                break;
-            case 4:
-                BatteryData.bank5 = newValues;
-                break;
-            case 5:
-                BatteryData.bank6 = newValues;
-                break;
-            case 6:
-                BatteryData.bank7 = newValues;
-                break;
-        }
-    }
-
-    public void OnOxygenSliderChanged(int tank, float newValues)
-    {
-        switch (tank)
-        {
-            case 0:
-                OxygenData.oxygenTank1 = newValues;
-                break;
-            case 1:
-                OxygenData.oxygenTank2 = newValues;
-                break;
-            case 2:
-                OxygenData.oxygenTank3 = newValues;
-                break;
-            case 3:
-                OxygenData.oxygenTank4 = newValues;
-                break;
-            case 4:
-                OxygenData.oxygenTank5 = newValues;
-                break;
-            case 5:
-                OxygenData.oxygenTank6 = newValues;
-                break;
-            case 6:
-                OxygenData.oxygenTank7 = newValues;
-                break;
-        }
-    }
 
     public delegate void ValueChangeHandler(string valueName, float newValue);
 
@@ -299,38 +264,95 @@ public class serverData : NetworkBehaviour
             case "b7":
                 BatteryData.bank7 = newValue;
                 break;
-            case "o1":
+            case "oxygentank1":
                 OxygenData.oxygenTank1 = newValue;
                 break;
-            case "o2":
+            case "oxygentank2":
                 OxygenData.oxygenTank2 = newValue;
                 break;
-            case "o3":
+            case "oxygentank3":
                 OxygenData.oxygenTank3 = newValue;
                 break;
-            case "o4":
-                OxygenData.oxygenTank4 = newValue;
+            case "reserveoxygentank1":
+                OxygenData.reserveOxygenTank1 = newValue;
                 break;
-            case "o5":
-                OxygenData.oxygenTank5 = newValue;
+            case "reserveoxygentank2":
+                OxygenData.reserveOxygenTank2 = newValue;
                 break;
-            case "o6":
-                OxygenData.oxygenTank6 = newValue;
+            case "reserveoxygentank3":
+                OxygenData.reserveOxygenTank3 = newValue;
                 break;
-            case "o7":
-                OxygenData.oxygenTank7 = newValue;
+            case "reserveoxygentank4":
+                OxygenData.reserveOxygenTank4 = newValue;
+                break;
+            case "reserveoxygentank5":
+                OxygenData.reserveOxygenTank5 = newValue;
+                break;
+            case "reserveoxygentank6":
+                OxygenData.reserveOxygenTank6 = newValue;
+                break;
+            case "airtank1":
+                AirData.airTank1 = newValue;
+                break;
+            case "airtank2":
+                AirData.airTank2 = newValue;
+                break;
+            case "airtank3":
+                AirData.airTank3 = newValue;
+                break;
+            case "airtank4":
+                AirData.airTank4 = newValue;
+                break;
+            case "reserveairtank1":
+                AirData.reserveAirTank1 = newValue;
+                break;
+            case "reserveairtank2":
+                AirData.reserveAirTank2 = newValue;
+                break;
+            case "reserveairtank3":
+                AirData.reserveAirTank3 = newValue;
+                break;
+            case "reserveairtank4":
+                AirData.reserveAirTank4 = newValue;
+                break;
+            case "reserveairtank5":
+                AirData.reserveAirTank5 = newValue;
+                break;
+            case "reserveairtank6":
+                AirData.reserveAirTank6 = newValue;
+                break;
+            case "reserveairtank7":
+                AirData.reserveAirTank7 = newValue;
+                break;
+            case "reserveairtank8":
+                AirData.reserveAirTank8 = newValue;
+                break;
+            case "reserveairtank9":
+                AirData.reserveAirTank9 = newValue;
                 break;
             case "co2":
-                OxygenData.Co2 = newValue;
+                CabinData.Co2 = newValue;
                 break;
             case "cabinpressure":
-                OxygenData.cabinPressure = newValue;
+                CabinData.cabinPressure = newValue;
                 break;
             case "cabintemp":
-                OxygenData.cabinTemp = newValue;
+                CabinData.cabinTemp = newValue;
                 break;
             case "cabinhumidity":
-                OxygenData.cabinHumidity = newValue;
+                CabinData.cabinHumidity = newValue;
+                break;
+            case "cabinoxygen":
+                CabinData.cabinOxygen = newValue;
+                break;
+            case "scrubbedco2":
+                CabinData.scrubbedCo2 = newValue;
+                break;
+            case "scrubbedhumidity":
+                CabinData.scrubbedHumidity = newValue;
+                break;
+            case "scrubbedoxygen":
+                CabinData.scrubbedOxygen = newValue;
                 break;
             case "error_bilgeleak":
                 ErrorData.error_bilgeLeak = newValue;
@@ -769,28 +791,6 @@ public class serverData : NetworkBehaviour
         }
     }
 
-    public float GetBatteryTotal()
-    {
-        float batPower;
-
-        //gliders only have 4 battery banks
-        if (isGlider)
-        {
-            batPower = (batteries[0] + batteries[1] + batteries[2] + batteries[3]) / 4.0f;
-        }
-        else
-        {
-            batPower = (batteries[0] + batteries[1] + batteries[2] + batteries[3] + batteries[4] + batteries[5] + batteries[6]) / 7.0f;
-        }
-        return batPower;
-    }
-
-    public float GetOxygenTotal()
-    {
-        float oxyTotal = (oxygenTanks[0] + oxygenTanks[1] + oxygenTanks[2] + oxygenTanks[3] + oxygenTanks[4] + oxygenTanks[5] + oxygenTanks[6]) / 7.0f;
-        return oxyTotal;
-    }
-
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
@@ -823,21 +823,6 @@ public class serverData : NetworkBehaviour
     /** Initialize clientside values. */
     public override void OnStartClient()
     {
-        BatteryData.bank1 = batteries[0];
-        BatteryData.bank2 = batteries[1];
-        BatteryData.bank3 = batteries[2];
-        BatteryData.bank4 = batteries[3];
-        BatteryData.bank5 = batteries[4];
-        BatteryData.bank6 = batteries[5];
-        BatteryData.bank7 = batteries[6];
-
-        OxygenData.oxygenTank1 = oxygenTanks[0];
-        OxygenData.oxygenTank2 = oxygenTanks[1];
-        OxygenData.oxygenTank3 = oxygenTanks[2];
-        OxygenData.oxygenTank4 = oxygenTanks[3];
-        OxygenData.oxygenTank5 = oxygenTanks[4];
-        OxygenData.oxygenTank6 = oxygenTanks[5];
-        OxygenData.oxygenTank7 = oxygenTanks[6];
     }
 
     /** Initialization. */
@@ -863,24 +848,6 @@ public class serverData : NetworkBehaviour
     {
         // Determine the current pilot.
         pilot = GetPilot();
-
-        // Get oxygen data from server.
-        oxygenTanks[0] = OxygenData.oxygenTank1;
-        oxygenTanks[1] = OxygenData.oxygenTank2;
-        oxygenTanks[2] = OxygenData.oxygenTank3;
-        oxygenTanks[3] = OxygenData.oxygenTank4;
-        oxygenTanks[4] = OxygenData.oxygenTank5;
-        oxygenTanks[5] = OxygenData.oxygenTank6;
-        oxygenTanks[6] = OxygenData.oxygenTank7;
-
-        // Get battery data from server.
-        batteries[0] = BatteryData.bank1;
-        batteries[1] = BatteryData.bank2;
-        batteries[2] = BatteryData.bank3;
-        batteries[3] = BatteryData.bank4;
-        batteries[4] = BatteryData.bank5;
-        batteries[5] = BatteryData.bank6;
-        batteries[6] = BatteryData.bank7;
     }
 
     /** Update data values only on the server. */
@@ -894,8 +861,6 @@ public class serverData : NetworkBehaviour
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
         floorDistance = Mathf.Max(0, floorDepth - depth);
-        BatteryData.battery = GetBatteryTotal();
-        OxygenData.oxygen = GetOxygenTotal();
 
         // Update ETA timer.
         if (dueTimeActive)

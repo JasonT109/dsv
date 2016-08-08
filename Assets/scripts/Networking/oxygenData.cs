@@ -1,59 +1,228 @@
 using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 using UnityEngine.Networking;
 
 public class oxygenData : NetworkBehaviour
 {
-    /** Oxygen reserve %. */
-    [SyncVar]
-    public float oxygen;
 
-    /** CO2% in cabin atmosphere. */
-    [SyncVar]
-    public float Co2 = 1.05f;
+    // Structures
+    // ------------------------------------------------------------
 
-    /** Oxygen tanks. */
-    [SyncVar]
-    public float oxygenTank1;
-    [SyncVar]
-    public float oxygenTank2;
-    [SyncVar]
-    public float oxygenTank3;
-    [SyncVar]
-    public float oxygenTank4;
-    [SyncVar]
-    public float oxygenTank5;
-    [SyncVar]
-    public float oxygenTank6;
-    [SyncVar]
-    public float oxygenTank7;
+    /** Sub oxygen tank configuration (capacities in litres). */
+    public struct OxygenTankConfig
+    {
+        public int MainOxygenTanks;
+        public int ReserveOxygenTanks;
+        public float MainOxygenTankCapacity;
+        public float ReserveOxygenTankCapacity;
+    }
 
-    /** Cabin pressure (in bar). */
-    [SyncVar]
-    public float cabinPressure = 1.024f;
 
-    /** Cabin temperature (degrees c). */
-    [SyncVar]
-    public float cabinTemp = 14.3f;
+    // Constants
+    // ------------------------------------------------------------
 
-    /** Cabin humidity (%). */
+    /** Tank configuration for a big sub. */
+    public static readonly OxygenTankConfig BigSubOxygenTankConfig = new OxygenTankConfig
+    {
+        MainOxygenTanks = 3,
+        ReserveOxygenTanks = 6,
+        MainOxygenTankCapacity = 54,
+        ReserveOxygenTankCapacity = 27,
+    };
+
+    /** Tank configuration for a glider. */
+    public static readonly OxygenTankConfig GliderOxygenTankConfig = new OxygenTankConfig
+    {
+        MainOxygenTanks = 1,
+        ReserveOxygenTanks = 4,
+        MainOxygenTankCapacity = 54,
+        ReserveOxygenTankCapacity = 27,
+    };
+
+
+    // Synchronization
+    // ------------------------------------------------------------
+
+    [Header("Synchronization")]
+
+    /** Main oxygen % (total of main tanks). */
     [SyncVar]
-    public float cabinHumidity = 42.9f;
+    public float oxygen = 100;
+
+    /** Reserve oxygen % (total of main tanks). */
+    [SyncVar]
+    public float reserveOxygen = 100;
 
     /** Oxygen flow (liters / minute, tops out to nominal 22 lpm at 5% reserves). */
-    public float oxygenFlow
-    { get { return Mathf.Clamp01(oxygen * 0.2f) * 22; } }
+    [SyncVar]
+    public float oxygenFlow = 22;
 
-    /** Cabin oxygen percentage (tops out to nominal 20.9% at 5% reserves). */
-    public float cabinOxygen
-    { get { return Mathf.Clamp01(oxygen * 0.2f) * 20.9f; } }
+    /** Main Oxygen tanks. */
+    [SyncVar]
+    public float oxygenTank1 = 100;
+    [SyncVar]
+    public float oxygenTank2 = 100;
+    [SyncVar]
+    public float oxygenTank3 = 100;
 
-    /** CO2 (parts per million). */
-    public float Co2Ppm
-    { get { return Co2 * Conversions.PercentToPartsPerMillion; } }
+    /** Reserve Oxygen tanks. */
+    [SyncVar]
+    public float reserveOxygenTank1 = 100;
+    [SyncVar]
+    public float reserveOxygenTank2 = 100;
+    [SyncVar]
+    public float reserveOxygenTank3 = 100;
+    [SyncVar]
+    public float reserveOxygenTank4 = 100;
+    [SyncVar]
+    public float reserveOxygenTank5 = 100;
+    [SyncVar]
+    public float reserveOxygenTank6 = 100;
 
-    /** Cabin pressure, pounds / square inch. */
-    public float cabinPressurePsi
-    { get { return cabinPressure * Conversions.BarToPsi; } }
+
+    /** Main oxygen capacity in litres (total of main tanks). */
+    public float oxygenLitres
+        { get { return oxygen * 0.01f * Config.MainOxygenTanks * Config.MainOxygenTankCapacity; } }
+
+    /** Reserve oxygen capacity in litres (total of main tanks). */
+    public float reserveOxygenLitres
+        { get { return reserveOxygen * 0.01f * Config.ReserveOxygenTanks * Config.ReserveOxygenTankCapacity; } }
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Server update. */
+    [ServerCallback]
+    public void Update()
+    {
+        var config = Config;
+
+        // Update main oxygen percentage.
+        oxygen = 0;
+        for (var i = 0; i < config.MainOxygenTanks; i++)
+            oxygen += GetMainOxygenTank(i + 1);
+        oxygen /= config.MainOxygenTanks;
+
+        // Update reserve oxygen percentage.
+        reserveOxygen = 0;
+        for (var i = 0; i < config.ReserveOxygenTanks; i++)
+            reserveOxygen += GetReserveOxygenTank(i + 1);
+        reserveOxygen /= config.ReserveOxygenTanks;
+    }
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Get main oxygen tank value (1-based.) */
+    public float GetMainOxygenTank(int tank)
+    {
+        switch (tank)
+        {
+            case 1:
+                return oxygenTank1;
+            case 2:
+                return oxygenTank2;
+            case 3:
+                return oxygenTank3;
+            default:
+                return oxygenTank1;
+        }
+    }
+
+    /** Set main oxygen tank value (1-based.) */
+    public void SetMainOxygenTank(int index, float value)
+    {
+        switch (index)
+        {
+            case 1:
+                oxygenTank1 = value;
+                break;
+            case 2:
+                oxygenTank2 = value;
+                break;
+            case 3:
+                oxygenTank3 = value;
+                break;
+        }
+    }
+
+    /** Get reserve oxygen tank value (1-based.) */
+    public float GetReserveOxygenTank(int tank)
+    {
+        switch (tank)
+        {
+            case 1:
+                return reserveOxygenTank1;
+            case 2:
+                return reserveOxygenTank2;
+            case 3:
+                return reserveOxygenTank3;
+            case 4:
+                return reserveOxygenTank4;
+            case 5:
+                return reserveOxygenTank5;
+            case 6:
+                return reserveOxygenTank6;
+            default:
+                return reserveOxygenTank1;
+        }
+    }
+
+    /** Set reserve oxygen tank value (1-based.) */
+    public void SetReserveOxygenTank(int index, float value)
+    {
+        switch (index)
+        {
+            case 1:
+                reserveOxygenTank1 = value;
+                break;
+            case 2:
+                reserveOxygenTank2 = value;
+                break;
+            case 3:
+                reserveOxygenTank3 = value;
+                break;
+            case 4:
+                reserveOxygenTank4 = value;
+                break;
+            case 5:
+                reserveOxygenTank5 = value;
+                break;
+            case 6:
+                reserveOxygenTank6 = value;
+                break;
+        }
+    }
+    
+
+    // Derived Properties
+    // ------------------------------------------------------------
+
+    /** Return the current sub's tank configuration. */
+    public OxygenTankConfig Config
+    {
+        get
+        {
+            var vessel = serverUtils.GetPlayerVessel();
+            if (serverUtils.IsGlider())
+                return GliderOxygenTankConfig;
+
+            switch (vessel)
+            {
+                case 1:
+                case 2:
+                    return BigSubOxygenTankConfig;
+                case 3:
+                case 4:
+                    return GliderOxygenTankConfig;
+                default:
+                    return BigSubOxygenTankConfig;
+            }
+        }
+    }
+
 
 }
