@@ -94,13 +94,15 @@ public class debugChangeValue : NetworkBehaviour {
     [Command]
     void CmdBatteryValueChanged(int bank, float value)
     {
-        serverUtils.SetBatteryData(bank, value);
+        // No longer supported - just use regular SetServerData.
+        // serverUtils.SetBatteryData(bank, value);
     }
 
     [Command]
     void CmdOxygenValueChanged(int bank, float value)
     {
-        serverUtils.SetOxygenData(bank, value);
+        // No longer supported - just use regular SetServerData.
+        // serverUtils.SetOxygenData(bank, value);
     }
 
     void Start ()

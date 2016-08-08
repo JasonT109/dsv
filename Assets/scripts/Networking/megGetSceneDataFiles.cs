@@ -7,7 +7,9 @@ using Meg.Scene;
 public class megGetSceneDataFiles : MonoBehaviour
 {
 
-    public string filePath = @"C:\meg\";
+    public string filePath
+        { get { return Configuration.Get("save-folder", @"C:\meg\"); } }
+
     public string[] dataFiles;
     public int textVerticalOffset = 54;
     public GameObject textObject;

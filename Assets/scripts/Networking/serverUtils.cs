@@ -71,6 +71,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the glider error data object. */
         private static gliderErrorData _gliderErrorData;
         public static gliderErrorData GliderErrorData
         {
@@ -94,7 +95,7 @@ namespace Meg.Networking
             }
         }
 
-        /** Return the map data object (contains shared crew state values.) */
+        /** Return the crew data object (contains shared crew state values.) */
         private static crewData _crewData;
         public static crewData CrewData
         {
@@ -106,7 +107,7 @@ namespace Meg.Networking
             }
         }
 
-        /** Return the map data object (contains shared oxygen state values.) */
+        /** Return the oxygen data object (contains shared oxygen state values.) */
         private static oxygenData _oxygenData;
         public static oxygenData OxygenData
         {
@@ -118,7 +119,31 @@ namespace Meg.Networking
             }
         }
 
-        /** Return the map data object (contains shared battery state values.) */
+        /** Return the air data object. */
+        private static airData _airData;
+        public static airData AirData
+        {
+            get
+            {
+                if (!_airData && ServerObject)
+                    _airData = ServerObject.GetComponent<airData>();
+                return _airData;
+            }
+        }
+
+        /** Return the cabin data object. */
+        private static cabinData _cabinData;
+        public static cabinData CabinData
+        {
+            get
+            {
+                if (!_cabinData && ServerObject)
+                    _cabinData = ServerObject.GetComponent<cabinData>();
+                return _cabinData;
+            }
+        }
+
+        /** Return the battery data object (contains shared battery state values.) */
         private static batteryData _batteryData;
         public static batteryData BatteryData
         {
@@ -130,7 +155,7 @@ namespace Meg.Networking
             }
         }
 
-        /** Return the map data object (contains shared operating state values.) */
+        /** Return the operating data object (contains shared operating state values.) */
         private static operatingData _operatingData;
         public static operatingData OperatingData
         {
@@ -197,6 +222,11 @@ namespace Meg.Networking
         public static readonly HashSet<string> Parameters = new HashSet<string>
         {
             "acceleration",
+            "air",
+            "airtank1",
+            "airtank2",
+            "airtank3",
+            "airtank4",
             "b1",
             "b2",
             "b3",
@@ -210,10 +240,8 @@ namespace Meg.Networking
             "cabinhumidity",
             "cabinoxygen",
             "cabinpressure",
-            "cabinpressurepsi",
             "cabintemp",
             "co2",
-            "co2ppm",
             "commssignalstrength",
             "crewbodytemp1",
             "crewbodytemp2",
@@ -306,19 +334,36 @@ namespace Meg.Networking
             "meg1warning",
             "megspeed",
             "megturnspeed",
-            "o1",
-            "o2",
-            "o3",
-            "o4",
-            "o5",
-            "o6",
-            "o7",
             "oxygen",
             "oxygenflow",
+            "oxygentank1",
+            "oxygentank2",
+            "oxygentank3",
             "pitchangle",
             "pitchspeed",
+            "playervessel",
             "pressure",
+            "reserveair",
+            "reserveairtank1",
+            "reserveairtank2",
+            "reserveairtank3",
+            "reserveairtank4",
+            "reserveairtank5",
+            "reserveairtank6",
+            "reserveairtank7",
+            "reserveairtank8",
+            "reserveairtank9",
+            "reserveoxygen",
+            "reserveoxygentank1",
+            "reserveoxygentank2",
+            "reserveoxygentank3",
+            "reserveoxygentank4",
+            "reserveoxygentank5",
+            "reserveoxygentank6",
             "scene",
+            "scrubbedco2",
+            "scrubbedhumidity",
+            "scrubbedoxygen",
             "shot",
             "rollangle",
             "rollspeed",
@@ -406,6 +451,7 @@ namespace Meg.Networking
         /** Metadata about various server parameters. */
         public static readonly Dictionary<string, ParameterInfo> ParameterInfos = new Dictionary<string, ParameterInfo>
         {
+            { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int } },
             { "depth", new ParameterInfo { maxValue = 12000 } },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "duetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
@@ -447,6 +493,8 @@ namespace Meg.Networking
             { "DCCquadScreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
             { "DCCquadScreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int } },
             { "DCCfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int } },
+            { "co2", new ParameterInfo { maxValue = 5 } },
+            { "scrubbedco2", new ParameterInfo { maxValue = 5 } },
         };
         
         /** Return information about a given parameter. */
@@ -506,51 +554,108 @@ namespace Meg.Networking
                 case "watertemp":
                     return ServerData.waterTemp;
                 case "b1":
-                    return ServerData.batteries[0];
+                    return BatteryData.bank1;
                 case "b2":
-                    return ServerData.batteries[1];
+                    return BatteryData.bank2;
                 case "b3":
-                    return ServerData.batteries[2];
+                    return BatteryData.bank3;
                 case "b4":
-                    return ServerData.batteries[3];
+                    return BatteryData.bank4;
                 case "b5":
-                    return ServerData.batteries[4];
+                    return BatteryData.bank5;
                 case "b6":
-                    return ServerData.batteries[5];
+                    return BatteryData.bank6;
                 case "b7":
-                    return ServerData.batteries[6];
-                case "o1":
-                    return ServerData.oxygenTanks[0];
-                case "o2":
-                    return ServerData.oxygenTanks[1];
-                case "o3":
-                    return ServerData.oxygenTanks[2];
-                case "o4":
-                    return ServerData.oxygenTanks[3];
-                case "o5":
-                    return ServerData.oxygenTanks[4];
-                case "o6":
-                    return ServerData.oxygenTanks[5];
-                case "o7":
-                    return ServerData.oxygenTanks[6];
+                    return BatteryData.bank7;
                 case "oxygen":
                     return OxygenData.oxygen;
+                case "oxygenlitres":
+                    return OxygenData.oxygenLitres;
+                case "o1":
+                case "oxygentank1":
+                    return OxygenData.oxygenTank1;
+                case "o2":
+                case "oxygentank2":
+                    return OxygenData.oxygenTank2;
+                case "o3":
+                case "oxygentank3":
+                    return OxygenData.oxygenTank3;
+                case "reserveoxygen":
+                    return OxygenData.reserveOxygen;
+                case "reserveoxygenlitres":
+                    return OxygenData.reserveOxygenLitres;
+                case "o4":
+                case "reserveoxygentank1":
+                    return OxygenData.reserveOxygenTank1;
+                case "o5":
+                case "reserveoxygentank2":
+                    return OxygenData.reserveOxygenTank2;
+                case "o6":
+                case "reserveoxygentank3":
+                    return OxygenData.reserveOxygenTank3;
+                case "o7":
+                case "reserveoxygentank4":
+                    return OxygenData.reserveOxygenTank4;
+                case "o8":
+                case "reserveoxygentank5":
+                    return OxygenData.reserveOxygenTank5;
+                case "o9":
+                case "reserveoxygentank6":
+                    return OxygenData.reserveOxygenTank6;
                 case "oxygenflow":
                     return OxygenData.oxygenFlow;
+                case "air":
+                    return AirData.air;
+                case "airlitres":
+                    return AirData.airLitres;
+                case "airtank1":
+                    return AirData.airTank1;
+                case "airtank2":
+                    return AirData.airTank2;
+                case "airtank3":
+                    return AirData.airTank3;
+                case "airtank4":
+                    return AirData.airTank4;
+                case "reserveair":
+                    return AirData.reserveAir;
+                case "reserveairlitres":
+                    return AirData.reserveAirLitres;
+                case "reserveairtank1":
+                    return AirData.reserveAirTank1;
+                case "reserveairtank2":
+                    return AirData.reserveAirTank2;
+                case "reserveairtank3":
+                    return AirData.reserveAirTank3;
+                case "reserveairtank4":
+                    return AirData.reserveAirTank4;
+                case "reserveairtank5":
+                    return AirData.reserveAirTank5;
+                case "reserveairtank6":
+                    return AirData.reserveAirTank6;
+                case "reserveairtank7":
+                    return AirData.reserveAirTank7;
+                case "reserveairtank8":
+                    return AirData.reserveAirTank8;
+                case "reserveairtank9":
+                    return AirData.reserveAirTank9;
                 case "co2":
-                    return OxygenData.Co2;
+                    return CabinData.Co2;
                 case "co2ppm":
-                    return OxygenData.Co2Ppm;
+                    return CabinData.Co2 * Conversions.PercentToPartsPerMillion;
                 case "cabinpressure":
-                    return OxygenData.cabinPressure;
-                case "cabinpressurepsi":
-                    return OxygenData.cabinPressurePsi;
+                    return CabinData.cabinPressure;
                 case "cabinoxygen":
-                    return OxygenData.cabinOxygen;
+                    return CabinData.cabinOxygen;
                 case "cabintemp":
-                    return OxygenData.cabinTemp;
+                    return CabinData.cabinTemp;
                 case "cabinhumidity":
-                    return OxygenData.cabinHumidity;
+                    return CabinData.cabinHumidity;
+                case "scrubbedco2":
+                    return CabinData.scrubbedCo2;
+                case "scrubbedhumidity":
+                    return CabinData.scrubbedHumidity;
+                case "scrubbedoxygen":
+                    return CabinData.scrubbedOxygen;
                 case "battery":
                     return BatteryData.battery;
                 case "batterytemp":
@@ -689,6 +794,8 @@ namespace Meg.Networking
                     return CrewData.crewBodyTemp5;
                 case "crewbodytemp6":
                     return CrewData.crewBodyTemp6;
+                case "playervessel":
+                    return MapData.playerVessel;
                 case "v1posx":
                     return MapData.vessel1Pos.x;
                 case "v1posy":
@@ -872,51 +979,42 @@ namespace Meg.Networking
                 case "watertemp":
                     return ServerData.waterTemp.ToString();
                 case "b1":
-                    return ServerData.batteries[0].ToString("n1");
+                    return BatteryData.bank1.ToString("n1");
                 case "b2":
-                    return ServerData.batteries[1].ToString("n1");
+                    return BatteryData.bank2.ToString("n1");
                 case "b3":
-                    return ServerData.batteries[2].ToString("n1");
+                    return BatteryData.bank3.ToString("n1");
                 case "b4":
-                    return ServerData.batteries[3].ToString("n1");
+                    return BatteryData.bank4.ToString("n1");
                 case "b5":
-                    return ServerData.batteries[4].ToString("n1");
+                    return BatteryData.bank5.ToString("n1");
                 case "b6":
-                    return ServerData.batteries[5].ToString("n1");
+                    return BatteryData.bank6.ToString("n1");
                 case "b7":
-                    return ServerData.batteries[6].ToString("n1");
+                    return BatteryData.bank7.ToString("n1");
                 case "o1":
-                    return ServerData.oxygenTanks[0].ToString("n1");
+                case "oxygentank1":
+                    return OxygenData.oxygenTank1.ToString("n1");
                 case "o2":
-                    return ServerData.oxygenTanks[1].ToString("n1");
+                case "oxygentank2":
+                    return OxygenData.oxygenTank2.ToString("n1");
                 case "o3":
-                    return ServerData.oxygenTanks[2].ToString("n1");
-                case "o4":
-                    return ServerData.oxygenTanks[3].ToString("n1");
-                case "o5":
-                    return ServerData.oxygenTanks[4].ToString("n1");
-                case "o6":
-                    return ServerData.oxygenTanks[5].ToString("n1");
-                case "o7":
-                    return ServerData.oxygenTanks[6].ToString("n1");
+                case "oxygentank3":
+                    return OxygenData.oxygenTank3.ToString("n1");
                 case "oxygen":
                     return (OxygenData.oxygen.ToString("n1") + "%");
                 case "oxygenflow":
                     return (OxygenData.oxygenFlow.ToString("n0") + "lpm");
                 case "co2":
-                    return (OxygenData.Co2.ToString() + "%");
-                case "co2ppm":
-                    return OxygenData.Co2Ppm.ToString("n1") + "ppm";
+                    return (CabinData.Co2 + "%");
                 case "cabinpressure":
-                    return OxygenData.cabinPressure.ToString();
-                case "cabinpressurepsi":
-                    return OxygenData.cabinPressurePsi.ToString("n1");
+                    return CabinData.cabinPressure.ToString();
                 case "cabinoxygen":
-                    return (OxygenData.cabinOxygen.ToString("n0") + "lpm");
+                    return (CabinData.cabinOxygen.ToString("n0") + "lpm");
                 case "cabinhumidity":
-                    return (OxygenData.cabinHumidity.ToString("n1") + "%");
+                    return (CabinData.cabinHumidity.ToString("n1") + "%");
                 case "cabintemp":
-                    return OxygenData.cabinTemp.ToString();
+                    return CabinData.cabinTemp.ToString();
                 case "battery":
                     return (BatteryData.battery.ToString("n1") + "%");
                 case "batterytemp":
@@ -1210,18 +1308,6 @@ namespace Meg.Networking
         {
             if (LocalPlayer)
                 LocalPlayer.PostVesselMovementState(json);
-        }
-
-        /** Set a battery bank value (only works on host). */
-        public static void SetBatteryData(int bank, float value)
-        {
-            ServerData.OnBatterySliderChanged(bank, value);
-        }
-
-        /** Set an oxygen bank value (only works on host). */
-        public static void SetOxygenData(int bank, float value)
-        {
-            ServerData.OnOxygenSliderChanged(bank, value);
         }
 
         /** Number of vessels that can be displayed on the map. */
@@ -1523,6 +1609,10 @@ namespace Meg.Networking
         {
             ServerObject.GetComponent<mapData>().mapEventName = eventName;
         }
+
+        /** Whether player is in a glider sub. */
+        public static bool IsGlider()
+            { return ServerData && ServerData.isGlider; }
 
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)

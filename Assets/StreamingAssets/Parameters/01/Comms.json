@@ -1,0 +1,13 @@
+{
+	"groups":[
+		{
+			"id":"COMMS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"commsSignalStrength"
+				}
+			]
+		}
+	]
+}
