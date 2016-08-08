@@ -423,7 +423,7 @@ namespace Meg.EventSystem
         {
             // Save out final scene state to file.
             if (megSceneFile.AutoSaveEnabled())
-                megSceneFile.AutoSave("End");
+                megSceneFile.AutoSave("Stop");
     
             // Reset data values from events.
             foreach (var e in _values)

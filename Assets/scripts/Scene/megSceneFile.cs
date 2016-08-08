@@ -9,6 +9,15 @@ namespace Meg.Scene
 
     public class megSceneFile
     {
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Default folder for autosave files. */
+        public const string DefaultAutoSaveFolder = @"C:/Meg/Autosave/";
+
+        /** Default format for autosave filenames. */
+        public const string DefaultAutoSaveFormat = @"{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:hh.mm.ss.f}_{6}.json";
+
 
         // Load / Save
         // ------------------------------------------------------------
@@ -45,8 +54,8 @@ namespace Meg.Scene
         public static void AutoSave(string suffix)
         {
             // Gather all information required to determine the auto-save filename.
-            var folder = Configuration.Get("auto-save-folder", @"C:/Meg/Autosave/");
-            var format = Configuration.Get("auto-save-format", "{0}/Scene_{2}/{6}/{1}_{2:00}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:hh.mm.ss.f}_{6}.json");
+            var folder = Configuration.Get("auto-save-folder", DefaultAutoSaveFolder);
+            var format = Configuration.Get("auto-save-format", DefaultAutoSaveFormat);
             var vessel = serverUtils.GetServerDataAsText("playerVesselName");
             var scene = serverUtils.GetServerData("scene");
             var shot = serverUtils.GetServerData("shot");
