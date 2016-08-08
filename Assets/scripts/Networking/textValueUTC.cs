@@ -8,7 +8,7 @@ public class textValueUTC : widgetText
     public float updateTick = 0.05f;
     private float nextUpdate = 0;
 
-    public string format = "{0:dd/mm/yy hh:mm:ss.f}";
+    public string format = "{0:dd/MM/yy hh:mm:ss.f}";
 
     private clientCalcValues _depthCalculator;
 

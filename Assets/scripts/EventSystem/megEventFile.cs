@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Meg.Networking;
+using Meg.Scene;
 
 namespace Meg.EventSystem
 {
@@ -212,16 +213,18 @@ namespace Meg.EventSystem
         /** Rewind the file to start time. */
         public void Rewind()
         {
-            var wasRunning = running;
-            var wasPaused = paused;
-            var wasCompleted = completed;
+            if (!running)
+                return;
 
-            Stop();
+            // Stop playback if needed.
+            if (paused || completed)
+                Stop();
+            else
+                time = 0;
 
-            if (wasRunning)
-                Start();
-            if (wasPaused || wasCompleted)
-                Pause();
+            // Rewind each group.
+            for (var i = 0; i < groups.Count; i++)
+                groups[i].Rewind();
         }
 
         /** Add an group of a given type. */
@@ -404,6 +407,10 @@ namespace Meg.EventSystem
         /** Capture initial server state. */
         private void CaptureServerState()
         {
+            // Save out initial scene state to file.
+            if (megSceneFile.AutoSaveEnabled())
+                megSceneFile.AutoSave("Start");
+
             // Capture initial camera state.
             _initialCameraValid = MapCamera.Capture(ref _initialCamera);
 
@@ -414,6 +421,10 @@ namespace Meg.EventSystem
         /** Reset server state to initial settings. */
         private void ResetServerState()
         {
+            // Save out final scene state to file.
+            if (megSceneFile.AutoSaveEnabled())
+                megSceneFile.AutoSave("End");
+    
             // Reset data values from events.
             foreach (var e in _values)
                 serverUtils.PostServerData(e.Key, e.Value.value);

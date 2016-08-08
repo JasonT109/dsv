@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.IO;
 using Meg.EventSystem;
@@ -34,6 +35,27 @@ namespace Meg.Scene
             var text = json.Print(true);
 
             File.WriteAllText(path, text);
+        }
+
+        /** Whether autosaving is enabled. */
+        public static bool AutoSaveEnabled()
+            { return Configuration.Get("auto-save-enabled", true); }
+
+        /** Save out scene state to an autosave file. */
+        public static void AutoSave(string suffix)
+        {
+            // Gather all information required to determine the auto-save filename.
+            var folder = Configuration.Get("auto-save-folder", @"C:/Meg/Autosave/");
+            var format = Configuration.Get("auto-save-format", "{0}/Scene_{2}/{6}/{1}_{2:00}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:hh.mm.ss.f}_{6}.json");
+            var vessel = serverUtils.GetServerDataAsText("playerVesselName");
+            var scene = serverUtils.GetServerData("scene");
+            var shot = serverUtils.GetServerData("shot");
+            var take = serverUtils.GetServerData("take");
+            var utc = DateTime.UtcNow;
+            var path = string.Format(format, folder, vessel, scene, shot, take, utc, suffix);
+
+            // Save file to nominated path.
+            SaveToFile(path);
         }
 
         /** Load state from JSON. */
