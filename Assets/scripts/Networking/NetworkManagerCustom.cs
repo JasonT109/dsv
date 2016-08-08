@@ -102,7 +102,7 @@ public class NetworkManagerCustom : MonoBehaviour
         _manager.networkPort = Port;
         
         // Modify UNET configuration to better tolerate packet loss, etc.
-        _manager.connectionConfig.NetworkDropThreshold = 95;
+        // _manager.connectionConfig.NetworkDropThreshold = 95;
     }
 
     /** Startup. */
@@ -110,17 +110,16 @@ public class NetworkManagerCustom : MonoBehaviour
     {
         Debug.Log(string.Format("NetworkManagerCustom.Start(id:{0})", Id));
 
-        // Perform an inital automatic startup attempt.
-        if (!HasSession && CanAttemptStartup())
-            AttemptAutoStartup();
+        // Schedule inital automatic startup attempt.
+        ScheduleNextAttempt();
     }
 
     /** Updating. */
     private void Update()
     {
         // Spawn server object if needed.
-        if (IsHost)
-            EnsureServerObjectExists();
+        // if (IsHost)
+        //    EnsureServerObjectExists();
 
         // Periodically attempt automatic startup.
         if (!HasSession && CanAttemptStartup())
@@ -185,9 +184,6 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Whether autostartup can be attempted. */
     private bool ShouldAutoStart()
     {
-        return !IsLoginScreen();
-
-        /*
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
             return !IsLoginScreen();
@@ -197,7 +193,6 @@ public class NetworkManagerCustom : MonoBehaviour
             return false;
 
         return true;
-        */
     }
 
     /** Attempt automatic session startup. */
@@ -207,13 +202,6 @@ public class NetworkManagerCustom : MonoBehaviour
         if (HasSession || _loadCount > 1 || !CanAttemptStartup())
             return;
 
-        // If we're not in the login screen and no session exists, must be in the editor.
-        // In that case we should start up a local server automatically.
-        var attempted = false;
-        if (!IsLoginScreen())
-            attempted = StartServer();
-
-        /*
         // Check if we should start a client or server session immediately.
         // If we're not in the login screen and no session exists, must be in the editor.
         // In that case we should start up a local server automatically.
@@ -225,7 +213,6 @@ public class NetworkManagerCustom : MonoBehaviour
             attempted = StartClient();
         else if (role == "server" || role == "host")
             attempted = StartServer();
-        */
 
         // Schedule the next auto-attempt (if we made one.)
         if (attempted)
@@ -260,7 +247,6 @@ public class NetworkManagerCustom : MonoBehaviour
             return;
 
         // Look for server object in scene, and spawn it if needed.
-        Debug.Log(string.Format("NetworkManagerCustom.EnsureServerObjectExists(id:{0}): Creating server object.", Id));
         _serverObject = GameObject.FindWithTag("ServerData");
         if (_serverObject == null)
             SpawnServerObject();
