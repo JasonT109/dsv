@@ -275,30 +275,39 @@ public class serverData : NetworkBehaviour
             case "b7":
                 BatteryData.bank7 = newValue;
                 break;
+            case "o1":
             case "oxygentank1":
                 OxygenData.oxygenTank1 = newValue;
                 break;
+            case "o2":
             case "oxygentank2":
                 OxygenData.oxygenTank2 = newValue;
                 break;
+            case "o3":
             case "oxygentank3":
                 OxygenData.oxygenTank3 = newValue;
                 break;
+            case "o4":
             case "reserveoxygentank1":
                 OxygenData.reserveOxygenTank1 = newValue;
                 break;
+            case "o5":
             case "reserveoxygentank2":
                 OxygenData.reserveOxygenTank2 = newValue;
                 break;
+            case "o6":
             case "reserveoxygentank3":
                 OxygenData.reserveOxygenTank3 = newValue;
                 break;
+            case "o7":
             case "reserveoxygentank4":
                 OxygenData.reserveOxygenTank4 = newValue;
                 break;
+            case "o8":
             case "reserveoxygentank5":
                 OxygenData.reserveOxygenTank5 = newValue;
                 break;
+            case "o9":
             case "reserveoxygentank6":
                 OxygenData.reserveOxygenTank6 = newValue;
                 break;
