@@ -924,9 +924,32 @@ public class serverData : NetworkBehaviour
     #endregion
     #region UnityMethods
 
-    /** Initialize clientside values. */
+    /** Network pre-startup notification for a client. */
+    public override void PreStartClient()
+    {
+        base.PreStartClient();
+        Debug.Log("serverData.PreStartClient(): ID: " + serverUtils.Id);
+    }
+
+    /** Network startup notification for a client. */
     public override void OnStartClient()
     {
+        base.OnStartClient();
+        Debug.Log("serverData.OnStartClient(): ID: " + serverUtils.Id);
+    }
+
+    /** Network startup notification for a server. */
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        Debug.Log("serverData.OnStartServer(): ID: " + serverUtils.Id);
+    }
+
+    /** Network destruction notification. */
+    public override void OnNetworkDestroy()
+    {
+        base.OnNetworkDestroy();
+        Debug.Log("serverData.OnNetworkDestroy(): ID: " + serverUtils.Id);
     }
 
     /** Initialization. */
