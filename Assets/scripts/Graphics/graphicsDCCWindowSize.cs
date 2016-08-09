@@ -109,7 +109,6 @@ public class graphicsDCCWindowSize : MonoBehaviour
         {
             scaleItems[i].transform.localScale = new Vector3((sScales[i].x * currentXScale) * scaleTweakFactor, (sScales[i].y * currentYScale) * scaleTweakFactor, 1);
         }
-
     }
 
     void Awake ()
@@ -133,6 +132,12 @@ public class graphicsDCCWindowSize : MonoBehaviour
             sScales[i] = new Vector2(1,1);
         }
     }
+
+    void Start ()
+    {
+        SetWindowSize(windowWidth, windowHeight);
+    }
+
     void Update ()
     {
         SetWindowSize(windowWidth, windowHeight);

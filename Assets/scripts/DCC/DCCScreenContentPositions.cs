@@ -15,17 +15,17 @@ namespace Meg.DCC
             hidden
         }
 
-        private static Vector2[] screenPositions = 
+        public static Vector2[] screenPositions = 
         {
-            new Vector2 (-6f, 2.65f),   //0 topLeft
-            new Vector2(6f, 2.65f),     //1 topRight
-            new Vector2(-6f, -2.65f),   //2 bottomLeft
-            new Vector2(6f, -2.65f),    //3 bottomRight
+            new Vector2 (-7f, 2.65f),   //0 topLeft
+            new Vector2(3f, 2.65f),     //1 topRight
+            new Vector2(-7f, -2.65f),   //2 bottomLeft
+            new Vector2(3f, -2.65f),    //3 bottomRight
             new Vector2(0f, 0f),        //4 middle
             new Vector2(0f, -6f)        //5 hidden
         };
 
-        private static Vector2[] screenScales = 
+        public static Vector2[] screenScales = 
         {
             new Vector2(95f, 53.4375f),     //0 topLeft
             new Vector2(95f, 53.4375f),     //1 topRight

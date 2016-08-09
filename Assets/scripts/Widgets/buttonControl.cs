@@ -47,6 +47,13 @@ public class buttonControl : MonoBehaviour
     public bool gliderButton = false;
     public GameObject gliderButtonOnMesh;
 
+    [Header("DCC")]
+    public bool DCCButton = false;
+    public bool DCCQuadButton = false;
+    public GameObject DCCQuadMenu;
+    public float pressTime = 0.2f;
+    public float pressedScale = 0.95f;
+
     public delegate void buttonEventHandler();
     public event buttonEventHandler onPressed;
     public event buttonEventHandler onReleased;
@@ -56,6 +63,7 @@ public class buttonControl : MonoBehaviour
     private Renderer r;
     private Material m;
     private float timeIndex = 0.0f;
+    private float pressTimer;
     private GameObject colourThemeObj;
     private float pressDelay = 0.2f;
     private bool canPress = true;
@@ -83,7 +91,7 @@ public class buttonControl : MonoBehaviour
             }
         }
 
-        if (gliderButton)
+        if (gliderButton || DCCButton)
         {
             transition = gliderButtonOnMesh.GetComponent<widgetHighLightOnActive>();
         }
@@ -167,12 +175,14 @@ public class buttonControl : MonoBehaviour
         GetComponent<ReleaseGesture>().Released -= releaseHandler;
     }
 
+    /**tapped removed as functionality appears superfluous */
     private void tappedHandler(object sender, EventArgs e)
     {
         var gesture = sender as TapGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
+        /*
         if (!disabled && !toggleType && canPress)
         {
             //Debug.Log("tapped this object: " + gameObject);
@@ -192,6 +202,7 @@ public class buttonControl : MonoBehaviour
             if (onPressed != null)
                 onPressed();
         }
+        */
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -215,6 +226,9 @@ public class buttonControl : MonoBehaviour
             changed = true;
             frame = 0;
             StartCoroutine(waitOneFrame());
+
+            if(DCCQuadButton)
+                transform.DOScale(transform.localScale * pressedScale, 0.1f);
 
             if (AnimateOnPress)
                 transform.DOPunchScale(transform.localScale * 0.05f, 0.1f);
@@ -330,10 +344,15 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (pressed)
+            pressTimer += Time.deltaTime;
+        else
+            pressTimer = 0;
+
         if (changed)
             frame += 1;
 
-        if (gliderButton)
+        if (gliderButton || DCCButton)
         {
             if (pressed || active)
             {
@@ -354,6 +373,22 @@ public class buttonControl : MonoBehaviour
                     gliderButtonOnMesh.SetActive(false);
                 }
             }
+        }
+
+        if (DCCQuadButton)
+        {
+            if (pressTimer > pressTime && pressed)
+            {
+                
+                DCCQuadMenu.SetActive(true);
+            }
+            else
+            {
+                DCCQuadMenu.SetActive(false);
+            }
+
+            if (!pressed)
+                transform.localScale = Vector3.one;
         }
 
         updateColor();
@@ -443,7 +478,6 @@ public class buttonControl : MonoBehaviour
     {
         yield return new WaitWhile(() => frame < 1);
         changed = false;
-        //Debug.Log("Button state changed.");
     }
 
     IEnumerator waitToDestroy(float waitTime, GameObject g)
