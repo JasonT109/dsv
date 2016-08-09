@@ -187,7 +187,7 @@ public class NavSubPin : MonoBehaviour
         vesselModel.transform.localPosition = ConvertVesselCoords(_position);
 
         // Get position in map space and position button there.
-        var mapPos = ConvertToMapSpace(vesselModel.transform.position);
+        var mapPos = ConvertToMap2DSpace(vesselModel.transform.position);
         vesselButton.transform.localPosition = mapPos;
 
         // Cast a ray down to the terrain from the original position.
@@ -198,7 +198,7 @@ public class NavSubPin : MonoBehaviour
         if (Distance > 0)
         {
             // Set the position of the height indicators to be at ground level
-            var groundPos = ConvertToMapSpace(_hit.point);
+            var groundPos = ConvertToMap2DSpace(_hit.point);
             vesselHeightIndicator.transform.localPosition = groundPos;
 
             // Set the x position to be exactly the same as button plus offset
@@ -283,8 +283,8 @@ public class NavSubPin : MonoBehaviour
     }
 
     /** Convert a vessel's position into 2D map space. */
-    private Vector2 ConvertToMapSpace(Vector3 p)
-        { return _manager.ConvertToMapSpace(p); }
+    private Vector2 ConvertToMap2DSpace(Vector3 p)
+        { return _manager.ConvertToMap2DSpace(p); }
 
     /** Convert a vessel's position into 3D map space. */
     private Vector3 ConvertVesselCoords(Vector3 p)
@@ -293,7 +293,7 @@ public class NavSubPin : MonoBehaviour
     /** Convert a vessel's position into 2D screen space. */
     private Vector3 ConvertVesselToScreenSpace(Vector3 p)
     {
-        var map = ConvertToMapSpace(p);
+        var map = ConvertToMap2DSpace(p);
         var world = vesselButton.transform.parent.TransformPoint(map);
         return Camera.main.WorldToScreenPoint(world);
     }

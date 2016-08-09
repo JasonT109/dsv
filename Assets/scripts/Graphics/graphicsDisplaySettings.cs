@@ -44,12 +44,22 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     public GameObject panelRightLarge;
 
 
+    /** Whether scaling is active. */
+    public bool Scaled { get; private set; }
+
+    /** The current scale factor in effect. */
+    public float Scale { get; private set; }
+
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
     /** Initialization. */
     void Awake()
     {
+        Scaled = false;
+        Scale = 1;
         Initialize();
     }
 
@@ -140,14 +150,16 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     // ------------------------------------------------------------
 
     /** Update the current camera scaling state based on debug settings. */
-    private void SetScaled(bool scaled)
+    private void SetScaled(bool value)
     {
         var scaleRoot = Camera.main;
         var scaleFrom = GetAspectToScaleFrom();
         var scaleTo = GetAspectToScaleTo();
-        var scale = scaled ? (scaleTo / scaleFrom) : 1;
 
-        scaleRoot.transform.localScale = new Vector3(scale, 1, 1);
+        Scaled = value;
+        Scale = value ? (scaleTo / scaleFrom) : 1;
+
+        scaleRoot.transform.localScale = new Vector3(Scale, 1, 1);
     }
 
     /** Determine what content aspect ratio we're scaling from. */
