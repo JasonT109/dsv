@@ -3,7 +3,7 @@
 	{
 		"save-folder" : "C:/Meg/",
 		"auto-save-folder" : "C:/Meg/Autosave/",
-		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:hh.mm.ss.f}_{6}.json",
+		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json",
 		"auto-save-enabled" : true,
 		"vessel-names" : ["Marco", "Polo", "Glider 1", "Glider 2", "Unknown", "Target"]
 	},

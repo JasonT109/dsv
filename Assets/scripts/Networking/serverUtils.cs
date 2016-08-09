@@ -517,6 +517,7 @@ namespace Meg.Networking
         /** Metadata about various server parameters. */
         private static readonly Dictionary<string, ParameterInfo> _parameterData = new Dictionary<string, ParameterInfo>
         {
+            { "air", new ParameterInfo { readOnly = true } },
             { "battery", new ParameterInfo { readOnly = true } },
             { "batterycurrent", new ParameterInfo { maxValue = 30 } },
             { "batterydrain", new ParameterInfo { maxValue = 1 } },

@@ -69,6 +69,12 @@ namespace Meg.EventSystem
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
 
+        /** When playback last started. */
+        public DateTime startedTimestamp;
+
+        /** When playback last stopped. */
+        public DateTime stoppedTimestamp;
+
 
         // Events
         // ------------------------------------------------------------
@@ -160,6 +166,9 @@ namespace Meg.EventSystem
 
             // Register with event manager for updates.
             megEventManager.Instance.StartUpdating(this);
+
+            // Remember when playback started.
+            startedTimestamp = DateTime.UtcNow;
         }
 
         /** Update this event file as time passes. */
@@ -208,6 +217,9 @@ namespace Meg.EventSystem
 
             // Stop receiving updates.
             megEventManager.Instance.StopUpdating(this);
+
+            // Remember when playback stopped.
+            stoppedTimestamp = DateTime.UtcNow;
         }
 
         /** Rewind the file to start time. */
@@ -348,6 +360,8 @@ namespace Meg.EventSystem
         public virtual JSONObject Save()
         {
             var json = new JSONObject();
+            json.AddField("metadata", SaveMetadata());
+
             var groupsJson = new JSONObject(JSONObject.Type.ARRAY);
             foreach (var g in groups)
                 groupsJson.Add(g.Save());
@@ -398,6 +412,16 @@ namespace Meg.EventSystem
 
             if (SavedToFile != null)
                 SavedToFile(this);
+        }
+
+        /** Save event file metadata to JSON. */
+        private JSONObject SaveMetadata()
+        {
+            var json = new JSONObject();
+            json.AddField("utc", string.Format("{0:dd/MM/yy hh:mm:ss.f}", DateTime.UtcNow));
+            json.AddField("startedTimestamp", string.Format("{0:dd/MM/yy hh:mm:ss.f}", startedTimestamp));
+            json.AddField("stoppedTimestamp", string.Format("{0:dd/MM/yy hh:mm:ss.f}", stoppedTimestamp));
+            return json;
         }
 
 

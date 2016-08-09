@@ -7,63 +7,63 @@
 				{
 					"type":"Value",
 					"triggerTime":3,
-					"completeTime":2,
+					"completeTime":11.6,
 					"serverParam":"b1",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":4,
-					"completeTime":4,
+					"completeTime":11.6,
 					"serverParam":"b2",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":3,
-					"completeTime":5,
+					"completeTime":15,
 					"serverParam":"b3",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":6,
-					"completeTime":3,
+					"completeTime":20,
 					"serverParam":"b4",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":8.322994,
-					"completeTime":5.347415,
+					"completeTime":10.83941,
 					"serverParam":"b5",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":6.856758,
-					"completeTime":7.669926,
+					"completeTime":25,
 					"serverParam":"b6",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":10.08274,
-					"completeTime":4.458692,
+					"completeTime":22.8,
 					"serverParam":"batteryCurrent",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":3.074678,
-					"completeTime":11.50953,
+					"completeTime":30,
 					"serverParam":"batterylife",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
-					"triggerTime":3.01669,
-					"completeTime":11.6,
+					"triggerTime":22.78068,
+					"completeTime":10.14277,
 					"serverParam":"batteryTimeRemaining",
 					"serverValue":0
 				}
