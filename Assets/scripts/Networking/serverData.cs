@@ -296,6 +296,30 @@ public class serverData : NetworkBehaviour
             case "b7":
                 BatteryData.bank7 = newValue;
                 break;
+            case "batteryerrorthreshold":
+                BatteryData.batteryErrorThreshold = newValue;
+                break;
+            case "b1error":
+                BatteryData.bank1Error = newValue;
+                break;
+            case "b2error":
+                BatteryData.bank2Error = newValue;
+                break;
+            case "b3error":
+                BatteryData.bank3Error = newValue;
+                break;
+            case "b4error":
+                BatteryData.bank4Error = newValue;
+                break;
+            case "b5error":
+                BatteryData.bank5Error = newValue;
+                break;
+            case "b6error":
+                BatteryData.bank6Error = newValue;
+                break;
+            case "b7error":
+                BatteryData.bank7Error = newValue;
+                break;
             case "o1":
             case "oxygentank1":
                 OxygenData.oxygenTank1 = newValue;

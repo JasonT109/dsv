@@ -69,6 +69,43 @@
 					"serverParam":"batteryDrain"
 				}
 			]
+		},
+		{
+			"id":"BATTERY ERRORS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"batteryErrorThreshold"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b1Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b2Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b3Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b4Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b5Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b6Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b7Error"
+				}
+			]
 		}
 	]
 }

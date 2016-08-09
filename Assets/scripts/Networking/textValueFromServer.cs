@@ -4,15 +4,25 @@ using Meg.Networking;
 
 public class textValueFromServer : widgetText
 {
+    [Header("Server Data")]
     public string linkDataString = "depth";
+
+    [Header("Output Value")]
+    public bool useOutputCurve;
+    public AnimationCurve outputCurve;
+    public bool addNoise = false;
+    public SmoothNoise noise;
     public float scale = 1;
+
+    [Header("Formatting")]
+    public string format = "";
+    public bool upperCase;
+    public ValueRange[] Ranges;
+
+    [Header("Updating")]
     public float updateTick = 0.2f;
     private float nextUpdate = 0;
 
-    public bool upperCase;
-
-    public string format = "";
-    
     [System.Serializable]
     public struct ValueRange
     {
@@ -21,28 +31,47 @@ public class textValueFromServer : widgetText
         public Color Color;
     }
 
-    public ValueRange[] Ranges;
-
     private void Start()
     {
+        if (addNoise)
+            noise.Start();
+
         Update();
         nextUpdate = Time.time + updateTick;
     }
 
     private void Update()
     {
+        // Always update noise function.
+        if (addNoise)
+            noise.Update();
+
+        // Check if it's time for the next update.
         if (Time.time < nextUpdate)
             return;
-
         nextUpdate = Time.time + updateTick;
 
+        // Determine current value.
+        var value = serverUtils.GetServerData(linkDataString);
+
+        // Apply remapping curve, if specified.
+        if (useOutputCurve)
+            value = outputCurve.Evaluate(value);
+
+        // Add noise if desired.
+        if (addNoise)
+            value += noise.Value;
+
+        // Apply scaling (if specified).
+        value = value * scale;
+
         // Apply baseline value formatting.
-        var value = serverUtils.GetServerData(linkDataString) * scale;
         if (string.IsNullOrEmpty(format))
             Text = serverUtils.GetServerDataAsText(linkDataString);
         else
             Text = string.Format(format, value);
 
+        // Convert to uppercase if desired.
         if (upperCase)
             Text = Text.ToUpper();
 

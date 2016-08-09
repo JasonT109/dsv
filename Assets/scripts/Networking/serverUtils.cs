@@ -257,10 +257,18 @@ namespace Meg.Networking
             "b5",
             "b6",
             "b7",
+            "b1error",
+            "b2error",
+            "b3error",
+            "b4error",
+            "b5error",
+            "b6error",
+            "b7error",
             "ballastpressure",
             "battery",
             "batterycurrent",
             "batterydrain",
+            "batteryerrorthreshold",
             "batterylife",
             "batterylifeenabled",
             "batterylifemax",
@@ -620,6 +628,8 @@ namespace Meg.Networking
                     return BatteryData.batteryCurrent;
                 case "batterydrain":
                     return BatteryData.batteryDrain;
+                case "batteryerrorthreshold":
+                    return BatteryData.batteryErrorThreshold;
                 case "batterylife":
                     return BatteryData.batteryLife;
                 case "batterylifemax":
@@ -646,6 +656,20 @@ namespace Meg.Networking
                     return BatteryData.bank6;
                 case "b7":
                     return BatteryData.bank7;
+                case "b1error":
+                    return BatteryData.bank1Error;
+                case "b2error":
+                    return BatteryData.bank2Error;
+                case "b3error":
+                    return BatteryData.bank3Error;
+                case "b4error":
+                    return BatteryData.bank4Error;
+                case "b5error":
+                    return BatteryData.bank5Error;
+                case "b6error":
+                    return BatteryData.bank6Error;
+                case "b7error":
+                    return BatteryData.bank7Error;
                 case "oxygen":
                     return OxygenData.oxygen;
                 case "oxygenlitres":

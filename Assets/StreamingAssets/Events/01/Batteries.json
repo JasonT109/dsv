@@ -1,42 +1,85 @@
 {
-	"groups":
-	[
+	"groups":[
 		{
-			"id" : "Battery Failure",
-			"paused" : true,
-			"minimized" : true,
-			"events" :
-			[
+			"id":"Battery Failure",
+			"minimized":true,
+			"events":[
 				{
-					"type" : "Value",
-					"triggerTime" : 3,
-					"completeTime" : 2,
-					"serverParam" : "b1",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":3,
+					"completeTime":2,
+					"serverParam":"b1",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 4,
-					"completeTime" : 4,
-					"serverParam" : "b2",
-					"serverValue" : 0
-				},
-								{
-					"type" : "Value",
-					"triggerTime" : 3,
-					"completeTime" : 5,
-					"serverParam" : "b3",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":4,
+					"completeTime":4,
+					"serverParam":"b2",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 6,
-					"completeTime" : 3,
-					"serverParam" : "b4",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":3,
+					"completeTime":5,
+					"serverParam":"b3",
+					"serverValue":0
 				},
-
+				{
+					"type":"Value",
+					"triggerTime":6,
+					"completeTime":3,
+					"serverParam":"b4",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":8.322994,
+					"completeTime":5.347415,
+					"serverParam":"b5",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":6.856758,
+					"completeTime":7.669926,
+					"serverParam":"b6",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":10.08274,
+					"completeTime":4.458692,
+					"serverParam":"batteryCurrent",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.074678,
+					"completeTime":11.50953,
+					"serverParam":"batterylife",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.01669,
+					"completeTime":11.6,
+					"serverParam":"batteryTimeRemaining",
+					"serverValue":0
+				}
 			]
-		},	
+		},
+		{
+			"id":"Battery Cooldown",
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":15,
+					"completeTime":120,
+					"serverParam":"batteryTemp",
+					"serverValue":0
+				}
+			]
+		}
 	]
 }
