@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.IO;
 using Meg.EventSystem;
@@ -8,6 +9,15 @@ namespace Meg.Scene
 
     public class megSceneFile
     {
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Default folder for autosave files. */
+        public const string DefaultAutoSaveFolder = @"C:/Meg/Autosave/";
+
+        /** Default format for autosave filenames. */
+        public const string DefaultAutoSaveFormat = @"{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json";
+
 
         // Load / Save
         // ------------------------------------------------------------
@@ -36,6 +46,27 @@ namespace Meg.Scene
             File.WriteAllText(path, text);
         }
 
+        /** Whether autosaving is enabled. */
+        public static bool AutoSaveEnabled()
+            { return Configuration.Get("auto-save-enabled", true); }
+
+        /** Save out scene state to an autosave file. */
+        public static void AutoSave(string suffix)
+        {
+            // Gather all information required to determine the auto-save filename.
+            var folder = Configuration.Get("auto-save-folder", DefaultAutoSaveFolder);
+            var format = Configuration.Get("auto-save-format", DefaultAutoSaveFormat);
+            var vessel = serverUtils.GetServerDataAsText("playerVesselName");
+            var scene = serverUtils.GetServerData("scene");
+            var shot = serverUtils.GetServerData("shot");
+            var take = serverUtils.GetServerData("take");
+            var utc = DateTime.UtcNow;
+            var path = string.Format(format, folder, vessel, scene, shot, take, utc, suffix);
+
+            // Save file to nominated path.
+            SaveToFile(path);
+        }
+
         /** Load state from JSON. */
         public void Load(JSONObject json)
         {
@@ -60,6 +91,7 @@ namespace Meg.Scene
         public JSONObject Save()
         {
             var json = new JSONObject();
+            json.AddField("metadata", SaveMetadata());
             json.AddField("parameters", SaveParameters());
             json.AddField("vessels", SaveVessels());
             json.AddField("movements", SaveMovements());
@@ -72,11 +104,25 @@ namespace Meg.Scene
         // Save Methods
         // ------------------------------------------------------------
 
+        /** Save file metadata to JSON. */
+        private JSONObject SaveMetadata()
+        {
+            var json = new JSONObject();
+            json.AddField("utc", string.Format("{0:dd/MM/yy hh:mm:ss.f}", DateTime.UtcNow));
+            json.AddField("scene", serverUtils.GetServerData("scene"));
+            json.AddField("shot", serverUtils.GetServerData("shot"));
+            json.AddField("take", serverUtils.GetServerData("take"));
+            json.AddField("playervessel", serverUtils.GetServerData("playervessel"));
+            json.AddField("playervesselname", serverUtils.GetServerDataAsText("playervesselname"));
+
+            return json;
+        }
+
         /** Save server parameter state to JSON. */
         private JSONObject SaveParameters()
         {
             var json = new JSONObject();
-            foreach (var parameter in serverUtils.Parameters)
+            foreach (var parameter in serverUtils.WriteableParameters)
                 json.AddField(parameter, serverUtils.GetServerData(parameter));
 
             return json;

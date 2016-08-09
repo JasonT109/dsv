@@ -1,7 +1,7 @@
 {
 	"groups":[
 		{
-			"id":"BATTERIES",
+			"id":"BATTERY BANKS",
 			"parameters":[
 				{
 					"type":"Value",
@@ -30,6 +30,80 @@
 				{
 					"type":"Value",
 					"serverParam":"b7"
+				}
+			]
+		},
+		{
+			"id":"BATTERY STATS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"batteryTemp"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryCurrent"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLife"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLifeMax"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryLifeEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeRemaining"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryTimeEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryDrain"
+				}
+			]
+		},
+		{
+			"id":"BATTERY ERRORS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"batteryErrorThreshold"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b1Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b2Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b3Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b4Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b5Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b6Error"
+				},
+				{
+					"type":"Value",
+					"serverParam":"b7Error"
 				}
 			]
 		}

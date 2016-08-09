@@ -88,6 +88,12 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public string mapEventName;
 
+    /** Initialization. */
+    private void Awake()
+    {
+        // Initialize vessel name.
+        playerVesselName = serverUtils.GetVesselName(playerVessel);
+    }
 
     /** Physics update. */
     void FixedUpdate()

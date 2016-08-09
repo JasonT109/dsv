@@ -254,6 +254,27 @@ public class serverData : NetworkBehaviour
             case "batterytemp":
                 BatteryData.batteryTemp = newValue;
                 break;
+            case "batterycurrent":
+                BatteryData.batteryCurrent = newValue;
+                break;
+            case "batterydrain":
+                BatteryData.batteryDrain = newValue;
+                break;
+            case "batterylife":
+                BatteryData.batteryLife = newValue;
+                break;
+            case "batterylifeenabled":
+                BatteryData.batteryLifeEnabled = newValue > 0;
+                break;
+            case "batterylifemax":
+                BatteryData.batteryLifeMax = newValue;
+                break;
+            case "batterytimeremaining":
+                BatteryData.batteryTimeRemaining = newValue;
+                break;
+            case "batterytimeenabled":
+                BatteryData.batteryTimeEnabled = newValue > 0;
+                break;
             case "b1":
                 BatteryData.bank1 = newValue;
                 break;
@@ -275,30 +296,63 @@ public class serverData : NetworkBehaviour
             case "b7":
                 BatteryData.bank7 = newValue;
                 break;
+            case "batteryerrorthreshold":
+                BatteryData.batteryErrorThreshold = newValue;
+                break;
+            case "b1error":
+                BatteryData.bank1Error = newValue;
+                break;
+            case "b2error":
+                BatteryData.bank2Error = newValue;
+                break;
+            case "b3error":
+                BatteryData.bank3Error = newValue;
+                break;
+            case "b4error":
+                BatteryData.bank4Error = newValue;
+                break;
+            case "b5error":
+                BatteryData.bank5Error = newValue;
+                break;
+            case "b6error":
+                BatteryData.bank6Error = newValue;
+                break;
+            case "b7error":
+                BatteryData.bank7Error = newValue;
+                break;
+            case "o1":
             case "oxygentank1":
                 OxygenData.oxygenTank1 = newValue;
                 break;
+            case "o2":
             case "oxygentank2":
                 OxygenData.oxygenTank2 = newValue;
                 break;
+            case "o3":
             case "oxygentank3":
                 OxygenData.oxygenTank3 = newValue;
                 break;
+            case "o4":
             case "reserveoxygentank1":
                 OxygenData.reserveOxygenTank1 = newValue;
                 break;
+            case "o5":
             case "reserveoxygentank2":
                 OxygenData.reserveOxygenTank2 = newValue;
                 break;
+            case "o6":
             case "reserveoxygentank3":
                 OxygenData.reserveOxygenTank3 = newValue;
                 break;
+            case "o7":
             case "reserveoxygentank4":
                 OxygenData.reserveOxygenTank4 = newValue;
                 break;
+            case "o8":
             case "reserveoxygentank5":
                 OxygenData.reserveOxygenTank5 = newValue;
                 break;
+            case "o9":
             case "reserveoxygentank6":
                 OxygenData.reserveOxygenTank6 = newValue;
                 break;
@@ -810,6 +864,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "joystickpilot":
                 SubControl.JoystickPilot = newValue;
+                break;
+            case "batterylifeenabled":
+                BatteryData.batteryLifeEnabled = newValue;
+                break;
+            case "batterytimeenabled":
+                BatteryData.batteryTimeEnabled = newValue;
                 break;
         }
     }

@@ -1,105 +1,224 @@
 {
-	"groups":
-	[
+	"groups":[
 		{
-			"id" : "Main Oxygen Depletion",
-			"paused" : true,
-			"events" :
-			[
+			"id":"Main Air Depletion",
+			"minimized":true,
+			"events":[
 				{
-					"type" : "Value",
-					"triggerTime" : 2,
-					"completeTime" : 20,
-					"serverParam" : "o1",
-					"serverValue" : 0
+					"type":"Value",
+					"completeTime":30,
+					"serverParam":"airtank1",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 2.5,
-					"completeTime" : 25,
-					"serverParam" : "o2",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":4.826391,
+					"completeTime":36,
+					"serverParam":"airTank2",
+					"serverValue":0
 				},
+				{
+					"type":"Value",
+					"triggerTime":8.257095,
+					"completeTime":45,
+					"serverParam":"airTank3",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.674676,
+					"completeTime":42.28316,
+					"serverParam":"airTank4",
+					"serverValue":0
+				}
 			]
 		},
 		{
-			"id" : "Oxygen Failure",
-			"paused" : true,
-			"minimized" : true,
-			"events" :
-			[
+			"id":"Main Oxygen Depletion",
+			"minimized":true,
+			"events":[
 				{
-					"type" : "Value",
-					"triggerTime" : 2.5,
-					"completeTime" : 12,
-					"serverParam" : "o3",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":2,
+					"completeTime":20,
+					"serverParam":"oxygenTank1",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 2.2,
-					"completeTime" : 13,
-					"serverParam" : "o4",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":2.5,
+					"completeTime":25,
+					"serverParam":"oxygenTank2",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 1.6,
-					"completeTime" : 13,
-					"serverParam" : "o5",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":4.044991,
+					"completeTime":45,
+					"serverParam":"oxygenTank3",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 1.4,
-					"completeTime" : 14,
-					"serverParam" : "o6",
-					"serverValue" : 0
+					"type":"Value",
+					"triggerTime":4.734194,
+					"completeTime":44.5,
+					"serverParam":"oxygenflow",
+					"serverValue":0
 				},
 				{
-					"type" : "Value",
-					"triggerTime" : 1.1,
-					"completeTime" : 12,
-					"serverParam" : "o7",
-					"serverValue" : 0
-				},
-				{
-					"type" : "Value",
-					"triggerTime" : 0.8,
-					"completeTime" : 0,
-					"serverParam" : "error_oxygenExt",
-					"serverValue" : 0
-				},
-				{
-					"type" : "Value",
-					"triggerTime" : 2,
-					"completeTime" : 0,
-					"serverParam" : "error_oxygenPump",
-					"serverValue" : 0
-				},
-				{
-					"type" : "Value",
-					"triggerTime" : 2.5,
-					"completeTime" : 0,
-					"serverParam" : "error_bowThruster",
-					"serverValue" : 0
-				},
-				{
-					"type" : "Value",
-					"triggerTime" : 3.2,
-					"completeTime" : 0,
-					"serverParam" : "error_starboardLights",
-					"serverValue" : 0
-				},
-				{
-					"type" : "Value",
-					"triggerTime" : 2.8,
-					"completeTime" : 0,
-					"serverParam" : "error_radar",
-					"serverValue" : 0
-				},
-
+					"type":"Value",
+					"triggerTime":5.944907,
+					"completeTime":120,
+					"serverParam":"scrubbedOxygen",
+					"serverValue":0
+				}
 			]
 		},
+		{
+			"id":"Reserve Oxygen Depletion",
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":2.5,
+					"completeTime":12,
+					"serverParam":"reserveOxygenTank1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.2,
+					"completeTime":13,
+					"serverParam":"reserveOxygenTank2",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.6,
+					"completeTime":13,
+					"serverParam":"reserveOxygenTank3",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.4,
+					"completeTime":14,
+					"serverParam":"reserveOxygenTank4",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.1,
+					"completeTime":12,
+					"serverParam":"reserveOxygenTank5",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.760699,
+					"completeTime":25,
+					"serverParam":"reserveOxygenTank6",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":0.8,
+					"serverParam":"error_oxygenExt",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2,
+					"serverParam":"error_oxygenPump",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.5,
+					"serverParam":"error_bowThruster",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.2,
+					"serverParam":"error_starboardLights",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.8,
+					"serverParam":"error_radar",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"Reserve Air Depletion",
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":32,
+					"serverParam":"reserveAirTank1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.11852,
+					"completeTime":43,
+					"serverParam":"reserveAirTank2",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":11.69554,
+					"completeTime":55,
+					"serverParam":"reserveAirTank3",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.60192,
+					"completeTime":54.75536,
+					"serverParam":"reserveAirTank4",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":22.43431,
+					"completeTime":44.11616,
+					"serverParam":"reserveAirTank5",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":9.503692,
+					"completeTime":53.59616,
+					"serverParam":"reserveAirTank6",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.598593,
+					"completeTime":40.19708,
+					"serverParam":"reserveAirTank7",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":5.518311,
+					"completeTime":80,
+					"serverParam":"reserveAirTank8",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":16.50988,
+					"completeTime":66.9263,
+					"serverParam":"reserveAirTank9",
+					"serverValue":0
+				}
+			]
+		}
 	]
 }

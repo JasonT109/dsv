@@ -17,6 +17,9 @@ public class textValuesFromServer : widgetText
     private void Start()
     {
         _values = new float[linkDataStrings.Length];
+
+        Update();
+        nextUpdate = Time.time + updateTick;
     }
 
     private void Update()

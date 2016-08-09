@@ -5,15 +5,18 @@ using Meg.Networking;
 
 public class NetworkManagerCustom : MonoBehaviour
 {
-    
+
     // Constants
     // ------------------------------------------------------------
 
-    /** Timeout for interactive startup attempts (seconds). */
-    public const float DefaultStartupTimeout = 2;
+    /** Interval for initial startup attempt (seconds). */
+    public const float InitialStartupAttemptInterval = 0.5f;
 
-    /** Timeout for automatic session startup attempts (seconds). */
-    public const float AutoStartupTimeout = 10;
+    /** Interval for interactive startup attempts (seconds). */
+    public const float DefaultStartupAttemptInterval = 2;
+
+    /** Interval for automatic session startup attempts (seconds). */
+    public const float AutoStartupAttemptTimeout = 10;
 
     /** Name of the password screen. */
     public const string LoginScene = "offline_scene";
@@ -110,18 +113,14 @@ public class NetworkManagerCustom : MonoBehaviour
     {
         Debug.Log(string.Format("NetworkManagerCustom.Start(id:{0})", Id));
 
-        // Perform an inital automatic startup attempt.
-        if (!HasSession && CanAttemptStartup())
-            AttemptAutoStartup();
+        // Schedule inital automatic startup attempt.
+        if (IsLoginScreen())
+            ScheduleNextAttempt(InitialStartupAttemptInterval);
     }
 
     /** Updating. */
     private void Update()
     {
-        // Spawn server object if needed.
-        if (IsHost)
-            EnsureServerObjectExists();
-
         // Periodically attempt automatic startup.
         if (!HasSession && CanAttemptStartup())
             AttemptAutoStartup();
@@ -167,7 +166,6 @@ public class NetworkManagerCustom : MonoBehaviour
             return false;
 
         Debug.Log(string.Format("NetworkManagerCustom.StartClient(id:{0}): Starting server session - scene '{1}'..", Id, Scene));
-        EnsureServerObjectExists();
         _manager.onlineScene = Scene;
         _manager.StartHost();
 
@@ -185,9 +183,6 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Whether autostartup can be attempted. */
     private bool ShouldAutoStart()
     {
-        return !IsLoginScreen();
-
-        /*
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
             return !IsLoginScreen();
@@ -197,7 +192,6 @@ public class NetworkManagerCustom : MonoBehaviour
             return false;
 
         return true;
-        */
     }
 
     /** Attempt automatic session startup. */
@@ -207,13 +201,6 @@ public class NetworkManagerCustom : MonoBehaviour
         if (HasSession || _loadCount > 1 || !CanAttemptStartup())
             return;
 
-        // If we're not in the login screen and no session exists, must be in the editor.
-        // In that case we should start up a local server automatically.
-        var attempted = false;
-        if (!IsLoginScreen())
-            attempted = StartServer();
-
-        /*
         // Check if we should start a client or server session immediately.
         // If we're not in the login screen and no session exists, must be in the editor.
         // In that case we should start up a local server automatically.
@@ -225,11 +212,10 @@ public class NetworkManagerCustom : MonoBehaviour
             attempted = StartClient();
         else if (role == "server" || role == "host")
             attempted = StartServer();
-        */
 
         // Schedule the next auto-attempt (if we made one.)
         if (attempted)
-            ScheduleNextAttempt(AutoStartupTimeout);
+            ScheduleNextAttempt(AutoStartupAttemptTimeout);
     }
 
     /** Whether a startup attempt can be made at present. */
@@ -238,7 +224,7 @@ public class NetworkManagerCustom : MonoBehaviour
 
     /** Schedule the next possible time for a startup attempt. */
     private void ScheduleNextAttempt()
-        { _nextStartTime = Time.time + DefaultStartupTimeout; }
+        { _nextStartTime = Time.time + DefaultStartupAttemptInterval; }
 
     /** Schedule the next possible time for a startup attempt. */
     private void ScheduleNextAttempt(float timeout)
@@ -247,43 +233,5 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Check if we're in the initial password screen. */
     private bool IsLoginScreen()
         { return SceneManager.GetActiveScene().name == LoginScene; }
-
-    /** Try to ensure the server object exists. */
-    private void EnsureServerObjectExists()
-    {
-        // Check if we're acting as the host.
-        if (!IsHost)
-            return;
-
-        // Check if server object exists.
-        if (_serverObject)
-            return;
-
-        // Look for server object in scene, and spawn it if needed.
-        Debug.Log(string.Format("NetworkManagerCustom.EnsureServerObjectExists(id:{0}): Creating server object.", Id));
-        _serverObject = GameObject.FindWithTag("ServerData");
-        if (_serverObject == null)
-            SpawnServerObject();
-    }
-
-    /** Spawn the server object from the host. */
-    private void SpawnServerObject()
-    {
-        // Check if we're acting as the host.
-        if (!IsHost)
-            return;
-
-        // As this is spawned only once by the host, we can assume there will only be one player in the scene.
-        var player = GameObject.FindWithTag("Player");
-        if (!player)
-            return;
-
-        // Spawn the server object.
-        Debug.Log(string.Format("NetworkManagerCustom.EnsureServerObjectExists(id:{0}): Spawning server object.", Id));
-        var toId = player.GetComponent<NetworkIdentity>();
-        var conn = toId.connectionToClient;
-        var sd = (GameObject) Instantiate(ServerObject, new Vector3(200, 0, 0), Quaternion.identity);
-        NetworkServer.SpawnWithClientAuthority(sd, conn);
-    }
 
 }

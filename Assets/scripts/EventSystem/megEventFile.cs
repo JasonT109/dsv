@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Meg.Networking;
+using Meg.Scene;
 
 namespace Meg.EventSystem
 {
@@ -67,6 +68,12 @@ namespace Meg.EventSystem
 
         /** The selected event (if any). */
         public megEvent selectedEvent { get; set; }
+
+        /** When playback last started. */
+        public DateTime startedTimestamp;
+
+        /** When playback last stopped. */
+        public DateTime stoppedTimestamp;
 
 
         // Events
@@ -159,6 +166,9 @@ namespace Meg.EventSystem
 
             // Register with event manager for updates.
             megEventManager.Instance.StartUpdating(this);
+
+            // Remember when playback started.
+            startedTimestamp = DateTime.UtcNow;
         }
 
         /** Update this event file as time passes. */
@@ -207,21 +217,26 @@ namespace Meg.EventSystem
 
             // Stop receiving updates.
             megEventManager.Instance.StopUpdating(this);
+
+            // Remember when playback stopped.
+            stoppedTimestamp = DateTime.UtcNow;
         }
 
         /** Rewind the file to start time. */
         public void Rewind()
         {
-            var wasRunning = running;
-            var wasPaused = paused;
-            var wasCompleted = completed;
+            if (!running)
+                return;
 
-            Stop();
+            // Stop playback if needed.
+            if (paused || completed)
+                Stop();
+            else
+                time = 0;
 
-            if (wasRunning)
-                Start();
-            if (wasPaused || wasCompleted)
-                Pause();
+            // Rewind each group.
+            for (var i = 0; i < groups.Count; i++)
+                groups[i].Rewind();
         }
 
         /** Add an group of a given type. */
@@ -345,6 +360,8 @@ namespace Meg.EventSystem
         public virtual JSONObject Save()
         {
             var json = new JSONObject();
+            json.AddField("metadata", SaveMetadata());
+
             var groupsJson = new JSONObject(JSONObject.Type.ARRAY);
             foreach (var g in groups)
                 groupsJson.Add(g.Save());
@@ -397,6 +414,16 @@ namespace Meg.EventSystem
                 SavedToFile(this);
         }
 
+        /** Save event file metadata to JSON. */
+        private JSONObject SaveMetadata()
+        {
+            var json = new JSONObject();
+            json.AddField("utc", string.Format("{0:dd/MM/yy hh:mm:ss.f}", DateTime.UtcNow));
+            json.AddField("startedTimestamp", string.Format("{0:dd/MM/yy hh:mm:ss.f}", startedTimestamp));
+            json.AddField("stoppedTimestamp", string.Format("{0:dd/MM/yy hh:mm:ss.f}", stoppedTimestamp));
+            return json;
+        }
+
 
         // Private Methods
         // ------------------------------------------------------------
@@ -404,6 +431,10 @@ namespace Meg.EventSystem
         /** Capture initial server state. */
         private void CaptureServerState()
         {
+            // Save out initial scene state to file.
+            if (megSceneFile.AutoSaveEnabled())
+                megSceneFile.AutoSave("Start");
+
             // Capture initial camera state.
             _initialCameraValid = MapCamera.Capture(ref _initialCamera);
 
@@ -414,6 +445,10 @@ namespace Meg.EventSystem
         /** Reset server state to initial settings. */
         private void ResetServerState()
         {
+            // Save out final scene state to file.
+            if (megSceneFile.AutoSaveEnabled())
+                megSceneFile.AutoSave("Stop");
+    
             // Reset data values from events.
             foreach (var e in _values)
                 serverUtils.PostServerData(e.Key, e.Value.value);

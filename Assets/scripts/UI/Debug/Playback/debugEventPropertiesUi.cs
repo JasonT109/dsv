@@ -553,18 +553,21 @@ public class debugEventPropertiesUi : MonoBehaviour
         var current = ValueEvent.serverParam;
         var prefix = (value ?? current);
         var index = 0;
-        var focus = 0;
-        foreach (var param in serverUtils.Parameters)
+        var focus = -1;
+        foreach (var param in serverUtils.WriteableParameters)
         {
             var entry = GetServerParamEntry(index);
             var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);
             entry.Text.text = param;
             entry.On.gameObject.SetActive(on);
-            if (string.CompareOrdinal(prefix, param) >= 0)
+            if (string.CompareOrdinal(prefix, param) >= 0 && focus < 0)
                 focus = index;
 
             index++;
         }
+
+        if (focus < 0)
+            focus = 0;
 
         for (var i = 0; i < _serverParams.Count; i++)
             _serverParams[i].gameObject.SetActive(i < index);

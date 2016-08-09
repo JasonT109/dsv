@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Vectrosity;
 using Meg.Maths;
+using Meg.Networking;
 
 public class graphicsLineGraph : MonoBehaviour
 {
@@ -21,21 +22,40 @@ public class graphicsLineGraph : MonoBehaviour
     public digital_gauge[] gauges;
     public float gaugeAverage;
 
+    public bool useServerValue = false;
+    public string linkDataString;
+
+    public float valueMin = 0f;
+    public float valueMax = 100f;
+
+    public bool doWobble = false;
+    public float valueWobble = 0.0f;
+    public float wobbleSpeed = 0.0f;
+    public float wobbleThreshold = 0;
+
+    public bool doNoise = false;
+    public SmoothNoise noise;
+    public float noiseThreshold = 0;
+
+    private float index;
+    private float wobble = 1.0f;
+    private float wobbleAccumulate = 0.0f;
+
     void Start()
     {
-        graphHeights = new float[numPoints];
+        if (doNoise)
+            noise.Start();
 
+        graphHeights = new float[numPoints];
         for (int i = 0; i < numPoints; i++)
         {
             if (useGaugeAverage)
-            {
-                graphHeights[i] = GetInitGaugeAverage();
-                graphHeights[i] += Random.Range(-1, 1);
-            }
+                graphHeights[i] = GetInitGaugeAverage() + Random.Range(-1, 1);
+            else if (useServerValue)
+                graphHeights[i] = GetServerValue() + Random.Range(-1, 1);
             else
-            {
                 graphHeights[i] = Random.Range(minHeight, maxHeight);
-            }
+
             line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, graphHeights[i]);
         }
 
@@ -53,7 +73,7 @@ public class graphicsLineGraph : MonoBehaviour
         if (gAvg != 0 && gauges.Length != 0)
             gAvg = gAvg / gauges.Length;
 
-        return graphicsMaths.remapValue(gAvg, 0, 100, 0, graphMax);
+        return graphicsMaths.remapValue(gAvg, valueMin, valueMax, 0, graphMax);
     }
 
     float GetGaugeAverage()
@@ -68,34 +88,59 @@ public class graphicsLineGraph : MonoBehaviour
         if (gAvg != 0 && gauges.Length != 0)
             gAvg = gAvg / gauges.Length;
 
-        return graphicsMaths.remapValue(gAvg, 0, 100, 0, graphMax);
+        return graphicsMaths.remapValue(gAvg, valueMin, valueMax, 0, graphMax);
+    }
+
+    float GetServerValue()
+    {
+        var value = serverUtils.GetServerData(linkDataString);
+        return graphicsMaths.remapValue(value, valueMin, valueMax, 0, graphMax);
     }
 
     void Update()
     {
+        if (doNoise)
+            noise.Update();
+
         if (Time.time > tickTime)
         {
+            // Move previous points back one step.
             System.Array.Copy(graphHeights, 1, graphHeights, 0, numPoints - 1);
 
+            // Sample the current graph value.
+            var value = Random.Range(minHeight, maxHeight);
             if (useGaugeAverage)
-            {
+            { 
                 gaugeAverage = GetGaugeAverage();
-                graphHeights[numPoints - 1] = gaugeAverage;
-                for (int i = 0; i < numPoints; i++)
-                {
-                    line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, Mathf.Clamp(graphHeights[i], 0, graphMax));
-                }
+                value = gaugeAverage;
             }
-            else
+            else if (useServerValue)
+                value = GetServerValue();
+
+            // Apply noise to the new value.
+            if (doNoise && value > noiseThreshold)
+                value += graphicsMaths.remapValue(noise.Value, valueMin, valueMax, 0, graphMax);
+
+            // Apply wobble to the new value.
+            if (doWobble && value > wobbleThreshold)
             {
-                graphHeights[numPoints - 1] = Random.Range(minHeight, maxHeight);
-                for (int i = 0; i < numPoints; i++)
-                {
-                    line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, Mathf.Clamp(graphHeights[i], 0, graphMax));
-                }
+                index += Time.deltaTime;
+                wobble = valueWobble * Mathf.Sin(wobbleSpeed * index);
+                wobbleAccumulate += wobble * 0.1f;
+                value += graphicsMaths.remapValue(wobbleAccumulate, valueMin, valueMax, 0, graphMax);
             }
-            tickTime = Time.time + updateSpeed;
+
+            // Clamp the new value to legal graph range.
+            value = Mathf.Clamp(value, 0, graphMax);
+
+            // Add the newest value to the graph.
+            graphHeights[numPoints - 1] = value;
+            for (int i = 0; i < numPoints; i++)
+                line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, Mathf.Clamp(graphHeights[i], 0, graphMax));
+
+            // Draw the updated graph line.
             line.vectorLine.Draw();
+            tickTime = Time.time + updateSpeed;
         }
     }
 }
