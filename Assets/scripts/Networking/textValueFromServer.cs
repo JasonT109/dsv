@@ -12,6 +12,7 @@ public class textValueFromServer : widgetText
     public AnimationCurve outputCurve;
     public bool addNoise = false;
     public SmoothNoise noise;
+    public float noiseThreshold = 0;
     public float scale = 1;
 
     [Header("Formatting")]
@@ -59,7 +60,7 @@ public class textValueFromServer : widgetText
             value = outputCurve.Evaluate(value);
 
         // Add noise if desired.
-        if (addNoise)
+        if (addNoise && value > noiseThreshold)
             value += noise.Value;
 
         // Apply scaling (if specified).

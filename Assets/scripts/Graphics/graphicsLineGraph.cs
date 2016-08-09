@@ -31,9 +31,11 @@ public class graphicsLineGraph : MonoBehaviour
     public bool doWobble = false;
     public float valueWobble = 0.0f;
     public float wobbleSpeed = 0.0f;
+    public float wobbleThreshold = 0;
 
     public bool doNoise = false;
     public SmoothNoise noise;
+    public float noiseThreshold = 0;
 
     private float index;
     private float wobble = 1.0f;
@@ -115,17 +117,18 @@ public class graphicsLineGraph : MonoBehaviour
             else if (useServerValue)
                 value = GetServerValue();
 
-            // Apply wobble to new value.
-            if (doWobble)
+            // Apply noise to the new value.
+            if (doNoise && value > noiseThreshold)
+                value += graphicsMaths.remapValue(noise.Value, valueMin, valueMax, 0, graphMax);
+
+            // Apply wobble to the new value.
+            if (doWobble && value > wobbleThreshold)
             {
                 index += Time.deltaTime;
                 wobble = valueWobble * Mathf.Sin(wobbleSpeed * index);
                 wobbleAccumulate += wobble * 0.1f;
                 value += graphicsMaths.remapValue(wobbleAccumulate, valueMin, valueMax, 0, graphMax);
             }
-
-            // Apply noise to new value.
-            value += graphicsMaths.remapValue(noise.Value, valueMin, valueMax, 0, graphMax);
 
             // Clamp the new value to legal graph range.
             value = Mathf.Clamp(value, 0, graphMax);
