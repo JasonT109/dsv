@@ -8,6 +8,7 @@ public class DCCWindow : MonoBehaviour
     public DCCScreenContentPositions.positionID quadPosition;
     public enum contentID
     {
+        none,
         instruments,
         thrusters,
         nav,
@@ -15,13 +16,16 @@ public class DCCWindow : MonoBehaviour
         diagnostics,
         lifesupport,
         piloting,
-        crew
+        comms,
+        power,
+        oxygen,
+        batteries
     }
 
     public contentID windowContent;
     public bool hasFocus;
     public bool isLerping = false;
-    private float lerpTime = 0.6f;
+    public float lerpTime = 0.6f;
     private Vector2 toPosition;
     private Vector2 fromPosition;
     private Vector2 toScale;
@@ -56,6 +60,9 @@ public class DCCWindow : MonoBehaviour
     public void SetWindowPosition(DCCScreenContentPositions.positionID destination)
     {
         quadPosition = destination;
+        isTransitioning = true;
+        transitionTimer = 0;
+
         DCCScreenContentPositions.SetScreenPos(transform, destination);
         DCCScreenContentPositions.SetScreenScale(transform, destination);
     }
