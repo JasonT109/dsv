@@ -6,6 +6,13 @@ using UnityEngine.Networking;
 public class batteryData : NetworkBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Number of attempts to make when selecting a bank to drain. */
+    public const int DrainAttemptsPerCycle = 10;
+
+
     // Structures
     // ------------------------------------------------------------
 
@@ -74,6 +81,10 @@ public class batteryData : NetworkBehaviour
     [SyncVar]
     public bool batteryTimeEnabled = true;
 
+    /** Rate of battery drain (% per second). */
+    [SyncVar]
+    public float batteryDrain = 100f / (3600 * 6);
+
     [SyncVar]
     public float bank1;
     [SyncVar]
@@ -107,10 +118,14 @@ public class batteryData : NetworkBehaviour
     {
         var config = BatteryConfiguration;
 
+        // Apply battery drain to one of the banks.
+        if (batteryDrain > 0)
+            ApplyBatteryDrain();
+
         // Update battery charge percentage.
         battery = 0;
         for (var i = 0; i < config.Banks; i++)
-            battery += GetMainBatteryTank(i + 1);
+            battery += GetBank(i + 1);
         battery /= config.Banks;
 
         // Update battery life remaining.
@@ -121,13 +136,13 @@ public class batteryData : NetworkBehaviour
         if (batteryTimeEnabled)
             batteryTimeRemaining = Mathf.Max(0, batteryTimeRemaining - Time.deltaTime);
     }
-
+    
 
     // Public Methods
     // ------------------------------------------------------------
 
     /** Get main battery tank (1-based.) */
-    public float GetMainBatteryTank(int index)
+    public float GetBank(int index)
     {
         switch (index)
         {
@@ -151,7 +166,7 @@ public class batteryData : NetworkBehaviour
     }
 
     /** Set main battery tank (1-based.) */
-    public void SetMainBatteryTank(int index, float value)
+    public void SetBank(int index, float value)
     {
         switch (index)
         {
@@ -206,5 +221,27 @@ public class batteryData : NetworkBehaviour
         }
     }
 
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Apply battery drain to the banks. */
+    private void ApplyBatteryDrain()
+    {
+        // Select a random bank to drain from.
+        // Skip over empty banks.
+        for (var i = 0; i < DrainAttemptsPerCycle; i++)
+        {
+            var config = BatteryConfiguration;
+            var bankToDrain = Random.Range(0, config.Banks) + 1;
+            var value = GetBank(bankToDrain);
+            if (value <= 0)
+                continue;
+
+            // Drain the bank of some charge.
+            value = Mathf.Max(0, value - Time.deltaTime * batteryDrain);
+            SetBank(bankToDrain, value);
+        }
+    }
 
 }

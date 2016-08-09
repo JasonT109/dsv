@@ -30,22 +30,6 @@
 				{
 					"type":"Value",
 					"serverParam":"b7"
-				},
-				{
-					"type":"Value",
-					"serverParam":"batteryTemp"
-				},
-				{
-					"type":"Value",
-					"serverParam":"batteryCurrent"
-				},
-				{
-					"type":"Value",
-					"serverParam":"batteryTimeRemaining"
-				},
-				{
-					"type":"Value",
-					"serverParam":"batteryTimeEnabled"
 				}
 			]
 		},
@@ -79,6 +63,10 @@
 				{
 					"type":"Value",
 					"serverParam":"batteryTimeEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"batteryDrain"
 				}
 			]
 		}

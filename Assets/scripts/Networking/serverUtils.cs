@@ -260,6 +260,7 @@ namespace Meg.Networking
             "ballastpressure",
             "battery",
             "batterycurrent",
+            "batterydrain",
             "batterylife",
             "batterylifeenabled",
             "batterylifemax",
@@ -501,6 +502,7 @@ namespace Meg.Networking
         {
             { "battery", new ParameterInfo { readOnly = true } },
             { "batterycurrent", new ParameterInfo { maxValue = 30 } },
+            { "batterydrain", new ParameterInfo { maxValue = 1 } },
             { "batterylife", new ParameterInfo { maxValue = 128 } },
             { "batterylifemax", new ParameterInfo { maxValue = 128 } },
             { "batterylifeenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
@@ -616,6 +618,8 @@ namespace Meg.Networking
                     return BatteryData.battery;
                 case "batterycurrent":
                     return BatteryData.batteryCurrent;
+                case "batterydrain":
+                    return BatteryData.batteryDrain;
                 case "batterylife":
                     return BatteryData.batteryLife;
                 case "batterylifemax":

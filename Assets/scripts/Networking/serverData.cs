@@ -257,6 +257,9 @@ public class serverData : NetworkBehaviour
             case "batterycurrent":
                 BatteryData.batteryCurrent = newValue;
                 break;
+            case "batterydrain":
+                BatteryData.batteryDrain = newValue;
+                break;
             case "batterylife":
                 BatteryData.batteryLife = newValue;
                 break;
