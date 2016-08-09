@@ -82,18 +82,20 @@ public class DCCScreenManager : MonoBehaviour
         hiddenWindow.gameObject.SetActive(false);
     }
 
-    /** Sets the contents of a specific quad box. */
-    void SetBoxContent(DCCQuadBox box)
+    /** Looks for orphaned windows. */
+    void CheckForOrphanedWindows()
     {
         for (int i = 0; i < quadWindows.Length; i++)
         {
-            //check the box position and see if we need to remove the content
+            //ensure the window is set to be a quad window
             if (quadWindows[i].quadWindow)
             {
                 bool visible = false;
 
+                //go through each quad box
                 for (int q = 0; q < quadBoxes.Length; q++)
                 {
+                    //if this window content is in a quad box we don't need to hide it
                     if (quadWindows[i].windowContent == quadBoxes[q].boxContent)
                         visible = true;
                 }
@@ -102,7 +104,14 @@ public class DCCScreenManager : MonoBehaviour
                 if (!visible)
                     SetWindowHiddenPosition(quadWindows[i]);
             }
+        }
+    }
 
+    /** Sets the contents of a specific quad box. */
+    void SetBoxContent(DCCQuadBox box)
+    {
+        for (int i = 0; i < quadWindows.Length; i++)
+        {
             //if our window contains the content that should be in this box AND it is NOT currently in that position
             if (quadWindows[i].windowContent == box.boxContent)
             {
@@ -142,6 +151,7 @@ public class DCCScreenManager : MonoBehaviour
     void Update ()
     {
         GetBoxContentID();
+        CheckForOrphanedWindows();
 
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
