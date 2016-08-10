@@ -21,7 +21,7 @@ public class InitialSubScreenSelector : MonoBehaviour
     public buttonControl Diagnostics;
     public buttonControl Sonar;
     public buttonControl Piloting;
-    public buttonControl Rov;
+    public buttonControl Dome;
 
 
     [Header("Configuration")]
@@ -88,8 +88,8 @@ public class InitialSubScreenSelector : MonoBehaviour
             case "piloting":
                 ScreenButtons.toggleButtonOn(Piloting.gameObject);
                 break;
-            case "rov":
-                ScreenButtons.toggleButtonOn(Rov.gameObject);
+            case "dome":
+                ScreenButtons.toggleButtonOn(Dome.gameObject);
                 break;
         }
 

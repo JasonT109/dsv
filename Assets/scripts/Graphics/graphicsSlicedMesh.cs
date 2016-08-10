@@ -153,13 +153,26 @@ public class graphicsSlicedMesh : MonoBehaviour
         GetComponent<MeshFilter>().sharedMesh = mesh;
 
         var y = _fillAmount * _h;
-        if (y <= _b)
+        if (_b <= 0)
+            CreateQuad();
+        else if (y <= _b)
             CreateTopOnly();
         else if (y <= (_h - _b))
             CreateTopAndMid();
         else
             CreateAll();
+    }
 
+    private void CreateQuad()
+    {
+        mesh.Clear();
+        var vertices = new[] { new Vector3(0, 0, 0), new Vector3(_w, 0, 0), new Vector3(0, _h, 0), new Vector3(_w, _h, 0) };
+        if (Centered)
+            Center(ref vertices);
+
+        mesh.vertices = vertices;
+        mesh.uv = new[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) };
+        mesh.triangles = new[] { 0, 2, 3, 0, 3, 1 };
     }
 
     private void CreateTopOnly()
