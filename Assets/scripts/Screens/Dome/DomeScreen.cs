@@ -205,7 +205,7 @@ public class DomeScreen : MonoBehaviour
         else
             FadeRenderer(Highlight, (hot && HasOverlay) || Pressed ? HighlightOnColor : HighlightOffColor, d);
 
-        FadeRenderer(Fill, (hot && Hovering) ? FillOnColor : FillOffColor, d);
+        FadeRenderer(Fill, Hovering ? FillOnColor : FillOffColor, d);
     }
 
     private Tweener FadeRenderer(MeshRenderer r, Color c, float duration)

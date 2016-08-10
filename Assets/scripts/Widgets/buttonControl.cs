@@ -531,15 +531,23 @@ public class buttonControl : MonoBehaviour
 
         if (duration <= 0)
             duration = colorTweenDuration;
-        if (!tweened)
-            duration = 0;
-        
+       
         m.DOKill();
 
-        if (m.HasProperty("_Color"))
-            return m.DOColor(c, "_Color", duration);
-        if (m.HasProperty("_TintColor"))
-            return m.DOColor(c, "_TintColor", duration);
+        if (tweened)
+        {
+            if (m.HasProperty("_Color"))
+                return m.DOColor(c, "_Color", duration);
+            if (m.HasProperty("_TintColor"))
+                return m.DOColor(c, "_TintColor", duration);
+        }
+        else
+        {
+            if (m.HasProperty("_Color"))
+                m.SetColor("_Color", c);
+            if (m.HasProperty("_TintColor"))
+                m.SetColor("_TintColor", c);
+        }
 
         return null;
     }
