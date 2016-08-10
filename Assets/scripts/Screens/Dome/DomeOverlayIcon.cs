@@ -82,6 +82,10 @@ public class DomeOverlayIcon : MonoBehaviour
     private void OnPressed(object sender, EventArgs e)
     {
         _pressed = true;
+
+        var t = transform;
+        if (!DOTween.IsTweening(t))
+            t.DOPunchScale(t.localScale * 0.05f, 0.1f);
     }
 
     private void OnReleased(object sender, EventArgs e)
@@ -181,7 +185,6 @@ public class DomeOverlayIcon : MonoBehaviour
     private IEnumerator ReleaseOverNothingRoutine()
     {
         var duration = 0.25f;
-        transform.DOKill();
         transform.DOMove(_homePosition, duration);
         yield return new WaitForSeconds(duration);
     }

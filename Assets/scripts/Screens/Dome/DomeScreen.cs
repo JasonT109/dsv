@@ -230,22 +230,21 @@ public class DomeScreen : MonoBehaviour
     /** Routine to change the current overlay name. */
     private IEnumerator ChangeLabelRoutine(string value)
     {
-        var wait = new WaitForSeconds(0.05f);
-        /*
-        var oldLength = Label.Text.Length;
-        for (var i = 0; i < oldLength; i++)
-        {
-            Label.Text = Label.Text.Substring(0, Label.Text.Length - 1);
-            yield return wait;
-        }
-        */
+        Label.Text = value;
 
-        var newLength = value.Length;
-        for (var i = 0; i < newLength; i++)
-        {
-            Label.Text = value.Substring(0, i + 1);
-            yield return wait;
-        }
+        var t = Label.transform;
+        if (DOTween.IsTweening(t))
+            yield break;
+
+        var dyn = Label.GetComponent<DynamicText>();
+        if (dyn)
+            dyn.pixelSnapTransformPos = false;
+
+        t.DOPunchScale(t.localScale * 0.05f, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+
+        if (dyn)
+            dyn.pixelSnapTransformPos = true;
     }
 
     /** Update the screen's appearance based on current state. */
