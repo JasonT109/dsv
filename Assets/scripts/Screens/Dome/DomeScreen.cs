@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
 using DG.Tweening;
 
 public class DomeScreen : MonoBehaviour
@@ -10,10 +12,10 @@ public class DomeScreen : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Default tween duration. */
-    private const float DefaultTweenDuration = 0.25f;
+    private const float DefaultTweenDuration = 1.0f;
 
     /** Label tween duration. */
-    private const float LabelTweenDuration = 0.5f;
+    private const float LabelTweenDuration = 0.75f;
 
 
     // Components
@@ -181,7 +183,7 @@ public class DomeScreen : MonoBehaviour
             return;
 
         if (!string.IsNullOrEmpty(value.Name))
-            Label.Text = value.Name;
+            Label.Text = Regex.Replace(value.Name, @"\s+", "\n");
 
         _overlay = value;
         _dirty = true;

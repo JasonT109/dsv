@@ -152,29 +152,26 @@ public class DomeOverlayIcon : MonoBehaviour
         var invisible = new Color(0, 0, 0, 0);
         var duration = 0.25f;
 
-        m.DOKill();
-        transform.DOKill();
-
-        var tween = DOTween.Sequence();
-        tween.Append(transform.DOScale(Vector3.zero, duration)
-            .OnComplete(() => transform.position = _homePosition));
-
-        tween.Join(Button.SetColor(invisible));
-
         var texts = GetComponentsInChildren<DynamicText>();
         for (var i = 0; i < texts.Length; i++)
         {
             var text = texts[i];
-            var textOriginalColor = text.color;
             text.pixelSnapTransformPos = false;
-            var textTween = DOTween.Sequence();
-            textTween.Append(DOTween.To(() => text.color, x => text.color = x, invisible, duration));
-            textTween.Append(DOTween.To(() => text.color, x => text.color = x, textOriginalColor, duration));
-            tween.Join(textTween);
         }
 
-        tween.Append(transform.DOScale(Vector3.one, duration));
-        tween.Join(Button.SetColor(c));
+        m.DOKill();
+        transform.DOKill();
+
+        var tween = DOTween.Sequence();
+        tween.Append(transform.DOScale(Vector3.zero, duration))
+            .OnComplete(() =>
+            {
+                transform.position = _homePosition;
+                transform.localScale = Vector3.one;
+                Button.Color = Button.GetThemeColor(3);
+            });
+
+        tween.Join(Button.SetColor(invisible, true, duration * 0.75f));
         tween.Play();
 
         yield return new WaitForSeconds(duration * 2);

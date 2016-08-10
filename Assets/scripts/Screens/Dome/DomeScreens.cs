@@ -37,7 +37,7 @@ public class DomeScreens : MonoBehaviour
     public struct ScreenPreset
     {
         public DomeScreen Screen;
-        public DomeScreen.Overlay Overlay;
+        public DomeOverlayIcon Icon;
     }
 
 
@@ -93,7 +93,7 @@ public class DomeScreens : MonoBehaviour
         foreach (var preset in presets)
         {
             preset.Screen.On = true;
-            preset.Screen.Current = preset.Overlay;
+            preset.Screen.Current = preset.Icon.Overlay;
         }
     }
 
