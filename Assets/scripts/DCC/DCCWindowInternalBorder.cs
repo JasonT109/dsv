@@ -5,6 +5,10 @@ public class DCCWindowInternalBorder : MonoBehaviour
 {
     public Texture2D border1;
     public Texture2D border2;
+    public Texture2D border3;
+
+    public float border1threshold = 90f;
+    public float border2threshold = 30f;
 
     public Renderer r;
     private Material m;
@@ -20,10 +24,12 @@ public class DCCWindowInternalBorder : MonoBehaviour
 
     void SetTexture()
     {
-        if (GetComponent<graphicsSlicedMesh>().Width > 90f)
+        if (GetComponent<graphicsSlicedMesh>().Width >= border1threshold)
             m.mainTexture = border1;
-        else
+        else if (GetComponent<graphicsSlicedMesh>().Width < border1threshold && GetComponent<graphicsSlicedMesh>().Width > border2threshold)
             m.mainTexture = border2;
+        else
+            m.mainTexture = border3;
     }
 
 	void Start ()
