@@ -12,7 +12,7 @@ public class DomeOverlayIcon : MonoBehaviour
     public buttonControl Button;
 
     [Header("Configuration")]
-    public DomeScreen.Overlay Overlay;
+    public domeData.OverlayId Overlay;
 
     private Vector3 _homePosition;
     private bool _pressed;
@@ -82,6 +82,10 @@ public class DomeOverlayIcon : MonoBehaviour
     private void OnPressed(object sender, EventArgs e)
     {
         _pressed = true;
+
+        var t = transform;
+        if (!DOTween.IsTweening(t))
+            t.DOPunchScale(t.localScale * 0.05f, 0.1f);
     }
 
     private void OnReleased(object sender, EventArgs e)
@@ -90,7 +94,7 @@ public class DomeOverlayIcon : MonoBehaviour
         if (Hovered)
         {
             Hovered.On = true;
-            Hovered.Current = Overlay;
+            Hovered.RequestOverlay(Overlay);
         }
 
         // Restore icon to original position.
@@ -148,33 +152,29 @@ public class DomeOverlayIcon : MonoBehaviour
     private IEnumerator ReleaseOverScreenRoutine()
     {
         var m = Button.GetComponent<MeshRenderer>().material;
-        var c = Button.Color;
         var invisible = new Color(0, 0, 0, 0);
         var duration = 0.25f;
-
-        m.DOKill();
-        transform.DOKill();
-
-        var tween = DOTween.Sequence();
-        tween.Append(transform.DOScale(Vector3.zero, duration)
-            .OnComplete(() => transform.position = _homePosition));
-
-        tween.Join(Button.SetColor(invisible));
 
         var texts = GetComponentsInChildren<DynamicText>();
         for (var i = 0; i < texts.Length; i++)
         {
             var text = texts[i];
-            var textOriginalColor = text.color;
             text.pixelSnapTransformPos = false;
-            var textTween = DOTween.Sequence();
-            textTween.Append(DOTween.To(() => text.color, x => text.color = x, invisible, duration));
-            textTween.Append(DOTween.To(() => text.color, x => text.color = x, textOriginalColor, duration));
-            tween.Join(textTween);
         }
 
-        tween.Append(transform.DOScale(Vector3.one, duration));
-        tween.Join(Button.SetColor(c));
+        m.DOKill();
+        transform.DOKill();
+
+        var tween = DOTween.Sequence();
+        tween.Append(transform.DOScale(Vector3.zero, duration))
+            .OnComplete(() =>
+            {
+                transform.position = _homePosition;
+                transform.localScale = Vector3.one;
+                Button.Color = Button.GetThemeColor(3);
+            });
+
+        tween.Join(Button.SetColor(invisible, true, duration * 0.75f));
         tween.Play();
 
         yield return new WaitForSeconds(duration * 2);
@@ -185,7 +185,6 @@ public class DomeOverlayIcon : MonoBehaviour
     private IEnumerator ReleaseOverNothingRoutine()
     {
         var duration = 0.25f;
-        transform.DOKill();
         transform.DOMove(_homePosition, duration);
         yield return new WaitForSeconds(duration);
     }

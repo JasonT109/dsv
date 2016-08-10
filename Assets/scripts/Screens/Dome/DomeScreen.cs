@@ -1,7 +1,10 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
+using System.Text.RegularExpressions;
 using DG.Tweening;
+using Meg.Networking;
 
 public class DomeScreen : MonoBehaviour
 {
@@ -10,10 +13,13 @@ public class DomeScreen : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Default tween duration. */
-    private const float DefaultTweenDuration = 0.25f;
+    private const float DefaultTweenDuration = 1.0f;
+
+    /** Outline tween duration. */
+    private const float OutlineTweenDuration = 0.5f;
 
     /** Label tween duration. */
-    private const float LabelTweenDuration = 0.5f;
+    private const float LabelTweenDuration = 0.75f;
 
 
     // Components
@@ -26,6 +32,12 @@ public class DomeScreen : MonoBehaviour
     public MeshRenderer Outline;
     public MeshRenderer Highlight;
     public widgetText Label;
+
+
+    [Header("Server Data")]
+
+    /** Server data value that governs this screen's content. */
+    public string linkDataString;
 
 
     [Header("Colors")]
@@ -48,23 +60,26 @@ public class DomeScreen : MonoBehaviour
     // Properties
     // ------------------------------------------------------------
 
+    /** Set that this screen belongs to. */
+    public DomeScreens Screens { get; private set; }
+
     /** Whether screen is currently on (powered). */
     public bool On { get { return _on; } set { SetOn(value); } }
 
     /** Whether screen is currently pressed. */
     public bool Pressed { get { return _pressed; } set { SetPressed(value); } }
 
-    /** Whether screen has an overlay assigned. */
-    public bool HasOverlay { get { return !string.IsNullOrEmpty(Name); } }
-
     /** Screen's current name. */
     public string Name { get { return _overlay.Name; } }
 
-    /** Screen's current overlay. */
-    public Overlay Current { get { return _overlay; } set { SetOverlay(value); } }
-
     /** Whether screen is hovered over. */
     public bool Hovering { get { return _hovering; } set { SetHovering(value); } }
+
+    /** Whether screen has an overlay assigned. */
+    public bool HasOverlay { get { return !string.IsNullOrEmpty(Name); } }
+
+    /** Screen's current overlay. */
+    public Overlay CurrentOverlay { get { return _overlay; } private set { SetOverlay(value); } }
 
 
     // Structures
@@ -74,6 +89,7 @@ public class DomeScreen : MonoBehaviour
     public struct Overlay
     {
         public string Name;
+        public domeData.OverlayId Id;
     }
 
 
@@ -112,11 +128,14 @@ public class DomeScreen : MonoBehaviour
         Highlight.material.SetColor("_TintColor", HighlightOffColor);
         Fill.material.SetColor("_TintColor", FillOffColor);
         Label.Color = LabelOffColor;
+
+        Screens = GetComponentInParent<DomeScreens>();
     }
 
     /** Updating. */
     private void LateUpdate()
     {
+        UpdateOverlayFromData();
         Pressed = Button.pressed;
 
         if (!_dirty)
@@ -136,10 +155,26 @@ public class DomeScreen : MonoBehaviour
 
     /** Clear the screen. */
     public void Clear()
-        { Current = new Overlay(); }
+        { RequestOverlay(domeData.OverlayId.None); }
+
+    /** Request an overlay to be applied to this screen. */
+    public void RequestOverlay(domeData.OverlayId id)
+        { serverUtils.PostServerData(linkDataString, (float) id); }
+
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Update the current overlay from server data. */
+    private void UpdateOverlayFromData()
+    {
+        var lastOverlayId = CurrentOverlay.Id;
+        var index = Mathf.RoundToInt(serverUtils.GetServerData(linkDataString));
+        var overlayId = (domeData.OverlayId) index;
+        SetOverlay(Screens.GetOverlay(overlayId));
+        if (overlayId != domeData.OverlayId.None && lastOverlayId != overlayId)
+            SetOn(true);
+    }
 
     /** Sets the screen's 'on' state. */
     private void SetOn(bool value)
@@ -180,11 +215,36 @@ public class DomeScreen : MonoBehaviour
         if (_overlay.Name == value.Name)
             return;
 
+        // Update the overlay display label.
         if (!string.IsNullOrEmpty(value.Name))
-            Label.Text = value.Name;
+        {
+            var label = Regex.Replace(value.Name, @"\s+", "\n").ToUpper();
+            StopAllCoroutines();
+            StartCoroutine(ChangeLabelRoutine(label));
+        }
 
         _overlay = value;
         _dirty = true;
+    }
+
+    /** Routine to change the current overlay name. */
+    private IEnumerator ChangeLabelRoutine(string value)
+    {
+        Label.Text = value;
+
+        var t = Label.transform;
+        if (DOTween.IsTweening(t))
+            yield break;
+
+        var dyn = Label.GetComponent<DynamicText>();
+        if (dyn)
+            dyn.pixelSnapTransformPos = false;
+
+        t.DOPunchScale(t.localScale * 0.05f, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+
+        if (dyn)
+            dyn.pixelSnapTransformPos = true;
     }
 
     /** Update the screen's appearance based on current state. */
@@ -198,7 +258,8 @@ public class DomeScreen : MonoBehaviour
         else
             FadeLabel(Label, LabelHiddenColor, LabelTweenDuration);
 
-        FadeRenderer(Outline, Pressed ? OutlinePressedColor : (hot ? OutlineOnColor : OutlineOffColor), 0);
+        FadeRenderer(Outline, Pressed ? OutlinePressedColor 
+            : (hot ? OutlineOnColor : OutlineOffColor), OutlineTweenDuration);
 
         if (Time.time < (_onTime + d))
             FadeRenderer(Highlight, HighlightOnColor, d).OnComplete(UpdateUi);

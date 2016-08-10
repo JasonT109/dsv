@@ -191,6 +191,7 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the DCC screens data object. */
         private static DCCScreenData _DCCScreenControl;
         public static DCCScreenData DCCScreenData
         {
@@ -199,6 +200,18 @@ namespace Meg.Networking
                 if (!_DCCScreenControl)
                     _DCCScreenControl = ServerObject.GetComponent<DCCScreenData>();
                 return _DCCScreenControl;
+            }
+        }
+
+        /** Return the Dome screens data object. */
+        private static domeData _domeData;
+        public static domeData DomeData
+        {
+            get
+            {
+                if (!_domeData && ServerObject)
+                    _domeData = ServerObject.GetComponent<domeData>();
+                return _domeData;
             }
         }
 
@@ -305,6 +318,21 @@ namespace Meg.Networking
             "divertpowertothrusters",
             "divetime",
             "divetimeactive",
+            "domecenter",
+            "domecornerbottomleft",
+            "domecornerbottomright",
+            "domecornertopleft",
+            "domecornertopright",
+            "domeleft",
+            "domehexbottomleft",
+            "domehexbottomright",
+            "domehextopleft",
+            "domehextopright",
+            "domeright",
+            "domesquarebottom",
+            "domesquareleft",
+            "domesquareright",
+            "domesquaretop",
             "duetime",
             "duetimeactive",
             "error_ballasttank",
@@ -574,6 +602,21 @@ namespace Meg.Networking
             { "cabinpressurepsi", new ParameterInfo { readOnly = true } },
             { "scrubbedco2", new ParameterInfo { maxValue = 5 } },
             { "cabinpressure", new ParameterInfo { maxValue = 1.25f } },
+            { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domecornertopleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domecornertopright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domeleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domehexbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domehexbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domehextopleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domehextopright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domeright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domesquarebottom", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domesquareleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domesquareright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "domesquaretop", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
         };
         
         /** Return information about a given parameter. */
@@ -1039,6 +1082,36 @@ namespace Meg.Networking
                     return DCCScreenData.DCCquadScreen4;
                 case "dccfullscreen":
                     return DCCScreenData.DCCfullscreen;
+                case "domecenter":
+                    return (float)DomeData.domeCenter;
+                case "domecornerbottomleft":
+                    return (float)DomeData.domeCornerBottomLeft;
+                case "domecornerbottomright":
+                    return (float)DomeData.domeCornerBottomRight;
+                case "domecornertopleft":
+                    return (float)DomeData.domeCornerTopLeft;
+                case "domecornertopright":
+                    return (float)DomeData.domeCornerTopRight;
+                case "domeleft":
+                    return (float)DomeData.domeLeft;
+                case "domehexbottomleft":
+                    return (float)DomeData.domeHexBottomLeft;
+                case "domehexbottomright":
+                    return (float)DomeData.domeHexBottomRight;
+                case "domehextopleft":
+                    return (float)DomeData.domeHexTopLeft;
+                case "domehextopright":
+                    return (float)DomeData.domeHexTopRight;
+                case "domeright":
+                    return (float)DomeData.domeRight;
+                case "domesquarebottom":
+                    return (float)DomeData.domeSquareBottom;
+                case "domesquareleft":
+                    return (float)DomeData.domeSquareLeft;
+                case "domesquareright":
+                    return (float)DomeData.domeSquareRight;
+                case "domesquaretop":
+                    return (float)DomeData.domeSquareTop;
                 default:
                     return Unknown;
             }
@@ -1283,6 +1356,36 @@ namespace Meg.Networking
                     return SonarData.MegSpeed.ToString("n1");
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
+                case "domecenter":
+                    return DomeData.domeCenter.ToString();
+                case "domecornerbottomleft":
+                    return DomeData.domeCornerBottomLeft.ToString();
+                case "domecornerbottomright":
+                    return DomeData.domeCornerBottomRight.ToString();
+                case "domecornertopleft":
+                    return DomeData.domeCornerTopLeft.ToString();
+                case "domecornertopright":
+                    return DomeData.domeCornerTopRight.ToString();
+                case "domeleft":
+                    return DomeData.domeLeft.ToString();
+                case "domehexbottomleft":
+                    return DomeData.domeHexBottomLeft.ToString();
+                case "domehexbottomright":
+                    return DomeData.domeHexBottomRight.ToString();
+                case "domehextopleft":
+                    return DomeData.domeHexTopLeft.ToString();
+                case "domehextopright":
+                    return DomeData.domeHexTopRight.ToString();
+                case "domeright":
+                    return DomeData.domeRight.ToString();
+                case "domesquarebottom":
+                    return DomeData.domeSquareBottom.ToString();
+                case "domesquareleft":
+                    return DomeData.domeSquareLeft.ToString();
+                case "domesquareright":
+                    return DomeData.domeSquareRight.ToString();
+                case "domesquaretop":
+                    return DomeData.domeSquareTop.ToString();
                 default:
                     var value = GetServerData(valueName);
                     return (value == Unknown) ? "no value" : value.ToString("n1");
