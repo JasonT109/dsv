@@ -5,16 +5,22 @@ using Meg.DCC;
 
 public class DCCScreenManager : MonoBehaviour
 {
+    [Header("Left Screen")]
+    public GameObject controlScreen;
+
+    [Header("Middle Screen")]
+    public GameObject quadScreen;
     public DCCQuadBox[] quadBoxes = new DCCQuadBox[5];
-
     public DCCWindow[] quadWindows;
-
     public int[] testPattern1 = { 4, 1, 2, 3, 5 };
     public int[] testPattern2 = { 3, 4, 1, 2, 5 };
     public int[] testPattern3 = { 2, 3, 4, 1, 5 };
     public int[] testPattern4 = { 1, 2, 3, 4, 5 };
-    private int currentTestPattern = 1;
 
+    [Header("Right Screen")]
+    public GameObject surfaceScreen;
+
+    private int currentTestPattern = 1;
     private float initTimer = 0;
     private float initTime = 2;
     private bool initialised = false;
@@ -184,6 +190,27 @@ public class DCCScreenManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
             TestPattern();
+        }
+
+        if (Input.GetButtonDown("ScreenLeft"))
+        {
+            controlScreen.SetActive(true);
+            quadScreen.SetActive(false);
+            surfaceScreen.SetActive(false);
+        }
+
+        if (Input.GetButtonDown("ScreenMiddle"))
+        {
+            controlScreen.SetActive(false);
+            quadScreen.SetActive(true);
+            surfaceScreen.SetActive(false);
+        }
+
+        if (Input.GetButtonDown("ScreenRight"))
+        {
+            controlScreen.SetActive(false);
+            quadScreen.SetActive(false);
+            surfaceScreen.SetActive(true);
         }
     }
 }

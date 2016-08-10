@@ -17,11 +17,11 @@ namespace Meg.DCC
 
         public static Vector3[] screenPositions = 
         {
-            new Vector3(-7f, 2.65f, 10f),   //0 topLeft
-            new Vector3(3f, 2.65f, 10f),     //1 topRight
-            new Vector3(-7f, -2.65f, 10f),   //2 bottomLeft
-            new Vector3(3f, -2.65f, 10f),    //3 bottomRight
-            new Vector3(-2f, 0f, 0f),        //4 middle
+            new Vector3(-7.6f, 2.65f, 10f),   //0 topLeft
+            new Vector3(2f, 2.65f, 10f),     //1 topRight
+            new Vector3(-7.6f, -2.65f, 10f),   //2 bottomLeft
+            new Vector3(2f, -2.65f, 10f),    //3 bottomRight
+            new Vector3(-3.25f, 0f, 0f),        //4 middle
             new Vector3(0f, -6f, 10f)        //5 hidden
         };
 
