@@ -6,6 +6,7 @@ using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.Networking;
 using Meg.Graphics;
+using UnityEngine.Events;
 
 public class buttonControl : MonoBehaviour
 {
@@ -43,6 +44,7 @@ public class buttonControl : MonoBehaviour
     [Header("Animation")]
     public bool AnimateOnPress;
     public float colorTweenDuration = 0;
+    public widgetHighLightOnActive transition;
 
     [Header("Glider")]
     public bool gliderButton = false;
@@ -55,6 +57,9 @@ public class buttonControl : MonoBehaviour
     public float pressTime = 0.2f;
     public float pressedScale = 0.95f;
 
+    [Header("Events")]
+    public UnityEvent onPress;
+    public UnityEvent onRelease;
     public delegate void buttonEventHandler();
     public event buttonEventHandler onPressed;
     public event buttonEventHandler onReleased;
@@ -68,7 +73,6 @@ public class buttonControl : MonoBehaviour
     private GameObject colourThemeObj;
     private float pressDelay = 0.2f;
     private bool canPress = true;
-    public widgetHighLightOnActive transition;
     private int frame = 0;
 
     public Color Color
@@ -132,6 +136,9 @@ public class buttonControl : MonoBehaviour
 
             if (onPressed != null)
                 onPressed();
+
+            if (onPress != null)
+                onPress.Invoke();
         }
     }
 
@@ -165,6 +172,9 @@ public class buttonControl : MonoBehaviour
 
             if (onReleased != null)
                 onReleased();
+
+            if (onRelease != null)
+                onRelease.Invoke();
         }
     }
 
@@ -242,6 +252,9 @@ public class buttonControl : MonoBehaviour
 
             if (onPressed != null)
                 onPressed();
+
+            if (onPress != null)
+                onPress.Invoke();
         }
     }
 
@@ -279,6 +292,9 @@ public class buttonControl : MonoBehaviour
 
             if (onReleased != null)
                 onReleased();
+
+            if (onRelease != null)
+                onRelease.Invoke();
         }
     }
 
