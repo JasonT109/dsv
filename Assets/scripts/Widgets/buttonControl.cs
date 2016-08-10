@@ -524,10 +524,10 @@ public class buttonControl : MonoBehaviour
         Color = GetThemeColor(3);
     }
 
-    private void SetColor(Color c, bool tweened = true, float duration = 0)
+    public Tweener SetColor(Color c, bool tweened = true, float duration = 0)
     {
         if (!m)
-            return;
+            return null;
 
         if (duration <= 0)
             duration = colorTweenDuration;
@@ -537,8 +537,10 @@ public class buttonControl : MonoBehaviour
         m.DOKill();
 
         if (m.HasProperty("_Color"))
-            m.DOColor(c, "_Color", duration);
+            return m.DOColor(c, "_Color", duration);
         if (m.HasProperty("_TintColor"))
-            m.DOColor(c, "_TintColor", duration);
+            return m.DOColor(c, "_TintColor", duration);
+
+        return null;
     }
 }

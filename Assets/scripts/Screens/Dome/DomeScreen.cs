@@ -12,6 +12,9 @@ public class DomeScreen : MonoBehaviour
     /** Default tween duration. */
     private const float DefaultTweenDuration = 0.25f;
 
+    /** Label tween duration. */
+    private const float LabelTweenDuration = 0.5f;
+
 
     // Components
     // ------------------------------------------------------------
@@ -39,6 +42,7 @@ public class DomeScreen : MonoBehaviour
 
     public Color LabelOnColor = Color.white;
     public Color LabelOffColor = new Color(0, 0, 0, 0);
+    public Color LabelHiddenColor = new Color(0, 0, 0, 0);
 
 
     // Properties
@@ -176,6 +180,9 @@ public class DomeScreen : MonoBehaviour
         if (_overlay.Name == value.Name)
             return;
 
+        if (!string.IsNullOrEmpty(value.Name))
+            Label.Text = value.Name;
+
         _overlay = value;
         _dirty = true;
     }
@@ -186,7 +193,11 @@ public class DomeScreen : MonoBehaviour
         var hot = On || Pressed;
         var d = DefaultTweenDuration;
 
-        FadeLabel(Label, hot ? LabelOnColor : LabelOffColor, d);
+        if (HasOverlay)
+            FadeLabel(Label, hot ? LabelOnColor : LabelOffColor, LabelTweenDuration);
+        else
+            FadeLabel(Label, LabelHiddenColor, LabelTweenDuration);
+
         FadeRenderer(Outline, Pressed ? OutlinePressedColor : (hot ? OutlineOnColor : OutlineOffColor), 0);
 
         if (Time.time < (_onTime + d))
@@ -210,7 +221,7 @@ public class DomeScreen : MonoBehaviour
     private Tweener FadeLabel(widgetText label, Color c, float duration)
     {
         DOTween.Kill(Label);
-        return DOTween.To(() => Label.Color, x => Label.Color = x, LabelOnColor, 0.5f);
+        return DOTween.To(() => label.Color, x => label.Color = x, c, duration);
     }
 
     /** Handle the screen's button being pressed. */
