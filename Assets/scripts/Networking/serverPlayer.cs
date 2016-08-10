@@ -241,4 +241,41 @@ public class serverPlayer : NetworkBehaviour
     }
 
 
+    // Networking Methods
+    // ------------------------------------------------------------
+
+    /** Network pre-startup notification for a client. */
+    public override void PreStartClient()
+    {
+        base.PreStartClient();
+        Debug.Log("serverPlayer.PreStartClient(): ID: " + serverUtils.Id);
+    }
+
+    /** Network startup notification for a client. */
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        Debug.Log("serverPlayer.OnStartClient(): ID: " + serverUtils.Id);
+    }
+
+    /** Network startup notification for a server. */
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        Debug.Log("serverPlayer.OnStartServer(): ID: " + serverUtils.Id);
+    }
+
+    /** Network destruction notification. */
+    public override void OnNetworkDestroy()
+    {
+        base.OnNetworkDestroy();
+        Debug.Log("serverPlayer.OnNetworkDestroy(): ID: " + serverUtils.Id);
+    }
+
+    /** Initialization. */
+    private void Start()
+    {
+        Debug.Log("serverPlayer.Start(): Client ID: " + serverUtils.Id);
+    }
+
 }

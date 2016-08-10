@@ -183,6 +183,10 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Whether autostartup can be attempted. */
     private bool ShouldAutoStart()
     {
+        var autoStartEnabled = Configuration.Get("auto-start", true);
+        if (!autoStartEnabled)
+            return false;
+
         var role = Configuration.Get("network-role", "");
         if (string.IsNullOrEmpty(role))
             return !IsLoginScreen();

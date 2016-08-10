@@ -6,6 +6,7 @@ using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.Networking;
 using Meg.Graphics;
+using UnityEngine.Events;
 
 public class buttonControl : MonoBehaviour
 {
@@ -45,6 +46,8 @@ public class buttonControl : MonoBehaviour
 
     [Header("Animation")]
     public bool AnimateOnPress;
+    public float colorTweenDuration = 0;
+    public widgetHighLightOnActive transition;
 
     [Header("Glider")]
     public bool gliderButton = false;
@@ -57,6 +60,9 @@ public class buttonControl : MonoBehaviour
     public float pressTime = 0.2f;
     public float pressedScale = 0.95f;
 
+    [Header("Events")]
+    public UnityEvent onPress;
+    public UnityEvent onRelease;
     public delegate void buttonEventHandler();
     public event buttonEventHandler onPressed;
     public event buttonEventHandler onReleased;
@@ -70,16 +76,21 @@ public class buttonControl : MonoBehaviour
     private GameObject colourThemeObj;
     private float pressDelay = 0.05f;
     private bool canPress = true;
-    public widgetHighLightOnActive transition;
     private int frame = 0;
     private float doublePressTime = 0f;
     private bool doublePressCheck = false;
+
+    public Color Color
+    {
+        get { return m ? m.color : Color.white; }
+        set { SetColor(value); }
+    }
 
     void Start()
     {
         r = GetComponent<Renderer>();
         m = r.material;
-        m.color = GetThemeColor(3);
+        SetColor(GetThemeColor(3), false);
         toggleVisGroup();
 
         if (active)
@@ -118,7 +129,7 @@ public class buttonControl : MonoBehaviour
 
             //set pressed state and change color
             pressed = true;
-            m.color = GetThemeColor(4);
+            Color = GetThemeColor(4);
 
             //broadcast that this button has changed state
             changed = true;
@@ -130,6 +141,9 @@ public class buttonControl : MonoBehaviour
 
             if (onPressed != null)
                 onPressed();
+
+            if (onPress != null)
+                onPress.Invoke();
         }
     }
 
@@ -148,7 +162,7 @@ public class buttonControl : MonoBehaviour
                 else
                 {
                     pressed = false;
-                    m.color = GetThemeColor(1);
+                    Color = GetThemeColor(1);
                 }
             }
             else
@@ -163,6 +177,9 @@ public class buttonControl : MonoBehaviour
 
             if (onReleased != null)
                 onReleased();
+
+            if (onRelease != null)
+                onRelease.Invoke();
         }
     }
 
@@ -197,7 +214,7 @@ public class buttonControl : MonoBehaviour
 
             //set pressed state and change color
             pressed = true;
-            m.color = GetThemeColor(4);
+            Color = GetThemeColor(4);
 
             //broadcast that this button has changed state
             changed = true;
@@ -236,7 +253,7 @@ public class buttonControl : MonoBehaviour
 
             //set pressed state and change color
             pressed = true;
-            m.color = GetThemeColor(4);
+            Color = GetThemeColor(4);
 
             //broadcast that this button has changed state
             changed = true;
@@ -251,6 +268,9 @@ public class buttonControl : MonoBehaviour
 
             if (onPressed != null)
                 onPressed();
+
+            if (onPress != null)
+                onPress.Invoke();
         }
     }
 
@@ -273,7 +293,7 @@ public class buttonControl : MonoBehaviour
                 else
                 {
                     pressed = false;
-                    m.color = GetThemeColor(1);
+                    Color = GetThemeColor(1);
                 }
                 if (requiresDoublePress && doublePressed)
                 {
@@ -292,6 +312,9 @@ public class buttonControl : MonoBehaviour
 
             if (onReleased != null)
                 onReleased();
+
+            if (onRelease != null)
+                onRelease.Invoke();
         }
     }
 
@@ -305,7 +328,7 @@ public class buttonControl : MonoBehaviour
                 active = true;
 
                 if (m)
-                    m.color = GetThemeColor(1);
+                    Color = GetThemeColor(1);
             }
             else
             {
@@ -313,7 +336,7 @@ public class buttonControl : MonoBehaviour
                 active = false;
 
                 if (m)
-                    m.color = GetThemeColor(3);
+                    Color = GetThemeColor(3);
             }
         }
         else
@@ -322,7 +345,7 @@ public class buttonControl : MonoBehaviour
             active = false;
 
             if (m)
-                m.color = GetThemeColor(3);
+                Color = GetThemeColor(3);
         }
         toggleVisGroup();
     }
@@ -346,7 +369,7 @@ public class buttonControl : MonoBehaviour
 
         if (active && !warning && !pressed)
         {
-            m.color = GetThemeColor(1);
+            Color = GetThemeColor(1);
         }
     }
 
@@ -460,13 +483,13 @@ public class buttonControl : MonoBehaviour
                 {
                     m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
                     //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
+                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
                 }
                 else
                 {
                     m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
                     //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
+                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
                 }
             }
             else
@@ -477,13 +500,13 @@ public class buttonControl : MonoBehaviour
                 {
                     m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
                     //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
+                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
                 }
                 else
                 {
                     m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
                     //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    m.color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
+                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
                 }
             }
         }
@@ -492,7 +515,7 @@ public class buttonControl : MonoBehaviour
             if (!pressed && !active)
             {
                 m.SetColor("_TintColor", GetThemeColor(3));
-                m.color = GetThemeColor(3);
+                Color = GetThemeColor(3);
             }
         }
     }
@@ -537,6 +560,34 @@ public class buttonControl : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         pressed = false;
-        m.color = GetThemeColor(3);
+        Color = GetThemeColor(3);
+    }
+
+    public Tweener SetColor(Color c, bool tweened = true, float duration = 0)
+    {
+        if (!m)
+            return null;
+
+        if (duration <= 0)
+            duration = colorTweenDuration;
+       
+        m.DOKill();
+
+        if (tweened)
+        {
+            if (m.HasProperty("_Color"))
+                return m.DOColor(c, "_Color", duration);
+            if (m.HasProperty("_TintColor"))
+                return m.DOColor(c, "_TintColor", duration);
+        }
+        else
+        {
+            if (m.HasProperty("_Color"))
+                m.SetColor("_Color", c);
+            if (m.HasProperty("_TintColor"))
+                m.SetColor("_TintColor", c);
+        }
+
+        return null;
     }
 }

@@ -18,8 +18,11 @@ public class NavSubPins : Singleton<NavSubPins>
     private readonly Dictionary<int, NavSubPin> _pinLookup = new Dictionary<int, NavSubPin>();
     private Camera _mapCamera;
 
+    private Vector3 _initialScale;
+
     private void Start()
     {
+        _initialScale = transform.localScale;
         _pins = GetComponentsInChildren<NavSubPin>();
         foreach (var pin in _pins)
             _pinLookup[pin.VesselId] = pin;
@@ -28,9 +31,26 @@ public class NavSubPins : Singleton<NavSubPins>
         _mapCamera = mapRoot.GetComponentInChildren<Camera>(true);
     }
 
+    private void Update()
+    {
+        // Update scaling of the pin model root to compensate for display scaling.
+        // This will be the case when scaling up from 16:10 to 16:9, for example.
+        UpdateScale();
+    }
+
     private void LateUpdate()
     {
         UpdatePins();
+    }
+
+    private void UpdateScale()
+    {
+        var s = Camera.main.transform.localScale;
+        var sx = _initialScale.x / s.x;
+        var sy = _initialScale.y / s.y;
+        var sz = _initialScale.z / s.z;
+
+        transform.localScale = new Vector3(sx, sy, sz);
     }
 
     private void UpdatePins()
@@ -51,13 +71,16 @@ public class NavSubPins : Singleton<NavSubPins>
     public NavSubPin GetVesselPin(int vessel)
         { return _pinLookup[vessel]; }
 
-    public Vector2 ConvertToMapSpace(Vector3 position)
+    public Vector2 ConvertToMap2DSpace(Vector3 position)
     {
-        Vector2 p;
+        // Project from map camera into viewport.
+        var c = _mapCamera.WorldToViewportPoint(position);
 
-        Vector3 c = _mapCamera.WorldToViewportPoint(position);
+        // Convert into 2D map space.
+        Vector2 p;
         p.x = Mathf.Clamp((c.x * 10.0f) - 5.0f, -imageSize.x, imageSize.x);
         p.y = Mathf.Clamp((c.y * 10.0f) - 5.0f, -imageSize.y, imageSize.y);
+
         return p;
     }
 
