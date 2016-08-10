@@ -50,13 +50,13 @@ public class graphicsDCCWindowSize : MonoBehaviour
     private BoxCollider boxCollider;
     private float defaultWidth = 190f;
     private float defaultHeight = 106.875f;
-    private Vector2[] rPositions;
+    private Vector3[] rPositions;
     private Vector2[] sScales;
     private float currentXScale = 1;
     private float currentYScale = 1;
     private graphicsSlicedMesh slicer;
     private graphicsSlicedMesh titleBarSlicer;
-    private Vector2[] childPositions = { new Vector2(-94.96f, 53.42f), new Vector2(-94.99f, -53.35f), new Vector2(0, 53.43f) };
+    private Vector3[] childPositions = { new Vector3(-94.96f, 53.42f, 0f), new Vector3(-94.99f, -53.35f, 0f), new Vector3(0, 53.43f, 0f) };
 
     public void ResetWindowSize()
     {
@@ -102,7 +102,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < repositionItems.Length; i++)
         {
-            repositionItems[i].transform.localPosition = new Vector2((rPositions[i].x * currentXScale), (rPositions[i].y * currentYScale));
+            repositionItems[i].transform.localPosition = new Vector3((rPositions[i].x * currentXScale), (rPositions[i].y * currentYScale));
         }
 
         for (int i = 0; i < scaleItems.Length; i++)
@@ -118,7 +118,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         boxCollider = GetComponent<BoxCollider>();
 
-        rPositions = new Vector2[repositionItems.Length];
+        rPositions = new Vector3[repositionItems.Length];
 
         for (int i = 0; i < repositionItems.Length; i++)
         {

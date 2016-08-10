@@ -23,6 +23,9 @@ public class DCCQuadButtonHilight : MonoBehaviour
     [Header("Selected Direction")]
     public DCCScreenContentPositions.positionID selectedDirection = DCCScreenContentPositions.positionID.hidden;
 
+    [Header("Parent Button Control")]
+    public buttonControl parentButton;
+
     private Vector3 transformDirection;
     private Color topLeftColor = Color.gray;
     private Color topRightColor = Color.gray;
@@ -33,6 +36,8 @@ public class DCCQuadButtonHilight : MonoBehaviour
     private float topRightTime = 0f;
     private float bottomLeftTime = 0f;
     private float bottomRightTime = 0f;
+
+    private bool waiting = false;
 
     private void OnEnable()
     {
@@ -64,7 +69,6 @@ public class DCCQuadButtonHilight : MonoBehaviour
 
         if (selectedDirection != DCCScreenContentPositions.positionID.hidden)
         {
-            //get where we are coming from, we can then tell destination content to occupy this spot (swap positions)
             string newPosition = GetContentsPosition(screenContent);
             SetServerScreenContent(newPosition);
         }
@@ -73,6 +77,7 @@ public class DCCQuadButtonHilight : MonoBehaviour
         quadDirection.transform.localPosition = Vector3.zero;
     }
 
+    /** Swaps position of content at destination quad box. */
     void RepositionContentAtDestination(DCCScreenContentPositions.positionID targetPosition, string newPosition)
     {
         string[] quads = new string[] { "DCCquadScreen0", "DCCquadScreen1", "DCCquadScreen2", "DCCquadScreen3", "DCCquadScreen4" };
@@ -81,17 +86,11 @@ public class DCCQuadButtonHilight : MonoBehaviour
 
         if (newPosition != "hidden")
         {
-            //move this content targetContent to the quadbox newPosition
             serverUtils.PostServerData(newPosition, (float)targetContent);
-
-            Debug.Log("Setting screen: " + targetPosition + " " + targetContent + " content to " + newPosition);
-        }
-        else
-        {
-            Debug.Log("Setting screen: " + targetPosition + " " + targetContent + " content to " + newPosition);
         }
     }
 
+    /** Returns the quad that this content inhabits. */
     string GetContentsPosition(DCCWindow.contentID content)
     {
         string newPosition = "hidden";
@@ -107,6 +106,7 @@ public class DCCQuadButtonHilight : MonoBehaviour
         return newPosition;
     }
 
+    /** Sets the screen content. A string new position is required for repositioning old content. */
     void SetServerScreenContent(string newPosition)
     {
         switch (selectedDirection)
@@ -131,6 +131,9 @@ public class DCCQuadButtonHilight : MonoBehaviour
                 RepositionContentAtDestination(DCCScreenContentPositions.positionID.middle, newPosition);
                 serverUtils.PostServerData("DCCquadScreen4", (float)screenContent);
                 break;
+            case DCCScreenContentPositions.positionID.hidden:
+                RepositionContentAtDestination(DCCScreenContentPositions.positionID.hidden, newPosition);
+                break;
         }
 
         selectedDirection = DCCScreenContentPositions.positionID.hidden;
@@ -138,60 +141,96 @@ public class DCCQuadButtonHilight : MonoBehaviour
 
 	void Update ()
     {
-        if (quadDirection.transform.localPosition.x < 0 && quadDirection.transform.localPosition.y > 0)
+        if (parentButton.DCCQuadButton)
         {
-            topLeftTime += Time.deltaTime;
-            selectedDirection = DCCScreenContentPositions.positionID.topLeft;
-        }
-        else
-        {
-            topLeftTime = 0;
-        }
+            if (quadDirection.transform.localPosition.x < 0 && quadDirection.transform.localPosition.y > 0)
+            {
+                topLeftTime += Time.deltaTime;
+                selectedDirection = DCCScreenContentPositions.positionID.topLeft;
+            }
+            else
+            {
+                topLeftTime = 0;
+            }
 
-        if (quadDirection.transform.localPosition.x > 0 && quadDirection.transform.localPosition.y > 0)
-        {
-            topRightTime += Time.deltaTime;
-            selectedDirection = DCCScreenContentPositions.positionID.topRight;
-        }
-        else
-        {
-            topRightTime = 0;
-        }
+            if (quadDirection.transform.localPosition.x > 0 && quadDirection.transform.localPosition.y > 0)
+            {
+                topRightTime += Time.deltaTime;
+                selectedDirection = DCCScreenContentPositions.positionID.topRight;
+            }
+            else
+            {
+                topRightTime = 0;
+            }
 
-        if (quadDirection.transform.localPosition.x < 0 && quadDirection.transform.localPosition.y < 0)
-        {
-            bottomLeftTime += Time.deltaTime;
-            selectedDirection = DCCScreenContentPositions.positionID.bottomLeft;
+            if (quadDirection.transform.localPosition.x < 0 && quadDirection.transform.localPosition.y < 0)
+            {
+                bottomLeftTime += Time.deltaTime;
+                selectedDirection = DCCScreenContentPositions.positionID.bottomLeft;
+            }
+            else
+            {
+                bottomLeftTime = 0;
+            }
+
+            if (quadDirection.transform.localPosition.x > 0 && quadDirection.transform.localPosition.y < 0)
+            {
+                bottomRightTime += Time.deltaTime;
+                selectedDirection = DCCScreenContentPositions.positionID.bottomRight;
+            }
+            else
+            {
+                bottomRightTime = 0;
+            }
+
+            float topLeftLerp = hilightSpeed / topLeftTime;
+            float topRightLerp = hilightSpeed / topRightTime;
+            float bottomLeftLerp = hilightSpeed / bottomLeftTime;
+            float bottomRightLerp = hilightSpeed / bottomRightTime;
+
+            topLeftColor = Color.Lerp(unhilighted, highlighted, 1 - topLeftLerp);
+            topRightColor = Color.Lerp(unhilighted, highlighted, 1 - topRightLerp);
+            bottomLeftColor = Color.Lerp(unhilighted, highlighted, 1 - bottomLeftLerp);
+            bottomRightColor = Color.Lerp(unhilighted, highlighted, 1 - bottomRightLerp);
+
+            quadDirections[0].GetComponent<Renderer>().material.SetColor("_TintColor", topLeftColor);
+            quadDirections[1].GetComponent<Renderer>().material.SetColor("_TintColor", topRightColor);
+            quadDirections[2].GetComponent<Renderer>().material.SetColor("_TintColor", bottomLeftColor);
+            quadDirections[3].GetComponent<Renderer>().material.SetColor("_TintColor", bottomRightColor);
+
+            if (parentButton.doublePressed && !waiting)
+            {
+                waiting = true;
+                StartCoroutine(pressWait(0.1f));
+
+                //if we are not switching to new content
+                if (screenContent == (DCCWindow.contentID)serverUtils.GetServerData("DCCquadScreen4"))
+                {
+                    if ((int)serverUtils.GetServerData("DCCfullscreen") == 1)
+                    {
+                        selectedDirection = DCCScreenContentPositions.positionID.hidden;
+                        serverUtils.PostServerData("DCCfullscreen", 0);
+                        serverUtils.PostServerData("DCCquadScreen4", 0);
+                    }
+                    else
+                    {
+                        selectedDirection = DCCScreenContentPositions.positionID.middle;
+                        serverUtils.PostServerData("DCCfullscreen", 1);
+                    }
+                }
+                else
+                {
+                    //put our new content into this box and make sure middle screen is shown
+                    selectedDirection = DCCScreenContentPositions.positionID.middle;
+                    serverUtils.PostServerData("DCCfullscreen", 1);
+                }
+            }
         }
-        else
-        {
-            bottomLeftTime = 0;
-        }
+    }
 
-        if (quadDirection.transform.localPosition.x > 0 && quadDirection.transform.localPosition.y < 0)
-        {
-            bottomRightTime += Time.deltaTime;
-            selectedDirection = DCCScreenContentPositions.positionID.bottomRight;
-        }
-        else
-        {
-            bottomRightTime = 0;
-        }
-
-        float topLeftLerp = hilightSpeed / topLeftTime;
-        float topRightLerp = hilightSpeed / topRightTime;
-        float bottomLeftLerp = hilightSpeed / bottomLeftTime;
-        float bottomRightLerp = hilightSpeed / bottomRightTime;
-
-        topLeftColor = Color.Lerp(unhilighted, highlighted, 1 - topLeftLerp);
-        topRightColor = Color.Lerp(unhilighted, highlighted, 1 - topRightLerp);
-        bottomLeftColor = Color.Lerp(unhilighted, highlighted, 1 - bottomLeftLerp);
-        bottomRightColor = Color.Lerp(unhilighted, highlighted, 1 - bottomRightLerp);
-
-        quadDirections[0].GetComponent<Renderer>().material.SetColor("_TintColor", topLeftColor);
-        quadDirections[1].GetComponent<Renderer>().material.SetColor("_TintColor", topRightColor);
-        quadDirections[2].GetComponent<Renderer>().material.SetColor("_TintColor", bottomLeftColor);
-        quadDirections[3].GetComponent<Renderer>().material.SetColor("_TintColor", bottomRightColor);
-
+    IEnumerator pressWait(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        waiting = false;
     }
 }

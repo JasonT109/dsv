@@ -15,14 +15,14 @@ namespace Meg.DCC
             hidden
         }
 
-        public static Vector2[] screenPositions = 
+        public static Vector3[] screenPositions = 
         {
-            new Vector2 (-7f, 2.65f),   //0 topLeft
-            new Vector2(3f, 2.65f),     //1 topRight
-            new Vector2(-7f, -2.65f),   //2 bottomLeft
-            new Vector2(3f, -2.65f),    //3 bottomRight
-            new Vector2(0f, 0f),        //4 middle
-            new Vector2(0f, -6f)        //5 hidden
+            new Vector3(-7f, 2.65f, 10f),   //0 topLeft
+            new Vector3(3f, 2.65f, 10f),     //1 topRight
+            new Vector3(-7f, -2.65f, 10f),   //2 bottomLeft
+            new Vector3(3f, -2.65f, 10f),    //3 bottomRight
+            new Vector3(-2f, 0f, 0f),        //4 middle
+            new Vector3(0f, -6f, 10f)        //5 hidden
         };
 
         public static Vector2[] screenScales = 
@@ -31,13 +31,13 @@ namespace Meg.DCC
             new Vector2(95f, 53.4375f),     //1 topRight
             new Vector2(95f, 53.4375f),     //2 bottomLeft
             new Vector2(95f, 53.4375f),     //3 bottomRight
-            new Vector2(190f, 106.875f),    //4 middle
-            new Vector2(0f, 0f)             //5 hidden
+            new Vector2(152f, 85.5f),       //4 middle
+            new Vector2(190f, 106.875f)     //5 hidden
         };
 
-        public static Vector2 GetScreenPosition(DCCScreenContentPositions.positionID id)
+        public static Vector3 GetScreenPosition(DCCScreenContentPositions.positionID id)
         {
-            Vector2 position = Vector2.zero;
+            Vector3 position = Vector3.zero;
 
             switch (id)
                 {
@@ -95,7 +95,7 @@ namespace Meg.DCC
 
         public static void SetScreenPos(Transform window, DCCScreenContentPositions.positionID id)
         {
-            Vector2 position = Vector2.zero;
+            Vector3 position = Vector3.zero;
 
             switch (id)
             {

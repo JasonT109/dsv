@@ -11,12 +11,15 @@ public class buttonControl : MonoBehaviour
 {
     [Header("State")]
     public bool pressed = false;
+    public bool doublePressed = false;
     public bool active = false;
     public bool disabled = false;
     public bool warning = false;
     public bool toggleType = false;
     public bool canToggleOff = false;
     public bool changed = false;
+    public float minDoublePressTime = 0.4f;
+    public bool requiresDoublePress = false;
 
     [Header("Appearance")]
     public Color[] colorTheme;
@@ -65,10 +68,12 @@ public class buttonControl : MonoBehaviour
     private float timeIndex = 0.0f;
     private float pressTimer;
     private GameObject colourThemeObj;
-    private float pressDelay = 0.2f;
+    private float pressDelay = 0.05f;
     private bool canPress = true;
     public widgetHighLightOnActive transition;
     private int frame = 0;
+    private float doublePressTime = 0f;
+    private bool doublePressCheck = false;
 
     void Start()
     {
@@ -211,9 +216,20 @@ public class buttonControl : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        //Debug.Log("Pressed this object: " + gameObject);
+        if (doublePressTime != 0)
+        {
+            doublePressed = true;
+            StartCoroutine(disableDoublePress(0.05f));
+        }
+
         if (!disabled && canPress)
         {
+            if (!doublePressed)
+            {
+                doublePressCheck = true;
+                StartCoroutine(waitDoublePress(minDoublePressTime));
+            }
+
             //prevent accidental double pressing of button
             canPress = false;
             StartCoroutine(waitRelease(pressDelay));
@@ -227,7 +243,7 @@ public class buttonControl : MonoBehaviour
             frame = 0;
             StartCoroutine(waitOneFrame());
 
-            if(DCCQuadButton)
+            if (DCCQuadButton)
                 transform.DOScale(transform.localScale * pressedScale, 0.1f);
 
             if (AnimateOnPress)
@@ -249,7 +265,7 @@ public class buttonControl : MonoBehaviour
         {
             if (buttonGroup)
             {
-                if (!active || canToggleOff)
+                if (!requiresDoublePress && (!active || canToggleOff))
                 {
                     var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
                     bGroupScript.toggleButtons(gameObject);
@@ -258,6 +274,10 @@ public class buttonControl : MonoBehaviour
                 {
                     pressed = false;
                     m.color = GetThemeColor(1);
+                }
+                if (requiresDoublePress && doublePressed)
+                {
+                    toggleButton(gameObject);
                 }
             }
             else
@@ -344,6 +364,11 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (doublePressCheck)
+            doublePressTime += Time.deltaTime;
+        else
+            doublePressTime = 0;
+
         if (pressed)
             pressTimer += Time.deltaTime;
         else
@@ -385,10 +410,8 @@ public class buttonControl : MonoBehaviour
             else
             {
                 DCCQuadMenu.SetActive(false);
-            }
-
-            if (!pressed)
                 transform.localScale = Vector3.one;
+            }
         }
 
         updateColor();
@@ -474,10 +497,26 @@ public class buttonControl : MonoBehaviour
         }
     }
 
+    IEnumerator waitDoublePress(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        doublePressCheck = false;
+        doublePressTime = 0;
+    }
+
+    IEnumerator disableDoublePress(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        if (doublePressed)
+            doublePressed = false;
+    }
+
     IEnumerator waitOneFrame()
     {
         yield return new WaitWhile(() => frame < 1);
         changed = false;
+        if (doublePressed)
+            doublePressed = false;
     }
 
     IEnumerator waitToDestroy(float waitTime, GameObject g)

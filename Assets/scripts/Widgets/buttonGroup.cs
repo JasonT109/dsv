@@ -14,7 +14,7 @@ public class buttonGroup : MonoBehaviour {
         {
             var bScript = button.GetComponent<buttonControl>();
             bScript.toggleButton(b, forceOn);
-            Resources.UnloadUnusedAssets();
+            //Resources.UnloadUnusedAssets();
         }
     }
 
