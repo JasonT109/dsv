@@ -195,6 +195,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private domeData _domeData;
+    public domeData DomeData
+    {
+        get
+        {
+            if (!_domeData)
+                _domeData = GetComponent<domeData>();
+            return _domeData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -229,6 +240,51 @@ public class serverData : NetworkBehaviour
                 break;
             case "floordepth":
                 floorDepth = newValue;
+                break;
+            case "domecenter":
+                DomeData.domeCenter = (domeData.OverlayId) newValue;
+                break;
+            case "domecornerbottomleft":
+                DomeData.domeCornerBottomLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domecornerbottomright":
+                DomeData.domeCornerBottomRight = (domeData.OverlayId) newValue;
+                break;
+            case "domecornertopleft":
+                DomeData.domeCornerTopLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domecornertopright":
+                DomeData.domeCornerTopRight = (domeData.OverlayId) newValue;
+                break;
+            case "domeleft":
+                DomeData.domeLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domehexbottomleft":
+                DomeData.domeHexBottomLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domehexbottomright":
+                DomeData.domeHexBottomRight = (domeData.OverlayId) newValue;
+                break;
+            case "domehextopleft":
+                DomeData.domeHexTopLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domehextopright":
+                DomeData.domeHexTopRight = (domeData.OverlayId) newValue;
+                break;
+            case "domeright":
+                DomeData.domeRight = (domeData.OverlayId) newValue;
+                break;
+            case "domesquarebottom":
+                DomeData.domeSquareBottom = (domeData.OverlayId) newValue;
+                break;
+            case "domesquareleft":
+                DomeData.domeSquareLeft = (domeData.OverlayId) newValue;
+                break;
+            case "domesquareright":
+                DomeData.domeSquareRight = (domeData.OverlayId) newValue;
+                break;
+            case "domesquaretop":
+                DomeData.domeSquareTop = (domeData.OverlayId) newValue;
                 break;
             case "duetime":
                 dueTime = newValue;

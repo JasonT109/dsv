@@ -12,7 +12,7 @@ public class DomeOverlayIcon : MonoBehaviour
     public buttonControl Button;
 
     [Header("Configuration")]
-    public DomeScreen.Overlay Overlay;
+    public domeData.OverlayId Overlay;
 
     private Vector3 _homePosition;
     private bool _pressed;
@@ -90,7 +90,7 @@ public class DomeOverlayIcon : MonoBehaviour
         if (Hovered)
         {
             Hovered.On = true;
-            Hovered.Current = Overlay;
+            Hovered.RequestOverlay(Overlay);
         }
 
         // Restore icon to original position.
@@ -148,7 +148,6 @@ public class DomeOverlayIcon : MonoBehaviour
     private IEnumerator ReleaseOverScreenRoutine()
     {
         var m = Button.GetComponent<MeshRenderer>().material;
-        var c = Button.Color;
         var invisible = new Color(0, 0, 0, 0);
         var duration = 0.25f;
 

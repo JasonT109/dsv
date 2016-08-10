@@ -21,6 +21,12 @@ public class DomeScreens : MonoBehaviour
     public Distribution DelayBetweenScreens;
 
 
+    [Header("Overlays")]
+
+    /** Overlays. */
+    public DomeScreen.Overlay[] Overlays;
+
+
     [Header("Presets")]
 
     /** Preset one. */
@@ -37,7 +43,7 @@ public class DomeScreens : MonoBehaviour
     public struct ScreenPreset
     {
         public DomeScreen Screen;
-        public DomeOverlayIcon Icon;
+        public domeData.OverlayId Overlay;
     }
 
 
@@ -78,24 +84,20 @@ public class DomeScreens : MonoBehaviour
     /** Clear all overlays. */
     public void ClearOverlays()
     {
-        foreach (var screen in Screens)
-            screen.Clear();
+        StopAllCoroutines();
+        StartCoroutine(ClearOverlaysRoutine());
     }
 
     /** Apply screen presets. */
     public void ApplyPresets(ScreenPreset[] presets)
     {
-        foreach (var screen in Screens)
-        {
-            screen.On = false;
-            screen.Clear();
-        }
-        foreach (var preset in presets)
-        {
-            preset.Screen.On = true;
-            preset.Screen.Current = preset.Icon.Overlay;
-        }
+        StopAllCoroutines();
+        StartCoroutine(ApplyPresetsRoutine(presets));
     }
+
+    /** Return an overlay for the given id. */
+    public DomeScreen.Overlay GetOverlay(domeData.OverlayId id)
+        { return Overlays[(int) id]; }
 
 
     // Private Methods
@@ -123,5 +125,36 @@ public class DomeScreens : MonoBehaviour
             yield return new WaitForSeconds(delay);
         }
     }
+
+    /** Clear overlays from screens. */
+    private IEnumerator ClearOverlaysRoutine()
+    {
+        foreach (var screen in Screens)
+        {
+            screen.Clear();
+            var delay = DelayBetweenScreens.Sample();
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    /** Apply screen presets. */
+    private IEnumerator ApplyPresetsRoutine(IEnumerable<ScreenPreset> presets)
+    {
+        foreach (var screen in Screens)
+        {
+            screen.On = false;
+            screen.Clear();
+            var delay = DelayBetweenScreens.Sample();
+            yield return new WaitForSeconds(delay);
+        }
+        foreach (var preset in presets)
+        {
+            preset.Screen.On = true;
+            preset.Screen.RequestOverlay(preset.Overlay);
+            var delay = DelayBetweenScreens.Sample();
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
 
 }
