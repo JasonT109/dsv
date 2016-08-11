@@ -9,12 +9,23 @@ For a full rundown of Unity's built-in arguments, please refer to [https://docs.
 
 Some of the more useful Unity launch options:
 
--show-screen-selector	| Forces the screen selector dialog to be shown.
--popupwindow			| The window will be created as a a pop-up window (without a frame).
--screen-fullscreen		| Overrides the default fullscreen state. This must be 0 or 1.
--screen-width			| Overrides the default screen width. This must be an integer from a supported resolution.
--screen-height			| Overrides the default screen height. This must be an integer from a supported resolution.
--screen-quality			| Overrides the default screen quality. Example usage would be: /path/to/myGame -screen-quality Beautiful
+### -show-screen-selector
+Forces the screen selector dialog to be shown.
+
+### -popupwindow
+The window will be created as a a pop-up window (without a frame).
+
+### screen-fullscreen
+Overrides the default fullscreen state. This must be 0 or 1.
+
+### -screen-width
+Overrides the default screen width. This must be an integer from a supported resolution.
+
+### -screen-height
+Overrides the default screen height. This must be an integer from a supported resolution.
+
+### -screen-quality
+Overrides the default screen quality. Example usage would be: /path/to/myGame -screen-quality Beautiful
 
 
 ## DSV CONFIGURATION OPTIONS
