@@ -1,0 +1,1 @@
+START dsv.exe -id subPilotMid -screen-position-x 960 -screen-position-y 0 -screen-fullscreen 0 -popupwindow -screen-width 960 -screen-height 540

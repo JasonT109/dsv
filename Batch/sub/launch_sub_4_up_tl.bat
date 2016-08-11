@@ -1,0 +1,1 @@
+START dsv.exe -id subPilotLeft -network-role server -screen-position-x 0 -screen-position-y 0 -screen-fullscreen 0 -popupwindow -screen-width 960 -screen-height 540
