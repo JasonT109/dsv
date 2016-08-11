@@ -1,6 +1,7 @@
 # BATCH FILES FOR LAUNCHING DSV CLIENT/SERVER INSTANCES
 
 This folder contains a set of example batch files that can be used to launch the Unity DSV interactive application in a variety of configurations.
+Copy them into the folder containing dsv.exe in order to use them.
 
 
 ## UNITY COMMAND LINE ARGUMENTS
