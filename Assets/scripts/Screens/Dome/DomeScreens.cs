@@ -104,6 +104,10 @@ public class DomeScreens : MonoBehaviour
     public DomeScreen.Overlay GetOverlay(domeData.OverlayId id)
         { return Overlays[(int) id]; }
 
+    /** Whether the given overlay is on (powered up) for at least one of the screens. */
+    public bool IsOverlayOn(domeData.OverlayId id)
+        { return Screens.Any(s => s.On && s.CurrentOverlay.Id == id); }
+
     
 
     // Private Methods

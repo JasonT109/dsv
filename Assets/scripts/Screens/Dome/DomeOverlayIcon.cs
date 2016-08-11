@@ -10,6 +10,7 @@ public class DomeOverlayIcon : MonoBehaviour
 
     [Header("Components")]
     public buttonControl Button;
+    public DomeScreens Screens;
 
     [Header("Configuration")]
     public domeData.OverlayId Overlay;
@@ -73,6 +74,8 @@ public class DomeOverlayIcon : MonoBehaviour
     {
         if (_pressed)
             Hovered = GetScreenUnderIcon();
+
+        Button.active = Screens.IsOverlayOn(Overlay);
     }
 
     private void OnTapped(object sender, EventArgs e)
@@ -131,6 +134,9 @@ public class DomeOverlayIcon : MonoBehaviour
         foreach (var gesture in go.GetComponentsInChildren<Gesture>())
             gesture.enabled = false;
 
+        // Disable text snapping (on self).
+        DisableTextSnapping();
+
         _underlayIcon = go;
     }
 
@@ -155,13 +161,7 @@ public class DomeOverlayIcon : MonoBehaviour
         var invisible = new Color(0, 0, 0, 0);
         var duration = 0.25f;
 
-        var texts = GetComponentsInChildren<DynamicText>();
-        for (var i = 0; i < texts.Length; i++)
-        {
-            var text = texts[i];
-            text.pixelSnapTransformPos = false;
-        }
-
+        DisableTextSnapping();
         m.DOKill();
         transform.DOKill();
 
@@ -177,9 +177,7 @@ public class DomeOverlayIcon : MonoBehaviour
         tween.Join(Button.SetColor(invisible, true, duration * 0.75f));
         tween.Play();
 
-        yield return new WaitForSeconds(duration * 2);
-        foreach (var text in texts)
-            text.pixelSnapTransformPos = true;
+        yield return 0;
     }
 
     private IEnumerator ReleaseOverNothingRoutine()
@@ -189,4 +187,14 @@ public class DomeOverlayIcon : MonoBehaviour
         yield return new WaitForSeconds(duration);
     }
 
+    private void DisableTextSnapping()
+    {
+        // Disable pixel snapping on all text components.
+        var texts = GetComponentsInChildren<DynamicText>();
+        for (var i = 0; i < texts.Length; i++)
+        {
+            var text = texts[i];
+            text.pixelSnapTransformPos = false;
+        }
+    }
 }
