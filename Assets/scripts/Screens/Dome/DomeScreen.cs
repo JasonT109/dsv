@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using System.Linq;
 using System.Text.RegularExpressions;
 using DG.Tweening;
 using Meg.Networking;
+using TouchScript.Gestures;
 
 public class DomeScreen : MonoBehaviour
 {
@@ -13,7 +13,7 @@ public class DomeScreen : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Default tween duration. */
-    private const float DefaultTweenDuration = 1.0f;
+    private const float DefaultTweenDuration = 0.25f;
 
     /** Outline tween duration. */
     private const float OutlineTweenDuration = 0.5f;
@@ -27,11 +27,16 @@ public class DomeScreen : MonoBehaviour
 
     [Header("Components")]
 
-    public buttonControl Button;
     public MeshRenderer Fill;
     public MeshRenderer Outline;
     public MeshRenderer Highlight;
     public widgetText Label;
+
+
+    [Header("Configuration")]
+
+    /** The name of this screen. */
+    public string Name;
 
 
     [Header("Server Data")]
@@ -69,17 +74,17 @@ public class DomeScreen : MonoBehaviour
     /** Whether screen is currently pressed. */
     public bool Pressed { get { return _pressed; } set { SetPressed(value); } }
 
-    /** Screen's current name. */
-    public string Name { get { return _overlay.Name; } }
-
     /** Whether screen is hovered over. */
     public bool Hovering { get { return _hovering; } set { SetHovering(value); } }
 
     /** Whether screen has an overlay assigned. */
-    public bool HasOverlay { get { return !string.IsNullOrEmpty(Name); } }
+    public bool HasOverlay { get { return !string.IsNullOrEmpty(OverlayName); } }
 
     /** Screen's current overlay. */
     public Overlay CurrentOverlay { get { return _overlay; } private set { SetOverlay(value); } }
+
+    /** Screen's current overlay name. */
+    public string OverlayName { get { return _overlay.Name; } }
 
 
     // Structures
@@ -121,8 +126,16 @@ public class DomeScreen : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
-        Button.onPressed += OnButtonPressed;
-        Button.onReleased += OnButtonReleased;
+        var press = GetComponent<PressGesture>();
+        var longPress = GetComponent<LongPressGesture>();
+        var release = GetComponent<ReleaseGesture>();
+
+        if (press)
+            press.Pressed += OnPressed;
+        if (release)
+            release.Released += OnReleased;
+        if (longPress)
+            longPress.LongPressed += OnLongPressed;
 
         Outline.material.SetColor("_TintColor", OutlineOffColor);
         Highlight.material.SetColor("_TintColor", HighlightOffColor);
@@ -136,7 +149,6 @@ public class DomeScreen : MonoBehaviour
     private void LateUpdate()
     {
         UpdateOverlayFromData();
-        Pressed = Button.pressed;
 
         if (!_dirty)
             return;
@@ -160,6 +172,13 @@ public class DomeScreen : MonoBehaviour
     /** Request an overlay to be applied to this screen. */
     public void RequestOverlay(domeData.OverlayId id)
         { serverUtils.PostServerData(linkDataString, (float) id); }
+
+    /** Request panning dial be displayed for this screen. */
+    public void RequestPan()
+    {
+        On = true;
+        Screens.PanDial.Show(this);
+    }
 
 
     // Private Methods
@@ -286,16 +305,24 @@ public class DomeScreen : MonoBehaviour
     }
 
     /** Handle the screen's button being pressed. */
-    private void OnButtonPressed()
+    private void OnPressed(object sender, EventArgs eventArgs)
     {
+        Pressed = true;
     }
 
     /** Handle the screen's button being released. */
-    private void OnButtonReleased()
+    private void OnReleased(object sender, EventArgs eventArgs)
     {
-        Toggle();
+        Pressed = false;
+        if (!Screens.PanDial.Showing)
+            Toggle();
     }
 
-
+    /** Handle a long press on the screen. */
+    private void OnLongPressed(object sender, EventArgs eventArgs)
+    {
+        Pressed = false;
+        RequestPan();
+    }
 
 }

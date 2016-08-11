@@ -14,6 +14,9 @@ public class DomeScreens : MonoBehaviour
     /** The dome screen collection. */
     public List<DomeScreen> Screens;
 
+    /** The panning dial interface. */
+    public DomePanDial PanDial;
+
 
     [Header("Animation")]
 
@@ -53,6 +56,8 @@ public class DomeScreens : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
+        // Ensure panning dial is inactive at startup.
+        PanDial.gameObject.SetActive(false);
     }
 
 
@@ -99,6 +104,7 @@ public class DomeScreens : MonoBehaviour
     public DomeScreen.Overlay GetOverlay(domeData.OverlayId id)
         { return Overlays[(int) id]; }
 
+    
 
     // Private Methods
     // ------------------------------------------------------------
