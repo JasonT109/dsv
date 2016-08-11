@@ -23,6 +23,9 @@ public class linkDataOverrides : MonoBehaviour
     [Header("Overrides")]
     public Override[] Overrides;
 
+    [Header("Configuration")]
+    public bool ApplyOnAwake = true;
+
     /** The set of components to affect. */
     [Header("ComponentsToAffect")]
     public bool textValueFromServer = true;
@@ -34,10 +37,13 @@ public class linkDataOverrides : MonoBehaviour
 
     /** Initialization. */
     private void Awake()
-	    { UpdateLinkDataInChildren(); }
+    {
+        if (ApplyOnAwake)
+            Apply();
+    }
 
     /** Update all link data within this object's children. */
-    private void UpdateLinkDataInChildren()
+    public void Apply()
     {
         if (textValueFromServer)
             foreach (var c in transform.GetComponentsInChildren<textValueFromServer>(true))
@@ -69,7 +75,7 @@ public class linkDataOverrides : MonoBehaviour
     private string GetLinkDataString(string linkData)
     {
         foreach (var o in Overrides)
-            linkData = Regex.Replace(linkData, o.pattern, o.replacement);
+            linkData = Regex.Replace(linkData, o.pattern, o.replacement, RegexOptions.IgnoreCase);
 
         return linkData;
     }

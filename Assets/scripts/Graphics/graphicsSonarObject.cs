@@ -67,19 +67,19 @@ public class graphicsSonarObject : NetworkBehaviour
     void Awake()
     {
         DataRoot = GameObject.FindGameObjectWithTag("ServerData");
-        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().getScale(), 
-                    DataRoot.GetComponent<SonarData>().getScale(), 
-                    DataRoot.GetComponent<SonarData>().getScale());
+        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().GetScale(), 
+                    DataRoot.GetComponent<SonarData>().GetScale(), 
+                    DataRoot.GetComponent<SonarData>().GetScale());
     }
 
 	void Update ()
     {
-        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().getScale(), 
-            DataRoot.GetComponent<SonarData>().getScale(), 
-            DataRoot.GetComponent<SonarData>().getScale());
+        this.transform.localScale = new Vector3 (DataRoot.GetComponent<SonarData>().GetScale(), 
+            DataRoot.GetComponent<SonarData>().GetScale(), 
+            DataRoot.GetComponent<SonarData>().GetScale());
 
-        turnSpeed = DataRoot.GetComponent<SonarData>().getScaleTurnSpeed();
-        speed = DataRoot.GetComponent<SonarData>().getScaleSpeed();
+        turnSpeed = DataRoot.GetComponent<SonarData>().GetScaleTurnSpeed();
+        speed = DataRoot.GetComponent<SonarData>().GetScaleSpeed();
 
         animator.SetFloat("swim", Mathf.Clamp01(swimBlend));
         animator.SetFloat("turnright", Mathf.Clamp01(turnRightBlend));

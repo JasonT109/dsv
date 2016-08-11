@@ -437,13 +437,21 @@ namespace Meg.Networking
             "reserveoxygentank4",
             "reserveoxygentank5",
             "reserveoxygentank6",
+            "rollangle",
+            "rollspeed",
             "scene",
             "scrubbedco2",
             "scrubbedhumidity",
             "scrubbedoxygen",
             "shot",
-            "rollangle",
-            "rollspeed",
+            "sonarlongfrequency",
+            "sonarlonggain",
+            "sonarlongrange",
+            "sonarlongsensitivity",
+            "sonarshortfrequency",
+            "sonarshortgain",
+            "sonarshortrange",
+            "sonarshortsensitivity",
             "take",
             "thruster_heat_l",
             "thruster_heat_r",
@@ -617,6 +625,14 @@ namespace Meg.Networking
             { "domesquareleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
             { "domesquareright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
             { "domesquaretop", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int } },
+            { "sonarshortfrequency", new ParameterInfo { minValue = 0, maxValue = 1000 } },
+            { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int } },
+            { "sonarshortgain", new ParameterInfo { minValue = 50, maxValue = 110} },
+            { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110} },
+            { "sonarlongfrequency", new ParameterInfo { minValue = 0, maxValue = 250 } },
+            { "sonarlongrange", new ParameterInfo { minValue = 1000, maxValue = 6000, type = ParameterType.Int } },
+            { "sonarlonggain", new ParameterInfo { minValue = 50, maxValue = 110} },
+            { "sonarlongsensitivity", new ParameterInfo { minValue = 0, maxValue = 110} },
         };
         
         /** Return information about a given parameter. */
@@ -1070,6 +1086,22 @@ namespace Meg.Networking
                     return SonarData.MegSpeed;
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed;
+                case "sonarlongfrequency":
+                    return SonarData.LongFrequency;
+                case "sonarlonggain":
+                    return SonarData.LongGain;
+                case "sonarlongrange":
+                    return SonarData.LongRange;
+                case "sonarlongsensitivity":
+                    return SonarData.LongSensitivity;
+                case "sonarshortfrequency":
+                    return SonarData.ShortFrequency;
+                case "sonarshortgain":
+                    return SonarData.ShortGain;
+                case "sonarshortrange":
+                    return SonarData.ShortRange;
+                case "sonarshortsensitivity":
+                    return SonarData.ShortSensitivity;
                 case "dccquadscreen0":
                     return DCCScreenData.DCCquadScreen0;
                 case "dccquadscreen1":
