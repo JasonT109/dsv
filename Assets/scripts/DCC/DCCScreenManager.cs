@@ -20,6 +20,9 @@ public class DCCScreenManager : MonoBehaviour
     [Header("Right Screen")]
     public GameObject surfaceScreen;
 
+    [Header("Registered non quad windows")]
+    public DCCWindow[] nonQuadWindows;
+
     private int currentTestPattern = 1;
     private float initTimer = 0;
     private float initTime = 2;
@@ -120,6 +123,7 @@ public class DCCScreenManager : MonoBehaviour
         }
     }
 
+    /** Sets the hidden status of middle windows when switching between fullscreen modes. */
     void SetMiddleScreenState(DCCQuadBox box, DCCWindow quadWindow)
     {
         if ((int)serverUtils.GetServerData("DCCfullscreen") == 1)
@@ -170,6 +174,70 @@ public class DCCScreenManager : MonoBehaviour
         }
     }
 
+    /** No quad windows register with this so we can sort them. */
+    public void RegisterWindow(DCCWindow newWindow)
+    {
+        //Debug.Log("Registering window: " + newWindow);
+
+        if (nonQuadWindows.Length == 0)
+        {
+            nonQuadWindows = new DCCWindow[1];
+            nonQuadWindows[0] = newWindow;
+        }
+        else
+        {
+            DCCWindow[] newWindowArray = new DCCWindow[nonQuadWindows.Length + 1];
+            int i = newWindowArray.Length;
+
+            System.Array.Copy(nonQuadWindows, newWindowArray, i - 1);
+            nonQuadWindows = new DCCWindow[i];
+            System.Array.Copy(newWindowArray, nonQuadWindows, i - 1);
+            nonQuadWindows[i - 1] = newWindow;
+        }
+    }
+
+    DCCWindow[] RemoveAt(DCCWindow[] source, int index)
+    {
+        Debug.Log("Removing window  " + source[index] + "at index: " + index);
+
+        DCCWindow[] dest = new DCCWindow[source.Length - 1];
+        if (index > 0)
+            System.Array.Copy(source, 0, dest, 0, index);
+
+        if (index < source.Length - 1)
+            System.Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+
+        return dest;
+    }
+
+    public void PushWindowToFront(DCCWindow focusedWindow)
+    {
+        //find the index of this window
+        int x = System.Array.IndexOf(nonQuadWindows, focusedWindow);
+
+        Debug.Log("Window at index: " + x + " to be removed from shunted forward.");
+
+        //get an array with this removed, but in its original order
+        DCCWindow[] tempWindows = tempWindows = RemoveAt(nonQuadWindows, x);
+
+        //copy the temp array back over at 0
+        System.Array.Copy(tempWindows, 0, nonQuadWindows, 0, nonQuadWindows.Length - 1);
+
+        //add the focused window to the end
+        nonQuadWindows[nonQuadWindows.Length - 1] = focusedWindow;
+    }
+
+    void SetWindowsSortDepth()
+    {
+        float zDepth = 20;
+
+        for (int i = 0; i < nonQuadWindows.Length; i++)
+        {
+            nonQuadWindows[i].transform.localPosition = new Vector3(nonQuadWindows[i].transform.localPosition.x, nonQuadWindows[i].transform.localPosition.y, zDepth);
+            zDepth -= 2;
+        }
+    }
+
     void Awake ()
     {
         initTime += Time.deltaTime;
@@ -186,6 +254,7 @@ public class DCCScreenManager : MonoBehaviour
 
         GetBoxContentID();
         CheckForOrphanedWindows();
+        SetWindowsSortDepth();
 
         if (Input.GetKeyDown(KeyCode.PageUp))
         {

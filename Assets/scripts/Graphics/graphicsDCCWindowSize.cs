@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class graphicsDCCWindowSize : MonoBehaviour
 {
     [Header("Child objects:")]
@@ -84,10 +85,12 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < slicedContent.Length; i++)
         {
-            slicedContent[i].Width = width;
-            slicedContent[i].Height = height;
-            //slicedContent[i].Border = slicer.Border;
-            //slicedContent[i].Margin = slicer.Margin;
+            if (slicedContent[i])
+            {
+                slicedContent[i].Width = width;
+                slicedContent[i].Height = height;
+            }
+
         }
 
         titleBarSlicer.Width = width;
@@ -122,7 +125,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < repositionItems.Length; i++)
         {
-            rPositions[i] = repositionItems[i].transform.localPosition;
+            rPositions[i] = childPositions[i];
         }
 
         sScales = new Vector2[scaleItems.Length];

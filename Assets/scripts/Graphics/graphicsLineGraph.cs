@@ -18,10 +18,17 @@ public class graphicsLineGraph : MonoBehaviour
     private float tickTime;
     // private float timeIndex = 0.0f;
 
+    [Header("Using Gauges")]
     public bool useGaugeAverage = false;
     public digital_gauge[] gauges;
     public float gaugeAverage;
 
+    [Header("Using Inferred Values")]
+    public bool pressure;
+    public bool psi;
+    public bool waterTemp;
+
+    [Header("Using Server Values")]
     public bool useServerValue = false;
     public string linkDataString;
 
@@ -41,8 +48,16 @@ public class graphicsLineGraph : MonoBehaviour
     private float wobble = 1.0f;
     private float wobbleAccumulate = 0.0f;
 
+    public Vector2 preHistoryRange = new Vector2(-1, 1);
+
+    private clientCalcValues _depthCalculator;
+
     void Start()
     {
+        _depthCalculator = clientCalcValues.Instance;
+        if (!_depthCalculator)
+            return;
+
         if (doNoise)
             noise.Start();
 
@@ -50,9 +65,11 @@ public class graphicsLineGraph : MonoBehaviour
         for (int i = 0; i < numPoints; i++)
         {
             if (useGaugeAverage)
-                graphHeights[i] = GetInitGaugeAverage() + Random.Range(-1, 1);
+                graphHeights[i] = GetInitGaugeAverage() + Random.Range(preHistoryRange.x, preHistoryRange.y);
             else if (useServerValue)
-                graphHeights[i] = GetServerValue() + Random.Range(-1, 1);
+                graphHeights[i] = GetServerValue() + Random.Range(preHistoryRange.x, preHistoryRange.y);
+            else if (pressure || waterTemp || psi)
+                graphHeights[i] = GetPressureValue() + Random.Range(preHistoryRange.x, preHistoryRange.y);
             else
                 graphHeights[i] = Random.Range(minHeight, maxHeight);
 
@@ -60,6 +77,26 @@ public class graphicsLineGraph : MonoBehaviour
         }
 
         line.vectorLine.Draw();
+    }
+
+    float GetPressureValue()
+    {
+        float dValue = 0;
+
+        if (pressure)
+        {
+            dValue = _depthCalculator.pressureResult;
+        }
+        if (waterTemp)
+        {
+            dValue = _depthCalculator.waterTempResult;
+        }
+        if (psi)
+        {
+            dValue = _depthCalculator.psiResult;
+        }
+
+        return graphicsMaths.remapValue(dValue, valueMin, valueMax, 0, graphMax);
     }
 
     float GetInitGaugeAverage()
@@ -110,10 +147,12 @@ public class graphicsLineGraph : MonoBehaviour
             // Sample the current graph value.
             var value = Random.Range(minHeight, maxHeight);
             if (useGaugeAverage)
-            { 
+            {
                 gaugeAverage = GetGaugeAverage();
                 value = gaugeAverage;
             }
+            else if (pressure || waterTemp || psi)
+                value = GetPressureValue();
             else if (useServerValue)
                 value = GetServerValue();
 
