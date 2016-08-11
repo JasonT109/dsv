@@ -1,4 +1,4 @@
-CUSTOMIZING WINDOWS 10 FOR SCREEN DISPLAY
+# CUSTOMIZING WINDOWS 10 FOR SCREEN DISPLAY
 
 1. Disable the taskbar by installing Taskbar Hider.
  - Run as Administrator.

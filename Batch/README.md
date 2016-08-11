@@ -2,12 +2,8 @@
 
 This folder contains a set of example batch files that can be used to launch the Unity DSV interactive application in a variety of configurations.
 
-The simplest 
 
-START dsv.exe -screen-fullscreen 1 -screen-width 1920 -screen-height 1080
-
-
-# UNITY COMMAND LINE ARGUMENTS
+## UNITY COMMAND LINE ARGUMENTS
 
 For a full rundown of Unity's built-in arguments, please refer to https://docs.unity3d.com/Manual/CommandLineArguments.html (scroll down to the section entitled 'Unity Standalone Player command line arguments'.)
 
@@ -21,7 +17,7 @@ Some of the more useful Unity launch options:
 -screen-quality			| Overrides the default screen quality. Example usage would be: /path/to/myGame -screen-quality Beautiful
 
 
-# DSV CONFIGURATION OPTIONS
+## DSV CONFIGURATION OPTIONS
 
 The DSV client has a range of configuration options.  Please refer to the documentation in 'Assets/StreamingAssets/readme.txt' or inspect 'Assets/StreamingAssets/config.json' to get a full rundown of the supported options.
 
