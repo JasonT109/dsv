@@ -14,7 +14,13 @@ public class UpdateDynamicText : MonoBehaviour
         yield return 0;
         var texts = GetComponentsInChildren<DynamicText>();
         foreach (var text in texts)
+        {
+            var widget = text.GetComponent<widgetText>();
+            if (widget && !widget.PixelSnapping)
+                continue;
+            
             text.pixelSnapTransformPos = true;
+        }
 
         // Regenerate text meshes.
         yield return 0;

@@ -1,13 +1,10 @@
 using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 using UnityStandardAssets.ImageEffects;
 
 public class SonarRays : MonoBehaviour
 {
-
-    public SonarRangeControl RangeControl;
-    public SonarGainControl GainControl;
-
     public GameObject Rays;
     public Bloom Bloom;
 
@@ -22,16 +19,19 @@ public class SonarRays : MonoBehaviour
     public AnimationCurve GainBloomThreshold;
 
     private Material _material;
+    private SonarData.Config _config;
 
     void Start()
 	{
 	    _material = Rays.GetComponent<Renderer>().material;
+        _config = serverUtils.SonarData.ShortRangeConfig;
     }
-	
-	void Update()
+
+    void Update()
 	{
-	    var range = (float) RangeControl.Range;
-	    var r = (range - RangeControl.MinRange) / (RangeControl.MaxRange - RangeControl.MinRange);
+        var range = serverUtils.SonarData.ShortRange;
+        var gain = serverUtils.SonarData.ShortGain;
+        var r = (range - _config.MinRange) / (_config.MaxRange - _config.MinRange);
 
         var lowX = Mathf.Lerp(RayTilingRangeLowX.x, RayTilingRangeLowX.y, r);
         var lowY = Mathf.Lerp(RayTilingRangeLowY.x, RayTilingRangeLowY.y, r);
@@ -44,7 +44,6 @@ public class SonarRays : MonoBehaviour
 	    _material.SetTextureScale("_LowTexture", lowScale);
         _material.SetTextureScale("_HighTexture", highScale);
 
-        var gain = (float)GainControl.Gain;
 
         var lowColor = _material.GetVector("_LowColor");
         lowColor.z = GainLowColorZ.Evaluate(gain);

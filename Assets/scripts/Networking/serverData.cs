@@ -741,6 +741,30 @@ public class serverData : NetworkBehaviour
             case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
                 break;
+            case "sonarlongfrequency":
+                SonarData.LongFrequency = newValue;
+                break;
+            case "sonarlonggain":
+                SonarData.LongGain = newValue;
+                break;
+            case "sonarlongrange":
+                SonarData.LongRange = newValue;
+                break;
+            case "sonarlongsensitivity":
+                SonarData.LongSensitivity = newValue;
+                break;
+            case "sonarshortfrequency":
+                SonarData.ShortFrequency = newValue;
+                break;
+            case "sonarshortgain":
+                SonarData.ShortGain = newValue;
+                break;
+            case "sonarshortrange":
+                SonarData.ShortRange = newValue;
+                break;
+            case "sonarshortsensitivity":
+                SonarData.ShortSensitivity = newValue;
+                break;
             case "vertran_heat_l":
                 GliderErrorData.vertran_heat_l = newValue;
                 break;

@@ -74,6 +74,9 @@ public class widgetText : MonoBehaviour
     /** Whether to scale text down if it gets too large. */
     public bool ShrinkToFit;
 
+    /** Whether text pixel snapping is enabled. */
+    public bool PixelSnapping = true;
+
     /** Text mesh (if used). */
     public TextMesh TextMesh
         { get; protected set; }
