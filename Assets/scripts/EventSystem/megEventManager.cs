@@ -11,16 +11,26 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** The sonar event manager. */
-        public megSonarEventManager Sonar { get; private set; }
+        public megSonarEventManager Sonar { get { return GetSonarEventManager(); } }
 
         /** The camera event manager. */
-        public megMapCameraEventManager MapCamera { get; private set; }
+        public megMapCameraEventManager MapCamera { get { return GetMapCameraEventManager(); } }
 
         /** The current event file (if any). */
         public megEventFile File { get; private set; }
 
         /** Whether a file is currently playing. */
         public bool Playing { get { return File != null && File.playing; } }
+
+
+        // Members
+        // ------------------------------------------------------------
+
+        /** The sonar event manager. */
+        private megSonarEventManager _sonar;
+
+        /** The camera event manager. */
+        private megMapCameraEventManager _mapCamera;
 
 
         // Unity Methods
@@ -31,12 +41,6 @@ namespace Meg.EventSystem
         {
             // Ensure that the event manager instance is populated.
             EnsureInstanceExists();
-
-            // Resolve links to other managers.
-            if (!Sonar)
-                Sonar = ObjectFinder.Find<megSonarEventManager>();
-            if (!MapCamera)
-                MapCamera = ObjectFinder.Find<megMapCameraEventManager>();
         }
 
 
@@ -58,18 +62,19 @@ namespace Meg.EventSystem
         /** Look up the sonar event manager. */
         public megSonarEventManager GetSonarEventManager()
         {
-            return Sonar;
+            if (!_sonar)
+                _sonar = ObjectFinder.Find<megSonarEventManager>();
+
+            return _sonar;
         }
 
         /** Look up the map camera event manager. */
         public megMapCameraEventManager GetMapCameraEventManager()
         {
-            if (MapCamera)
-                return MapCamera;
+            if (!_mapCamera)
+                _mapCamera = megMapCameraEventManager.Instance;
 
-            MapCamera = megMapCameraEventManager.Instance;
-
-            return MapCamera;
+            return _mapCamera;
         }
 
     }
