@@ -646,10 +646,10 @@ namespace Meg.Networking
         }
 
         /** Return the current value of a shared state value, indexed by name. */
-        public static float GetServerData(string valueName)
+        public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
             if (!ServerObject)
-                return Unknown;
+                return defaultValue;
 
             switch (valueName.ToLower())
             {
@@ -1143,9 +1143,9 @@ namespace Meg.Networking
                 case "domesquareright":
                     return (float)DomeData.domeSquareRight;
                 case "domesquaretop":
-                    return (float)DomeData.domeSquareTop;
+                    return (float) DomeData.domeSquareTop;
                 default:
-                    return Unknown;
+                    return GetDynamicValue(valueName, defaultValue);
             }
         }
 
@@ -1483,16 +1483,61 @@ namespace Meg.Networking
                 case "joystickpilot":
                     return SubControl.JoystickPilot;
                 default:
+                    // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
             }
         }
 
-
         /** Set the current value of a shared numeric state value by name (only works on host). */
-        public static void SetServerData(string valueName, float value)
+        public static void SetServerData(string valueName, float value, bool add = false)
         {
-            ServerData.OnValueChanged(valueName, value);
+            // Check that parameter name is valid.
+            if (string.IsNullOrEmpty(valueName))
+                return;
+
+            // Update the server data value.
+            var key = valueName.ToLower();
+            ServerData.OnValueChanged(key, value);
+
+            // Register value if adding a new one.
+            if (add && !Parameters.Contains(key))
+                RegisterDynamicValue(key);
+        }
+
+        /** Set a shared server value at runtime. */
+        public static void SetDynamicValue(string valueName, float newValue)
+        {
+            // Check that parameter name is valid.
+            if (string.IsNullOrEmpty(valueName))
+                return;
+
+            // Update the shared server data value.
+            var key = valueName.ToLower();
+            ServerData.SetDynamicValue(key, newValue);
+
+            // Register value if adding a new one.
+            if (!Parameters.Contains(key))
+                RegisterDynamicValue(key);
+        }
+
+        /** Register a new server data value. */
+        private static void RegisterDynamicValue(string valueName)
+        {
+            Parameters.Add(valueName.ToLower());
+            WriteableParameters.Add(valueName.ToLower());
+        }
+
+        /** Return a shared server value that has been defined at runtime. */
+        public static float GetDynamicValue(string valueName, float defaultValue = Unknown)
+        {
+            return ServerData.GetDynamicValue(valueName, defaultValue);
+        }
+
+        /** Determines if a dynamic shared server value exists. */
+        public static bool HasDynamicValue(string valueName)
+        {
+            return ServerData.HasDynamicValue(valueName);
         }
 
         /** Set the current value of a shared string state value by name (only works on host). */
@@ -1502,12 +1547,12 @@ namespace Meg.Networking
         }
 
         /** Set the current value of a shared numeric state value by name (works on both clients and host). */
-        public static void PostServerData(string valueName, float value)
+        public static void PostServerData(string valueName, float value, bool add = false)
         {
             if (ServerData && ServerData.isServer)
-                SetServerData(valueName, value);
+                SetServerData(valueName, value, add);
             else if (LocalPlayer)
-                LocalPlayer.PostServerData(valueName, value);
+                LocalPlayer.PostServerData(valueName, value, add);
         }
 
         /** Set the current value of a shared string state value by name (works on both clients and host). */

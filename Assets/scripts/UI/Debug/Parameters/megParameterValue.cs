@@ -19,7 +19,7 @@ namespace Meg.Parameters
         public float serverValue
         {
             get { return GetServerData(serverParam); }
-            set { PostServerData(serverParam, value);}
+            set { PostServerData(serverParam, value, true);}
         }
 
 

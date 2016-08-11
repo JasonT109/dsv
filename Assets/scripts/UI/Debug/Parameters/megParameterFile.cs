@@ -123,7 +123,7 @@ namespace Meg.Parameters
         // ------------------------------------------------------------
 
         /** Set a server float value. */
-        public void PostServerData(string key, float value)
+        public void PostServerData(string key, float value, bool add)
         {
             // Record initial value if this is the first time we've set it.
             // This will be used to reset the value when file playback stops.
@@ -132,7 +132,7 @@ namespace Meg.Parameters
                     { time = Time.time, value = serverUtils.GetServerData(key) };
 
             // Set the server data value.
-            serverUtils.PostServerData(key, value);
+            serverUtils.PostServerData(key, value, add);
         }
 
         /** Return a server value. */
