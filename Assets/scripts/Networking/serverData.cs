@@ -237,7 +237,7 @@ public class serverData : NetworkBehaviour
     public ValueChangeHandler ValueChangedEvent;
 
     /** Updates a server shared value. */
-    public void OnValueChanged(string valueName, float newValue)
+    public void OnValueChanged(string valueName, float newValue, bool add = false)
     {
         switch (valueName.ToLower())
         {
@@ -818,7 +818,7 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
             default:
-                SetDynamicValue(valueName, newValue);
+                SetDynamicValue(valueName, newValue, add);
                 break;
         }
 
@@ -827,7 +827,7 @@ public class serverData : NetworkBehaviour
     }
 
     /** Set a shared server value at runtime. */
-    public void SetDynamicValue(string valueName, float newValue)
+    public void SetDynamicValue(string valueName, float newValue, bool add)
     {
         // Check that value name is valid.
         if (string.IsNullOrEmpty(valueName))
@@ -844,7 +844,11 @@ public class serverData : NetworkBehaviour
             }
                 
         // Otherwise, insert a new entry.
-        dynamicValues.Add(value);
+        if (add)
+        {
+            dynamicValues.Add(value);
+            serverUtils.RegisterDynamicValue(key);
+        }
     }
 
     /** Return a shared server value that has been defined at runtime. */
@@ -857,7 +861,10 @@ public class serverData : NetworkBehaviour
         // Search for a matching entry in shared dynamic value list.
         for (var i = 0; i < dynamicValues.Count; i++)
             if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                serverUtils.RegisterDynamicValue(valueName);
                 return dynamicValues[i].value;
+            }
 
         return defaultValue;
     }
@@ -872,7 +879,10 @@ public class serverData : NetworkBehaviour
         // Search for a matching entry in shared dynamic value list.
         for (var i = 0; i < dynamicValues.Count; i++)
             if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                serverUtils.RegisterDynamicValue(valueName);
                 return true;
+            }
 
         return false;
     }

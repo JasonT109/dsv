@@ -1498,15 +1498,11 @@ namespace Meg.Networking
 
             // Update the server data value.
             var key = valueName.ToLower();
-            ServerData.OnValueChanged(key, value);
-
-            // Register value if adding a new one.
-            if (add && !Parameters.Contains(key))
-                RegisterDynamicValue(key);
+            ServerData.OnValueChanged(key, value, add);
         }
 
         /** Set a shared server value at runtime. */
-        public static void SetDynamicValue(string valueName, float newValue)
+        public static void SetDynamicValue(string valueName, float newValue, bool add = true)
         {
             // Check that parameter name is valid.
             if (string.IsNullOrEmpty(valueName))
@@ -1514,18 +1510,18 @@ namespace Meg.Networking
 
             // Update the shared server data value.
             var key = valueName.ToLower();
-            ServerData.SetDynamicValue(key, newValue);
-
-            // Register value if adding a new one.
-            if (!Parameters.Contains(key))
-                RegisterDynamicValue(key);
+            ServerData.SetDynamicValue(key, newValue, add);
         }
 
         /** Register a new server data value. */
-        private static void RegisterDynamicValue(string valueName)
+        public static void RegisterDynamicValue(string valueName)
         {
-            Parameters.Add(valueName.ToLower());
-            WriteableParameters.Add(valueName.ToLower());
+            var key = valueName.ToLower();
+            if (!Parameters.Contains(key))
+                Parameters.Add(key);
+
+            if (!WriteableParameters.Contains(key))
+                WriteableParameters.Add(valueName.ToLower());
         }
 
         /** Return a shared server value that has been defined at runtime. */
