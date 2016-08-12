@@ -436,7 +436,7 @@ namespace Meg.EventSystem
                 megSceneFile.AutoSave("Start");
 
             // Capture initial camera state.
-            _initialCameraValid = MapCamera.Capture(ref _initialCamera);
+            _initialCameraValid = MapCamera ? MapCamera.Capture(ref _initialCamera) : false;
 
             // Capture initial vessel states.
             serverUtils.VesselMovements.CaptureInitialState();
