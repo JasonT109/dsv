@@ -24,9 +24,10 @@ public class graphicsScrollingText : widgetText
 
     public int MaxVisibleLines = 0;
 
-    private void Start()
+    private void OnEnable()
     {
         Text = "";
+        StopAllCoroutines();
         StartCoroutine(TextRoutine());
     }
 

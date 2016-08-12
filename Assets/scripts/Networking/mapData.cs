@@ -36,9 +36,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public Vector3 vessel4Pos = new Vector3(0f, 0f, 7700f);
     [SyncVar]
-    public Vector3 meg1Pos = new Vector3(0f, -2.5f, 8200f);
+    public Vector3 vessel5Pos = new Vector3(0f, -2.5f, 8200f);
     [SyncVar]
-    public Vector3 intercept1Pos = new Vector3(2f, 2f, 8200f);
+    public Vector3 vessel6Pos = new Vector3(2f, 2f, 8200f);
 
     [Header("Vessel Velocities")]
     [SyncVar]
@@ -50,9 +50,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public float vessel4Velocity;
     [SyncVar]
-    public float meg1Velocity;
+    public float vessel5Velocity;
     [SyncVar]
-    public float intercept1Velocity;
+    public float vessel6Velocity;
 
     [Header("Vessel Visibility")]
     [SyncVar]
@@ -64,9 +64,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool vessel4Vis = true;
     [SyncVar]
-    public bool meg1Vis = true;
+    public bool vessel5Vis = true;
     [SyncVar]
-    public bool intercept1Vis = true;
+    public bool vessel6Vis = true;
 
     [Header("Vessel Warnings")]
     [SyncVar]
@@ -78,9 +78,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool vessel4Warning;
     [SyncVar]
-    public bool meg1Warning;
+    public bool vessel5Warning;
     [SyncVar]
-    public bool intercept1Warning;
+    public bool vessel6Warning;
 
     [Header("Map Events")]
     [SyncVar]
@@ -133,12 +133,12 @@ public class mapData : NetworkBehaviour
                 vessel4Velocity = velocity;
                 break;
             case 5:
-                meg1Pos = position;
-                meg1Velocity = velocity;
+                vessel5Pos = position;
+                vessel5Velocity = velocity;
                 break;
             case 6:
-                intercept1Pos = position;
-                intercept1Velocity = velocity;
+                vessel6Pos = position;
+                vessel6Velocity = velocity;
                 break;
         }
     }

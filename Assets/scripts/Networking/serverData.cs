@@ -694,11 +694,13 @@ public class serverData : NetworkBehaviour
             case "vessel4vis":
                 MapData.vessel4Vis = newValue > 0;
                 break;
+            case "vessel5vis":
             case "meg1vis":
-                MapData.meg1Vis = newValue > 0;
+                MapData.vessel5Vis = newValue > 0;
                 break;
+            case "vessel6vis":
             case "intercept1vis":
-                MapData.intercept1Vis = newValue > 0;
+                MapData.vessel6Vis = newValue > 0;
                 break;
             case "vessel1warning":
                 MapData.vessel1Warning = newValue > 0;
@@ -712,12 +714,15 @@ public class serverData : NetworkBehaviour
             case "vessel4warning":
                 MapData.vessel4Warning = newValue > 0;
                 break;
+            case "vessel5warning":
             case "meg1warning":
-                MapData.meg1Warning = newValue > 0;
+                MapData.vessel5Warning = newValue > 0;
                 break;
+            case "vessel6warning":
             case "intercept1warning":
-                MapData.intercept1Warning = newValue > 0;
+                MapData.vessel6Warning = newValue > 0;
                 break;
+            // case "vessel"
             case "initiatemapevent":
                 MapData.initiateMapEvent = newValue;
                 break;
@@ -954,10 +959,10 @@ public class serverData : NetworkBehaviour
                 MapData.vessel4Vis = state;
                 break;
             case 5:
-                MapData.meg1Vis = state;
+                MapData.vessel5Vis = state;
                 break;
             case 6:
-                MapData.intercept1Vis = state;
+                MapData.vessel6Vis = state;
                 break;
         }
     }
@@ -987,11 +992,13 @@ public class serverData : NetworkBehaviour
             case "vessel4vis":
                 MapData.vessel4Vis = newValue;
                 break;
+            case "vessel5vis":
             case "meg1vis":
-                MapData.meg1Vis = newValue;
+                MapData.vessel5Vis = newValue;
                 break;
+            case "vessel6vis":
             case "intercept1vis":
-                MapData.intercept1Vis = newValue;
+                MapData.vessel6Vis = newValue;
                 break;
             case "vessel1warning":
                 MapData.vessel1Warning = newValue;
@@ -1005,11 +1012,13 @@ public class serverData : NetworkBehaviour
             case "vessel4warning":
                 MapData.vessel4Warning = newValue;
                 break;
+            case "vessel5warning":
             case "meg1warning":
-                MapData.meg1Warning = newValue;
+                MapData.vessel5Warning = newValue;
                 break;
+            case "vessel6warning":
             case "intercept1warning":
-                MapData.intercept1Warning = newValue;
+                MapData.vessel6Warning = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;

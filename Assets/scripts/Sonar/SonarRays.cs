@@ -23,6 +23,9 @@ public class SonarRays : MonoBehaviour
     public AnimationCurve SensitivityBloomIntensity;
     public AnimationCurve SensitivityBloomThreshold;
 
+    public Vector2 WobbleIntensity = Vector2.zero;
+    public Vector2 WobbleRate = Vector2.one;
+
     private Material _material;
     private SonarData.Config _config;
 
@@ -60,12 +63,16 @@ public class SonarRays : MonoBehaviour
         _material.SetTextureScale("_LowTexture", lowScale);
         _material.SetTextureScale("_HighTexture", highScale);
 
+        var wobbleIntensity = Mathf.Lerp(WobbleIntensity.x, WobbleIntensity.y, r);
+        var wobbleRate = Mathf.Lerp(WobbleRate.x, WobbleRate.y, r);
+        var wobble = Mathf.Sin(Time.time * wobbleRate) * wobbleIntensity;
+
         var lowColor = _material.GetVector("_LowColor");
-        lowColor.z = GainLowColorZ.Evaluate(gain);
+        lowColor.z = GainLowColorZ.Evaluate(gain) * (1 + wobble);
         _material.SetVector("_LowColor", lowColor);
 
         var highColor = _material.GetVector("_HighColor");
-        highColor.z = GainHighColorZ.Evaluate(gain);
+        highColor.z = GainHighColorZ.Evaluate(gain) * (1 + wobble);
         _material.SetVector("_HighColor", highColor);
     }
 
