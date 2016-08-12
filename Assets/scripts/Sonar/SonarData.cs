@@ -118,6 +118,18 @@ public class SonarData : NetworkBehaviour
         public float GainIncrement = 5;
         public float SensitivityIncrement = 5;
 
+        public float Range
+            { get { return GetServerData("range"); } }
+
+        public float Frequency
+            { get { return GetServerData("frequency"); } }
+
+        public float Gain
+            { get { return GetServerData("gain"); } }
+
+        public float Sensitivity
+            { get { return GetServerData("sensitivity"); } }
+
         public float MinRange
             { get { return GetMinValue("range"); } }
 

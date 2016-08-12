@@ -323,7 +323,7 @@ public class HUDLinearGauge : MonoBehaviour
     /** Compute the correct position in local space for a given value. */
     private Vector3 ValueToLocal(float value)
     {
-        var v = (value - _smoothed);
+        var v = (value - _smoothed) * (int) Direction;
         switch (Layout)
         {
             case LinearGaugeLayout.Radial:
@@ -340,7 +340,7 @@ public class HUDLinearGauge : MonoBehaviour
     /** Comput the correct orientation in local space for a given value. */
     private Quaternion ValueToLocalRotation(float value)
     {
-        var v = (value - _smoothed);
+        var v = (value - _smoothed) * (int) Direction * -1;
         switch (Layout)
         {
             case LinearGaugeLayout.Radial:
