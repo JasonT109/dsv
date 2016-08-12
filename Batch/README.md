@@ -31,7 +31,7 @@ Overrides the default screen quality. Example usage would be: /path/to/myGame -s
 
 ## DSV CONFIGURATION OPTIONS
 
-The DSV client has a range of configuration options.  Please refer to the documentation in [Assets/StreamingAssets/README.md](Assets/StreamingAssets/README.md) and inspect [Assets/StreamingAssets/config.json](Assets/StreamingAssets/config.json) to get a full rundown of the supported options.
+The DSV client has a range of configuration options.  Please refer to the documentation in [Assets/StreamingAssets/README.md](../Assets/StreamingAssets/README.md) and inspect [Assets/StreamingAssets/config.json](../Assets/StreamingAssets/config.json) to get a full rundown of the supported options.
 
 The most important commandline option is -id <configId>.  This selects which set of configuration options will be activated for the client instance being launched.
 
