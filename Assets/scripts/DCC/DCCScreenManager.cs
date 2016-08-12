@@ -218,7 +218,7 @@ public class DCCScreenManager : MonoBehaviour
         Debug.Log("Window at index: " + x + " to be removed from shunted forward.");
 
         //get an array with this removed, but in its original order
-        DCCWindow[] tempWindows = tempWindows = RemoveAt(nonQuadWindows, x);
+        DCCWindow[] tempWindows = RemoveAt(nonQuadWindows, x);
 
         //copy the temp array back over at 0
         System.Array.Copy(tempWindows, 0, nonQuadWindows, 0, nonQuadWindows.Length - 1);
