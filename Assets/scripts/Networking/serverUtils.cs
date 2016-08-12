@@ -22,6 +22,19 @@ namespace Meg.Networking
         // Static Properties
         // ------------------------------------------------------------
 
+        /** A unique identifier for this game instance (supplied on the commandline). */
+        private static string _id;
+        public static string Id
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_id))
+                    _id = Configuration.Instance.CurrentId;
+
+                return _id;
+            }
+        }
+
         /** Return the local player object (used to push commands to server.) */
         public static serverPlayer LocalPlayer
         {
@@ -218,10 +231,6 @@ namespace Meg.Networking
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
-
-        /** A unique identifier for this game instance (supplied on the commandline). */
-        public static string Id
-            { get { return Configuration.Instance.CurrentId; } }
 
         /** Whether the server object is available for use yet. */
         public static bool IsReady()
