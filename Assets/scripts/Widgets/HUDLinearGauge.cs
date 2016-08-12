@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Meg.Maths;
 using Meg.Networking;
 
 public class HUDLinearGauge : MonoBehaviour
@@ -15,6 +16,13 @@ public class HUDLinearGauge : MonoBehaviour
         LowToHigh = -1,
         HighToLow = 1
     };
+
+    /** Possible gauge layouts. */
+    public enum LinearGaugeLayout
+    {
+        Linear = 0,
+        Radial = 1
+    }
 
 
     // Properties
@@ -46,8 +54,14 @@ public class HUDLinearGauge : MonoBehaviour
     /** Direction of the gauge values. */
     public LinearGaugeDirection Direction = LinearGaugeDirection.LowToHigh;
 
+    /** Layout of gauge values. */
+    public LinearGaugeLayout Layout = LinearGaugeLayout.Linear;
+
     /** Amount of smoothing for gauge movement (seconds to reach target). */
     public float SmoothTime = 0;
+
+    /** Whether to fade ticks at edge of visible range. */
+    public bool FadeTicks = true;
 
 
     [Header("Ticks")]
@@ -58,14 +72,11 @@ public class HUDLinearGauge : MonoBehaviour
     /** Increment between successive ticks. */
     public float SubTickInterval = 1;
 
+    /** Number of extra ticks to add (to prevent visible jumps). */
+    public int ExtraMainTicks = 2;
+
     /** Format string for tick labels. */
     public string TickFormat = "{0:N0}";
-
-    /** Tick local position offset. */
-    public Vector3 TickLocalOffset = Vector3.zero;
-
-    /** Tick local rotation (euler angles). */
-    public Vector3 TickLocalRotation = Vector3.zero;
 
     /** Prefab used for a main tick. */
     public GameObject MainTickPrefab;
@@ -75,6 +86,25 @@ public class HUDLinearGauge : MonoBehaviour
 
     /** Prefab used for the zero-point tick (optional). */
     public GameObject ZeroTickPrefab;
+
+
+    [Header("Tick Orientation")]
+
+    /** Tick local position offset. */
+    public Vector3 TickLocalOffset = Vector3.zero;
+
+    /** Tick local rotation (euler angles). */
+    public Vector3 TickLocalRotation = Vector3.zero;
+
+    /** Scale adjustment for main ticks. */
+    public Vector3 MainTickScaling = Vector3.one;
+
+    /** Scale adjustment for sub ticks. */
+    public Vector3 SubTickScaling = Vector3.one;
+
+    /** Scale adjustment for zeroticks. */
+    public Vector3 ZeroTickScaling = Vector3.one;
+
 
 
     // Private properties
@@ -185,7 +215,7 @@ public class HUDLinearGauge : MonoBehaviour
     private void InitializeTicks()
     {
         // Determine the number of ticks that are visible.
-        var nMainTicks = Mathf.CeilToInt(VisibleRange / MainTickInterval) + 2;
+        var nMainTicks = Mathf.CeilToInt(VisibleRange / MainTickInterval) + ExtraMainTicks;
         var mainTickPeriod = Mathf.RoundToInt(MainTickInterval / SubTickInterval);
         var nTicks = nMainTicks * mainTickPeriod;
 
@@ -193,12 +223,17 @@ public class HUDLinearGauge : MonoBehaviour
         for (var i = 0; i < nTicks; i++)
         {
             var prefab = SubTickPrefab;
-            if (i % mainTickPeriod == 0)
+            var scaling = SubTickScaling;
+            if (i % mainTickPeriod == 0 || !prefab)
+            {
                 prefab = MainTickPrefab;
+                scaling = MainTickScaling;
+            }
 
             var tick = Instantiate(prefab);
-            tick.transform.parent = gameObject.transform;
+            tick.transform.SetParent(gameObject.transform, false);
             tick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
+            tick.transform.localScale = Vector3.Scale(tick.transform.localScale, scaling);
 
             _ticks.Add(tick);
             _renderers.Add(tick.GetComponentInChildren<Renderer>());
@@ -209,8 +244,9 @@ public class HUDLinearGauge : MonoBehaviour
         if (ZeroTickPrefab)
         {
             _zeroTick = Instantiate(ZeroTickPrefab);
-            _zeroTick.transform.parent = gameObject.transform;
+            _zeroTick.transform.SetParent(gameObject.transform, false);
             _zeroTick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
+            _zeroTick.transform.localScale = Vector3.Scale(_zeroTick.transform.localScale, ZeroTickScaling);
             _zeroTick.SetActive(false);
             _zeroRenderer = _zeroTick.GetComponentInChildren<Renderer>();
             _zeroLabel = _zeroTick.GetComponentInChildren<widgetText>();
@@ -240,9 +276,10 @@ public class HUDLinearGauge : MonoBehaviour
         var value = GetInitialTickValue();
         for (var i = 0; i < _ticks.Count; i++)
         {
-            var visible = value >= LowValue && value <= HighValue;
             var isZero = Mathf.Approximately(value, 0) && _zeroTick;
             var isNonZero = !isZero;
+            var visible = (value >= LowValue && value <= HighValue)
+                || Layout == LinearGaugeLayout.Radial;
 
             // Set tick visibility.
             _ticks[i].SetActive(visible && isNonZero);
@@ -254,6 +291,7 @@ public class HUDLinearGauge : MonoBehaviour
 
             // Position the tick.
             tick.transform.localPosition = ValueToLocal(value);
+            tick.transform.localRotation = ValueToLocalRotation(value);
 
             // Update tick label.
             var label = isNonZero ? _labels[i] : _zeroLabel;
@@ -285,15 +323,43 @@ public class HUDLinearGauge : MonoBehaviour
     /** Compute the correct position in local space for a given value. */
     private Vector3 ValueToLocal(float value)
     {
-        var x = (value - _smoothed) * _valueToLocalScale * (int) Direction;
-        return new Vector3(x, 0, 0) + TickLocalOffset;
+        var v = (value - _smoothed) * (int) Direction;
+        switch (Layout)
+        {
+            case LinearGaugeLayout.Radial:
+                var theta = graphicsMaths.remapValue(v, MinValue, MaxValue, 0, 360);
+                var radians = theta * Mathf.Deg2Rad;
+                return new Vector3(Mathf.Cos(radians) * _maxSize.x * 0.5f, Mathf.Sin(radians) * _maxSize.y * 0.5f, 0);
+
+            default:
+                var x = v * _valueToLocalScale * (int) Direction;
+                return new Vector3(x, 0, 0) + TickLocalOffset;
+        }
+    }
+
+    /** Comput the correct orientation in local space for a given value. */
+    private Quaternion ValueToLocalRotation(float value)
+    {
+        var v = (value - _smoothed) * (int) Direction * -1;
+        switch (Layout)
+        {
+            case LinearGaugeLayout.Radial:
+                var theta = graphicsMaths.remapValue(v, MinValue, MaxValue, 0, 360);
+                return Quaternion.Euler(0, 0, theta) * Quaternion.Euler(TickLocalRotation);
+
+            default:
+                return Quaternion.Euler(TickLocalRotation);
+        }
     }
 
     /** Compute the correct alpha for a given tick value. */
     private float ValueToAlpha(float value)
     {
+        if (!FadeTicks)
+            return 1;
+
         var f = Mathf.Abs((value - _smoothed) / (VisibleRange * 0.5f));
-        var a = Mathf.Clamp01((1 - f) * 5);
+        var a = Mathf.Clamp01((1 - f)*5);
         return a;
     }
 

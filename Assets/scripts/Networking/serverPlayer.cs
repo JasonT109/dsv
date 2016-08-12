@@ -40,12 +40,12 @@ public class serverPlayer : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** Set a numeric data value on the server. */
-    public void PostServerData(string key, float value)
+    public void PostServerData(string key, float value, bool add)
     {
         if (isServer)
-            serverUtils.SetServerData(key, value);
+            serverUtils.SetServerData(key, value, add);
         else if (isClient)
-            CmdPostServerFloat(key, value);
+            CmdPostServerFloat(key, value, add);
     }
 
     /** Set a string data value on the server. */
@@ -117,8 +117,8 @@ public class serverPlayer : NetworkBehaviour
 
     /** Command to set a numeric data value on the server. */
     [Command]
-    public void CmdPostServerFloat(string key, float value)
-        { serverUtils.SetServerData(key, value); }
+    public void CmdPostServerFloat(string key, float value, bool add)
+        { serverUtils.SetServerData(key, value, add); }
 
     /** Command to set a string data value on the server. */
     [Command]

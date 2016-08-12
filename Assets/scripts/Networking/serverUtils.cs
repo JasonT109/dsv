@@ -22,6 +22,19 @@ namespace Meg.Networking
         // Static Properties
         // ------------------------------------------------------------
 
+        /** A unique identifier for this game instance (supplied on the commandline). */
+        private static string _id;
+        public static string Id
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_id))
+                    _id = Configuration.Instance.CurrentId;
+
+                return _id;
+            }
+        }
+
         /** Return the local player object (used to push commands to server.) */
         public static serverPlayer LocalPlayer
         {
@@ -218,10 +231,6 @@ namespace Meg.Networking
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
-
-        /** A unique identifier for this game instance (supplied on the commandline). */
-        public static string Id
-            { get { return Configuration.Instance.CurrentId; } }
 
         /** Whether the server object is available for use yet. */
         public static bool IsReady()
@@ -493,16 +502,22 @@ namespace Meg.Networking
             "verticalvelocity",
             "vertran_heat_l",
             "vertran_heat_r",
+            "vessel1depth",
             "vessel1vis",
             "vessel1warning",
+            "vessel2depth",
             "vessel2vis",
             "vessel2warning",
+            "vessel3depth",
             "vessel3vis",
             "vessel3warning",
+            "vessel4depth",
             "vessel4vis",
             "vessel4warning",
+            "vessel4depth",
             "vessel5vis",
             "vessel5warning",
+            "vessel6depth",
             "vessel6vis",
             "vessel6warning",
             "vesselmovementenabled",
@@ -583,6 +598,14 @@ namespace Meg.Networking
             { "vessel6warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "meg1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "intercept1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel1depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "vessel2depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "vessel3depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "vessel4depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "vessel5depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "vessel6depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "meg1depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
+            { "intercept1depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "isautostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
@@ -646,10 +669,10 @@ namespace Meg.Networking
         }
 
         /** Return the current value of a shared state value, indexed by name. */
-        public static float GetServerData(string valueName)
+        public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
             if (!ServerObject)
-                return Unknown;
+                return defaultValue;
 
             switch (valueName.ToLower())
             {
@@ -972,6 +995,7 @@ namespace Meg.Networking
                     return MapData.vessel1Pos.y;
                 case "v1posz":
                 case "v1depth":
+                case "vessel1depth":
                     return MapData.vessel1Pos.z;
                 case "v2posx":
                     return MapData.vessel2Pos.x;
@@ -979,6 +1003,7 @@ namespace Meg.Networking
                     return MapData.vessel2Pos.y;
                 case "v2posz":
                 case "v2depth":
+                case "vessel2depth":
                     return MapData.vessel2Pos.z;
                 case "v3posx":
                     return MapData.vessel3Pos.x;
@@ -986,6 +1011,7 @@ namespace Meg.Networking
                     return MapData.vessel3Pos.y;
                 case "v3posz":
                 case "v3depth":
+                case "vessel3depth":
                     return MapData.vessel3Pos.z;
                 case "v4posx":
                     return MapData.vessel4Pos.x;
@@ -993,27 +1019,30 @@ namespace Meg.Networking
                     return MapData.vessel4Pos.y;
                 case "v4posz":
                 case "v4depth":
+                case "vessel4depth":
                     return MapData.vessel4Pos.z;
                 case "v5posx":
                 case "meg1posx":
-                    return MapData.meg1Pos.x;
+                    return MapData.vessel5Pos.x;
                 case "v5posy":
                 case "meg1posy":
-                    return MapData.meg1Pos.y;
+                    return MapData.vessel5Pos.y;
                 case "v5posz":
                 case "v5depth":
                 case "meg1posz":
-                    return MapData.meg1Pos.z;
+                case "vessel5depth":
+                    return MapData.vessel5Pos.z;
                 case "v6posx":
                 case "intercept1posx":
-                    return MapData.intercept1Pos.x;
+                    return MapData.vessel6Pos.x;
                 case "v6posy":
                 case "intercept1posy":
-                    return MapData.intercept1Pos.y;
+                    return MapData.vessel6Pos.y;
                 case "v6posz":
                 case "v6depth":
                 case "intercept1posz":
-                    return MapData.intercept1Pos.z;
+                case "vessel6depth":
+                    return MapData.vessel6Pos.z;
                 case "v1velocity":
                     return MapData.vessel1Velocity;
                 case "v2velocity":
@@ -1024,10 +1053,12 @@ namespace Meg.Networking
                     return MapData.vessel4Velocity;
                 case "v5velocity":
                 case "meg1velocity":
-                    return MapData.meg1Velocity;
+                case "vessel5velocity":
+                    return MapData.vessel5Velocity;
                 case "v6velocity":
                 case "intercept1velocity":
-                    return MapData.intercept1Velocity;
+                case "vessel6velocity":
+                    return MapData.vessel6Velocity;
                 case "vessel1vis":
                     return MapData.vessel1Vis ? 1.0f : 0.0f;
                 case "vessel2vis":
@@ -1038,10 +1069,10 @@ namespace Meg.Networking
                     return MapData.vessel4Vis ? 1.0f : 0.0f;
                 case "vessel5vis":
                 case "meg1vis":
-                    return MapData.meg1Vis ? 1.0f : 0.0f;
+                    return MapData.vessel5Vis ? 1.0f : 0.0f;
                 case "vessel6vis":
                 case "intercept1vis":
-                    return MapData.intercept1Vis ? 1.0f : 0.0f;
+                    return MapData.vessel6Vis ? 1.0f : 0.0f;
                 case "vessel1warning":
                     return MapData.vessel1Warning ? 1.0f : 0.0f;
                 case "vessel2warning":
@@ -1052,10 +1083,10 @@ namespace Meg.Networking
                     return MapData.vessel4Warning ? 1.0f : 0.0f;
                 case "vessel5warning":
                 case "meg1warning":
-                    return MapData.meg1Warning ? 1.0f : 0.0f;
+                    return MapData.vessel5Warning ? 1.0f : 0.0f;
                 case "vessel6warning":
                 case "intercept1warning":
-                    return MapData.intercept1Warning ? 1.0f : 0.0f;
+                    return MapData.vessel6Warning ? 1.0f : 0.0f;
                 case "initiatemapevent":
                     return MapData.initiateMapEvent;
                 case "latitude":
@@ -1143,9 +1174,9 @@ namespace Meg.Networking
                 case "domesquareright":
                     return (float)DomeData.domeSquareRight;
                 case "domesquaretop":
-                    return (float)DomeData.domeSquareTop;
+                    return (float) DomeData.domeSquareTop;
                 default:
-                    return Unknown;
+                    return GetDynamicValue(valueName, defaultValue);
             }
         }
 
@@ -1292,10 +1323,10 @@ namespace Meg.Networking
                     return MapData.vessel4Pos.z.ToString("n0");
                 case "v5depth":
                 case "meg1depth":
-                    return MapData.meg1Pos.z.ToString("n0");
+                    return MapData.vessel5Pos.z.ToString("n0");
                 case "v6depth":
                 case "intercept1depth":
-                    return MapData.intercept1Pos.z.ToString("n0");
+                    return MapData.vessel6Pos.z.ToString("n0");
                 case "v1velocity":
                     return MapData.vessel1Velocity.ToString("n1");
                 case "v2velocity":
@@ -1306,10 +1337,10 @@ namespace Meg.Networking
                     return MapData.vessel4Velocity.ToString("n1");
                 case "v5velocity":
                 case "meg1velocity":
-                    return MapData.meg1Velocity.ToString("n1");
+                    return MapData.vessel5Velocity.ToString("n1");
                 case "v6velocity":
                 case "intercept1velocity":
-                    return MapData.intercept1Velocity.ToString("n1");
+                    return MapData.vessel6Velocity.ToString("n1");
                 case "mapeventname":
                     return MapData.mapEventName;
                 case "vessel1vis":
@@ -1322,10 +1353,10 @@ namespace Meg.Networking
                     return MapData.vessel4Vis.ToString();
                 case "vessel5vis":
                 case "meg1vis":
-                    return MapData.meg1Vis.ToString();
+                    return MapData.vessel5Vis.ToString();
                 case "vessel6vis":
                 case "intercept1vis":
-                    return MapData.intercept1Vis.ToString();
+                    return MapData.vessel6Vis.ToString();
                 case "vessel1warning":
                     return MapData.vessel1Warning.ToString();
                 case "vessel2warning":
@@ -1336,10 +1367,10 @@ namespace Meg.Networking
                     return MapData.vessel4Warning.ToString();
                 case "vessel5warning":
                 case "meg1warning":
-                    return MapData.meg1Warning.ToString();
+                    return MapData.vessel5Warning.ToString();
                 case "vessel6warning":
                 case "intercept1warning":
-                    return MapData.intercept1Warning.ToString();
+                    return MapData.vessel6Warning.ToString();
                 case "latitude":
                     return FormatLatitude(MapData.latitude);
                 case "longitude":
@@ -1455,9 +1486,9 @@ namespace Meg.Networking
                 case "vessel4vis":
                     return MapData.vessel4Vis;
                 case "meg1vis":
-                    return MapData.meg1Vis;
+                    return MapData.vessel5Vis;
                 case "intercept1vis":
-                    return MapData.intercept1Vis;
+                    return MapData.vessel6Vis;
                 case "vessel1warning":
                     return MapData.vessel1Warning;
                 case "vessel2warning":
@@ -1467,9 +1498,9 @@ namespace Meg.Networking
                 case "vessel4warning":
                     return MapData.vessel4Warning;
                 case "meg1warning":
-                    return MapData.meg1Warning;
+                    return MapData.vessel5Warning;
                 case "intercept1warning":
-                    return MapData.intercept1Warning;
+                    return MapData.vessel6Warning;
                 case "vesselmovementenabled":
                     return VesselMovements.Enabled;
                 case "disableinput":
@@ -1483,16 +1514,57 @@ namespace Meg.Networking
                 case "joystickpilot":
                     return SubControl.JoystickPilot;
                 default:
+                    // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
             }
         }
 
-
         /** Set the current value of a shared numeric state value by name (only works on host). */
-        public static void SetServerData(string valueName, float value)
+        public static void SetServerData(string valueName, float value, bool add = false)
         {
-            ServerData.OnValueChanged(valueName, value);
+            // Check that parameter name is valid.
+            if (string.IsNullOrEmpty(valueName))
+                return;
+
+            // Update the server data value.
+            var key = valueName.ToLower();
+            ServerData.OnValueChanged(key, value, add);
+        }
+
+        /** Set a shared server value at runtime. */
+        public static void SetDynamicValue(string valueName, float newValue, bool add = true)
+        {
+            // Check that parameter name is valid.
+            if (string.IsNullOrEmpty(valueName))
+                return;
+
+            // Update the shared server data value.
+            var key = valueName.ToLower();
+            ServerData.SetDynamicValue(key, newValue, add);
+        }
+
+        /** Register a new server data value. */
+        public static void RegisterDynamicValue(string valueName)
+        {
+            var key = valueName.ToLower();
+            if (!Parameters.Contains(key))
+                Parameters.Add(key);
+
+            if (!WriteableParameters.Contains(key))
+                WriteableParameters.Add(valueName.ToLower());
+        }
+
+        /** Return a shared server value that has been defined at runtime. */
+        public static float GetDynamicValue(string valueName, float defaultValue = Unknown)
+        {
+            return ServerData.GetDynamicValue(valueName, defaultValue);
+        }
+
+        /** Determines if a dynamic shared server value exists. */
+        public static bool HasDynamicValue(string valueName)
+        {
+            return ServerData.HasDynamicValue(valueName);
         }
 
         /** Set the current value of a shared string state value by name (only works on host). */
@@ -1502,12 +1574,12 @@ namespace Meg.Networking
         }
 
         /** Set the current value of a shared numeric state value by name (works on both clients and host). */
-        public static void PostServerData(string valueName, float value)
+        public static void PostServerData(string valueName, float value, bool add = false)
         {
             if (ServerData && ServerData.isServer)
-                SetServerData(valueName, value);
+                SetServerData(valueName, value, add);
             else if (LocalPlayer)
-                LocalPlayer.PostServerData(valueName, value);
+                LocalPlayer.PostServerData(valueName, value, add);
         }
 
         /** Set the current value of a shared string state value by name (works on both clients and host). */
@@ -1738,16 +1810,16 @@ namespace Meg.Networking
                     vesselData[3] = MapData.vessel4Velocity;
                     break;
                 case 5:
-                    vesselData[0] = MapData.meg1Pos.x;
-                    vesselData[1] = MapData.meg1Pos.y;
-                    vesselData[2] = MapData.meg1Pos.z;
-                    vesselData[3] = MapData.meg1Velocity;
+                    vesselData[0] = MapData.vessel5Pos.x;
+                    vesselData[1] = MapData.vessel5Pos.y;
+                    vesselData[2] = MapData.vessel5Pos.z;
+                    vesselData[3] = MapData.vessel5Velocity;
                     break;
                 case 6:
-                    vesselData[0] = MapData.intercept1Pos.x;
-                    vesselData[1] = MapData.intercept1Pos.y;
-                    vesselData[2] = MapData.intercept1Pos.z;
-                    vesselData[3] = MapData.intercept1Velocity;
+                    vesselData[0] = MapData.vessel6Pos.x;
+                    vesselData[1] = MapData.vessel6Pos.y;
+                    vesselData[2] = MapData.vessel6Pos.z;
+                    vesselData[3] = MapData.vessel6Velocity;
                     break;
             }
 
@@ -1807,10 +1879,10 @@ namespace Meg.Networking
                     vesselVis = MapData.vessel4Vis;
                     break;
                 case 5:
-                    vesselVis = MapData.meg1Vis;
+                    vesselVis = MapData.vessel5Vis;
                     break;
                 case 6:
-                    vesselVis = MapData.intercept1Vis;
+                    vesselVis = MapData.vessel6Vis;
                     break;
             }
 

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Collections;
 using Meg.Networking;
 
 public class serverData : NetworkBehaviour
@@ -47,6 +46,24 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public bool dueTimeActive = true;
 
+    #endregion
+
+    #region DynamicValues
+
+    /** Structure for tracking a dynamic server value. */
+    [System.Serializable]
+    public struct ServerValue
+    {
+        public string key;
+        public float value;
+    }
+
+    /** Class definition for a synchronized list of dynamic server values. */
+    public class SyncListValues : SyncListStruct<ServerValue> { };
+
+    /** Synchronized list for server values that are defined at runtime. */
+    public SyncListValues dynamicValues = new SyncListValues();
+    
     #endregion
 
     #region PublicVars
@@ -219,10 +236,9 @@ public class serverData : NetworkBehaviour
 
     public ValueChangeHandler ValueChangedEvent;
 
-    public void OnValueChanged(string valueName, float newValue)
+    /** Updates a server shared value. */
+    public void OnValueChanged(string valueName, float newValue, bool add = false)
     {
-        //Debug.Log("Setting server data: " + valueName + " to: " + newValue);
-
         switch (valueName.ToLower())
         {
             case "scene":
@@ -678,11 +694,13 @@ public class serverData : NetworkBehaviour
             case "vessel4vis":
                 MapData.vessel4Vis = newValue > 0;
                 break;
+            case "vessel5vis":
             case "meg1vis":
-                MapData.meg1Vis = newValue > 0;
+                MapData.vessel5Vis = newValue > 0;
                 break;
+            case "vessel6vis":
             case "intercept1vis":
-                MapData.intercept1Vis = newValue > 0;
+                MapData.vessel6Vis = newValue > 0;
                 break;
             case "vessel1warning":
                 MapData.vessel1Warning = newValue > 0;
@@ -696,12 +714,15 @@ public class serverData : NetworkBehaviour
             case "vessel4warning":
                 MapData.vessel4Warning = newValue > 0;
                 break;
+            case "vessel5warning":
             case "meg1warning":
-                MapData.meg1Warning = newValue > 0;
+                MapData.vessel5Warning = newValue > 0;
                 break;
+            case "vessel6warning":
             case "intercept1warning":
-                MapData.intercept1Warning = newValue > 0;
+                MapData.vessel6Warning = newValue > 0;
                 break;
+            // case "vessel"
             case "initiatemapevent":
                 MapData.initiateMapEvent = newValue;
                 break;
@@ -801,12 +822,77 @@ public class serverData : NetworkBehaviour
             case "dccfullscreen":
                 DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
+            default:
+                SetDynamicValue(valueName, newValue, add);
+                break;
         }
 
         if (ValueChangedEvent != null)
             ValueChangedEvent(valueName, newValue);
     }
 
+    /** Set a shared server value at runtime. */
+    public void SetDynamicValue(string valueName, float newValue, bool add)
+    {
+        // Check that value name is valid.
+        if (string.IsNullOrEmpty(valueName))
+            return;
+
+        // Try to replace an existing entry if possible.
+        var key = valueName.ToLower();
+        var value = new ServerValue { key = key, value = newValue };
+        for (var i = 0; i < dynamicValues.Count; i++)
+            if (string.Equals(dynamicValues[i].key, key, System.StringComparison.OrdinalIgnoreCase))
+            {
+                dynamicValues[i] = value;
+                return;
+            }
+                
+        // Otherwise, insert a new entry.
+        if (add)
+        {
+            dynamicValues.Add(value);
+            serverUtils.RegisterDynamicValue(key);
+        }
+    }
+
+    /** Return a shared server value that has been defined at runtime. */
+    public float GetDynamicValue(string valueName, float defaultValue = serverUtils.Unknown)
+    {
+        // Check that value name is valid.
+        if (string.IsNullOrEmpty(valueName))
+            return defaultValue;
+
+        // Search for a matching entry in shared dynamic value list.
+        for (var i = 0; i < dynamicValues.Count; i++)
+            if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                serverUtils.RegisterDynamicValue(valueName);
+                return dynamicValues[i].value;
+            }
+
+        return defaultValue;
+    }
+
+    /** Return a shared server value that has been defined at runtime. */
+    public bool HasDynamicValue(string valueName)
+    {
+        // Check that value name is valid.
+        if (string.IsNullOrEmpty(valueName))
+            return false;
+
+        // Search for a matching entry in shared dynamic value list.
+        for (var i = 0; i < dynamicValues.Count; i++)
+            if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                serverUtils.RegisterDynamicValue(valueName);
+                return true;
+            }
+
+        return false;
+    }
+
+    /** Updates a server string value. */
     public void OnValueChanged(string valueName, string newValue)
     {
         switch (valueName.ToLower())
@@ -873,10 +959,10 @@ public class serverData : NetworkBehaviour
                 MapData.vessel4Vis = state;
                 break;
             case 5:
-                MapData.meg1Vis = state;
+                MapData.vessel5Vis = state;
                 break;
             case 6:
-                MapData.intercept1Vis = state;
+                MapData.vessel6Vis = state;
                 break;
         }
     }
@@ -906,11 +992,13 @@ public class serverData : NetworkBehaviour
             case "vessel4vis":
                 MapData.vessel4Vis = newValue;
                 break;
+            case "vessel5vis":
             case "meg1vis":
-                MapData.meg1Vis = newValue;
+                MapData.vessel5Vis = newValue;
                 break;
+            case "vessel6vis":
             case "intercept1vis":
-                MapData.intercept1Vis = newValue;
+                MapData.vessel6Vis = newValue;
                 break;
             case "vessel1warning":
                 MapData.vessel1Warning = newValue;
@@ -924,11 +1012,13 @@ public class serverData : NetworkBehaviour
             case "vessel4warning":
                 MapData.vessel4Warning = newValue;
                 break;
+            case "vessel5warning":
             case "meg1warning":
-                MapData.meg1Warning = newValue;
+                MapData.vessel5Warning = newValue;
                 break;
+            case "vessel6warning":
             case "intercept1warning":
-                MapData.intercept1Warning = newValue;
+                MapData.vessel6Warning = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;
@@ -1035,8 +1125,11 @@ public class serverData : NetworkBehaviour
     /** Initialization. */
     void Start ()
     {
-        rb = gameObject.GetComponent<Rigidbody>();
         Debug.Log("serverData.Start(): Client ID: " + serverUtils.Id);
+        rb = gameObject.GetComponent<Rigidbody>();
+
+        // Register for dynamic value change notifications.
+        dynamicValues.Callback += OnDynamicValueChanged;
     }
 	
     /** Updating. */
@@ -1084,38 +1177,21 @@ public class serverData : NetworkBehaviour
     /** Physics update. */
     void FixedUpdate()
     {
+        // Update the sub control logic.
         GetComponent<SubControl>().SubController();
 
-        //if (!disableInput)
-        //{
-        //    //apply the input forces
-        //    currentThrust = Mathf.Lerp(currentThrust, (thrust * inputZaxis), Time.deltaTime * 0.1f);
-        //    rb.AddForce(transform.forward * currentThrust);
-        //    rb.AddRelativeTorque(-Vector3.right * (pitchSpeed * inputYaxis));
-        //    rb.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
-        //}
-        //
-        ////calculate bank
-        //float amountToBank = rb.angularVelocity.y * bankAmount;
-        //bank = Mathf.Lerp(bank, amountToBank, rollSpeed);
-        //rotation = transform.rotation.eulerAngles;
-        //rotation *= Mathf.Deg2Rad;
-        //rotation.z = 0f;
-        //rotation += bankAxis * bank;
-        //rotation *= Mathf.Rad2Deg;
-        //
-        ////apply the bank
-        //transform.rotation = Quaternion.Euler(rotation);
-
-        //server only
+        // Update roll, pitch and yaw.
         if (isServer)
             GetRollPitchYaw(transform.rotation);
     }
 
-    IEnumerator wait(float waitTime)
+    /** Handle changes to dynamic server values. */
+    private void OnDynamicValueChanged(SyncListValues.Operation op, int index)
     {
-        yield return new WaitForSeconds(waitTime);
-        //updateTimer = false;
+        // TODO: Update a dictionary to get O(1) lookups for dynamic values.
+        // UpdateDynamicLookup();
     }
+
+
     #endregion
 }

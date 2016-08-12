@@ -89,8 +89,8 @@ namespace Meg.Parameters
         // ------------------------------------------------------------
 
         /** Set a server value. */
-        protected void PostServerData(string key, float value)
-            { file.PostServerData(key, value); }
+        protected void PostServerData(string key, float value, bool add)
+            { file.PostServerData(key, value, add); }
 
         /** Set a server value. */
         protected void PostServerData(string key, string value)

@@ -31,21 +31,21 @@
 
 	"subPilotLeft" :
 	{
-		"parent" : "sub",
+		"parent" : "subPilot",
 		"screen-initial" : "thrusters",
 		"screen-position-x" : -1920,
 	},
 
 	"subPilotMid" :
 	{
-		"parent" : "sub",
+		"parent" : "subPilot",
 		"screen-initial" : "instruments",
 		"screen-position-x" : 0,
 	},
 
 	"subPilotRight" :
 	{
-		"parent" : "sub",
+		"parent" : "subPilot",
 		"screen-initial" : "navigation",
 		"screen-position-x" : 1920,
 	},
@@ -84,6 +84,14 @@
 	{
 		"parent" : "glider",
 		"screen-position-x" : 1920,
+	},
+
+
+	"dcc" :
+	{
+		"parent" : "default",
+		"network-role" : "client",
+		"network-scene" : "screen_dcc",
 	},
 
 
