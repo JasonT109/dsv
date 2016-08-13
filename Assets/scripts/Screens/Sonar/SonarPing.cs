@@ -30,6 +30,12 @@ public class SonarPing : MonoBehaviour
     /** Auto-pulse interval. */
     public float AutoPulseInterval = 0;
 
+    /** Whether to hide if out of range. */
+    public bool HideIfOutOfRange = true;
+
+    /** Whether to hide if not visible on sonar. */
+    public bool HideIfNotOnSonar = true;
+
     /** Parent sonar ping manager. */
     public SonarPings Pings { get; set; }
 
@@ -68,9 +74,12 @@ public class SonarPing : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
-        _indicatorScale = Indicator.transform.localScale;
-        _indicatorColor = Indicator.material.GetColor("_TintColor");
-        Indicator.gameObject.SetActive(false);
+        if (Indicator)
+        {
+            _indicatorScale = Indicator.transform.localScale;
+            _indicatorColor = Indicator.material.GetColor("_TintColor");
+            Indicator.gameObject.SetActive(false);
+        }
     }
 
     /** Enabling. */
@@ -89,9 +98,9 @@ public class SonarPing : MonoBehaviour
     {
         var p = VesselData.GetSonarPosition(Vessel.Id, Pings.Type);
         var player = VesselData.PlayerVessel;
-        var visible = Vessel.OnSonar 
-            && (Vessel.Id != player) 
-            && (p.magnitude <= 1);
+        var visible = (Vessel.OnSonar || !HideIfNotOnSonar)
+            && (p.magnitude <= 1 || !HideIfOutOfRange)
+            && (Vessel.Id != player);
 
         gameObject.SetActive(visible);
 
@@ -115,9 +124,23 @@ public class SonarPing : MonoBehaviour
         }
     }
 
+    /** Convert ping's position into vessel space. */
+    public Vector3 ToVesselSpace()
+        { return LocalToVesselSpace(Vector3.zero); }
+
+    /** Convert a position in ping's local space into vessel space. */
+    public Vector3 LocalToVesselSpace(Vector3 local)
+    {
+        var p = transform.localPosition + local;
+        return VesselData.SonarToVesselSpace(p / Pings.SonarToRootScale, Pings.Type);
+    }
+
     /** Pulse this ping's visual indicator. */
     public void Pulse()
     {
+        if (!Indicator)
+            return;
+
         Indicator.gameObject.SetActive(true);
         Indicator.transform.localScale = Vector3.zero;
         Indicator.transform.DOScale(_indicatorScale, 0.5f);

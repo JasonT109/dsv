@@ -111,6 +111,33 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselMovementState(json.Print(true));
     }
 
+    /** Add a vessel to the simulation. */
+    public void PostAddVessel(vesselData.Vessel vessel)
+    {
+        if (isServer)
+            serverUtils.VesselData.AddVessel(vessel);
+        else if (isClient)
+            CmdAddVessel(vessel);
+    }
+
+    /** Remove the last vessel from the simulation. */
+    public void PostRemoveLastVessel()
+    {
+        if (isServer)
+            serverUtils.VesselData.RemoveLastVessel();
+        else if (isClient)
+            CmdRemoveLastVessel();
+    }
+
+    /** Clear extra vessels from the simulation. */
+    public void PostClearExtraVessels()
+    {
+        if (isServer)
+            serverUtils.VesselData.ClearExtraVessels();
+        else if (isClient)
+            CmdClearExtraVessels();
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -171,6 +198,22 @@ public class serverPlayer : NetworkBehaviour
             Debug.LogError("CmdSetVesselMovementsState(): Failed to apply vessels state from client: " + ex);
         }
     }
+
+    /** Add a vessel to the simulation. */
+    [Command]
+    public void CmdAddVessel(vesselData.Vessel vessel)
+        { serverUtils.VesselData.AddVessel(vessel); }
+
+    /** Remove the last vessel from the simulation. */
+    [Command]
+    public void CmdRemoveLastVessel()
+        { serverUtils.VesselData.RemoveLastVessel(); }
+
+    /** Clear extra vessels from the simulation. */
+    [Command]
+    public void CmdClearExtraVessels()
+        { serverUtils.VesselData.ClearExtraVessels(); }
+
 
 
     // Private Methods

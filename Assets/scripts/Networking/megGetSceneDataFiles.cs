@@ -112,7 +112,10 @@ public class megGetSceneDataFiles : MonoBehaviour
             StartCoroutine(wait(0.2f));
 
             if (!string.IsNullOrEmpty(fileToLoad))
+            {
                 megSceneFile.LoadFromFile(fileToLoad);
+                fileToLoad = "";
+            }
         }
     }
 }

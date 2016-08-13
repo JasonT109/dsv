@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Text.RegularExpressions;
@@ -176,9 +177,12 @@ public class vesselData : NetworkBehaviour
     [Server]
     public void AddVessel(Vessel vessel)
     {
+        // Assign vessel an id based on the highest existing id in list.
+        var id = Vessels.Count + 1;
+        vessel.Id = id;
+
         // Add vessel to the synchronized list.
         Vessels.Add(vessel);
-        var id = vessel.Id;
 
         // Register vessel dynamic server parameters.
         serverUtils.RegisterServerValue(string.Format("vessel{0}visible", id), 
@@ -203,21 +207,30 @@ public class vesselData : NetworkBehaviour
             new serverUtils.ParameterInfo { maxValue = (int) Icon.Warning, type = serverUtils.ParameterType.Int });
     }
 
-    /** Update a vessel by id. */
-    private void SetVessel(int id, Vessel vessel)
+    /** Remove the last vessel (if possible). */
+    [Server]
+    public void RemoveLastVessel()
     {
-        if (id >= 1 && id <= Vessels.Count)
-            Vessels[id - 1] = vessel;
+        if (Vessels.Count > BaseVesselCount)
+            Vessels.RemoveAt(Vessels.Count - 1);
     }
 
-    /** Return a vessel for the given id. */
-    private Vessel GetVessel(int id)
+    /** Clear extra vessels (leaving just the base vessel set). */
+    [Server]
+    public void ClearExtraVessels()
     {
-        if (id >= 1 && id <= Vessels.Count)
-            return Vessels[id - 1];
-
-        return new Vessel { Id = id, Name = Unknown };
+        while (Vessels.Count > BaseVesselCount)
+            RemoveLastVessel();
     }
+
+    /** Returns whether a vessel can be removed. */
+    public bool CanRemove(Vessel vessel)
+        { return CanRemove(vessel.Id); }
+
+    /** Returns whether a vessel can be removed. */
+    public bool CanRemove(int id)
+        { return id > BaseVesselCount; }
+
 
 
     // Setters and Getters
@@ -434,7 +447,7 @@ public class vesselData : NetworkBehaviour
             return GetPosition(PlayerVessel);
 
         // Get sonar maximum range in metres.
-        var range = serverUtils.SonarData.GetConfigForType(type).MaxRange;
+        var range = serverUtils.SonarData.GetConfigForType(type).MaxRange * WorldToVesselScale;
         if (range <= 0)
             return GetPosition(PlayerVessel);
 
@@ -497,23 +510,110 @@ public class vesselData : NetworkBehaviour
 
 
 
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save state to JSON. */
+    public JSONObject Save()
+    {
+        var json = new JSONObject();
+        json.AddField("PlayerVessel", PlayerVessel);
+
+        var vesselsJson = new JSONObject(JSONObject.Type.ARRAY);
+        foreach (var v in Vessels)
+            vesselsJson.Add(SaveVessel(v));
+
+        json.AddField("Vessels", vesselsJson);
+        return json;
+    }
+
+    /** Load state from JSON. */
+    [Server]
+    public void Load(JSONObject json)
+    {
+        var vesselsJson = json.GetField("Vessels");
+        Vessels.Clear();
+        for (var i = 0; i < vesselsJson.Count; i++)
+            AddVessel(LoadVessel(vesselsJson[i]));
+
+        // Reset player's world position and velocity.
+        PlayerVessel = (int) json.GetField("PlayerVessel").i;
+        PlayerPosition = VesselToWorldSpace(GetPosition(PlayerVessel));
+        PlayerWorldVelocity = Vector3.zero;
+    }
+
+    /** Save a vessel state to JSON. */
+    private JSONObject SaveVessel(Vessel vessel)
+    {
+        var json = new JSONObject();
+        json.AddField("Id", vessel.Id);
+        json.AddField("Name", vessel.Name);
+        json.AddField("Position", vessel.Position);
+        json.AddField("Speed", vessel.Speed);
+        json.AddField("OnMap", vessel.OnMap);
+        json.AddField("OnSonar", vessel.OnSonar);
+        json.AddField("Icon", (int) vessel.Icon);
+
+        return json;
+    }
+
+    /** Load vessel state from JSON. */
+    private Vessel LoadVessel(JSONObject json)
+    {
+        var vessel = new Vessel();
+        json.GetField(ref vessel.Id, "Id");
+        json.GetField(ref vessel.Name, "Name");
+        json.GetField(ref vessel.Position, "Position");
+        json.GetField(ref vessel.Speed, "Speed");
+        json.GetField(ref vessel.OnMap, "OnMap");
+        json.GetField(ref vessel.OnSonar, "OnSonar");
+
+        int icon = 0;
+        json.GetField(ref icon, "Icon");
+        vessel.Icon = (Icon) icon;
+
+        return vessel;
+    }
+
+
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Update a vessel by id. */
+    private void SetVessel(int id, Vessel vessel)
+    {
+        // Ensure enough vessels exist in the synchronized list.
+        // while (Vessels.Count < id)
+        //    Vessels.Add(new Vessel());
+
+        // Update vessel's data in the synchronized list.
+        if (id >= 1 && id <= Vessels.Count)
+            Vessels[id - 1] = vessel;
+    }
+
+    /** Return a vessel for the given id. */
+    private Vessel GetVessel(int id)
+    {
+        if (id >= 1 && id <= Vessels.Count)
+            return Vessels[id - 1];
+
+        return new Vessel { Id = id, Name = Unknown };
+    }
 
     /** Initialize the vessel state list. */
     [Server]
     private void InitializeVessels()
     {
         // Populate predefined vessels that always exist in the simulation.
-        AddVessel(new Vessel { Id = 1, Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Id = 2, Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Id = 3, Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Id = 4, Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Id = 5, Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), OnMap = true, OnSonar = true, Icon = Icon.Warning });
-        AddVessel(new Vessel { Id = 6, Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel { Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel { Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel { Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel { Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel { Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), OnMap = true, OnSonar = true, Icon = Icon.Warning });
+        AddVessel(new Vessel { Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), OnMap = true, OnSonar = true });
 
-        AddVessel(new Vessel { Id = 7, Name = "Light S01", Position = new Vector3(1.5f, 2f, 8200f), OnSonar = true });
-        AddVessel(new Vessel { Id = 8, Name = "Light S03", Position = new Vector3(1.5f, -1f, 8200f), OnSonar = true });
+        AddVessel(new Vessel { Name = "Light S01", Position = new Vector3(1.5f, 2f, 8200f), OnSonar = true });
+        AddVessel(new Vessel { Name = "Light S03", Position = new Vector3(1.5f, -1f, 8200f), OnSonar = true });
     }
 
     /** Get a vessel's name from configuration. */

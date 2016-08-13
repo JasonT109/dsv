@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-public class NoiseRotation : MonoBehaviour 
+public class SonarNoiseRotation : MonoBehaviour 
 {
 
 	void Update ()

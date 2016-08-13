@@ -131,12 +131,7 @@ namespace Meg.Scene
         /** Save state of all vessels to JSON. */
         private JSONObject SaveVessels()
         {
-            var json = new JSONObject();
-            var n = serverUtils.GetVesselCount();
-            for (var vessel = 1; vessel <= n; vessel++)
-                json.AddField(vessel.ToString(), SaveVessel(vessel));
-
-            return json;
+            return serverUtils.VesselData.Save();
         }
 
         /** Save a vessel's state to JSON. */
@@ -182,26 +177,7 @@ namespace Meg.Scene
         /** Load vessel states from JSON. */
         public void LoadVessels(JSONObject json)
         {
-            for (var i = 0; i < json.Count; i++)
-                LoadVessel(i + 1, json[i]);
-        }
-
-        /** Load vessel state from JSON. */
-        private void LoadVessel(int vessel, JSONObject json)
-        {
-            var position = serverUtils.GetVesselPosition(vessel);
-            var velocity = serverUtils.GetVesselVelocity(vessel);
-            var visible = serverUtils.GetVesselVis(vessel);
-
-            json.GetField(ref position, "position");
-            json.GetField(ref velocity, "velocity");
-            json.GetField(ref visible, "visible");
-
-            serverUtils.SetVesselData(vessel, position, velocity);
-
-            // If this is the player vessel, reset its world velocity.
-            if (velocity <= 0 && vessel == serverUtils.GetPlayerVessel())
-                serverUtils.SetPlayerWorldVelocity(Vector3.zero);
+            serverUtils.VesselData.Load(json);
         }
 
         /** Load vessel movements from JSON. */

@@ -1506,6 +1506,27 @@ namespace Meg.Networking
                 LocalPlayer.PostVesselMovementState(json);
         }
 
+        /** Add a vessel to the simulation. */
+        public static void PostAddVessel(vesselData.Vessel vessel)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddVessel(vessel);
+        }
+
+        /** Remove the last vessel from the simulation. */
+        public static void PostRemoveLastVessel()
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveLastVessel();
+        }
+
+        /** Clear extra vessels from the simulation. */
+        public static void PostClearExtraVessels()
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearExtraVessels();
+        }
+
         /** Number of vessels that can be displayed on the map. */
         public static int GetVesselCount()
             { return VesselData.VesselCount; }
