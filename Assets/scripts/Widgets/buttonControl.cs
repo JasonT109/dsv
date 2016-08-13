@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using TouchScript.Gestures;
@@ -37,7 +38,17 @@ public class buttonControl : MonoBehaviour
     public float autoWarningValue = 0f;
     public string autoWarningServerName = "depth";
     public bool autoWarningGreaterThan = false;
+    public bool autoWarningInheritFromVisGroup;
+    public autoWarningCondition[] autoWarningConditions;
     public bool useUniversalSync = false;
+
+    [Serializable]
+    public struct autoWarningCondition
+    {
+        public float value;
+        public string serverName;
+        public bool greaterThan;
+    }
 
     [Header("Server")]
     public bool observeServerState;
@@ -79,6 +90,8 @@ public class buttonControl : MonoBehaviour
     private int frame = 0;
     private float doublePressTime = 0f;
     private bool doublePressCheck = false;
+
+    private buttonControl[] _autoWarningsInVisGroup;
 
     public Color Color
     {
@@ -438,18 +451,8 @@ public class buttonControl : MonoBehaviour
         updateColor();
 
         if (autoWarning)
-        {
-            if (autoWarningGreaterThan)
-            {
-                // check if server value is higher than warning value
-                warning = serverUtils.GetServerData(autoWarningServerName) > autoWarningValue;
-            }
-            else
-            {
-                // check if server value is lower than warning value
-                warning = serverUtils.GetServerData(autoWarningServerName) <= autoWarningValue;
-            }
-        }
+            warning = IsAutoWarningActive();
+
         if (warning)
         {
             float sinWave;
@@ -474,6 +477,54 @@ public class buttonControl : MonoBehaviour
                 SetColor(GetThemeColor(3), false);
         }
     }
+
+    private bool IsAutoWarningActive()
+    {
+        // Evaluate primary autowarning condition.
+        bool on = false;
+
+        if (!string.IsNullOrEmpty(autoWarningServerName))
+            on = IsWarningConditionMet(autoWarningServerName, autoWarningGreaterThan, autoWarningValue);
+
+        // Evaluate additional autowarning conditions.
+        for (var i = 0; i < autoWarningConditions.Length; i++)
+            on = on || IsWarningConditionMet(autoWarningConditions[i]);
+
+        // Optionally check if any warnings are active in vis group.
+        if (autoWarningInheritFromVisGroup)
+            on = on || HasWarningInVisgroup();
+
+        return on;
+    }
+
+    private bool HasWarningInVisgroup()
+    {
+        if (!visGroup)
+            return false;
+
+        if (_autoWarningsInVisGroup == null)
+            _autoWarningsInVisGroup = visGroup.transform
+                .GetComponentsInChildren<buttonControl>(true)
+                .Where(b => b.autoWarning)
+                .ToArray();
+
+        return _autoWarningsInVisGroup
+            .Any(b => b.IsAutoWarningActive());
+    }
+
+    private bool IsWarningConditionMet(autoWarningCondition c)
+        { return IsWarningConditionMet(c.serverName, c.greaterThan, c.value); }
+
+    private bool IsWarningConditionMet(string key, bool greaterThan, float value)
+    {
+        var current = serverUtils.GetServerData(key);
+        if (greaterThan)
+            return current > value;
+
+        return current <= value;
+    }
+
+
 
     IEnumerator waitDoublePress(float waitTime)
     {
