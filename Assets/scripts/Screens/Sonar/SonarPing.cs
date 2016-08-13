@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
+using Meg.Maths;
 using Meg.Networking;
 
 public class SonarPing : MonoBehaviour
@@ -16,6 +18,15 @@ public class SonarPing : MonoBehaviour
     /** Label for depth information. */
     public widgetText DepthLabel;
 
+    /** Ping indicator. */
+    public Renderer Indicator;
+
+    /** Interval for position updates. */
+    public float PositionUpdateInterval = 0;
+
+    /** Interval for depth updates. */
+    public float DepthUpdateInterval = 0;
+
     /** Parent sonar ping manager. */
     public SonarPings Pings { get; set; }
 
@@ -31,6 +42,35 @@ public class SonarPing : MonoBehaviour
         { get { return serverUtils.VesselData; } }
 
 
+
+    // Members
+    // ------------------------------------------------------------
+
+    /** Timestamp for next position update. */
+    private float _nextPositionUpdate;
+
+    /** Timestamp for next depth update. */
+    private float _nextDepthUpdate;
+
+    /** Indicator's normal color. */
+    private Color _indicatorColor;
+
+    /** Indicator's normal scale. */
+    private Vector3 _indicatorScale;
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Awake()
+    {
+        _indicatorScale = Indicator.transform.localScale;
+        _indicatorColor = Indicator.material.GetColor("_TintColor");
+        Indicator.gameObject.SetActive(false);
+    }
+
+
     // Public Methods
     // ------------------------------------------------------------
 
@@ -43,12 +83,36 @@ public class SonarPing : MonoBehaviour
             && (Vessel.Id != player) 
             && (p.magnitude <= 1);
 
-        transform.localPosition = p * Pings.SonarToRootScale;
+        gameObject.SetActive(visible);
+
         transform.rotation = Quaternion.identity;
 
-        gameObject.SetActive(visible);
+        var t = Time.time;
+        if (t > _nextPositionUpdate)
+        {
+            transform.localPosition = p * Pings.SonarToRootScale;
+            _nextPositionUpdate = t + PositionUpdateInterval;
+        }
+
         NameLabel.Text = Vessel.Name.ToUpper();
-        DepthLabel.Text = string.Format("{0:+0;-#}m", Vessel.Depth - VesselData.GetDepth(player));
+
+        if (t > _nextDepthUpdate)
+        {
+            var delta = Vessel.Depth - VesselData.GetDepth(player);
+            var rounded = graphicsMaths.roundToInterval(delta, 5);
+            DepthLabel.Text = string.Format("{0}{1:n0}m", rounded > 0 ? "+" : "", rounded);
+            _nextDepthUpdate = t + DepthUpdateInterval;
+        }
+    }
+
+    /** Pulse this ping's visual indicator. */
+    public void Pulse()
+    {
+        Indicator.gameObject.SetActive(true);
+        Indicator.transform.localScale = Vector3.zero;
+        Indicator.transform.DOScale(_indicatorScale, 0.5f);
+        Indicator.material.SetColor("_TintColor", _indicatorColor);
+        Indicator.material.DOColor(new Color(0,0,0,0), "_TintColor", 0.5f).SetDelay(0.25f);
     }
 
 }
