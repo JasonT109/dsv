@@ -116,6 +116,7 @@ public class PasswordScreen : MonoBehaviour
         StartButtonText.text = "CONNECT TO HOST";
     }
 
+
     public void ToggleGlider()
     {
         GliderButtonImg.color = SelectedColor;
