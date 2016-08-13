@@ -86,7 +86,7 @@ public class SubControl : NetworkBehaviour
 
         // Don't apply sub control if vessel is being moved by the vessel simulation.
         var movement = serverUtils.GetVesselMovements().GetPlayerVesselMovement();
-        if (movement)
+        if (movement && movement.Active)
             return;
 
         Vector3 RollExtract = new Vector3(0,0,-1);

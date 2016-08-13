@@ -149,7 +149,7 @@ public abstract class vesselMovement : NetworkBehaviour
 
         // If we're controlling the player vessel, update its world velocity.
         // Supplied velocity uses map axes, so translate it into world space.
-        if (Vessel == MapData.playerVessel)
+        if (Vessel == serverUtils.GetPlayerVessel())
             serverUtils.SetPlayerWorldVelocity(WorldVelocity);
     }
 

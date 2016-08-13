@@ -96,7 +96,7 @@ namespace Meg.Networking
             }
         }
 
-        /** Return the map data object (contains shared vessel state values.) */
+        /** Return the map data object (contains shared map state values.) */
         private static mapData _mapData;
         public static mapData MapData
         {
@@ -105,6 +105,18 @@ namespace Meg.Networking
                 if (!_mapData && ServerObject)
                     _mapData = ServerObject.GetComponent<mapData>();
                 return _mapData;
+            }
+        }
+
+        /** Return the vessel data object (contains shared vessel state values.) */
+        private static vesselData _vesselData;
+        public static vesselData VesselData
+        {
+            get
+            {
+                if (!_vesselData && ServerObject)
+                    _vesselData = ServerObject.GetComponent<vesselData>();
+                return _vesselData;
             }
         }
 
@@ -671,8 +683,12 @@ namespace Meg.Networking
         /** Return the current value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
-            if (!ServerObject)
+            if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
+
+            // Check if we're looking for a vessel state value.
+            if (VesselData.IsVesselKey(valueName))
+                return VesselData.GetServerData(valueName, defaultValue);
 
             switch (valueName.ToLower())
             {
@@ -988,105 +1004,7 @@ namespace Meg.Networking
                 case "crewbodytemp6":
                     return CrewData.crewBodyTemp6;
                 case "playervessel":
-                    return MapData.playerVessel;
-                case "v1posx":
-                    return MapData.vessel1Pos.x;
-                case "v1posy":
-                    return MapData.vessel1Pos.y;
-                case "v1posz":
-                case "v1depth":
-                case "vessel1depth":
-                    return MapData.vessel1Pos.z;
-                case "v2posx":
-                    return MapData.vessel2Pos.x;
-                case "v2posy":
-                    return MapData.vessel2Pos.y;
-                case "v2posz":
-                case "v2depth":
-                case "vessel2depth":
-                    return MapData.vessel2Pos.z;
-                case "v3posx":
-                    return MapData.vessel3Pos.x;
-                case "v3posy":
-                    return MapData.vessel3Pos.y;
-                case "v3posz":
-                case "v3depth":
-                case "vessel3depth":
-                    return MapData.vessel3Pos.z;
-                case "v4posx":
-                    return MapData.vessel4Pos.x;
-                case "v4posy":
-                    return MapData.vessel4Pos.y;
-                case "v4posz":
-                case "v4depth":
-                case "vessel4depth":
-                    return MapData.vessel4Pos.z;
-                case "v5posx":
-                case "meg1posx":
-                    return MapData.vessel5Pos.x;
-                case "v5posy":
-                case "meg1posy":
-                    return MapData.vessel5Pos.y;
-                case "v5posz":
-                case "v5depth":
-                case "meg1posz":
-                case "vessel5depth":
-                    return MapData.vessel5Pos.z;
-                case "v6posx":
-                case "intercept1posx":
-                    return MapData.vessel6Pos.x;
-                case "v6posy":
-                case "intercept1posy":
-                    return MapData.vessel6Pos.y;
-                case "v6posz":
-                case "v6depth":
-                case "intercept1posz":
-                case "vessel6depth":
-                    return MapData.vessel6Pos.z;
-                case "v1velocity":
-                    return MapData.vessel1Velocity;
-                case "v2velocity":
-                    return MapData.vessel2Velocity;
-                case "v3velocity":
-                    return MapData.vessel3Velocity;
-                case "v4velocity":
-                    return MapData.vessel4Velocity;
-                case "v5velocity":
-                case "meg1velocity":
-                case "vessel5velocity":
-                    return MapData.vessel5Velocity;
-                case "v6velocity":
-                case "intercept1velocity":
-                case "vessel6velocity":
-                    return MapData.vessel6Velocity;
-                case "vessel1vis":
-                    return MapData.vessel1Vis ? 1.0f : 0.0f;
-                case "vessel2vis":
-                    return MapData.vessel2Vis ? 1.0f : 0.0f;
-                case "vessel3vis":
-                    return MapData.vessel3Vis ? 1.0f : 0.0f;
-                case "vessel4vis":
-                    return MapData.vessel4Vis ? 1.0f : 0.0f;
-                case "vessel5vis":
-                case "meg1vis":
-                    return MapData.vessel5Vis ? 1.0f : 0.0f;
-                case "vessel6vis":
-                case "intercept1vis":
-                    return MapData.vessel6Vis ? 1.0f : 0.0f;
-                case "vessel1warning":
-                    return MapData.vessel1Warning ? 1.0f : 0.0f;
-                case "vessel2warning":
-                    return MapData.vessel2Warning ? 1.0f : 0.0f;
-                case "vessel3warning":
-                    return MapData.vessel3Warning ? 1.0f : 0.0f;
-                case "vessel4warning":
-                    return MapData.vessel4Warning ? 1.0f : 0.0f;
-                case "vessel5warning":
-                case "meg1warning":
-                    return MapData.vessel5Warning ? 1.0f : 0.0f;
-                case "vessel6warning":
-                case "intercept1warning":
-                    return MapData.vessel6Warning ? 1.0f : 0.0f;
+                    return VesselData.PlayerVessel;
                 case "initiatemapevent":
                     return MapData.initiateMapEvent;
                 case "latitude":
@@ -1189,7 +1107,7 @@ namespace Meg.Networking
             switch (valueName.ToLower())
             {
                 case "playervesselname":
-                    return MapData.playerVesselName;
+                    return VesselData.PlayerVesselName;
                 case "scene":
                     return ServerData.scene.ToString();
                 case "shot":
@@ -1313,64 +1231,8 @@ namespace Meg.Networking
                     return CrewData.crewBodyTemp5.ToString("n1");
                 case "crewbodytemp6":
                     return CrewData.crewBodyTemp6.ToString("n1");
-                case "v1depth":
-                    return MapData.vessel1Pos.z.ToString("n0");
-                case "v2depth":
-                    return MapData.vessel2Pos.z.ToString("n0");
-                case "v3depth":
-                    return MapData.vessel3Pos.z.ToString("n0");
-                case "v4depth":
-                    return MapData.vessel4Pos.z.ToString("n0");
-                case "v5depth":
-                case "meg1depth":
-                    return MapData.vessel5Pos.z.ToString("n0");
-                case "v6depth":
-                case "intercept1depth":
-                    return MapData.vessel6Pos.z.ToString("n0");
-                case "v1velocity":
-                    return MapData.vessel1Velocity.ToString("n1");
-                case "v2velocity":
-                    return MapData.vessel2Velocity.ToString("n1");
-                case "v3velocity":
-                    return MapData.vessel3Velocity.ToString("n1");
-                case "v4velocity":
-                    return MapData.vessel4Velocity.ToString("n1");
-                case "v5velocity":
-                case "meg1velocity":
-                    return MapData.vessel5Velocity.ToString("n1");
-                case "v6velocity":
-                case "intercept1velocity":
-                    return MapData.vessel6Velocity.ToString("n1");
                 case "mapeventname":
                     return MapData.mapEventName;
-                case "vessel1vis":
-                    return MapData.vessel1Vis.ToString();
-                case "vessel2vis":
-                    return MapData.vessel2Vis.ToString();
-                case "vessel3vis":
-                    return MapData.vessel3Vis.ToString();
-                case "vessel4vis":
-                    return MapData.vessel4Vis.ToString();
-                case "vessel5vis":
-                case "meg1vis":
-                    return MapData.vessel5Vis.ToString();
-                case "vessel6vis":
-                case "intercept1vis":
-                    return MapData.vessel6Vis.ToString();
-                case "vessel1warning":
-                    return MapData.vessel1Warning.ToString();
-                case "vessel2warning":
-                    return MapData.vessel2Warning.ToString();
-                case "vessel3warning":
-                    return MapData.vessel3Warning.ToString();
-                case "vessel4warning":
-                    return MapData.vessel4Warning.ToString();
-                case "vessel5warning":
-                case "meg1warning":
-                    return MapData.vessel5Warning.ToString();
-                case "vessel6warning":
-                case "intercept1warning":
-                    return MapData.vessel6Warning.ToString();
                 case "latitude":
                     return FormatLatitude(MapData.latitude);
                 case "longitude":
@@ -1471,36 +1333,17 @@ namespace Meg.Networking
         /** Return the current value of a shared boolean state value by name. */
         public static bool GetServerBool(string boolName)
         {
+            // Check if we're looking for a vessel state value.
+            if (VesselData.IsVesselKey(boolName))
+                return VesselData.GetServerData(boolName, Unknown) > 0;
+
+            // Match server data key against known values.
             switch (boolName.ToLower())
             {
                 case "divetimeactive":
                     return ServerData.diveTimeActive;
                 case "duetimeactive":
                     return ServerData.dueTimeActive;
-                case "vessel1vis":
-                    return MapData.vessel1Vis;
-                case "vessel2vis":
-                    return MapData.vessel2Vis;
-                case "vessel3vis":
-                    return MapData.vessel3Vis;
-                case "vessel4vis":
-                    return MapData.vessel4Vis;
-                case "meg1vis":
-                    return MapData.vessel5Vis;
-                case "intercept1vis":
-                    return MapData.vessel6Vis;
-                case "vessel1warning":
-                    return MapData.vessel1Warning;
-                case "vessel2warning":
-                    return MapData.vessel2Warning;
-                case "vessel3warning":
-                    return MapData.vessel3Warning;
-                case "vessel4warning":
-                    return MapData.vessel4Warning;
-                case "meg1warning":
-                    return MapData.vessel5Warning;
-                case "intercept1warning":
-                    return MapData.vessel6Warning;
                 case "vesselmovementenabled":
                     return VesselMovements.Enabled;
                 case "disableinput":
@@ -1637,61 +1480,40 @@ namespace Meg.Networking
 
         /** Number of vessels that can be displayed on the map. */
         public static int GetVesselCount()
-        {
-            return mapData.VesselCount;
-        }
+            { return VesselData.VesselCount; }
 
         /** Set a vessel's current position and nominal speed (1-based index). */
-        public static void SetVesselData(int vessel, Vector3 pos, float vesselVelocity)
-        {
-            ServerData.OnVesselDataChanged(vessel, pos, vesselVelocity);
-        }
+        public static void SetVesselData(int vessel, Vector3 position, float speed)
+            { VesselData.SetState(vessel, position, speed); }
 
         /** Return a vessel's current depth (1-based index). */
         public static float GetVesselDepth(int vessel)
-        {
-            return GetVesselData(vessel)[2];
-        }
+            { return VesselData.GetDepth(vessel); }
 
         /** Set a vessel's current depth (1-based index). */
         public static void SetVesselDepth(int vessel, float depth)
-        {
-            Vector3 position;
-            float velocity;
-
-            GetVesselData(vessel, out position, out velocity);
-            position.z = depth;
-            SetVesselData(vessel, position, velocity);
-        }
+            { VesselData.SetDepth(vessel, depth); }
 
         /** Return a vessel's current position (1-based index). */
         public static Vector3 GetVesselPosition(int vessel)
-        {
-            var data = GetVesselData(vessel);
-            return new Vector3(data[0], data[1], data[2]);
-        }
+            { return VesselData.GetPosition(vessel); }
 
         /** Return a vessel's velocity (1-based index). */
         public static float GetVesselVelocity(int vessel)
-        {
-            var data = GetVesselData(vessel);
-            return data[3];
-        }
+            { return VesselData.GetSpeed(vessel); }
 
         /** Return a vessel's name (1-based index). */
         public static string GetVesselName(int vessel)
-        {
-            return ServerData.GetVesselName(vessel);
-        }
+            { return VesselData.GetName(vessel); }
 
         /** Return the player vessel's current target vessel (or 0 if there is no target). */
         public static int GetTargetVessel()
         {
-            var playerVessel = serverUtils.GetPlayerVessel();
+            var playerVessel = GetPlayerVessel();
             if (playerVessel <= 0)
                 return 0;
 
-            var movement = serverUtils.GetVesselMovements().GetVesselMovement(playerVessel);
+            var movement = GetVesselMovements().GetVesselMovement(playerVessel);
             var intercept = movement as vesselIntercept;
             var pursue = movement as vesselPursue;
 
@@ -1728,171 +1550,62 @@ namespace Meg.Networking
 
         /** Set a vessel's current position (1-based index). */
         public static void SetVesselPosition(int vessel, Vector3 p)
-        {
-            Vector3 position;
-            float velocity;
-            GetVesselData(vessel, out position, out velocity);
-            SetVesselData(vessel, p, velocity);
-        }
+            { VesselData.SetPosition(vessel, p); }
 
         /** Set a vessel's current speed (1-based index). */
         public static void SetVesselVelocity(int vessel, float v)
-        {
-            Vector3 position;
-            float velocity;
-            GetVesselData(vessel, out position, out velocity);
-            SetVesselData(vessel, position, v);
-        }
+            { VesselData.SetSpeed(vessel, v); }
 
         /** Return vessel's current position/velocity data (1-based index). */
         public static void GetVesselData(int vessel, out Vector3 position, out float velocity)
         {
-            var data = GetVesselData(vessel);
-            position = new Vector3(data[0], data[1], data[2]);
-            velocity = data[3];
+            position = VesselData.GetPosition(vessel);
+            velocity = VesselData.GetSpeed(vessel);
         }
 
         /** Return the distance between two vessels in meters. */
         public static float GetVesselDistance(int from, int to)
-        {
-            var a = GetVesselPosition(from); a.x *= 1000; a.y *= 1000;
-            var b = GetVesselPosition(to); b.x *= 1000; b.y *= 1000;
-            return Vector3.Distance(a, b);
-        }
+            { return VesselData.GetDistance(from, to); }
 
         /** Return a vessel's current position as a latitude/longitude pair (1-based index). */
         public static Vector2 GetVesselLatLong(int vessel)
-        {
-            var position = GetVesselPosition(vessel);
-            var dx = position.x * 1000;
-            var dy = position.y * 1000;
-
-            double latitude = GetServerData("latitude");
-            double longitude = GetServerData("longitude");
-
-            latitude = latitude + (dy / Conversions.EarthRadius) * (180 / Math.PI);
-            longitude = longitude + (dx / Conversions.EarthRadius) * (180 / Math.PI) / Math.Cos(latitude * Math.PI / 180);
-
-            return new Vector2((float) longitude, (float) latitude);
-        }
+            { return VesselData.GetLatLong(vessel); }
 
         /** Return a vessel's current state as am [x,y,z,speed] tuple (1-based index). */
         public static float[] GetVesselData(int vessel)
-        {
-            //get vessels map space position
-
-            float[] vesselData = new float[4];
-
-            switch (vessel)
-            {
-                case 1:
-                    vesselData[0] = MapData.vessel1Pos.x;
-                    vesselData[1] = MapData.vessel1Pos.y;
-                    vesselData[2] = MapData.vessel1Pos.z;
-                    vesselData[3] = MapData.vessel1Velocity;
-                    break;
-                case 2:
-                    vesselData[0] = MapData.vessel2Pos.x;
-                    vesselData[1] = MapData.vessel2Pos.y;
-                    vesselData[2] = MapData.vessel2Pos.z;
-                    vesselData[3] = MapData.vessel2Velocity;
-                    break;
-                case 3:
-                    vesselData[0] = MapData.vessel3Pos.x;
-                    vesselData[1] = MapData.vessel3Pos.y;
-                    vesselData[2] = MapData.vessel3Pos.z;
-                    vesselData[3] = MapData.vessel3Velocity;
-                    break;
-                case 4:
-                    vesselData[0] = MapData.vessel4Pos.x;
-                    vesselData[1] = MapData.vessel4Pos.y;
-                    vesselData[2] = MapData.vessel4Pos.z;
-                    vesselData[3] = MapData.vessel4Velocity;
-                    break;
-                case 5:
-                    vesselData[0] = MapData.vessel5Pos.x;
-                    vesselData[1] = MapData.vessel5Pos.y;
-                    vesselData[2] = MapData.vessel5Pos.z;
-                    vesselData[3] = MapData.vessel5Velocity;
-                    break;
-                case 6:
-                    vesselData[0] = MapData.vessel6Pos.x;
-                    vesselData[1] = MapData.vessel6Pos.y;
-                    vesselData[2] = MapData.vessel6Pos.z;
-                    vesselData[3] = MapData.vessel6Velocity;
-                    break;
-            }
-
-            return vesselData;
-        }
+            { return VesselData.GetData(vessel); }
 
         /** Return the vessel movements manager. */
         public static vesselMovements GetVesselMovements()
-        {
-            return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null;
-        }
+            { return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null; }
 
         /** Sets which vessel is controlled by the player (1-based index). */
         public static void SetPlayerVessel(int vessel)
         {
-            //Debug.Log("Setting player vessel to: " + vessel);
-            if (ServerObject != null)
-                ServerData.SetPlayerVessel(vessel);
+            if (VesselData)
+                VesselData.PlayerVessel = vessel;
         }
 
         /** Returns which vessel is controlled by the player (1-based index). */
         public static int GetPlayerVessel()
-        {
-            if (!ServerObject)
-                return 0;
-
-            return MapData.playerVessel;
-        }
+            { return VesselData ? VesselData.PlayerVessel : 0; }
 
         /** Sets the player vessel's velocity in world space. */
         public static void SetPlayerWorldVelocity(Vector3 velocity)
         {
-            if (ServerObject != null)
-                ServerData.SetPlayerWorldVelocity(velocity);
+            if (VesselData)
+                VesselData.SetPlayerWorldVelocity(velocity);
         }
 
         /** Return a vessel's visibility on the navigation map (1-based index). */
         public static bool GetVesselVis(int vessel)
-        {
-            if (ServerObject == null)
-                return false;
-
-            bool vesselVis = true;
-
-            switch (vessel)
-            {
-                case 1:
-                    vesselVis = MapData.vessel1Vis;
-                    break;
-                case 2:
-                    vesselVis = MapData.vessel2Vis;
-                    break;
-                case 3:
-                    vesselVis = MapData.vessel3Vis;
-                    break;
-                case 4:
-                    vesselVis = MapData.vessel4Vis;
-                    break;
-                case 5:
-                    vesselVis = MapData.vessel5Vis;
-                    break;
-                case 6:
-                    vesselVis = MapData.vessel6Vis;
-                    break;
-            }
-
-            return vesselVis;
-        }
+            { return VesselData && VesselData.IsVisible(vessel); }
 
         /** Sets a vessel's visibility on the navigation map (1-based index). */
         public static void SetVesselVis(int vessel, bool state)
         {
-            ServerData.SetVesselVis(vessel, state);
+            if (VesselData)
+                VesselData.SetVisible(vessel, state);
         }
 
         /** Set the current vessel color theme. */

@@ -168,6 +168,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private vesselData _vesselData;
+    private vesselData VesselData
+    {
+        get
+        {
+            if (!_vesselData)
+                _vesselData = GetComponent<vesselData>();
+            return _vesselData;
+        }
+    }
+
     private operatingData _operatingData;
     public operatingData OperatingData
     {
@@ -230,16 +241,40 @@ public class serverData : NetworkBehaviour
 
     #endregion
 
-    #region PublicMethods
 
+    #region Events
+
+    /** Handler type for shared server value change events. */
     public delegate void ValueChangeHandler(string valueName, float newValue);
 
+    /** An event that fires when a shared server value is changed on this instance. */
     public ValueChangeHandler ValueChangedEvent;
+
+    #endregion
+
+
+    #region PublicMethods
 
     /** Updates a server shared value. */
     public void OnValueChanged(string valueName, float newValue, bool add = false)
     {
-        switch (valueName.ToLower())
+        // Check if a value name was supplied.
+        if (string.IsNullOrEmpty(valueName))
+            return;
+
+        // Check if we're setting a vessel state value.
+        if (VesselData.IsVesselKey(valueName))
+        {
+            VesselData.SetServerData(valueName, newValue, add);
+            if (ValueChangedEvent != null)
+                ValueChangedEvent(valueName, newValue);
+
+            return;
+        }
+
+        // Match the server data key against known data values.
+        var key = valueName.ToLower();
+        switch (key)
         {
             case "scene":
                 scene = Mathf.RoundToInt(newValue);
@@ -674,7 +709,7 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
             case "playervessel":
-                SetPlayerVessel(Mathf.RoundToInt(newValue));
+                VesselData.PlayerVessel = Mathf.RoundToInt(newValue);
                 break;
             case "latitude":
                 MapData.latitude = newValue;
@@ -682,47 +717,6 @@ public class serverData : NetworkBehaviour
             case "longitude":
                 MapData.longitude = newValue;
                 break;
-            case "vessel1vis":
-                MapData.vessel1Vis = newValue > 0;
-                break;
-            case "vessel2vis":
-                MapData.vessel2Vis = newValue > 0;
-                break;
-            case "vessel3vis":
-                MapData.vessel3Vis = newValue > 0;
-                break;
-            case "vessel4vis":
-                MapData.vessel4Vis = newValue > 0;
-                break;
-            case "vessel5vis":
-            case "meg1vis":
-                MapData.vessel5Vis = newValue > 0;
-                break;
-            case "vessel6vis":
-            case "intercept1vis":
-                MapData.vessel6Vis = newValue > 0;
-                break;
-            case "vessel1warning":
-                MapData.vessel1Warning = newValue > 0;
-                break;
-            case "vessel2warning":
-                MapData.vessel2Warning = newValue > 0;
-                break;
-            case "vessel3warning":
-                MapData.vessel3Warning = newValue > 0;
-                break;
-            case "vessel4warning":
-                MapData.vessel4Warning = newValue > 0;
-                break;
-            case "vessel5warning":
-            case "meg1warning":
-                MapData.vessel5Warning = newValue > 0;
-                break;
-            case "vessel6warning":
-            case "intercept1warning":
-                MapData.vessel6Warning = newValue > 0;
-                break;
-            // case "vessel"
             case "initiatemapevent":
                 MapData.initiateMapEvent = newValue;
                 break;
@@ -902,7 +896,7 @@ public class serverData : NetworkBehaviour
                 break;
 
             case "playervesselname":
-                MapData.playerVesselName = newValue;
+                VesselData.PlayerVesselName = newValue;
                 break;
 
             default:
@@ -913,62 +907,16 @@ public class serverData : NetworkBehaviour
         }
     }
 
-    public void OnVesselDataChanged(int vessel, Vector3 pos, float vesselVelocity)
-    {
-        if (vessel == MapData.playerVessel)
-            gameObject.transform.position = new Vector3(pos.x * 1000, -pos.z, pos.y * 1000);
-
-        MapData.SetVesselState(vessel, pos, vesselVelocity);
-    }
-
-    public void SetPlayerWorldVelocity(Vector3 velocity)
-    {
-        GetComponent<SubControl>().SetWorldVelocity(velocity);
-    }
-
-    public void SetPlayerVessel(int vessel)
-    {
-        MapData.playerVessel = vessel;
-        MapData.playerVesselName = GetVesselName(vessel);
-    }
-
-    public string GetVesselName(int vessel)
-    {
-        // Retrieve vessel name from configuration.
-        var vesselNames = Configuration.GetJson("vessel-names");
-        if (vesselNames && vesselNames.IsArray && vessel < vesselNames.Count)
-            return vesselNames[vessel - 1].str;
-
-        return "Unknown";
-    }
-
-    public void SetVesselVis(int vessel, bool state)
-    {
-        switch (vessel)
-        {
-            case 1:
-                MapData.vessel1Vis = state;
-                break;
-            case 2:
-                MapData.vessel2Vis = state;
-                break;
-            case 3:
-                MapData.vessel3Vis = state;
-                break;
-            case 4:
-                MapData.vessel4Vis = state;
-                break;
-            case 5:
-                MapData.vessel5Vis = state;
-                break;
-            case 6:
-                MapData.vessel6Vis = state;
-                break;
-        }
-    }
-
     public void OnChangeBool(string boolName, bool newValue)
     {
+        // Check if we're setting a vessel state value.
+        if (VesselData.IsVesselKey(boolName))
+        {
+            VesselData.SetServerData(boolName, newValue ? 1 : 0);
+            return;
+        }
+
+        // Match incoming key against known data values.
         switch (boolName.ToLower())
         {
             case "divetimeactive":
@@ -979,46 +927,6 @@ public class serverData : NetworkBehaviour
                 break;
             case "disableinput":
                 SubControl.disableInput = newValue;
-                break;
-            case "vessel1vis":
-                MapData.vessel1Vis = newValue;
-                break;
-            case "vessel2vis":
-                MapData.vessel2Vis = newValue;
-                break;
-            case "vessel3vis":
-                MapData.vessel3Vis = newValue;
-                break;
-            case "vessel4vis":
-                MapData.vessel4Vis = newValue;
-                break;
-            case "vessel5vis":
-            case "meg1vis":
-                MapData.vessel5Vis = newValue;
-                break;
-            case "vessel6vis":
-            case "intercept1vis":
-                MapData.vessel6Vis = newValue;
-                break;
-            case "vessel1warning":
-                MapData.vessel1Warning = newValue;
-                break;
-            case "vessel2warning":
-                MapData.vessel2Warning = newValue;
-                break;
-            case "vessel3warning":
-                MapData.vessel3Warning = newValue;
-                break;
-            case "vessel4warning":
-                MapData.vessel4Warning = newValue;
-                break;
-            case "vessel5warning":
-            case "meg1warning":
-                MapData.vessel5Warning = newValue;
-                break;
-            case "vessel6warning":
-            case "intercept1warning":
-                MapData.vessel6Warning = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;
