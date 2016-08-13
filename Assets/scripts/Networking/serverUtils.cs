@@ -404,7 +404,6 @@ namespace Meg.Networking
             "intercept1posz",
             "intercept1velocity",
             "intercept1vis",
-            "intercept1warning",
             "isautostabilised",
             "ispitchalsostabilised",
             "jet_heat_l",
@@ -420,7 +419,6 @@ namespace Meg.Networking
             "meg1posz",
             "meg1velocity",
             "meg1vis",
-            "meg1warning",
             "megspeed",
             "megturnspeed",
             "o1",
@@ -516,22 +514,22 @@ namespace Meg.Networking
             "vertran_heat_r",
             "vessel1depth",
             "vessel1vis",
-            "vessel1warning",
+            "vessel1icon",
             "vessel2depth",
             "vessel2vis",
-            "vessel2warning",
+            "vessel2icon",
             "vessel3depth",
             "vessel3vis",
-            "vessel3warning",
+            "vessel3icon",
             "vessel4depth",
             "vessel4vis",
-            "vessel4warning",
+            "vessel4icon",
             "vessel4depth",
             "vessel5vis",
-            "vessel5warning",
+            "vessel5icon",
             "vessel6depth",
             "vessel6vis",
-            "vessel6warning",
+            "vessel6icon",
             "vesselmovementenabled",
             "watertemp",
             "xpos",
@@ -549,16 +547,40 @@ namespace Meg.Networking
         }
 
         /** Configuration data for a parameter. */
-        public class ParameterInfo
+        public struct ParameterInfo
         {
-            public ParameterType type = ParameterType.Float;
+            public ParameterType type;
             public float minValue;
-            public float maxValue = 100;
+            public float maxValue;
             public bool readOnly;
+
+            public ParameterInfo(ParameterType type)
+            {
+                this.type = type;
+                minValue = 0;
+                maxValue = 100;
+                readOnly = false;
+            }
+        }
+
+        /** Structure for tracking a dynamic server value. */
+        [System.Serializable]
+        public struct ServerValue
+        {
+            public string key;
+            public float value;
+            public ParameterInfo info;
+
+            public ServerValue(string key, float value)
+            {
+                this.key = key;
+                this.value = value;
+                info = DefaultParameterInfo;
+            }
         }
 
         /** Default parameter configuration. */
-        public static readonly ParameterInfo DefaultParameterInfo = new ParameterInfo();
+        public static readonly ParameterInfo DefaultParameterInfo = new ParameterInfo(ParameterType.Float);
 
         /** The set of all server data parameter info entries. */
         private static Dictionary<string, ParameterInfo> _parameterInfos;
@@ -602,14 +624,12 @@ namespace Meg.Networking
             { "vessel6vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "meg1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
             { "intercept1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel2warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel3warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel4warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel5warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "vessel6warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "meg1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
-            { "intercept1warning", new ParameterInfo { maxValue = 1, type = ParameterType.Bool } },
+            { "vessel1icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
+            { "vessel2icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
+            { "vessel3icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
+            { "vessel4icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
+            { "vessel5icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
+            { "vessel6icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int } },
             { "vessel1depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
             { "vessel2depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
             { "vessel3depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int } },
@@ -1376,26 +1396,34 @@ namespace Meg.Networking
         }
 
         /** Set a shared server value at runtime. */
-        public static void SetDynamicValue(string valueName, float newValue, bool add = true)
+        public static void SetDynamicValue(string valueName, float newValue, ParameterInfo info)
         {
             // Check that parameter name is valid.
             if (string.IsNullOrEmpty(valueName))
                 return;
 
             // Update the shared server data value.
-            var key = valueName.ToLower();
-            ServerData.SetDynamicValue(key, newValue, add);
+            ServerData.SetDynamicValue(new ServerValue
+                { key = valueName.ToLower(), value = newValue, info = info }, true);
+        }
+
+        /** Set a shared server value at runtime. */
+        public static void SetDynamicValue(string valueName, bool newValue, ParameterInfo info)
+            { SetDynamicValue(valueName, newValue ? 1 : 0, info); }
+
+        /** Register the existence of a server data value. */
+        public static void RegisterServerValue(string valueName, ParameterInfo info)
+        {
+            RegisterServerValue(new ServerValue
+                { key = valueName.ToLower(), info = info });
         }
 
         /** Register a new server data value. */
-        public static void RegisterDynamicValue(string valueName)
+        public static void RegisterServerValue(ServerValue value)
         {
-            var key = valueName.ToLower();
-            if (!Parameters.Contains(key))
-                Parameters.Add(key);
-
-            if (!WriteableParameters.Contains(key))
-                WriteableParameters.Add(valueName.ToLower());
+            Parameters.Add(value.key);
+            WriteableParameters.Add(value.key);
+            ParameterInfos[value.key] = value.info;
         }
 
         /** Return a shared server value that has been defined at runtime. */
@@ -1599,7 +1627,7 @@ namespace Meg.Networking
 
         /** Return a vessel's visibility on the navigation map (1-based index). */
         public static bool GetVesselVis(int vessel)
-            { return VesselData && VesselData.IsVisibleOnMap(vessel); }
+            { return VesselData && VesselData.IsOnMap(vessel); }
 
         /** Sets a vessel's visibility on the navigation map (1-based index). */
         public static void SetVesselVis(int vessel, bool state)

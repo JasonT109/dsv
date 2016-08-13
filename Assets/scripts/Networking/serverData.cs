@@ -50,16 +50,8 @@ public class serverData : NetworkBehaviour
 
     #region DynamicValues
 
-    /** Structure for tracking a dynamic server value. */
-    [System.Serializable]
-    public struct ServerValue
-    {
-        public string key;
-        public float value;
-    }
-
     /** Class definition for a synchronized list of dynamic server values. */
-    public class SyncListValues : SyncListStruct<ServerValue> { };
+    public class SyncListValues : SyncListStruct<serverUtils.ServerValue> { };
 
     /** Synchronized list for server values that are defined at runtime. */
     public SyncListValues dynamicValues = new SyncListValues();
@@ -817,7 +809,8 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
             default:
-                SetDynamicValue(valueName, newValue, add);
+                SetDynamicValue(new serverUtils.ServerValue
+                    { key = valueName.ToLower(), value = newValue }, add);
                 break;
         }
 
@@ -826,17 +819,15 @@ public class serverData : NetworkBehaviour
     }
 
     /** Set a shared server value at runtime. */
-    public void SetDynamicValue(string valueName, float newValue, bool add)
+    public void SetDynamicValue(serverUtils.ServerValue value, bool add)
     {
         // Check that value name is valid.
-        if (string.IsNullOrEmpty(valueName))
+        if (string.IsNullOrEmpty(value.key))
             return;
 
         // Try to replace an existing entry if possible.
-        var key = valueName.ToLower();
-        var value = new ServerValue { key = key, value = newValue };
         for (var i = 0; i < dynamicValues.Count; i++)
-            if (string.Equals(dynamicValues[i].key, key, System.StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(dynamicValues[i].key, value.key, System.StringComparison.OrdinalIgnoreCase))
             {
                 dynamicValues[i] = value;
                 return;
@@ -846,7 +837,7 @@ public class serverData : NetworkBehaviour
         if (add)
         {
             dynamicValues.Add(value);
-            serverUtils.RegisterDynamicValue(key);
+            serverUtils.RegisterServerValue(value);
         }
     }
 
@@ -861,7 +852,7 @@ public class serverData : NetworkBehaviour
         for (var i = 0; i < dynamicValues.Count; i++)
             if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
             {
-                serverUtils.RegisterDynamicValue(valueName);
+                serverUtils.RegisterServerValue(dynamicValues[i]);
                 return dynamicValues[i].value;
             }
 
@@ -879,7 +870,7 @@ public class serverData : NetworkBehaviour
         for (var i = 0; i < dynamicValues.Count; i++)
             if (string.Equals(dynamicValues[i].key, valueName, System.StringComparison.OrdinalIgnoreCase))
             {
-                serverUtils.RegisterDynamicValue(valueName);
+                serverUtils.RegisterServerValue(dynamicValues[i]);
                 return true;
             }
 

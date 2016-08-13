@@ -51,9 +51,8 @@ public class vesselData : NetworkBehaviour
         public string Name;
         public Vector3 Position;
         public float Speed;
-        public bool VisibleOnMap;
-        public bool VisibleOnSonar;
-        public bool Warning;
+        public bool OnMap;
+        public bool OnSonar;
         public Icon Icon;
 
         public float Depth
@@ -65,9 +64,8 @@ public class vesselData : NetworkBehaviour
             Name = vessel.Name;
             Position = vessel.Position;
             Speed = vessel.Speed;
-            VisibleOnMap = vessel.VisibleOnMap;
-            VisibleOnSonar = vessel.VisibleOnSonar;
-            Warning = vessel.Warning;
+            OnMap = vessel.OnMap;
+            OnSonar = vessel.OnSonar;
             Icon = vessel.Icon;
         }
     };
@@ -150,7 +148,31 @@ public class vesselData : NetworkBehaviour
     [Server]
     public void AddVessel(Vessel vessel)
     {
+        // Add vessel to the synchronized list.
         Vessels.Add(vessel);
+        var id = vessel.Id;
+
+        // Register vessel dynamic server parameters.
+        serverUtils.RegisterServerValue(string.Format("vessel{0}visible", id), 
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}onmap", id), 
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}onsonar", id), 
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}posx", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}posy", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}posz", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}depth", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}speed", id),
+            serverUtils.DefaultParameterInfo);
+        serverUtils.RegisterServerValue(string.Format("vessel{0}velocity", id),
+            serverUtils.DefaultParameterInfo);
+        serverUtils.RegisterServerValue(string.Format("vessel{0}icon", id),
+            new serverUtils.ParameterInfo { maxValue = (int) Icon.Warning, type = serverUtils.ParameterType.Int });
     }
 
     /** Update a vessel by id. */
@@ -192,30 +214,31 @@ public class vesselData : NetworkBehaviour
             case "visible":
                 SetVisible(id, value > 0);
                 break;
-
-            case "warning":
-                SetWarning(id, value > 0);
+            case "onmap":
+                SetOnMap(id, value > 0);
                 break;
-
+            case "onsonar":
+                SetOnSonar(id, value > 0);
+                break;
             case "posx":
                 var px = GetPosition(id);
                 SetPosition(id, new Vector3(value, px.y, px.z));
                 break;
-
             case "posy":
                 var py = GetPosition(id);
                 SetPosition(id, new Vector3(py.x, value, py.z));
                 break;
-
             case "posz":
             case "depth":
                 var pz = GetPosition(id);
                 SetPosition(id, new Vector3(pz.x, pz.y, value));
                 break;
-
             case "speed":
             case "velocity":
                 SetSpeed(id, value);
+                break;
+            case "icon":
+                SetIcon(id, (Icon) Mathf.RoundToInt(value));
                 break;
         }
     }
@@ -233,29 +256,22 @@ public class vesselData : NetworkBehaviour
         {
             case "vis":
             case "visible":
-            case "visibleonmap":
-                return GetVessel(id).VisibleOnMap ? 1 : 0;
-
-            case "visibleonsonar":
-                return GetVessel(id).VisibleOnMap ? 1 : 0;
-
-            case "warning":
-                return GetVessel(id).Warning ? 1 : 0;
-
+            case "onmap":
+                return GetVessel(id).OnMap ? 1 : 0;
+            case "onsonar":
+                return GetVessel(id).OnSonar ? 1 : 0;
             case "posx":
                 return GetVessel(id).Position.x;
-
             case "posy":
                 return GetVessel(id).Position.y;
-
             case "posz":
             case "depth":
                 return GetVessel(id).Position.z;
-
             case "speed":
             case "velocity":
                 return GetVessel(id).Speed;
-
+            case "icon":
+                return (int) GetIcon(id);
             default:
                 return defaultValue;
         }
@@ -306,31 +322,31 @@ public class vesselData : NetworkBehaviour
 
     /** Set a vessel's visibility (1-based index). */
     public void SetVisible(int id, bool visible)
-        { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnMap = visible, VisibleOnSonar = visible }); }
+        { SetVessel(id, new Vessel(GetVessel(id)) { OnMap = visible, OnSonar = visible }); }
 
     /** Set a vessel's map visibility (1-based index). */
-    public void SetVisibleOnMap(int id, bool visible)
-        { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnMap = visible }); }
+    public void SetOnMap(int id, bool visible)
+        { SetVessel(id, new Vessel(GetVessel(id)) { OnMap = visible }); }
 
     /** Set a vessel's sonar visibility (1-based index). */
-    public void SetVisibleOnSonar(int id, bool visible)
-        { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnSonar = visible }); }
+    public void SetOnSonar(int id, bool visible)
+        { SetVessel(id, new Vessel(GetVessel(id)) { OnSonar = visible }); }
 
     /** Return a vessel's current map visibility. */
-    public bool IsVisibleOnMap(int id)
-        { return GetVessel(id).VisibleOnMap; }
+    public bool IsOnMap(int id)
+        { return GetVessel(id).OnMap; }
 
     /** Return a vessel's current sonar visibility. */
-    public bool IsVisibleOnSonar(int id)
-        { return GetVessel(id).VisibleOnSonar; }
+    public bool IsOnSonar(int id)
+        { return GetVessel(id).OnSonar; }
 
-    /** Set a vessel's warning status (1-based index). */
-    public void SetWarning(int id, bool warning)
-        { SetVessel(id, new Vessel(GetVessel(id)) { Warning = warning }); }
+    /** Set a vessel's icon (1-based index). */
+    public void SetIcon(int id, Icon icon)
+        { SetVessel(id, new Vessel(GetVessel(id)) { Icon = icon }); }
 
     /** Return a vessel's current warning status. */
-    public bool IsWarning(int id)
-        { return GetVessel(id).Warning; }
+    public Icon GetIcon(int id)
+        { return GetVessel(id).Icon; }
 
     /** Set a vessel's speed (1-based index). */
     public void SetSpeed(int id, float speed)
@@ -466,12 +482,12 @@ public class vesselData : NetworkBehaviour
     private void InitializeVessels()
     {
         // Populate predefined vessels that always exist in the simulation.
-        AddVessel(new Vessel() { Id = 1, Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 2, Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 3, Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 4, Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 5, Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 6, Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), VisibleOnMap = true, VisibleOnSonar = true });
+        AddVessel(new Vessel() { Id = 1, Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel() { Id = 2, Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel() { Id = 3, Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel() { Id = 4, Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), OnMap = true, OnSonar = true });
+        AddVessel(new Vessel() { Id = 5, Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), OnMap = true, OnSonar = true, Icon = Icon.Warning });
+        AddVessel(new Vessel() { Id = 6, Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), OnMap = true, OnSonar = true });
     }
 
     /** Get a vessel's name from configuration. */

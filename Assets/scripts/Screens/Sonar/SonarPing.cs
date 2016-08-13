@@ -27,6 +27,9 @@ public class SonarPing : MonoBehaviour
     /** Interval for depth updates. */
     public float DepthUpdateInterval = 0;
 
+    /** Auto-pulse interval. */
+    public float AutoPulseInterval = 0;
+
     /** Parent sonar ping manager. */
     public SonarPings Pings { get; set; }
 
@@ -70,6 +73,13 @@ public class SonarPing : MonoBehaviour
         Indicator.gameObject.SetActive(false);
     }
 
+    /** Enabling. */
+    private void OnEnable()
+    {
+        if (AutoPulseInterval > 0)
+            StartCoroutine(AutoPulseRoutine(AutoPulseInterval));
+    }
+
 
     // Public Methods
     // ------------------------------------------------------------
@@ -79,7 +89,7 @@ public class SonarPing : MonoBehaviour
     {
         var p = VesselData.GetSonarPosition(Vessel.Id, Pings.Type);
         var player = VesselData.PlayerVessel;
-        var visible = Vessel.VisibleOnSonar 
+        var visible = Vessel.OnSonar 
             && (Vessel.Id != player) 
             && (p.magnitude <= 1);
 
@@ -114,5 +124,22 @@ public class SonarPing : MonoBehaviour
         Indicator.material.SetColor("_TintColor", _indicatorColor);
         Indicator.material.DOColor(new Color(0,0,0,0), "_TintColor", 0.5f).SetDelay(0.25f);
     }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Automatic pulsing routine. */
+    private IEnumerator AutoPulseRoutine(float interval)
+    {
+        var wait = new WaitForSeconds(interval);
+        while (gameObject.activeSelf)
+        {
+            Pulse();
+            yield return wait;
+        }
+        
+    }
+
 
 }
