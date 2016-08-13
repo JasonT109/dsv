@@ -368,9 +368,7 @@ public class buttonControl : MonoBehaviour
         colorTheme[1] = colorScheme.keyColor;
 
         if (active && !warning && !pressed)
-        {
             Color = GetThemeColor(1);
-        }
     }
 
     public Color GetThemeColor(int i)
@@ -443,28 +441,13 @@ public class buttonControl : MonoBehaviour
         {
             if (autoWarningGreaterThan)
             {
-                //check if server value is higher than warning value
-                if (serverUtils.GetServerData(autoWarningServerName) > autoWarningValue)
-                {
-                    warning = true;
-                }
-                else
-                {
-                    warning = false;
-                }
-
+                // check if server value is higher than warning value
+                warning = serverUtils.GetServerData(autoWarningServerName) > autoWarningValue;
             }
             else
             {
-                //check if server value is lower than warning value
-                if (serverUtils.GetServerData(autoWarningServerName) <= autoWarningValue)
-                {
-                    warning = true;
-                }
-                else
-                {
-                    warning = false;
-                }
+                // check if server value is lower than warning value
+                warning = serverUtils.GetServerData(autoWarningServerName) <= autoWarningValue;
             }
         }
         if (warning)
@@ -475,48 +458,20 @@ public class buttonControl : MonoBehaviour
                 timeIndex += Time.deltaTime * warningFlashSpeed;
                 sinWave = Mathf.Sin(timeIndex);
                 if (timeIndex > 1.0f)
-                {
                     timeIndex = warningFlashPause;
-                }
 
-                if (active)
-                {
-                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
-                }
-                else
-                {
-                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
-                }
+                SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
             }
             else
             {
                 sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex);
-
-                if (active)
-                {
-                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave)));
-                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(1), Mathf.Sin(sinWave));
-                }
-                else
-                {
-                    m.SetColor("_TintColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    //m.SetColor("_MainColor", Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave)));
-                    Color = Color.Lerp(GetThemeColor(0), GetThemeColor(3), Mathf.Sin(sinWave));
-                }
+                SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
             }
         }
         else
         {
             if (!pressed && !active)
-            {
-                m.SetColor("_TintColor", GetThemeColor(3));
-                Color = GetThemeColor(3);
-            }
+                SetColor(GetThemeColor(3), false);
         }
     }
 
