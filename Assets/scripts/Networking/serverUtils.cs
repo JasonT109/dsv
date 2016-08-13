@@ -1599,10 +1599,6 @@ namespace Meg.Networking
         public static Vector2 GetVesselLatLong(int vessel)
             { return VesselData.GetLatLong(vessel); }
 
-        /** Return a vessel's current state as am [x,y,z,speed] tuple (1-based index). */
-        public static float[] GetVesselData(int vessel)
-            { return VesselData.GetData(vessel); }
-
         /** Return the vessel movements manager. */
         public static vesselMovements GetVesselMovements()
             { return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null; }

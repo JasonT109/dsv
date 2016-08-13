@@ -79,6 +79,12 @@ public class SubControl : NetworkBehaviour
         transform.LookAt(rb.position + velocity);
     }
 
+    /** Return the sub's current world velocity. */
+    public Vector3 GetWorldVelocity()
+    {
+        return rb.velocity;
+    }
+
     // Update is called once per frame
     public void SubController()
     {

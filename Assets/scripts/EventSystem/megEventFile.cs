@@ -436,10 +436,11 @@ namespace Meg.EventSystem
                 megSceneFile.AutoSave("Start");
 
             // Capture initial camera state.
-            _initialCameraValid = MapCamera ? MapCamera.Capture(ref _initialCamera) : false;
+            _initialCameraValid = MapCamera && MapCamera.Capture(ref _initialCamera);
 
             // Capture initial vessel states.
             serverUtils.VesselMovements.CaptureInitialState();
+            serverUtils.VesselData.CaptureInitialState();
         }
 
         /** Reset server state to initial settings. */
@@ -463,10 +464,13 @@ namespace Meg.EventSystem
             if (_cameraEventsTriggered && _initialCameraValid)
                 serverUtils.PostMapCameraState(_initialCamera);
 
-            // Reset all vessels to their original state.
+            // Reset vessels to their original state.
             // Only do this on the server, though.
             if (serverUtils.IsServer())
+            {
                 serverUtils.VesselMovements.ResetToInitialState();
+                serverUtils.VesselData.ResetToInitialState();
+            }
 
             // Clear all tracking data.
             _values.Clear();
