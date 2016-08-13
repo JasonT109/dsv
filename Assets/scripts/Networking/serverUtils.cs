@@ -570,7 +570,7 @@ namespace Meg.Networking
                     return _parameterInfos;
 
                 _parameterInfos = new Dictionary<string, ParameterInfo>();
-                foreach (var info in _parameterData)
+                foreach (var info in ParameterData)
                     _parameterInfos.Add(info.Key.ToLower(), info.Value);
 
                 return _parameterInfos;
@@ -578,7 +578,7 @@ namespace Meg.Networking
         }
 
         /** Metadata about various server parameters. */
-        private static readonly Dictionary<string, ParameterInfo> _parameterData = new Dictionary<string, ParameterInfo>
+        private static readonly Dictionary<string, ParameterInfo> ParameterData = new Dictionary<string, ParameterInfo>
         {
             { "air", new ParameterInfo { readOnly = true } },
             { "battery", new ParameterInfo { readOnly = true } },
@@ -1599,7 +1599,7 @@ namespace Meg.Networking
 
         /** Return a vessel's visibility on the navigation map (1-based index). */
         public static bool GetVesselVis(int vessel)
-            { return VesselData && VesselData.IsVisible(vessel); }
+            { return VesselData && VesselData.IsVisibleOnMap(vessel); }
 
         /** Sets a vessel's visibility on the navigation map (1-based index). */
         public static void SetVesselVis(int vessel, bool state)

@@ -36,7 +36,7 @@ public class SonarControls : MonoBehaviour
     [Header("Configuration")]
 
     /** The active sonar type . */
-    public SonarData.SonarType Type = SonarData.SonarType.ShortRange;
+    public SonarData.Type Type = SonarData.Type.ShortRange;
 
     /** The active sonar configuration. */
     public SonarData.Config Config
@@ -49,14 +49,14 @@ public class SonarControls : MonoBehaviour
     /** Select short-range sonar. */
     public void SelectShortRange()
     {
-        Type = SonarData.SonarType.ShortRange;
+        Type = SonarData.Type.ShortRange;
         ShortRangeOverrides.Apply();
     }
 
     /** Select long-range sonar. */
     public void SelectLongRange()
     {
-        Type = SonarData.SonarType.LongRange;
+        Type = SonarData.Type.LongRange;
         LongRangeOverrides.Apply();
     }
 

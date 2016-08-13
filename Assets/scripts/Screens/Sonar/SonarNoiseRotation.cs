@@ -1,20 +1,16 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 
 public class NoiseRotation : MonoBehaviour 
 {
 
-    public GameObject serverData;
+	void Update ()
+	{
+	    var serverData = serverUtils.ServerData;
+        if (!serverData)
+            return;
 
-	// Use this for initialization
-	void Start () 
-    {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
         Vector3 constrained = new Vector3(transform.localRotation.eulerAngles.x, serverData.transform.rotation.eulerAngles.y, transform.localRotation.eulerAngles.x);
         transform.localRotation = Quaternion.Euler(constrained);
 	}

@@ -10,7 +10,7 @@ public class SonarData : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** The types of available sonar. */
-    public enum SonarType
+    public enum Type
     {
         None,
         ShortRange,
@@ -90,13 +90,13 @@ public class SonarData : NetworkBehaviour
         { return DefaultScale * ShortRangeRatio; }
 
     /** Return a sonar configuration based on type. */
-    public Config GetConfigForType(SonarType type)
+    public Config GetConfigForType(Type type)
     {
         switch (type)
         {
-            case SonarType.ShortRange:
+            case Type.ShortRange:
                 return ShortRangeConfig;
-            case SonarType.LongRange:
+            case Type.LongRange:
                 return LongRangeConfig;
             default:
                 return ShortRangeConfig;
@@ -111,7 +111,7 @@ public class SonarData : NetworkBehaviour
     [System.Serializable]
     public class Config
     {
-        public SonarType Type = SonarType.ShortRange;
+        public Type Type = Type.ShortRange;
         public string LinkDataPrefix = "sonarshort";
         public float RangeIncrement = 15;
         public float FrequencyIncrement = 5;

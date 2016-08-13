@@ -5,7 +5,7 @@ using UnityStandardAssets.ImageEffects;
 
 public class SonarRays : MonoBehaviour
 {
-    public SonarData.SonarType Type = SonarData.SonarType.ShortRange;
+    public SonarData.Type Type = SonarData.Type.ShortRange;
 
     public GameObject Rays;
     public Bloom Bloom;

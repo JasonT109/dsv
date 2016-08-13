@@ -22,6 +22,12 @@ public class vesselData : NetworkBehaviour
     /** Default name for an unknown vessel. */
     public string Unknown = "Unknown";
 
+    /** Scaling factor for converting sub world space into vessel XY space. */
+    public const float WorldToVesselScale = 0.001f;
+
+    /** Scaling factor for converting vessel XY space into sub world space. */
+    public const float VesselToWorldScale = 1000f;
+
 
     // Enumerations
     // ------------------------------------------------------------
@@ -49,6 +55,9 @@ public class vesselData : NetworkBehaviour
         public bool VisibleOnSonar;
         public bool Warning;
         public Icon Icon;
+
+        public float Depth
+            { get { return Position.z; } }
 
         public Vessel(Vessel vessel)
         {
@@ -128,13 +137,40 @@ public class vesselData : NetworkBehaviour
     {
         // Force player vessel's data to match the sub's world position. 
         if (PlayerVessel > 0)
-            SetPosition(PlayerVessel, SubToVesselSpace(SubPosition));
+            SetPosition(PlayerVessel, WorldToVesselSpace(SubPosition));
     }
 
     #endregion
 
 
     // Public Methods
+    // ------------------------------------------------------------
+
+    /** Add a vessel. */
+    [Server]
+    public void AddVessel(Vessel vessel)
+    {
+        Vessels.Add(vessel);
+    }
+
+    /** Update a vessel by id. */
+    public void SetVessel(int id, Vessel vessel)
+    {
+        if (id >= 1 && id <= Vessels.Count)
+            Vessels[id - 1] = vessel;
+    }
+
+    /** Return a vessel for the given id. */
+    public Vessel GetVessel(int id)
+    {
+        if (id >= 1 && id <= Vessels.Count)
+            return Vessels[id - 1];
+
+        return new Vessel { Id = id, Name = Unknown };
+    }
+
+
+    // Setters and Getters
     // ------------------------------------------------------------
 
     /** Whether the given server data key relates to vessel state. */
@@ -197,6 +233,10 @@ public class vesselData : NetworkBehaviour
         {
             case "vis":
             case "visible":
+            case "visibleonmap":
+                return GetVessel(id).VisibleOnMap ? 1 : 0;
+
+            case "visibleonsonar":
                 return GetVessel(id).VisibleOnMap ? 1 : 0;
 
             case "warning":
@@ -228,7 +268,7 @@ public class vesselData : NetworkBehaviour
 
         // Update sub's transform if affecting the player vessel.
         if (id == PlayerVessel)
-            SubPosition = VesselToSubSpace(position);
+            SubPosition = VesselToWorldSpace(position);
     }
 
     /** Return a vessel's position. */
@@ -253,7 +293,7 @@ public class vesselData : NetworkBehaviour
 
         // Update sub's transform if affecting the player vessel.
         if (id == PlayerVessel)
-            SubPosition = VesselToSubSpace(position);
+            SubPosition = VesselToWorldSpace(position);
     }
 
     /** Set a vessel's name (1-based index). */
@@ -268,9 +308,21 @@ public class vesselData : NetworkBehaviour
     public void SetVisible(int id, bool visible)
         { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnMap = visible, VisibleOnSonar = visible }); }
 
-    /** Return a vessel's current visibility. */
-    public bool IsVisible(int id)
+    /** Set a vessel's map visibility (1-based index). */
+    public void SetVisibleOnMap(int id, bool visible)
+        { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnMap = visible }); }
+
+    /** Set a vessel's sonar visibility (1-based index). */
+    public void SetVisibleOnSonar(int id, bool visible)
+        { SetVessel(id, new Vessel(GetVessel(id)) { VisibleOnSonar = visible }); }
+
+    /** Return a vessel's current map visibility. */
+    public bool IsVisibleOnMap(int id)
         { return GetVessel(id).VisibleOnMap; }
+
+    /** Return a vessel's current sonar visibility. */
+    public bool IsVisibleOnSonar(int id)
+        { return GetVessel(id).VisibleOnSonar; }
 
     /** Set a vessel's warning status (1-based index). */
     public void SetWarning(int id, bool warning)
@@ -287,9 +339,8 @@ public class vesselData : NetworkBehaviour
     /** Return a vessel's current speed. */
     public float GetSpeed(int id)
         { return GetVessel(id).Speed; }
-
-
-    /** Return a vessel's current state as am [x,y,z,speed] tuple (1-based index). */
+    
+    /** Return a vessel's current state as an [x,y,z,speed] tuple (1-based index). */
     public float[] GetData(int id)
     {
         // Check if a valid vessel id has been supplied.
@@ -307,36 +358,65 @@ public class vesselData : NetworkBehaviour
         return result;
     }
     
-    /** Add a vessel. */
-    [Server]
-    public void AddVessel(Vessel vessel)
-    {
-        Vessels.Add(vessel);
-    }
 
-    /** Update a vessel by id. */
-    public void SetVessel(int id, Vessel vessel)
-    {
-        if (id >= 1 && id <= Vessels.Count)
-            Vessels[id - 1] = vessel;
-    }
+    // Coordinates and Spaces
+    // ------------------------------------------------------------
 
-    /** Return a vessel for the given id. */
-    public Vessel GetVessel(int id)
-    {
-        if (id >= 1 && id <= Vessels.Count)
-            return Vessels[id - 1];
+    /** Return a vessel's position in sub space. */
+    public Vector3 GetWorldPosition(int id)
+        { return VesselToWorldSpace(GetPosition(id)); }
 
-        return new Vessel { Id = id, Name = Unknown };
-    }
+    /** Return a vessel's position in long-range sonar space. */
+    public Vector2 GetSonarPosition(int id, SonarData.Type type)
+        { return VesselToSonarSpace(GetPosition(id), type); }
 
     /** Convert a point in vessel space to sub space. */
-    public Vector3 VesselToSubSpace(Vector3 p)
-        { return new Vector3(p.x * 1000, -p.z, p.y * 1000); }
+    public Vector3 VesselToWorldSpace(Vector3 p)
+        { return new Vector3(p.x * VesselToWorldScale, -p.z, p.y * VesselToWorldScale); }
 
     /** Convert a point in sub space to vessel space. */
-    public Vector3 SubToVesselSpace(Vector3 p)
-        { return new Vector3(p.x * 0.001f, p.z * 0.001f, -p.y); }
+    public Vector3 WorldToVesselSpace(Vector3 world)
+        { return new Vector3(world.x * WorldToVesselScale, world.z * WorldToVesselScale, -world.y); }
+
+    /** Convert a point in vessel space to the player vessel's local space. */
+    public Vector3 VesselToPlayerSpace(Vector3 p)
+        { return p - GetPosition(PlayerVessel); }
+
+    /** Convert a point in vessel space to the player vessel's local space. */
+    public Vector3 PlayerToVesselSpace(Vector3 p)
+        { return p + GetPosition(PlayerVessel); }
+
+    /** Convert a point in vessel space to sonar space (normalized to 0..1 according to maximum range). */
+    public Vector2 VesselToSonarSpace(Vector3 p, SonarData.Type type)
+    {
+        // Check that sonar exists.
+        if (!serverUtils.SonarData)
+            return Vector3.zero;
+
+        // Convert sonar maximum range from metres into vessel space.
+        var range = serverUtils.SonarData.GetConfigForType(type).MaxRange * WorldToVesselScale;
+        if (range <= 0)
+            return Vector3.zero;
+
+        // Compute normalized position, relative to player.
+        return VesselToPlayerSpace(p) / range;
+    }
+
+    /** Convert a point in sonar space to vessel space. */
+    public Vector3 SonarToVesselSpace(Vector3 sonar, SonarData.Type type)
+    {
+        // Check that sonar exists.
+        if (!serverUtils.SonarData)
+            return GetPosition(PlayerVessel);
+
+        // Get sonar maximum range in metres.
+        var range = serverUtils.SonarData.GetConfigForType(type).MaxRange;
+        if (range <= 0)
+            return GetPosition(PlayerVessel);
+
+        // Convert from normalized sonar space to vessel space.
+        return PlayerToVesselSpace(sonar * range);
+    }
 
     /** Set the player sub's world velocity. */
     public void SetPlayerWorldVelocity(Vector3 velocity)
@@ -387,11 +467,11 @@ public class vesselData : NetworkBehaviour
     {
         // Populate predefined vessels that always exist in the simulation.
         AddVessel(new Vessel() { Id = 1, Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), VisibleOnMap = true, VisibleOnSonar = true });
-        AddVessel(new Vessel() { Id = 2, Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f) });
-        AddVessel(new Vessel() { Id = 3, Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f) });
-        AddVessel(new Vessel() { Id = 4, Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f) });
-        AddVessel(new Vessel() { Id = 5, Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f) });
-        AddVessel(new Vessel() { Id = 6, Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f) });
+        AddVessel(new Vessel() { Id = 2, Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), VisibleOnMap = true, VisibleOnSonar = true });
+        AddVessel(new Vessel() { Id = 3, Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), VisibleOnMap = true, VisibleOnSonar = true });
+        AddVessel(new Vessel() { Id = 4, Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), VisibleOnMap = true, VisibleOnSonar = true });
+        AddVessel(new Vessel() { Id = 5, Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), VisibleOnMap = true, VisibleOnSonar = true });
+        AddVessel(new Vessel() { Id = 6, Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), VisibleOnMap = true, VisibleOnSonar = true });
     }
 
     /** Get a vessel's name from configuration. */
@@ -399,7 +479,7 @@ public class vesselData : NetworkBehaviour
     {
         // Retrieve vessel name from configuration.
         var vesselNames = Configuration.GetJson("vessel-names");
-        if (vesselNames && vesselNames.IsArray && vessel < vesselNames.Count)
+        if (vesselNames && vesselNames.IsArray && vessel <= vesselNames.Count)
             return vesselNames[vessel - 1].str;
 
         return Unknown;
