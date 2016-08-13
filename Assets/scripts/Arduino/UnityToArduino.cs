@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO.Ports;
 using System;
+using Meg.Networking;
 
 public class UnityToArduino : MonoBehaviour 
 {
@@ -33,10 +34,13 @@ public class UnityToArduino : MonoBehaviour
             //    (int)(Server.pitchAngle),
             //    (int)(Server.rollAngle))); 
 
-            port.Write(String.Format("{0}, {1}, {2}\0",
-                (int)(Crew.vessel1Pos.x),
-                (int)(Crew.vessel1Pos.y),
-                (int)(Crew.vessel1Pos.z))); 
+            var playerVessel = serverUtils.GetPlayerVessel();
+            var position = serverUtils.GetVesselPosition(playerVessel);
+
+            port.Write(String.Format("{0}, {1}, {2}\0", 
+                (int)(position.x),
+                (int)(position.y),
+                (int)(position.z))); 
             
             yield return new WaitForSeconds(0.1f);
         }

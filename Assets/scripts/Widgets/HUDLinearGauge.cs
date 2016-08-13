@@ -329,10 +329,11 @@ public class HUDLinearGauge : MonoBehaviour
             case LinearGaugeLayout.Radial:
                 var theta = graphicsMaths.remapValue(v, MinValue, MaxValue, 0, 360);
                 var radians = theta * Mathf.Deg2Rad;
-                return new Vector3(Mathf.Cos(radians) * _maxSize.x * 0.5f, Mathf.Sin(radians) * _maxSize.y * 0.5f, 0);
+                var radius = _maxSize.x * 0.5f;
+                return new Vector3(Mathf.Cos(radians) * radius, Mathf.Sin(radians) * radius, 0);
 
             default:
-                var x = v * _valueToLocalScale * (int) Direction;
+                var x = v * _valueToLocalScale;
                 return new Vector3(x, 0, 0) + TickLocalOffset;
         }
     }
@@ -340,7 +341,7 @@ public class HUDLinearGauge : MonoBehaviour
     /** Comput the correct orientation in local space for a given value. */
     private Quaternion ValueToLocalRotation(float value)
     {
-        var v = (value - _smoothed) * (int) Direction * -1;
+        var v = (value - _smoothed) * (int) Direction;
         switch (Layout)
         {
             case LinearGaugeLayout.Radial:
