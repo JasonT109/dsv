@@ -560,7 +560,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);
             entry.Text.text = param;
             entry.On.gameObject.SetActive(on);
-            if (string.CompareOrdinal(prefix, param) >= 0 && focus < 0)
+            if (string.CompareOrdinal(prefix, param) <= 0 && focus < 0)
                 focus = index;
 
             index++;
