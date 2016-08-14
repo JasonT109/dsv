@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using Meg.EventSystem;
@@ -15,6 +16,7 @@ public class debugVesselPingUi : MonoBehaviour
 
     public SonarPing Ping;
     public TransformGesture TransformGesture;
+    public PressGesture PressGesture;
     public Text NameLabel;
     public Graphic Icon;
     public Image Arrow;
@@ -52,9 +54,14 @@ public class debugVesselPingUi : MonoBehaviour
             Ping = GetComponent<SonarPing>();
         if (!TransformGesture)
             TransformGesture = GetComponent<TransformGesture>();
+        if (!PressGesture)
+            PressGesture = GetComponent<PressGesture>();
 
         if (Arrow)
             Arrow.gameObject.SetActive(false);
+
+        if (PressGesture)
+            PressGesture.Pressed += OnPressed;
     }
 
     void Update()
@@ -100,6 +107,9 @@ public class debugVesselPingUi : MonoBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+    private void OnPressed(object sender, EventArgs e)
+        { Select(); }
 
     private void UpdateArrow()
     {
