@@ -82,16 +82,12 @@ public class debugEventFileUi : MonoBehaviour
     /** Color for active duration text. */
     public Color ActiveDurationTextColor;
 
-
     /** The current file. */
-    public megEventFile File { get { return _file; } }
+    public megEventFile File { get { return megEventManager.Instance.File; } }
 
 
     // Members
     // ------------------------------------------------------------
-
-    /** The current event file. */
-    private readonly megEventFile _file = new megEventFile();
 
     /** Event group UI nodes. */
     private readonly List<debugEventGroupUi> _groups = new List<debugEventGroupUi>();
@@ -109,8 +105,8 @@ public class debugEventFileUi : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
-        _file.Loaded += OnFileLoaded;
-        _file.Cleared += OnFileCleared;
+        File.Loaded += OnFileLoaded;
+        File.Cleared += OnFileCleared;
 
         _playLabel = PlayButton.GetComponentInChildren<Text>();
         Properties.OnSelected += HandlePropertiesSelected;
@@ -133,7 +129,7 @@ public class debugEventFileUi : MonoBehaviour
     {
         try
         {
-            _file.LoadFromFile(f.FullName);
+            File.LoadFromFile(f.FullName);
         }
         catch (Exception ex)
         {
@@ -141,37 +137,37 @@ public class debugEventFileUi : MonoBehaviour
         }
     }
 
-    /** Start playback on the event file. */
-    public void TogglePlay(bool value)
+    /** Toggle playback on the event file. */
+    public void TogglePlay()
     {
         // Ignore events originating from internal ui updates.
         if (_updatingUi)
             return;
         
-        if (value && !_file.running)
-            _file.Start();
-        else if (value && _file.paused)
-            _file.Resume();
-        else if (!value)
-            _file.Pause();
+        if (!File.running)
+            File.Start();
+        else if (File.paused)
+            File.Resume();
+        else
+            File.Pause();
     }
 
     /** Rewind to the start of the event file. */
     public void Rewind()
     {
-        if (!_file.canRewind)
+        if (!File.canRewind)
             return;
 
-        _file.Rewind();
+        File.Rewind();
     }
 
     /** Add a new group to the file. */
     public void AddGroup()
     {
-        if (!_file.canAdd)
+        if (!File.canAdd)
             return;
 
-        var group = _file.InsertGroup(_file.selectedGroup);
+        var group = File.InsertGroup(File.selectedGroup);
         var ui = AddGroupUi(group);
 
         HandleGroupSelected(ui);
@@ -180,29 +176,29 @@ public class debugEventFileUi : MonoBehaviour
     /** Remove the selected group from the file. */
     public void RemoveGroup()
     {
-        if (!_file.canRemove)
+        if (!File.canRemove)
             return;
 
-        var group = _file.selectedGroup;
-        _file.RemoveGroup(group);
+        var group = File.selectedGroup;
+        File.RemoveGroup(group);
         RemoveGroupUi(group);
     }
 
     /** Clear the file contents. */
     public void Clear()
     {
-        if (!_file.canClear)
+        if (!File.canClear)
             return;
 
         Properties.Group = null;
 
-        _file.Clear();
+        File.Clear();
     }
 
     /** Save the file. */
     public void Save()
     {
-        if (!_file.canSave)
+        if (!File.canSave)
             return;
 
         var path = "";
@@ -219,7 +215,7 @@ public class debugEventFileUi : MonoBehaviour
             path = saveDialog.FileName;
 
             if (!string.IsNullOrEmpty(path))
-                _file.SaveToFile(path);
+                File.SaveToFile(path);
 
             Folder.FileList.Refresh();
         }
@@ -245,7 +241,7 @@ public class debugEventFileUi : MonoBehaviour
     private void InitUi()
     {
         Properties.Group = null;
-        AddGroupUis(_file);
+        AddGroupUis(File);
 
         // Force a UI reflow to ensure group layouts are correct.
         Canvas.ForceUpdateCanvases();
@@ -256,25 +252,25 @@ public class debugEventFileUi : MonoBehaviour
     {
         _updatingUi = true;
 
-        PlayButton.interactable = _file.canPlay;
-        PlayButton.isOn = _file.playing;
+        PlayButton.interactable = File.canPlay;
+        PlayButton.isOn = File.playing;
 
-        _playLabel.text = _file.playing ? "PAUSE" : "PLAY";
-        PauseIcon.gameObject.SetActive(_file.playing);
+        _playLabel.text = File.playing ? "PAUSE" : "PLAY";
+        PauseIcon.gameObject.SetActive(File.playing);
 
-        RewindButton.interactable = _file.canRewind;
-        AddGroupButton.interactable = _file.canAdd;
-        RemoveGroupButton.interactable = _file.canRemove && _file.selectedGroup != null;
-        ClearButton.interactable = _file.canClear;
-        SaveButton.interactable = _file.canSave;
+        RewindButton.interactable = File.canRewind;
+        AddGroupButton.interactable = File.canAdd;
+        RemoveGroupButton.interactable = File.canRemove && File.selectedGroup != null;
+        ClearButton.interactable = File.canClear;
+        SaveButton.interactable = File.canSave;
 
-        var t = TimeSpan.FromSeconds(_file.time);
-        TimeText.color = _file.playing ? ActiveTimeTextColor : InactiveTimeTextColor;
+        var t = TimeSpan.FromSeconds(File.time);
+        TimeText.color = File.playing ? ActiveTimeTextColor : InactiveTimeTextColor;
         TimeText.text = string.Format("{0:00}:{1:00}:{2:00}.{3:0}", 
             t.Hours, t.Minutes, t.Seconds, t.Milliseconds / 100);
 
-        var d = TimeSpan.FromSeconds(_file.endTime);
-        DurationText.color = _file.playing ? ActiveDurationTextColor : InactiveDurationTextColor;
+        var d = TimeSpan.FromSeconds(File.endTime);
+        DurationText.color = File.playing ? ActiveDurationTextColor : InactiveDurationTextColor;
         DurationText.text = string.Format("/ {0:00}:{1:00}:{2:00}",
             d.Hours, d.Minutes, d.Seconds);
 
@@ -311,7 +307,7 @@ public class debugEventFileUi : MonoBehaviour
     {
         RemoveGroupUis();
 
-        foreach (var group in _file.groups)
+        foreach (var group in File.groups)
             AddGroupUi(group);
     }
 
@@ -331,17 +327,17 @@ public class debugEventFileUi : MonoBehaviour
     {
         var g = groupUi.Group;
         var e = eventUi ? eventUi.Event : null;
-        if (g == _file.selectedGroup && e == null)
+        if (g == File.selectedGroup && e == null)
             g = null;
 
         Properties.Group = g;
 
-        if (e == _file.selectedEvent)
+        if (e == File.selectedEvent)
             Properties.ToggleEvent(e);
         else
             Properties.ExpandEvent(e);
 
-        _file.selectedGroup = g;
+        File.selectedGroup = g;
     }
 
     private void HandlePropertiesSelected(debugEventGroupPropertiesUi groupUi, debugEventPropertiesUi eventUi)

@@ -72,8 +72,9 @@ public class widgetDebugButton : MonoBehaviour
         debugButton.onPressed += OnDebugButtonPressed;
 
         // Listen for regular screen navigation button presses.
-        foreach (var button in navButtonGroup.buttons)
-            button.GetComponent<buttonControl>().onPressed += OnNavButtonPressed;
+        if (navButtonGroup)
+            foreach (var button in navButtonGroup.buttons)
+                button.GetComponent<buttonControl>().onPressed += OnNavButtonPressed;
     }
 
     /** Updating. */
@@ -82,6 +83,10 @@ public class widgetDebugButton : MonoBehaviour
         // Reset the press counter after a period of inactivity.
         if (Time.time >= _pressResetTime)
             _presses = 0;
+
+        // Keyboard shortcut for the debug menu.
+        if (Input.GetKeyDown(KeyCode.D) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
+            Toggle();
     }
 
 
@@ -91,7 +96,9 @@ public class widgetDebugButton : MonoBehaviour
     /** Activate the debug screen. */
     public void Activate()
     {
-        navButtonGroup.toggleButtons(debugButton.gameObject);
+        if (navButtonGroup)
+            navButtonGroup.toggleButtons(debugButton.gameObject);
+
         debugVisGroup.SetActive(true);
         _presses = 0;
     }
@@ -101,6 +108,20 @@ public class widgetDebugButton : MonoBehaviour
     {
         debugVisGroup.SetActive(false);
         _presses = 0;
+    }
+
+    /** Toggle the debug screen. */
+    public void Toggle()
+    {
+        if (!debugVisGroup.activeSelf)
+            Activate();
+        else
+        {
+            Deactivate();
+
+            if (navButtonGroup)
+                navButtonGroup.toggleButtons(navButtonGroup.lastButton);
+        }
     }
 
 
@@ -118,7 +139,9 @@ public class widgetDebugButton : MonoBehaviour
         if (_presses < pressesToActivate)
             return;
 
-        navButtonGroup.toggleButtons(debugButton.gameObject);
+        if (navButtonGroup)
+            navButtonGroup.toggleButtons(debugButton.gameObject);
+
         debugVisGroup.SetActive(true);
         _presses = 0;
     }
