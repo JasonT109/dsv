@@ -71,7 +71,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
             var file = megEventManager.Instance.File;
             var group = file != null ? file.selectedGroup : null;
-            return (group != null && group.file.canAdd);
+            return (file != null && group != null && file.canAdd);
         }
     }
 
@@ -123,7 +123,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         var file = megEventManager.Instance.File;
         var group = file != null ? file.selectedGroup : null;
-        if (group == null || !group.file.canAdd)
+        if (file == null || group == null || !file.canAdd)
             return;
 
         var vesselEvent = group.AddEvent(megEventType.VesselMovement) as megEventVesselMovement;
