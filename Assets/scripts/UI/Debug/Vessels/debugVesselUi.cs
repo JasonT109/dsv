@@ -40,6 +40,12 @@ public class debugVesselUi : MonoBehaviour
     /** Color to use for backdrop when vessel is selected. */
     public Color BackdropSelectedColor;
 
+    /** Color to use for backdrop when vessel is the player vessel. */
+    public Color BackdropPlayerColor;
+
+    /** Color to use for backdrop when vessel is the player vessel and is selected. */
+    public Color BackdropPlayerSelectedColor;
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -104,9 +110,10 @@ public class debugVesselUi : MonoBehaviour
     {
         _updating = true;
 
-        var c = BackdropInactiveColor;
+        var isPlayer = Vessel.Id == VesselData.PlayerVessel;
+        var c = isPlayer ? BackdropPlayerColor : BackdropInactiveColor;
         if (Vessels.Selected.Id == Vessel.Id)
-            c = BackdropSelectedColor;
+            c = isPlayer ? BackdropPlayerSelectedColor : BackdropSelectedColor;
 
         Backdrop.color = c;
 

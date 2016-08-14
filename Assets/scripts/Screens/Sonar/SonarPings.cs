@@ -24,6 +24,25 @@ public class SonarPings : MonoBehaviour
     /** Scaling factor from normalized sonar space into root space. */
     public float SonarToRootScale = 1;
 
+    /** Possible display spaces. */
+    public enum DisplaySpace
+    {
+        Sonar,
+        Vessel
+    }
+
+    /** Whether to display pings in vessel space. */
+    public DisplaySpace Space = DisplaySpace.Sonar;
+
+    /** Whether to hide pings if out of range. */
+    public bool HideIfOutOfRange = true;
+
+    /** Whether to hide pings if not visible on sonar. */
+    public bool HideIfNotOnSonar = true;
+
+    /** Whether to hide pings if this is the player vessel. */
+    public bool HideIfPlayer = true;
+
 
     [Header("Prefabs")]
 
@@ -47,7 +66,7 @@ public class SonarPings : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Vessel data. */
-    private vesselData VesselData
+    private static vesselData VesselData
         { get { return serverUtils.VesselData; } }
 
 
@@ -55,7 +74,7 @@ public class SonarPings : MonoBehaviour
     // ------------------------------------------------------------
 
     /** The list of ping instances. */
-    private List<SonarPing> _pings = new List<SonarPing>();
+    private readonly List<SonarPing> _pings = new List<SonarPing>();
     
 
     // Unity Methods
@@ -73,6 +92,35 @@ public class SonarPings : MonoBehaviour
 	{
 	    UpdatePings();
 	}
+
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Convert a position in vessel space to ping vspace. */
+    public Vector3 VesselToPingSpace(vesselData.Vessel vessel)
+    {
+        return VesselToPingSpace(VesselData.GetPosition(vessel.Id));
+    }
+
+    /** Convert a position in vessel space to ping vspace. */
+    public Vector3 VesselToPingSpace(Vector3 v)
+    {
+        if (Space == DisplaySpace.Sonar)
+            return VesselData.VesselToSonarSpace(v, Type) * SonarToRootScale;
+        else
+            { v = v * SonarToRootScale; v.z = 0; return v; }
+    }
+
+    /** Convert a position in ping space to vessel space. */
+    public Vector3 PingToVesselSpace(Vector3 ping)
+    {
+        if (Space == DisplaySpace.Sonar)
+            return VesselData.SonarToVesselSpace(ping / SonarToRootScale, Type);
+        else
+            { ping = ping / SonarToRootScale; ping.z = 0; return ping; }
+    }
 
 
     // Private Methods

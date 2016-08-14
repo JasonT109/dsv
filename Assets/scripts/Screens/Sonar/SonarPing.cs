@@ -30,12 +30,6 @@ public class SonarPing : MonoBehaviour
     /** Auto-pulse interval. */
     public float AutoPulseInterval = 0;
 
-    /** Whether to hide if out of range. */
-    public bool HideIfOutOfRange = true;
-
-    /** Whether to hide if not visible on sonar. */
-    public bool HideIfNotOnSonar = true;
-
     /** Parent sonar ping manager. */
     public SonarPings Pings { get; set; }
 
@@ -93,23 +87,29 @@ public class SonarPing : MonoBehaviour
     // Public Methods
     // ------------------------------------------------------------
 
+    /** Configure ping. */
+    public void Configure(SonarPings pings)
+    {
+        Pings = pings;
+        transform.SetParent(Pings.Root, false);
+    }
+
     /** Updating. */
     public void Refresh()
     {
         var p = VesselData.GetSonarPosition(Vessel.Id, Pings.Type);
         var player = VesselData.PlayerVessel;
-        var visible = (Vessel.OnSonar || !HideIfNotOnSonar)
-            && (p.magnitude <= 1 || !HideIfOutOfRange)
-            && (Vessel.Id != player);
+        var visible = (Vessel.OnSonar || !Pings.HideIfNotOnSonar)
+            && (p.magnitude <= 1 || !Pings.HideIfOutOfRange)
+            && (Vessel.Id != player || !Pings.HideIfPlayer);
 
         gameObject.SetActive(visible);
-
         transform.rotation = Quaternion.identity;
 
         var t = Time.time;
         if (t > _nextPositionUpdate)
         {
-            transform.localPosition = p * Pings.SonarToRootScale;
+            transform.localPosition = Pings.VesselToPingSpace(Vessel);
             _nextPositionUpdate = t + PositionUpdateInterval;
         }
 
@@ -130,10 +130,7 @@ public class SonarPing : MonoBehaviour
 
     /** Convert a position in ping's local space into vessel space. */
     public Vector3 LocalToVesselSpace(Vector3 local)
-    {
-        var p = transform.localPosition + local;
-        return VesselData.SonarToVesselSpace(p / Pings.SonarToRootScale, Pings.Type);
-    }
+        { return Pings.PingToVesselSpace(transform.localPosition + local); }
 
     /** Pulse this ping's visual indicator. */
     public void Pulse()
