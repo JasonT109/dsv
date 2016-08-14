@@ -72,8 +72,9 @@ public class widgetDebugButton : MonoBehaviour
         debugButton.onPressed += OnDebugButtonPressed;
 
         // Listen for regular screen navigation button presses.
-        foreach (var button in navButtonGroup.buttons)
-            button.GetComponent<buttonControl>().onPressed += OnNavButtonPressed;
+        if (navButtonGroup)
+            foreach (var button in navButtonGroup.buttons)
+                button.GetComponent<buttonControl>().onPressed += OnNavButtonPressed;
     }
 
     /** Updating. */
@@ -95,7 +96,9 @@ public class widgetDebugButton : MonoBehaviour
     /** Activate the debug screen. */
     public void Activate()
     {
-        navButtonGroup.toggleButtons(debugButton.gameObject);
+        if (navButtonGroup)
+            navButtonGroup.toggleButtons(debugButton.gameObject);
+
         debugVisGroup.SetActive(true);
         _presses = 0;
     }
@@ -115,7 +118,9 @@ public class widgetDebugButton : MonoBehaviour
         else
         {
             Deactivate();
-            navButtonGroup.toggleButtons(navButtonGroup.lastButton);
+
+            if (navButtonGroup)
+                navButtonGroup.toggleButtons(navButtonGroup.lastButton);
         }
     }
 
@@ -134,7 +139,9 @@ public class widgetDebugButton : MonoBehaviour
         if (_presses < pressesToActivate)
             return;
 
-        navButtonGroup.toggleButtons(debugButton.gameObject);
+        if (navButtonGroup)
+            navButtonGroup.toggleButtons(debugButton.gameObject);
+
         debugVisGroup.SetActive(true);
         _presses = 0;
     }
