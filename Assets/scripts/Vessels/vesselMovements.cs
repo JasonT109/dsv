@@ -179,6 +179,21 @@ public class vesselMovements : NetworkBehaviour
         RemoveVesselMovement(id);
     }
 
+    /** Sets up movement on a vessel by type. */
+    [Server]
+    public void SetMovementType(int id, string type)
+    {
+        var current = GetMovementType(id);
+        if (current == type)
+            return;
+
+        var movement = CreateVesselMovement(type);
+        if (movement)
+            movement.Configure(id, Active);
+
+        SetVesselMovement(id, movement);
+    }
+
 
     // Public Methods
     // ------------------------------------------------------------
@@ -216,6 +231,13 @@ public class vesselMovements : NetworkBehaviour
     /** Returns whether a vessel is pursuing. */
     public bool IsPursuing(int id)
         { return GetVesselMovement(id) is vesselPursue; }
+
+    /** Return the type of movement for a given vessel. */
+    public string GetMovementType(int id)
+    {
+        var movement = GetVesselMovement(id);
+        return movement ? movement.Type : NoType;
+    }
 
     /** Return the player vessel's current movement mode (if any). */
     public vesselMovement GetPlayerVesselMovement()

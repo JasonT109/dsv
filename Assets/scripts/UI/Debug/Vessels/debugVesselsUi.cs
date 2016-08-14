@@ -24,16 +24,21 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Button for clearing extra vessels. */
     public Button ClearButton;
 
+    /** Properties interface. */
+    public debugVesselPropertiesUi Properties;
+
 
     [Header("Prefabs")]
 
     /** The vessel item renderer prefab. */
     public debugVesselUi VesselUiPrefab;
 
-
-
     /** The selected vessel. */
-    public vesselData.Vessel Selected { get; set; }
+    public vesselData.Vessel Selected
+    {
+        get { return _selected;  }
+        set { Select(value);}
+    }
 
 
 
@@ -55,6 +60,9 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Vessel renderers. */
     private readonly List<debugVesselUi> _vessels = new List<debugVesselUi>();
 
+    /** Selected vessel. */
+    private vesselData.Vessel _selected;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -67,10 +75,14 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
 
     private void Update()
     {
-        if (VesselData)
-            UpdateVessels();
-    }
+        if (!VesselData)
+            return;
 
+        if (Selected.Id <= 0)
+            Selected = VesselData.GetVessel(VesselData.PlayerVessel);
+
+        UpdateVessels();
+    }
 
 
     // Public Methods
@@ -79,7 +91,8 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Set the selected vessel. */
     public void Select(vesselData.Vessel vessel)
     {
-        Selected = vessel;
+        _selected = vessel;
+        Properties.Vessel = vessel;
     }
 
     /** Add a vessel to the vessel list. */
@@ -92,15 +105,21 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Remove the last vessel in list. */
     public void RemoveVessel()
     {
-        if (CanRemoveVessels)
-            serverUtils.PostRemoveLastVessel();
+        if (!CanRemoveVessels)
+            return;
+
+        serverUtils.PostRemoveLastVessel();
+        Select(VesselData.GetVessel(VesselData.LastVessel));
     }
 
     /** Clear extra vessels. */
     public void ClearExtraVessels()
     {
-        if (CanRemoveVessels)
-            serverUtils.PostClearExtraVessels();
+        if (!CanRemoveVessels)
+            return;
+
+        serverUtils.PostClearExtraVessels();
+        Select(VesselData.GetVessel(VesselData.LastVessel));
     }
 
 

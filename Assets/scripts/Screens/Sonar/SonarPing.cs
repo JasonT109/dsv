@@ -130,7 +130,11 @@ public class SonarPing : MonoBehaviour
 
     /** Convert a position in ping's local space into vessel space. */
     public Vector3 LocalToVesselSpace(Vector3 local)
-        { return Pings.PingToVesselSpace(transform.localPosition + local); }
+    {
+        var v = Pings.PingToVesselSpace(transform.localPosition + local);
+        v.z = Vessel.Depth;
+        return v;
+    }
 
     /** Pulse this ping's visual indicator. */
     public void Pulse()

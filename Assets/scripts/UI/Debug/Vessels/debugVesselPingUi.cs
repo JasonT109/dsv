@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Meg.EventSystem;
 using Meg.Networking;
 using TouchScript.Gestures;
 using UnityEngine.UI;
@@ -47,6 +48,9 @@ public class debugVesselPingUi : MonoBehaviour
 
     void Update()
     {
+        TransformGesture.enabled = VesselData.isServer
+            && !megEventManager.Instance.Playing;
+
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var color = selected ? SelectedColor : NormalColor;
         if (!Vessel.OnSonar)
@@ -54,8 +58,6 @@ public class debugVesselPingUi : MonoBehaviour
 
         NameLabel.color = color;
         Icon.color = color;
-
-        TransformGesture.enabled = VesselData.isServer;
 
         var transforming = TransformGesture.State == Gesture.GestureState.Changed;
 	    Ping.enabled = !transforming;

@@ -111,6 +111,10 @@ public class vesselData : NetworkBehaviour
     public int VesselCount
         { get { return Vessels.Count; } }
 
+    /** Return the last vessels's id. */
+    public int LastVessel
+        { get { return Vessels.Count; } }
+
     /** Regular expression used to match server data keys. */
     public readonly Regex DataKeyPattern = new Regex(
         @"^(v|vessel|meg|intercept)(\d+)(\w+)$", RegexOptions.IgnoreCase);
@@ -235,6 +239,15 @@ public class vesselData : NetworkBehaviour
 
     // Setters and Getters
     // ------------------------------------------------------------
+
+    /** Return a vessel for the given id. */
+    public Vessel GetVessel(int id)
+    {
+        if (id >= 1 && id <= Vessels.Count)
+            return Vessels[id - 1];
+
+        return new Vessel { Id = id, Name = Unknown };
+    }
 
     /** Whether the given server data key relates to vessel state. */
     public bool IsVesselKey(string valueName)
@@ -589,15 +602,6 @@ public class vesselData : NetworkBehaviour
         // Update vessel's data in the synchronized list.
         if (id >= 1 && id <= Vessels.Count)
             Vessels[id - 1] = vessel;
-    }
-
-    /** Return a vessel for the given id. */
-    private Vessel GetVessel(int id)
-    {
-        if (id >= 1 && id <= Vessels.Count)
-            return Vessels[id - 1];
-
-        return new Vessel { Id = id, Name = Unknown };
     }
 
     /** Initialize the vessel state list. */

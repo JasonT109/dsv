@@ -170,4 +170,13 @@ public class vesselIntercept : vesselMovement
         SetVesselState(position + dp, direction * requiredSpeed, Mathf.Clamp(Speed, 0, RatedTopSpeed));
     }
 
+    /** Return the movement's speed. */
+    public override float GetSpeed()
+        { return Speed;}
+
+    /** Set the movement's speed. */
+    public override  void SetSpeed(float value)
+        { Speed = value; }
+
+
 }

@@ -98,4 +98,12 @@ public class vesselHoldingPattern : vesselMovement
             _time += GetDeltaTime();
     }
 
+    /** Return the movement's speed. */
+    public override float GetSpeed()
+        { return Speed;}
+
+    /** Set the movement's speed. */
+    public override  void SetSpeed(float value)
+        { Speed = value; }
+
 }

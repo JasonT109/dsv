@@ -29,6 +29,10 @@ public abstract class vesselMovement : NetworkBehaviour
     public bool Active
         { get { return Movements.Active; } }
 
+    /** The type key for this movement. */
+    public string Type
+        { get { return GetSaveKey(); } }
+
 
     // Computed Properties
     // ------------------------------------------------------------
@@ -158,5 +162,11 @@ public abstract class vesselMovement : NetworkBehaviour
     {
         serverUtils.GetVesselData(Vessel, out position, out velocity);
     }
+
+    /** Return the movement's speed. */
+    public abstract float GetSpeed();
+
+    /** Set the movement's speed. */
+    public abstract void SetSpeed(float value);
 
 }
