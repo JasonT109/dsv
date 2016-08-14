@@ -11,6 +11,7 @@ public class serverValueScale : MonoBehaviour
     public Vector2 FromRange = new Vector2(0, 100);
     public Vector2 ToRange = new Vector2(1, 2);
     public bool Clamped = true;
+    public bool Reciprocal;
 
     public float SmoothTime = 0;
 
@@ -31,9 +32,12 @@ public class serverValueScale : MonoBehaviour
         var value = serverUtils.GetServerData(LinkDataString, DefaultValue);
         _smoothed = Mathf.SmoothDamp(_smoothed, value, ref _smoothedVelocity, SmoothTime*Time.deltaTime);
 
-        var scale = graphicsMaths.remapValue(value, FromRange.x, FromRange.y, ToRange.x, ToRange.y);
+        var scale = graphicsMaths.remapValue(_smoothed, FromRange.x, FromRange.y, ToRange.x, ToRange.y);
         if (Clamped)
             scale = Mathf.Clamp(scale, ToRange.x, ToRange.y);
+
+        if (Reciprocal && !Mathf.Approximately(scale, 0))
+            scale = 1 / scale;
 
         transform.localScale = Vector3.one * scale;
     }

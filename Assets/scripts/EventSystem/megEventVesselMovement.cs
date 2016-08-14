@@ -68,7 +68,14 @@ namespace Meg.EventSystem
                 return triggerLabel;
 
             var vesselName = serverUtils.VesselData.GetDebugName(Vessel);
-            return string.Format("{0}: {1}, {2:n1}m/s", vesselName, Type, Speed);
+            var movementType = Type;
+            if (IsPursue)
+            {
+                var targetName = serverUtils.VesselData.GetDebugName(TargetVessel);
+                movementType = string.Format("{0} {1}", Type, targetName);
+            }
+
+            return string.Format("{0}: {1}, {2:n1}m/s", vesselName, movementType, Speed);
         }
 
 

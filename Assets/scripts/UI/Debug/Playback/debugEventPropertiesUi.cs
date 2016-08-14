@@ -109,7 +109,9 @@ public class debugEventPropertiesUi : MonoBehaviour
     [Header("Vessels Event Components")]
 
     public Transform VesselProperties;
-    public Toggle[] VesselToggles;
+    public Slider VesselIdSlider;
+    public InputField VesselIdInput;
+    public Text VesselNameLabel;
     public Toggle[] VesselTypeToggles;
     public Transform VesselStateProperties;
     public Toggle VesselAutoSpeedToggle;
@@ -124,7 +126,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField VesselPeriodInput;
     public Text VesselTargetLabel;
     public Transform VesselTargets;
-    public Toggle[] VesselTargetToggles;
+    public Slider VesselTargetSlider;
+    public InputField VesselTargetInput;
     public Button VesselCaptureButton;
     
 
@@ -171,6 +174,10 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Whether event is minimized. */
     public bool Minimized
         { get { return _event.minimized; } }
+
+    /** Vessel data. */
+    private vesselData VesselData
+        { get { return serverUtils.VesselData; } }
 
 
     // Events
@@ -560,7 +567,7 @@ public class debugEventPropertiesUi : MonoBehaviour
             var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);
             entry.Text.text = param;
             entry.On.gameObject.SetActive(on);
-            if (string.CompareOrdinal(prefix, param) >= 0 && focus < 0)
+            if (string.CompareOrdinal(prefix, param) <= 0 && focus < 0)
                 focus = index;
 
             index++;
@@ -969,12 +976,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void ConfigureVesselsProperties()
     {
-        for (var i = 0; i < VesselToggles.Length; i++)
-        {
-            var vessel = i + 1;
-            VesselToggles[i].onValueChanged.AddListener(
-                on => OnVesselToggled(vessel, on));
-        }
+        VesselIdSlider.onValueChanged.AddListener(OnVesselIdSliderChanged);
+        VesselIdInput.onEndEdit.AddListener(OnVesselIdInputChanged);
 
         for (var i = 0; i < VesselTypeToggles.Length; i++)
         {
@@ -992,24 +995,20 @@ public class debugEventPropertiesUi : MonoBehaviour
         VesselDiveAngleInput.onEndEdit.AddListener(OnVesselDiveAngleInputChanged);
         VesselPeriodSlider.onValueChanged.AddListener(OnVesselPeriodSliderChanged);
         VesselPeriodInput.onEndEdit.AddListener(OnVesselPeriodInputChanged);
-        
-        for (var i = 0; i < VesselTargetToggles.Length; i++)
-        {
-            var vessel = i + 1;
-            VesselTargetToggles[i].onValueChanged.AddListener(
-                on => OnVesselTargetToggled(vessel, on));
-        }
+        VesselTargetSlider.onValueChanged.AddListener(OnVesselTargetSliderChanged);
+        VesselTargetInput.onEndEdit.AddListener(OnVesselTargetInputChanged);
     }
 
     private void InitVesselsProperties()
     {
         _initializing = true;
 
-        UpdateVesselToggles();
-        UpdateVesselTypeToggles();
-        UpdateVesselTargetToggles();
-
         var v = VesselEvent;
+        VesselIdSlider.value = v.Vessel;
+        VesselIdInput.text = string.Format("{0:N0}", v.Vessel);
+
+        UpdateVesselTypeToggles();
+
         VesselAutoSpeedToggle.isOn = v.AutoSpeed;
         VesselSpeedSlider.value = v.Speed;
         VesselSpeedSlider.maxValue = Mathf.Max(VesselSpeedSlider.maxValue, v.Speed);
@@ -1020,6 +1019,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         VesselDiveAngleInput.text = string.Format("{0:N1}", v.DiveAngle);
         VesselPeriodSlider.value = v.Period;
         VesselPeriodInput.text = string.Format("{0:N1}", v.Period);
+        VesselTargetSlider.value = v.TargetVessel;
+        VesselTargetInput.text = string.Format("{0:N0}", v.TargetVessel);
 
         _initializing = false;
     }
@@ -1027,6 +1028,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateVesselsProperties()
     {
         var v = VesselEvent;
+        VesselNameLabel.text = "VESSEL: " + VesselData.GetDebugName(v.Vessel);
         VesselStateProperties.gameObject.SetActive(!v.IsNone);
         VesselAutoSpeedToggle.gameObject.SetActive(v.IsIntercept);
         VesselSpeedGroup.interactable = !VesselAutoSpeedToggle.isOn;
@@ -1036,28 +1038,30 @@ public class debugEventPropertiesUi : MonoBehaviour
         VesselPeriodSlider.transform.parent.gameObject.SetActive(v.IsHolding);
         VesselTargetLabel.gameObject.SetActive(v.IsPursue);
         VesselTargets.transform.gameObject.SetActive(v.IsPursue);
+        VesselTargetLabel.gameObject.SetActive(v.IsPursue);
+        VesselTargetLabel.text = v.IsPursue ? "PURSUE " + VesselData.GetDebugName(v.TargetVessel) : "";
     }
 
-    private void UpdateVesselToggles()
+    private void OnVesselIdSliderChanged(float value)
     {
-        for (var i = 0; i < VesselToggles.Length; i++)
-        {
-            var toggle = VesselToggles[i];
-            toggle.isOn = VesselEvent.Vessel == i + 1;
-            toggle.interactable = !toggle.isOn;
-        }
-    }
-
-    private void OnVesselToggled(int vessel, bool value)
-    {
-        if (_initializing || !value)
+        if (_initializing)
             return;
 
-        VesselEvent.Vessel = vessel;
+        VesselEvent.Vessel = Mathf.RoundToInt(value);
+        VesselIdInput.text = string.Format("{0:N0}", value);
+    }
 
-        _initializing = true;
-        UpdateVesselToggles();
-        _initializing = false;
+    private void OnVesselIdInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.Vessel = Mathf.RoundToInt(result);
+        VesselIdSlider.value = result;
     }
 
     private void UpdateVesselTypeToggles()
@@ -1079,28 +1083,6 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         _initializing = true;
         UpdateVesselTypeToggles();
-        _initializing = false;
-    }
-
-    private void UpdateVesselTargetToggles()
-    {
-        for (var i = 0; i < VesselTargetToggles.Length; i++)
-        {
-            var toggle = VesselTargetToggles[i];
-            toggle.isOn = VesselEvent.TargetVessel == i + 1;
-            toggle.interactable = !toggle.isOn;
-        }
-    }
-
-    private void OnVesselTargetToggled(int vessel, bool value)
-    {
-        if (_initializing || !value)
-            return;
-
-        VesselEvent.TargetVessel = vessel;
-
-        _initializing = true;
-        UpdateVesselTargetToggles();
         _initializing = false;
     }
 
@@ -1200,7 +1182,29 @@ public class debugEventPropertiesUi : MonoBehaviour
         VesselEvent.Period = result;
         VesselPeriodSlider.value = result;
     }
-    
+
+    private void OnVesselTargetSliderChanged(float value)
+    {
+        if (_initializing)
+            return;
+
+        VesselEvent.TargetVessel = Mathf.RoundToInt(value);
+        VesselTargetInput.text = string.Format("{0:N0}", value);
+    }
+
+    private void OnVesselTargetInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        VesselEvent.TargetVessel = Mathf.RoundToInt(result);
+        VesselTargetSlider.value = result;
+    }
+
     public void VesselsCapture()
     {
         if (_initializing)

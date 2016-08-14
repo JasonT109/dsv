@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using Meg.EventSystem;
@@ -37,6 +38,17 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public InputField MovementPeriodInput;
     public Slider MovementTargetSlider;
     public InputField MovementTargetInput;
+    public Text MovementTargetLabel;
+
+    [Header("Time To Intercept")]
+    public CanvasGroup EtaGroup;
+    public Text EtaHeader;
+    public Slider EtaHoursSlider;
+    public InputField EtaHoursInput;
+    public Slider EtaMinutesSlider;
+    public InputField EtaMinutesInput;
+    public Slider EtaSecondsSlider;
+    public InputField EtaSecondsInput;
 
     /** The vessel being edited. */
     public vesselData.Vessel Vessel
@@ -158,7 +170,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
         ConfigureMovementProperties();
     }
 
-
     private void InitUi()
     {
         _updating = true;
@@ -185,6 +196,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         UpdateMovementProperties();
         AddMovementEventButton.interactable = CanAddEvents;
         _updating = false;
+        
     }
 
     private void ClearUi()
@@ -277,6 +289,18 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementPeriodInput.onEndEdit.AddListener(OnMovementPeriodInputChanged);
         MovementTargetSlider.onValueChanged.AddListener(OnMovementTargetSliderChanged);
         MovementTargetInput.onEndEdit.AddListener(OnMovementTargetInputChanged);
+
+        ConfigureEtaProperties();
+    }
+
+    private void ConfigureEtaProperties()
+    {
+        EtaHoursSlider.onValueChanged.AddListener(OnEtaSliderChanged);
+        EtaHoursInput.onEndEdit.AddListener(OnEtaInputChanged);
+        EtaMinutesSlider.onValueChanged.AddListener(OnEtaSliderChanged);
+        EtaMinutesInput.onEndEdit.AddListener(OnEtaInputChanged);
+        EtaSecondsSlider.onValueChanged.AddListener(OnEtaSliderChanged);
+        EtaSecondsInput.onEndEdit.AddListener(OnEtaInputChanged);
     }
 
     private void InitMovementProperties()
@@ -314,10 +338,14 @@ public class debugVesselPropertiesUi : MonoBehaviour
         }
 
         _updating = false;
+
+        InitEtaUi();
     }
 
     private void UpdateMovementProperties()
     {
+        _updating = true;
+
         MovementStateProperties.gameObject.SetActive(Movement != null);
         MovementAutoSpeedToggle.gameObject.SetActive(Intercept);
         MovementSpeedGroup.interactable = !MovementAutoSpeedToggle.isOn;
@@ -326,6 +354,22 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementDiveAngleSlider.transform.parent.gameObject.SetActive(SetVector);
         MovementPeriodSlider.transform.parent.gameObject.SetActive(Holding);
         MovementTargetSlider.transform.parent.gameObject.SetActive(Pursue);
+
+        if (Movement != null && MovementAutoSpeedToggle.isOn)
+        {
+            MovementSpeedSlider.value = Movement.GetSpeed();
+            MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
+            MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
+        }
+
+        MovementTargetLabel.gameObject.SetActive(Pursue);
+        MovementTargetLabel.text = Pursue ? "PURSUE " + VesselData.GetDebugName(Pursue.TargetVessel) : "";
+
+        EtaGroup.gameObject.SetActive(Intercept);
+        if (Intercept && megEventManager.Instance.Playing)
+            InitEtaUi();
+
+        _updating = false;
     }
 
     private void UpdateMovementTypeToggles()
@@ -335,7 +379,17 @@ public class debugVesselPropertiesUi : MonoBehaviour
         {
             var toggle = MovementTypeToggles[i];
             toggle.isOn = _vesselMovementTypes[i] == type;
+            toggle.interactable = CanSetMovementType(type);
         }
+    }
+
+    private bool CanSetMovementType(string type)
+    {
+        // Don't allow the intercept pin to intercept itself.
+        if (Vessel.Id == vesselData.InterceptId && type != vesselMovements.InterceptType)
+            return false;
+
+        return true;
     }
 
     private void OnMovementTypeToggled(string type, bool value)
@@ -466,5 +520,53 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementTargetSlider.value = result;
     }
 
+    private void OnEtaSliderChanged(float value)
+    {
+        if (_updating)
+            return;
+
+        var eta = Mathf.RoundToInt(EtaHoursSlider.value) * 3600 
+            + Mathf.RoundToInt(EtaMinutesSlider.value) * 60 
+            + Mathf.RoundToInt(EtaSecondsSlider.value);
+
+        Movements.SetTimeToIntercept(eta);
+        InitEtaUi();
+    }
+
+    private void OnEtaInputChanged(string value)
+    {
+        if (_updating)
+            return;
+
+        float hours, minutes = 0, seconds = 0;
+        var parsed = float.TryParse(EtaHoursInput.text, out hours)
+            && float.TryParse(EtaMinutesInput.text, out minutes)
+            && float.TryParse(EtaSecondsInput.text, out seconds);
+
+        if (!parsed)
+            return;
+        
+        var eta = hours * 3600 + minutes * 60 + seconds;
+        Movements.SetTimeToIntercept(eta);
+        InitEtaUi();
+    }
+
+    private void InitEtaUi()
+    {
+        _updating = true;
+
+        var t = TimeSpan.FromSeconds(Movements.TimeToIntercept);
+
+        EtaGroup.interactable = !megEventManager.Instance.Playing;
+        EtaHeader.text = string.Format("{0:00}:{1:00}:{2:00}", t.Hours, t.Minutes, t.Seconds);
+        EtaHoursInput.text = string.Format("{0:00}", t.Hours);
+        EtaMinutesInput.text = string.Format("{0:00}", t.Minutes);
+        EtaSecondsInput.text = string.Format("{0:00}", t.Seconds);
+        EtaHoursSlider.value = t.Hours;
+        EtaMinutesSlider.value = t.Minutes;
+        EtaSecondsSlider.value = t.Seconds;
+
+        _updating = false;
+    }
 
 }

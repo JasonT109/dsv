@@ -148,6 +148,10 @@ public class vesselMovements : NetworkBehaviour
         if (IsIntercepting(id))
             return;
 
+        // Can't allow intercept pin to intercept itself!
+        if (id == vesselData.InterceptId)
+            return;
+
         var intercept = CreateVesselMovement(InterceptPrefab);
         intercept.Configure(id, Active);
         SetVesselMovement(id, intercept);
@@ -185,6 +189,10 @@ public class vesselMovements : NetworkBehaviour
     {
         var current = GetMovementType(id);
         if (current == type)
+            return;
+
+        // Can't allow intercept pin to intercept itself!
+        if (type == InterceptType && id == vesselData.InterceptId)
             return;
 
         var movement = CreateVesselMovement(type);
