@@ -374,6 +374,8 @@ namespace Meg.Networking
             "error_jet_r",
             "error_oxygenext",
             "error_oxygenpump",
+            "error_panel_l",
+            "error_panel_r",
             "error_portlights",
             "error_radar",
             "error_runninglights",
@@ -963,6 +965,10 @@ namespace Meg.Networking
                     return GliderErrorData.jet_heat_l;
                 case "jet_heat_r":
                     return GliderErrorData.jet_heat_r;
+                case "error_panel_l":
+                    return GliderErrorData.error_panel_l;
+                case "error_panel_r":
+                    return GliderErrorData.error_panel_r;
                 case "disableinput":
                     return SubControl.disableInput ? 1 : 0;
                 case "inputxaxis":

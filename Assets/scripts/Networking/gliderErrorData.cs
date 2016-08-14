@@ -28,4 +28,8 @@ public class gliderErrorData : NetworkBehaviour
     public float jet_heat_l = 36f;
     [SyncVar]
     public float jet_heat_r = 39f;
+    [SyncVar]
+    public float error_panel_l = 1f;
+    [SyncVar]
+    public float error_panel_r = 1f;
 }

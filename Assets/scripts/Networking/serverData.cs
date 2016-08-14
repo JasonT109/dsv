@@ -772,6 +772,24 @@ public class serverData : NetworkBehaviour
             case "sonarshortsensitivity":
                 SonarData.ShortSensitivity = newValue;
                 break;
+            case "error_thruster_l":
+                GliderErrorData.error_thruster_l = newValue;
+                break;
+            case "error_thruster_r":
+                GliderErrorData.error_thruster_r = newValue;
+                break;
+            case "error_vertran_l":
+                GliderErrorData.error_vertran_l = newValue;
+                break;
+            case "error_vertran_r":
+                GliderErrorData.error_vertran_r = newValue;
+                break;
+            case "error_jet_l":
+                GliderErrorData.error_jet_l = newValue;
+                break;
+            case "error_jet_r":
+                GliderErrorData.error_jet_r = newValue;
+                break;
             case "vertran_heat_l":
                 GliderErrorData.vertran_heat_l = newValue;
                 break;
@@ -789,6 +807,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "jet_heat_r":
                 GliderErrorData.jet_heat_r = newValue;
+                break;
+            case "error_panel_l":
+                GliderErrorData.error_panel_l = newValue;
+                break;
+            case "error_panel_r":
+                GliderErrorData.error_panel_r = newValue;
                 break;
             case "dccquadscreen0":
                 DCCScreenData.DCCquadScreen0 = (int)newValue;

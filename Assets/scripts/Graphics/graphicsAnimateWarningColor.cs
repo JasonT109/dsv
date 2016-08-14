@@ -15,6 +15,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     public bool useUniversalSync = true;
     public bool usingTintColor = false;
     public float phase = 0f;
+    public int[] materialIndex;
 
     private GameObject syncNode;
     private float timeIndex;
@@ -125,6 +126,17 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        SetColor();
+        if (materialIndex.Length > 0)
+        {
+            for (int i = 0; i < materialIndex.Length; i++)
+            {
+                m = r.materials[materialIndex[i]];
+                SetColor();
+            }
+        }
+        else
+        {
+            SetColor();
+        }
     }
 }
