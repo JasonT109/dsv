@@ -183,10 +183,10 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.value = Vessel.Depth;
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, Vessel.Depth);
         DepthInput.text = string.Format("{0:N1}", Vessel.Depth);
-        UpdateIconToggles();
 
         _updating = false;
 
+        UpdateIconToggles();
         InitMovementProperties();
     }
 
@@ -231,12 +231,14 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
     private void UpdateIconToggles()
     {
-        var icon = Vessel.Icon;
+        _updating = true;
+        var icon = VesselData.GetIcon(Vessel.Id);
         for (var i = 0; i < IconToggles.Length; i++)
         {
             var toggle = IconToggles[i];
             toggle.isOn = ((vesselData.Icon) i) == icon;
         }
+        _updating = false;
     }
 
     private void OnIconToggled(vesselData.Icon icon, bool value)
@@ -245,6 +247,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         VesselData.SetIcon(Vessel.Id, icon);
+        UpdateIconToggles();
     }
 
 

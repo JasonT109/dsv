@@ -7,14 +7,26 @@ public class debugPlaybackWarning : MonoBehaviour
 
     public buttonControl Button;
 
-	private void Start()
+    public Renderer PlayIcon;
+    public Renderer PauseIcon;
+
+    private void Start()
 	{
 	    if (!Button)
 	        Button = GetComponent<buttonControl>();
+
+        Update();
 	}
 	
 	private void Update()
 	{
-	    Button.warning = megEventManager.Instance.Playing;
-	}
+        var playing = megEventManager.Instance.Playing;
+
+	    Button.warning = playing;
+
+	    if (PlayIcon)
+	        PlayIcon.enabled = !playing;
+        if (PauseIcon)
+            PauseIcon.enabled = playing;
+    }
 }

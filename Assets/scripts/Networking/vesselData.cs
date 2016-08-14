@@ -377,7 +377,7 @@ public class vesselData : NetworkBehaviour
     /** Return a debug name for the given vessel. */
     public string GetDebugName(int id)
     {
-        var name = string.Format("{0} {1}", id, GetName(id).ToUpper());
+        var name = string.Format("{0}: {1}", id, GetName(id).ToUpper());
         if (id == MegId)
             name += " (MEG)";
         else if (id == InterceptId)

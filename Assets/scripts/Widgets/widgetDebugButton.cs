@@ -82,6 +82,10 @@ public class widgetDebugButton : MonoBehaviour
         // Reset the press counter after a period of inactivity.
         if (Time.time >= _pressResetTime)
             _presses = 0;
+
+        // Keyboard shortcut for the debug menu.
+        if (Input.GetKeyDown(KeyCode.D) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
+            Toggle();
     }
 
 
@@ -101,6 +105,18 @@ public class widgetDebugButton : MonoBehaviour
     {
         debugVisGroup.SetActive(false);
         _presses = 0;
+    }
+
+    /** Toggle the debug screen. */
+    public void Toggle()
+    {
+        if (!debugVisGroup.activeSelf)
+            Activate();
+        else
+        {
+            Deactivate();
+            navButtonGroup.toggleButtons(navButtonGroup.lastButton);
+        }
     }
 
 

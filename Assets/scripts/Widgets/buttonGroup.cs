@@ -5,6 +5,7 @@ public class buttonGroup : MonoBehaviour {
 
     public GameObject[] buttons;
     public bool changed = false;
+    public GameObject lastButton { get; private set; }
 
     public void toggleButtons(GameObject b, bool forceOn = false)
     {
@@ -15,6 +16,9 @@ public class buttonGroup : MonoBehaviour {
             var bScript = button.GetComponent<buttonControl>();
             bScript.toggleButton(b, forceOn);
             //Resources.UnloadUnusedAssets();
+
+            if (bScript.active)
+                lastButton = button;
         }
     }
 

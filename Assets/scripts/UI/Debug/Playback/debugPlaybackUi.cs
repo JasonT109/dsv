@@ -26,8 +26,6 @@ public class debugPlaybackUi : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
-        // Inform event manager about the current event file.
-        megEventManager.Instance.SetCurrentFile(EventFileUi.File);
     }
 
 
