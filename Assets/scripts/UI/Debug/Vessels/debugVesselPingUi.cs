@@ -27,7 +27,8 @@ public class debugVesselPingUi : MonoBehaviour
 
     [Header("Movements")]
 
-    public Vector3 VelocityScale = Vector3.one;
+    public float MinScale = 0.1f;
+    public float MaxScale = 1;
 
 
     public vesselData.Vessel Vessel
@@ -51,6 +52,9 @@ public class debugVesselPingUi : MonoBehaviour
             Ping = GetComponent<SonarPing>();
         if (!TransformGesture)
             TransformGesture = GetComponent<TransformGesture>();
+
+        if (Arrow)
+            Arrow.gameObject.SetActive(false);
     }
 
     void Update()
@@ -60,7 +64,9 @@ public class debugVesselPingUi : MonoBehaviour
 
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var color = selected ? SelectedColor : NormalColor;
-        if (!Vessel.OnSonar)
+        if (Ping.Pings.Space == SonarPings.DisplaySpace.Sonar && !Vessel.OnSonar)
+            color.a *= 0.5f;
+        else if (Ping.Pings.Space == SonarPings.DisplaySpace.Vessel && !Vessel.OnMap)
             color.a *= 0.5f;
 
         NameLabel.color = color;
@@ -76,12 +82,12 @@ public class debugVesselPingUi : MonoBehaviour
 
             VesselData.SetPosition(Vessel.Id, Ping.ToVesselSpace());
         }
+    }
 
+    void LateUpdate()
+    {
         if (Arrow)
-        {
-            Arrow.color = color;
             UpdateArrow();
-        }
     }
 
     // Public Methods
@@ -102,14 +108,30 @@ public class debugVesselPingUi : MonoBehaviour
         if (!movement)
             return;
 
-        var v = Vector3.Scale(movement.Velocity, VelocityScale);
-        var p = Vessel.Position + v;
-        var s = Ping.Pings.VesselToPingSpace(p);
-        var delta = s - p;
+        var v = movement.Velocity;
+        var speed = v.magnitude;
+        var angle = Mathf.Atan2(v.y, v.x) * Mathf.Rad2Deg;
+        var elevation = 0f;
+        if (!Mathf.Approximately(speed, 0))
+            elevation = Mathf.Asin(v.z / speed) * Mathf.Rad2Deg;
 
-        var angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-        // var elevation = 0; // Mathf.Sin(delta.z) * Mathf.Rad2Deg;
-        Arrow.rectTransform.rotation = Quaternion.Euler(0, 0, angle); // * Quaternion.Euler(elevation, 0, 0);
+        Arrow.rectTransform.localRotation = Quaternion.Euler(0, 0, angle) * Quaternion.Euler(0, elevation, 0);
+
+        // Determine the arrow's color.
+        var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
+        var color = selected ? SelectedColor : NormalColor;
+        if (Ping.Pings.Space == SonarPings.DisplaySpace.Sonar && !Vessel.OnSonar)
+            color.a *= 0.5f;
+        else if (Ping.Pings.Space == SonarPings.DisplaySpace.Vessel && !Vessel.OnMap)
+            color.a *= 0.5f;
+
+        var w = movement.WorldVelocity;
+        var max = serverUtils.GetServerData("maxspeed");
+        var t = Mathf.Clamp01(w.magnitude / max);
+        var scale = Mathf.Lerp(MinScale, MaxScale, t);
+
+        Arrow.color = color;
+        Arrow.transform.localScale = Vector3.one * scale;
     }
 
 

@@ -106,6 +106,7 @@ public class SonarPing : MonoBehaviour
         var p = VesselData.GetSonarPosition(Vessel.Id, Pings.Type);
         var player = VesselData.PlayerVessel;
         var visible = (Vessel.OnSonar || !Pings.HideIfNotOnSonar)
+            && (Vessel.OnMap || !Pings.HideIfNotOnMap)
             && (p.magnitude <= 1 || !Pings.HideIfOutOfRange)
             && (Vessel.Id != player || !Pings.HideIfPlayer);
 

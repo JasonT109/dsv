@@ -40,6 +40,9 @@ public class SonarPings : MonoBehaviour
     /** Whether to hide pings if not visible on sonar. */
     public bool HideIfNotOnSonar = true;
 
+    /** Whether to hide pings if not visible on map. */
+    public bool HideIfNotOnMap = false;
+
     /** Whether to hide pings if this is the player vessel. */
     public bool HideIfPlayer = true;
 
