@@ -261,21 +261,21 @@ public class DCCScreenManager : MonoBehaviour
             TestPattern();
         }
 
-        if (Input.GetButtonDown("ScreenLeft"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenLeft"))
         {
             controlScreen.SetActive(true);
             quadScreen.SetActive(false);
             surfaceScreen.SetActive(false);
         }
 
-        if (Input.GetButtonDown("ScreenMiddle"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenMiddle"))
         {
             controlScreen.SetActive(false);
             quadScreen.SetActive(true);
             surfaceScreen.SetActive(false);
         }
 
-        if (Input.GetButtonDown("ScreenRight"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenRight"))
         {
             controlScreen.SetActive(false);
             quadScreen.SetActive(false);

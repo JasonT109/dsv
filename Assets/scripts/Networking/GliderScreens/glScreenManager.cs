@@ -156,19 +156,19 @@ public class glScreenManager : Singleton<glScreenManager> {
 	void Update ()
     {
 
-        if (Input.GetButtonDown("ScreenLeft"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenLeft"))
         {
             screenID = 2;
             hasChanged = true;
         }
 
-        if (Input.GetButtonDown("ScreenMiddle"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenMiddle"))
         {
             screenID = 1;
             hasChanged = true;
         }
 
-        if (Input.GetButtonDown("ScreenRight"))
+        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenRight"))
         {
             screenID = 0;
             hasChanged = true;
