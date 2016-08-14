@@ -119,7 +119,7 @@ public class debugVesselUi : MonoBehaviour
 
         OnMapToggle.isOn = Vessel.OnMap;
         OnSonarToggle.isOn = Vessel.OnSonar;
-        NameLabel.text = Vessel.Name.ToUpper();
+        NameLabel.text = string.Format("{0}: {1}", Vessel.Id, Vessel.Name.ToUpper());
 
         _updating = false;
     }

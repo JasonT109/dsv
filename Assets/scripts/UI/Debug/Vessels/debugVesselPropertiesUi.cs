@@ -17,6 +17,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public debugVesselsUi Vessels;
     public Slider DepthSlider;
     public InputField DepthInput;
+    public Toggle[] IconToggles;
 
 
     [Header("Movement Components")]
@@ -114,6 +115,13 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.onValueChanged.AddListener(OnDepthSliderChanged);
         DepthInput.onEndEdit.AddListener(OnDepthInputChanged);
 
+        for (var i = 0; i < IconToggles.Length; i++)
+        {
+            var icon = (vesselData.Icon) i;
+            IconToggles[i].onValueChanged.AddListener(
+                on => OnIconToggled(icon, on));
+        }
+
         ConfigureMovementProperties();
     }
 
@@ -131,6 +139,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.value = Vessel.Depth;
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, Vessel.Depth);
         DepthInput.text = string.Format("{0:N1}", Vessel.Depth);
+        UpdateIconToggles();
 
         _updating = false;
 
@@ -172,6 +181,24 @@ public class debugVesselPropertiesUi : MonoBehaviour
         VesselData.SetDepth(Vessel.Id, result);
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, result);
         DepthSlider.value = result;
+    }
+
+    private void UpdateIconToggles()
+    {
+        var icon = Vessel.Icon;
+        for (var i = 0; i < IconToggles.Length; i++)
+        {
+            var toggle = IconToggles[i];
+            toggle.isOn = ((vesselData.Icon) i) == icon;
+        }
+    }
+
+    private void OnIconToggled(vesselData.Icon icon, bool value)
+    {
+        if (_updating)
+            return;
+
+        VesselData.SetIcon(Vessel.Id, icon);
     }
 
 
