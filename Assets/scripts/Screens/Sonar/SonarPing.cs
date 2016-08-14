@@ -21,6 +21,9 @@ public class SonarPing : MonoBehaviour
     /** Ping indicator. */
     public Renderer Indicator;
 
+    /** Rotation root (for keeping ping upright on screen. */
+    public Transform Rotator;
+
     /** Interval for position updates. */
     public float PositionUpdateInterval = 0;
 
@@ -74,6 +77,9 @@ public class SonarPing : MonoBehaviour
             _indicatorColor = Indicator.material.GetColor("_TintColor");
             Indicator.gameObject.SetActive(false);
         }
+
+        if (!Rotator)
+            Rotator = transform;
     }
 
     /** Enabling. */
@@ -104,7 +110,7 @@ public class SonarPing : MonoBehaviour
             && (Vessel.Id != player || !Pings.HideIfPlayer);
 
         gameObject.SetActive(visible);
-        transform.rotation = Quaternion.identity;
+        Rotator.rotation = Quaternion.identity;
 
         var t = Time.time;
         if (t > _nextPositionUpdate)

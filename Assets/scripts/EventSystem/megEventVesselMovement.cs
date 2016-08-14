@@ -67,7 +67,8 @@ namespace Meg.EventSystem
             if (!string.IsNullOrEmpty(triggerLabel))
                 return triggerLabel;
 
-            return string.Format("Vessel {0}: {1}, {2:n1}m/s", Vessel, Type, Speed);
+            var vesselName = serverUtils.VesselData.GetDebugName(Vessel);
+            return string.Format("{0}: {1}, {2:n1}m/s", vesselName, Type, Speed);
         }
 
 

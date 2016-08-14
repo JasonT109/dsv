@@ -60,6 +60,9 @@ public class vesselData : NetworkBehaviour
         public float Depth
             { get { return Position.z; } }
 
+        public vesselMovement Movement
+            { get { return serverUtils.VesselMovements.GetVesselMovement(Id); } }
+
         public Vessel(Vessel vessel)
         {
             Id = vessel.Id;
@@ -371,6 +374,18 @@ public class vesselData : NetworkBehaviour
     public string GetName(int id)
         { return GetVessel(id).Name; }
 
+    /** Return a debug name for the given vessel. */
+    public string GetDebugName(int id)
+    {
+        var name = string.Format("{0} {1}", id, GetName(id).ToUpper());
+        if (id == MegId)
+            name += " (MEG)";
+        else if (id == InterceptId)
+            name += " (INT)";
+
+        return name;
+    }
+
     /** Set a vessel's visibility (1-based index). */
     public void SetVisible(int id, bool visible)
         { SetVessel(id, new Vessel(GetVessel(id)) { OnMap = visible, OnSonar = visible }); }
@@ -615,9 +630,6 @@ public class vesselData : NetworkBehaviour
         AddVessel(new Vessel { Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), OnMap = true, OnSonar = true });
         AddVessel(new Vessel { Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), OnMap = true, OnSonar = true, Icon = Icon.Warning });
         AddVessel(new Vessel { Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), OnMap = true, OnSonar = true });
-
-        AddVessel(new Vessel { Name = "Light S01", Position = new Vector3(1.5f, 2f, 8200f), OnSonar = true });
-        AddVessel(new Vessel { Name = "Light S03", Position = new Vector3(1.5f, -1f, 8200f), OnSonar = true });
     }
 
     /** Get a vessel's name from configuration. */

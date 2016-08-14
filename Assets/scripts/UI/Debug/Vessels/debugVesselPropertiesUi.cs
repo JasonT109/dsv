@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.UI;
 
@@ -18,7 +19,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public Slider DepthSlider;
     public InputField DepthInput;
     public Toggle[] IconToggles;
-
+    public Button AddMovementEventButton;
 
     [Header("Movement Components")]
     public Transform MovementProperties;
@@ -60,6 +61,20 @@ public class debugVesselPropertiesUi : MonoBehaviour
         vesselMovements.SetVectorType,
         vesselMovements.HoldingType };
 
+    /** Whether it's possible to add events. */
+    private bool CanAddEvents
+    {
+        get
+        {
+            if (Vessel.Id <= 0 || !Vessel.Movement)
+                return false;
+
+            var file = megEventManager.Instance.File;
+            var group = file != null ? file.selectedGroup : null;
+            return (group != null && group.file.canAdd);
+        }
+    }
+
 
     // Members
     // ------------------------------------------------------------
@@ -100,6 +115,24 @@ public class debugVesselPropertiesUi : MonoBehaviour
         VesselData.SetName(Vessel.Id, value);
     }
 
+    /** Add a vessel movement event to the selected event group. */
+    public void AddMovementEvent()
+    {
+        if (!CanAddEvents)
+            return;
+
+        var file = megEventManager.Instance.File;
+        var group = file != null ? file.selectedGroup : null;
+        if (group == null || !group.file.canAdd)
+            return;
+
+        var vesselEvent = group.AddEvent(megEventType.VesselMovement) as megEventVesselMovement;
+        if (vesselEvent == null)
+            return;
+
+        vesselEvent.Vessel = Vessel.Id;
+        vesselEvent.Capture();
+    }
 
     // Private Methods
     // ------------------------------------------------------------
@@ -150,6 +183,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     {
         _updating = true;
         UpdateMovementProperties();
+        AddMovementEventButton.interactable = CanAddEvents;
         _updating = false;
     }
 
