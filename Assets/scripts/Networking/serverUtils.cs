@@ -401,6 +401,9 @@ namespace Meg.Networking
             "inputyaxis",
             "inputyaxis2",
             "inputzaxis",
+			"iscontroldecentmode",
+			"iscontrolmodeoverride",
+			"iscontroloverridestandard",
             "isautostabilised",
             "ispitchalsostabilised",
             "jet_heat_l",
@@ -674,6 +677,9 @@ namespace Meg.Networking
             { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y input axis (pitch)." } },
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y2 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
+			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode boolean." } },
+			{ "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
+			{ "iscontroloverridestandard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode when server is overriding." } },
             { "isautostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub roll is automatically stabilised."} },
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub pitch is also automatically stabilised."} },
             { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether pilot input is overridden by joysticks attached to the server."} },
@@ -1048,7 +1054,13 @@ namespace Meg.Networking
                 case "inputxaxis2":
                     return SubControl.inputXaxis2;
                 case "inputyaxis2":
-                    return SubControl.inputYaxis2;
+					return SubControl.inputYaxis2;
+				case "iscontroldecentmode":
+					return SubControl.isControlDecentMode ? 1 : 0;
+				case "iscontrolmodeoverride":
+					return SubControl.isControlModeOverride ? 1 : 0;
+				case "iscontroloverridestandard":
+					return SubControl.isControlOverrideStandard ? 1 : 0;
                 case "isautostabilised":
                     return SubControl.isAutoStabilised ? 1 : 0;
                 case "ispitchalsostabilised":
@@ -1442,6 +1454,12 @@ namespace Meg.Networking
                     return VesselMovements.Enabled;
                 case "disableinput":
                     return SubControl.disableInput;
+				case "iscontroldecentmode":
+					return SubControl.isControlDecentMode;
+				case "iscontrolmodeoverride":
+					return SubControl.isControlModeOverride;
+				case "iscontroloverridestandard":
+					return SubControl.isControlOverrideStandard;
                 case "isautostabilised":
                     return SubControl.isAutoStabilised;
                 case "ispitchalsostabilised":
