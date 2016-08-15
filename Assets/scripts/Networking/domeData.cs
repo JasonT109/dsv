@@ -5,6 +5,10 @@ using System.Collections;
 public class domeData : NetworkBehaviour
 {
 
+    /** Description for dome HUD parameters. */
+    public const string HudDescription =
+        "(0:None, 1:Inst, 2:Pilot 3:Hud, 4:Thrust, 5:Light, 6:Bat, 7:Map, 8:Sonar, 9:Track, 10:Comms, 11:Stats, 12:Progress)";
+
     // Enumerations
     // ------------------------------------------------------------
 
@@ -26,6 +30,7 @@ public class domeData : NetworkBehaviour
         DiveProgress = 12
     }
 
+    
 
     // Synchronization
     // ------------------------------------------------------------

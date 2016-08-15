@@ -97,6 +97,7 @@ public abstract class debugParameterUi : MonoBehaviour
     private void SetParameter(megParameter value)
     {
         _parameter = value;
+        InitParameterUi();
     }
 
     private void ConfigureUi()
