@@ -564,7 +564,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         var prefix = (value ?? current);
         var index = 0;
         var focus = -1;
-        foreach (var param in serverUtils.WriteableParameters)
+
+        foreach (var param in serverUtils.InterfaceParameters)
         {
             var entry = GetServerParamEntry(index);
             var on = string.Equals(param, current, StringComparison.OrdinalIgnoreCase);

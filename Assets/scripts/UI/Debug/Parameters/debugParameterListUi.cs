@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Meg.Networking;
 using Meg.UI;
 using UnityEngine.Events;
@@ -53,8 +54,7 @@ public class debugParameterListUi : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_serverParams.Count != serverUtils.WriteableParameters.Count)
-            UpdateServerParamList();
+        UpdateServerParamList();
     }
 
 
@@ -64,7 +64,7 @@ public class debugParameterListUi : MonoBehaviour
     private void UpdateServerParamList()
     {
         var index = 0;
-        foreach (var param in serverUtils.WriteableParameters)
+        foreach (var param in serverUtils.InterfaceParameters)
         {
             var entry = GetServerParamEntry(index);
             entry.Text.text = param;

@@ -270,6 +270,17 @@ namespace Meg.Networking
             }
         }
 
+        /** The set of all server data parameters that are visible in the editing interface. */
+        public static IEnumerable<string> InterfaceParameters
+        {
+            get
+            {
+                return WriteableParameters
+                    .Where(p => !GetServerDataInfo(p).hideInUi)
+                    .OrderBy(key => key);
+            }
+        }
+
         /** The set of all server data parameters. */
         private static HashSet<string> _parameters;
         public static HashSet<string> Parameters
@@ -548,6 +559,7 @@ namespace Meg.Networking
             public float minValue;
             public float maxValue;
             public bool readOnly;
+            public bool hideInUi;
             public string description;
 
             public ParameterInfo(ParameterType type)
@@ -556,6 +568,7 @@ namespace Meg.Networking
                 minValue = 0;
                 maxValue = 100;
                 readOnly = false;
+                hideInUi = false;
                 description = "";
             }
         }
@@ -666,9 +679,14 @@ namespace Meg.Networking
             { "domesquaretop", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "duetime", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "ETA / Time to Intercept (s)."} },
             { "duetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether ETA/TTI is automatically updated over time."} },
+            { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
+            { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
+            { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
+            { "heading", new ParameterInfo { readOnly = true, description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
             { "horizontalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the horizontal direction (m/s)." } },
             { "hydraulicpressure", new ParameterInfo { description = "Hydraulic system pressure (psi)."} },
             { "hydraulictemp", new ParameterInfo { description = "Hydraulic system temperature (°c)."} },
+            { "initiatemapevent", new ParameterInfo { description = "Used to signal a map camera angle change.", hideInUi = true } },
             { "inputxaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X input axis (yaw)." } },
             { "inputxaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X2 input axis." } },
             { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y input axis (pitch)." } },
@@ -681,6 +699,8 @@ namespace Meg.Networking
             { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees)." } },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees)." } },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
+            { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
+            { "megturnspeed", new ParameterInfo { description = "Speed that the Meg turns in the short-range sonar display."} },
             { "minspeed", new ParameterInfo { description = "Sub's minimum speed at 100% reverse throttle (m/s)."} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
@@ -689,6 +709,8 @@ namespace Meg.Networking
             { "o5", new ParameterInfo { description = "Oxygen tank 5 capacity (%) (legacy, maps to reserveOxygenTank2)."} },
             { "o6", new ParameterInfo { description = "Oxygen tank 6 capacity (%) (legacy, maps to reserveOxygenTank3)."} },
             { "o7", new ParameterInfo { description = "Oxygen tank 7 capacity (%) (legacy, maps to reserveOxygenTank4)."} },
+            { "o8", new ParameterInfo { description = "Oxygen tank 8 capacity (%) (legacy, maps to reserveOxygenTank5)."} },
+            { "o9", new ParameterInfo { description = "Oxygen tank 9 capacity (%) (legacy, maps to reserveOxygenTank6)."} },
             { "oxygen", new ParameterInfo { readOnly = true, description = "Overall oxygen tank percentage (%)."} },
             { "oxygenflow", new ParameterInfo { description = "Flow from the oxygen tanks (liters / min)."} },
             { "oxygentank1", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
@@ -697,6 +719,7 @@ namespace Meg.Networking
             { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current pitch angle (nose up/down, degrees)."} },
             { "pitchspeed", new ParameterInfo { description = "Sub's pitching speed (nose up / down)."} },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int, description = "Which vessel is occupied by the players (crew)."} },
+            { "pressure", new ParameterInfo { readOnly = true, description = "Current exterior pressure (bar)"} },
             { "reserveair", new ParameterInfo { readOnly = true, description = "Overall reserve air tank percentage (%)."} },
             { "reserveairtank1", new ParameterInfo { description = "Reserve air tank 1 capacity (%)."} },
             { "reserveairtank2", new ParameterInfo { description = "Reserve air tank 2 capacity (%)."} },
@@ -730,34 +753,18 @@ namespace Meg.Networking
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
             { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for front-scanning (short-range) sonar (%)."} },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
+            { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
             { "towwinchload", new ParameterInfo { description = "Tow winch load (kg)."} },
             { "variableballastpressure", new ParameterInfo { description = "Variable ballast pressure (psi)."} },
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
             { "velocity", new ParameterInfo { description = "Sub's current speed (m/s)." } },
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
-            { "vessel1depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 1 below sea level." } },
-            { "vessel1icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 1 (0 = normal, 1 = warning, etc.)"} },
-            { "vessel1vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 1 is visible (affects both map & sonar)."} },
-            { "vessel2depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 2 below sea level." } },
-            { "vessel2icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 2 (0 = normal, 1 = warning, etc.)" } },
-            { "vessel2vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 2 is visible (affects both map & sonar)." } },
-            { "vessel3depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 3 below sea level." } },
-            { "vessel3icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 3 (0 = normal, 1 = warning, etc.)" } },
-            { "vessel3vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 3 is visible (affects both map & sonar)." } },
-            { "vessel4depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 4 below sea level." } },
-            { "vessel4icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 4 (0 = normal, 1 = warning, etc.)" } },
-            { "vessel4vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 4 is visible (affects both map & sonar)." } },
-            { "vessel5depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 5 below sea level." } },
-            { "vessel5icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 5 (0 = normal, 1 = warning, etc.)" } },
-            { "vessel5vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 5 is visible (affects both map & sonar)." } },
-            { "vessel6depth", new ParameterInfo { maxValue = 12000, type = ParameterType.Int, description = "Depth of vessel 6 below sea level." } },
-            { "vessel6icon", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Icon for vessel 6 (0 = normal, 1 = warning, etc.)" } },
-            { "vessel6vis", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel 6 is visible (affects both map & sonar)." } },
             { "vesselmovementenabled", new ParameterInfo { description = "Whether vessel movement simulation is enabled during playback." } },
-            { "xpos", new ParameterInfo { description = "Sub's x coordinate (m)." } },
+            { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
+            { "xpos", new ParameterInfo { description = "Sub's X coordinate (m) (Note that this is in the XZ plane, where Y is up/down.)" } },
             { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360, description = "Sub's current yaw angle (heading, degrees)." } },
             { "yawspeed", new ParameterInfo { description = "Sub's yawing speed (heading change)."} },
-            { "ypos", new ParameterInfo { description = "Sub's y coordinate (m)." } },
+            { "zpos", new ParameterInfo { description = "Sub's Z coordinate (m) (Note that this is in the XZ plane, where Y is up/down.)" } },
         };
         
         /** Return information about a given parameter. */

@@ -203,26 +203,77 @@ public class vesselData : NetworkBehaviour
         Vessels.Add(vessel);
 
         // Register vessel dynamic server parameters.
+        serverUtils.RegisterServerValue(string.Format("vessel{0}vis", id),
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}visible", id), 
-            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether to display this vessel (affects both map and sonar)." });
         serverUtils.RegisterServerValue(string.Format("vessel{0}onmap", id), 
-            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether to display this vessel on the map." });
         serverUtils.RegisterServerValue(string.Format("vessel{0}onsonar", id), 
-            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool });
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether to display this vessel on the sonar." });
         serverUtils.RegisterServerValue(string.Format("vessel{0}posx", id),
-            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}posy", id),
-            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}posz", id),
-            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}depth", id),
-            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000 });
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 12000, description = "Vessel's current depth (m)"});
         serverUtils.RegisterServerValue(string.Format("vessel{0}speed", id),
-            serverUtils.DefaultParameterInfo);
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, description = "Vessel's current speed (m/s)." });
         serverUtils.RegisterServerValue(string.Format("vessel{0}velocity", id),
-            serverUtils.DefaultParameterInfo);
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}icon", id),
-            new serverUtils.ParameterInfo { maxValue = (int) Icon.Warning, type = serverUtils.ParameterType.Int });
+            new serverUtils.ParameterInfo { maxValue = (int) Icon.Warning, type = serverUtils.ParameterType.Int, description = "Vessel's icon (0:Normal, 1:Warning)" });
+
+        // Hide some of the old legacy parameters.
+        serverUtils.RegisterServerValue(string.Format("v{0}vis", id),
+            new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, hideInUi = true });
+        serverUtils.RegisterServerValue(string.Format("v{0}posx", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+        serverUtils.RegisterServerValue(string.Format("v{0}posy", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+        serverUtils.RegisterServerValue(string.Format("v{0}posz", id),
+            new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+        serverUtils.RegisterServerValue(string.Format("v{0}depth", id),
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 12000, hideInUi = true });
+        serverUtils.RegisterServerValue(string.Format("v{0}velocity", id),
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
+
+        // Hide old meg parameters.
+        if (id == MegId)
+        {
+            serverUtils.RegisterServerValue(string.Format("meg{0}vis", id),
+                new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("meg{0}posx", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("meg{0}posy", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("meg{0}posz", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("meg{0}depth", id),
+                new serverUtils.ParameterInfo { minValue = 0, maxValue = 12000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("meg{0}velocity", id),
+                new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
+        }
+
+        // Hide old intercept parameters.
+        if (id == InterceptId)
+        {
+            serverUtils.RegisterServerValue(string.Format("intercept{0}vis", id),
+                new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("intercept{0}posx", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("intercept{0}posy", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("intercept{0}posz", id),
+                new serverUtils.ParameterInfo { minValue = -5000, maxValue = 5000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("intercept{0}depth", id),
+                new serverUtils.ParameterInfo { minValue = 0, maxValue = 12000, hideInUi = true });
+            serverUtils.RegisterServerValue(string.Format("intercept{0}velocity", id),
+                new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
+        }
+
     }
 
     /** Remove the last vessel (if possible). */
