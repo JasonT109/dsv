@@ -202,6 +202,14 @@ public class debugParameterGroupUi : MonoBehaviour
             File.selectedGroup = null;
     }
 
+    /** Return the UI for a given parameter. */
+    public debugParameterUi GetParameterUi(megParameter parameter)
+        { return _parameters.FirstOrDefault(p => p.Parameter == parameter); }
+
+    /** Return the UI for a given value parameter. */
+    public debugParameterValueUi GetParameterValueUi(megParameter parameter)
+        { return GetParameterUi(parameter) as debugParameterValueUi; }
+
 
     // Private Methods
     // ------------------------------------------------------------

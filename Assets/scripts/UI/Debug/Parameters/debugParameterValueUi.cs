@@ -29,7 +29,22 @@ public class debugParameterValueUi : debugParameterUi
         { get { return Parameter as megParameterValue; } }
 
 
-    // Private Methods
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Set the name of this parameter. */
+    public void SetName(string valueName)
+    {
+        _updating = true;
+        ValueParameter.serverParam = valueName;
+        UpdateServerParamInput();
+        UpdateServerValueInput();
+        UpdateServerValueSlider();
+        _updating = false;
+    }
+
+
+    // Protected Methods
     // ------------------------------------------------------------
 
     protected override void ConfigureParameterUi()

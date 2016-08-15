@@ -587,9 +587,6 @@ public class debugEventPropertiesUi : MonoBehaviour
                 GetServerParamEntry(focus).GetComponent<RectTransform>(), 0.25f);
     }
 
-    private bool IsParameterPrefixed(string param, string prefix)
-        { return param.StartsWith(prefix, StringComparison.InvariantCultureIgnoreCase); }
-
     private debugServerParamEntryUi GetServerParamEntry(int i)
     {
         if (i >= _serverParams.Count)

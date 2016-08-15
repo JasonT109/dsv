@@ -555,6 +555,7 @@ namespace Meg.Networking
             public float minValue;
             public float maxValue;
             public bool readOnly;
+            public string description;
 
             public ParameterInfo(ParameterType type)
             {
@@ -562,6 +563,7 @@ namespace Meg.Networking
                 minValue = 0;
                 maxValue = 100;
                 readOnly = false;
+                description = "";
             }
         }
 
