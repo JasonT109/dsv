@@ -29,6 +29,9 @@ public class debugParameterGroupUi : MonoBehaviour
     /** Minimize toggle. */
     public Toggle MinimizeToggle;
 
+    /** Name editing toggle. */
+    public Toggle NameEditToggle;
+
 
     [Header("Prefabs")]
 
@@ -101,6 +104,15 @@ public class debugParameterGroupUi : MonoBehaviour
     // Public Methods
     // ------------------------------------------------------------
 
+    /** Toggle name input editability. */
+    public void ToggleNameEditing()
+    {
+        NameInput.interactable = !NameInput.interactable;
+
+        if (NameInput.interactable)
+            NameInput.Select();
+    }
+
     /** Sets the group's name. */
     public void NameInputChanged(string value)
     {
@@ -108,6 +120,12 @@ public class debugParameterGroupUi : MonoBehaviour
             return;
 
         _group.id = value;
+
+        if (NameEditToggle.isOn)
+        {
+            NameEditToggle.isOn = false;
+            NameInput.interactable = false;
+        }
     }
 
     /** Toggle an parameter's minimized state. */

@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"14/08/16 10:22:42.1",
+		"utc":"15/08/16 10:07:48.9",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
-			"id":"Group",
+			"id":"GLIDER WING DAMAGE",
+			"minimized":true,
 			"events":[
 				{
 					"type":"Value",

@@ -82,6 +82,9 @@ namespace Meg.EventSystem
         /** General signature for file events. */
         public delegate void megEventFileHandler(megEventFile file);
 
+        /** Signature for file group events. */
+        public delegate void megEventFileGroupHandler(megEventFile file, megEventGroup group);
+
         /** Event fired when file is loaded. */
         public megEventFileHandler Loaded;
 
@@ -91,7 +94,13 @@ namespace Meg.EventSystem
         /** Event fired when file is cleared. */
         public megEventFileHandler Cleared;
 
-    
+        /** Event fired when a group is added to the file. */
+        public megEventFileGroupHandler GroupAdded;
+
+        /** Event fired when a group is removed from the file. */
+        public megEventFileGroupHandler GroupRemoved;
+
+
         // Structures
         // ------------------------------------------------------------
 
@@ -249,6 +258,9 @@ namespace Meg.EventSystem
             if (running)
                 group.Start();
 
+            if (GroupAdded != null)
+                GroupAdded(this, group);
+
             return group;
         }
 
@@ -266,6 +278,9 @@ namespace Meg.EventSystem
             if (running)
                 group.Start();
 
+            if (GroupAdded != null)
+                GroupAdded(this, group);
+
             return group;
         }
 
@@ -278,6 +293,14 @@ namespace Meg.EventSystem
         {
             group.Stop();
             groups.Remove(group);
+
+            if (selectedGroup == group)
+                selectedGroup = null;
+            if (selectedEvent != null && selectedEvent.group == group)
+                selectedEvent = null;
+
+            if (GroupRemoved != null)
+                GroupRemoved(this, group);
         }
 
         /** Clear the file of all groups. */
@@ -285,6 +308,9 @@ namespace Meg.EventSystem
         {
             Stop();
             groups.Clear();
+
+            selectedGroup = null;
+            selectedEvent = null;
 
             if (Cleared != null)
                 Cleared(this);

@@ -492,20 +492,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         ServerValueInput.text = string.Format("{0:N2}", ValueEvent.serverValue);
     }
 
-    public void ServerParamInputChanged(string value)
+    public void ToggleParameterList()
     {
-        if (_initializing)
-            return;
-
-        ShowServerParamList();
-        UpdateServerParamList(value);
-    }
-
-    public void ServerParamInputClicked()
-    {
-        if (_initializing)
-            return;
-
         if (ServerParamEntriesScrollView.gameObject.activeSelf)
             HideServerParamList();
         else
@@ -513,6 +501,18 @@ public class debugEventPropertiesUi : MonoBehaviour
             ShowServerParamList();
             EventSystem.SetSelectedGameObject(ServerParamEntriesScrollView.gameObject);
         }
+    }
+
+    public void ServerParamInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        UpdateServerParamList(value);
+    }
+
+    public void ServerParamInputClicked()
+    {
     }
 
     public void ServerParamInputEndEdit(string value)
@@ -557,6 +557,9 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerParamList(string value = null, bool recenter = true)
     {
+        if (!ServerParamEntriesScrollView.gameObject.activeSelf)
+            return;
+
         var current = ValueEvent.serverParam;
         var prefix = (value ?? current);
         var index = 0;
