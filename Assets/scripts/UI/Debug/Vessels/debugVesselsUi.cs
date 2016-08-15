@@ -98,8 +98,14 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Add a vessel to the vessel list. */
     public void AddVessel()
     {
+        var playerDepth = VesselData.GetDepth(VesselData.PlayerVessel);
         serverUtils.PostAddVessel(new vesselData.Vessel
-            { Name = "Unknown", OnSonar = true });
+        {
+            Name = "Unknown",
+            Position = new Vector3(0, 0, playerDepth),
+            ColorOnMap = vesselData.DefaultColorOnMap,
+            ColorOnSonar = vesselData.DefaultColorOnSonar
+        });
     }
 
     /** Remove the last vessel in list. */

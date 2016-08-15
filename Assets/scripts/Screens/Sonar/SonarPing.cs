@@ -39,6 +39,31 @@ public class SonarPing : MonoBehaviour
     /** Vessel represented by this ping. */
     public vesselData.Vessel Vessel { get; set; }
 
+    /** Depth offset used to control this ping's depth order (optional). */
+    public float DepthOffset { get; set; }
+
+    /** Color for this ping. */
+    public Color Color
+    {
+        get
+        {
+            return Pings.Space == SonarPings.DisplaySpace.Sonar
+                ? Vessel.ColorOnSonar
+                : Vessel.ColorOnMap;
+        }
+    }
+
+    /** Whether ping is visible. */
+    public bool Visible
+    {
+        get
+        {
+            return Pings.Space == SonarPings.DisplaySpace.Sonar
+                ? Vessel.OnSonar
+                : Vessel.OnMap;
+        }
+    }
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -116,17 +141,14 @@ public class SonarPing : MonoBehaviour
         var t = Time.time;
         if (t > _nextPositionUpdate)
         {
-            transform.localPosition = Pings.VesselToPingSpace(Vessel);
+            transform.localPosition = Pings.VesselToPingSpace(Vessel) + new Vector3(0, 0, DepthOffset);
             _nextPositionUpdate = t + PositionUpdateInterval;
         }
 
         NameLabel.Text = Vessel.Name.ToUpper();
-
         if (t > _nextDepthUpdate)
-        {
-            var delta = Vessel.Depth - VesselData.GetDepth(player);
-            var rounded = graphicsMaths.roundToInterval(delta, 5);
-            DepthLabel.Text = string.Format("{0}{1:n0}m", rounded > 0 ? "+" : "", rounded);
+        { 
+            UpdateDepth();
             _nextDepthUpdate = t + DepthUpdateInterval;
         }
     }
@@ -170,6 +192,22 @@ public class SonarPing : MonoBehaviour
             yield return wait;
         }
         
+    }
+
+    /** Update the ping's depth display. */
+    private void UpdateDepth()
+    {
+        if (Pings.RelativeDepth)
+        {
+            var player = VesselData.PlayerVessel;
+            var delta = Vessel.Depth - VesselData.GetDepth(player);
+            var rounded = graphicsMaths.roundToInterval(delta, 5);
+            DepthLabel.Text = string.Format("{0}{1:n0}m", rounded > 0 ? "+" : "", rounded);
+        }
+        else
+        {
+            DepthLabel.Text = string.Format("{0:n0}m", Vessel.Depth);
+        }
     }
 
 

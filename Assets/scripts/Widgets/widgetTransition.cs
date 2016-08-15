@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class widgetTransition : MonoBehaviour {
@@ -23,6 +23,9 @@ public class widgetTransition : MonoBehaviour {
 
     void Start ()
     {
+        if (!parentObject)
+            return;
+
         //create a new transform for the child object, this we can then offset to make the box visually more appealing
         if (repositionChildren)
         {
@@ -51,6 +54,9 @@ public class widgetTransition : MonoBehaviour {
 
     void OnEnable()
     {
+        if (!parentObject)
+            return;
+        
         c = transform.GetChild(0);
 
         if (scaleOnEnable)
@@ -82,6 +88,9 @@ public class widgetTransition : MonoBehaviour {
 
     void Update ()
     {
+        if (!parentObject)
+            return;
+
         //set the root position to them same as our spawning button
         transform.position = parentObject.transform.position;
 

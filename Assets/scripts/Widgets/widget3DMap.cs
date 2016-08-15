@@ -147,12 +147,15 @@ public class widget3DMap : MonoBehaviour {
         if (deactivateChildrenOnScroll)
         {
             //set all children buttons to in active
-            foreach (GameObject b in gameObject.GetComponentInChildren<buttonGroup>().buttons)
+            var buttonGroup = gameObject.GetComponentInChildren<buttonGroup>();
+            foreach (var b in buttonGroup.buttons)
             {
-                if (b.GetComponent<buttonControl>().active)
-                {
-                    b.GetComponent<buttonControl>().toggleButton(b);
-                }
+                if (!b)
+                    continue;
+
+                var button = b.GetComponent<buttonControl>();
+                if (button && button.active)
+                    button.toggleButton(b);
             }
         }
     }

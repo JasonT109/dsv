@@ -30,6 +30,13 @@ public class vesselData : NetworkBehaviour
     /** Scaling factor for converting vessel XY space into sub world space. */
     public const float VesselToWorldScale = 1000f;
 
+    /** Default vessel color on map. */
+    public static readonly Color DefaultColorOnMap = new Color(0.196f, 0.643f, 0.878f, 1);
+
+    /** Default vessel color on sonar. */
+    public static readonly Color DefaultColorOnSonar = new Color(0.196f, 0.643f, 0.878f, 1);
+
+
 
     // Enumerations
     // ------------------------------------------------------------
@@ -56,6 +63,8 @@ public class vesselData : NetworkBehaviour
         public bool OnMap;
         public bool OnSonar;
         public Icon Icon;
+        public Color ColorOnSonar;
+        public Color ColorOnMap;
 
         public float Depth
             { get { return Position.z; } }
@@ -72,6 +81,8 @@ public class vesselData : NetworkBehaviour
             OnMap = vessel.OnMap;
             OnSonar = vessel.OnSonar;
             Icon = vessel.Icon;
+            ColorOnSonar = vessel.ColorOnSonar;
+            ColorOnMap = vessel.ColorOnMap;
         }
     };
 
@@ -414,6 +425,22 @@ public class vesselData : NetworkBehaviour
     public Icon GetIcon(int id)
         { return GetVessel(id).Icon; }
 
+    /** Set a vessel's sonar color (1-based index). */
+    public void SetColorOnSonar(int id, Color color)
+        { SetVessel(id, new Vessel(GetVessel(id)) { ColorOnSonar = color }); }
+
+    /** Return a vessel's current sonar color. */
+    public Color GetColorOnSonar(int id)
+        { return GetVessel(id).ColorOnSonar; }
+
+    /** Set a vessel's map color (1-based index). */
+    public void SetColorOnMap(int id, Color color)
+        { SetVessel(id, new Vessel(GetVessel(id)) { ColorOnMap = color }); }
+
+    /** Return a vessel's current map color. */
+    public Color GetColorOnMap(int id)
+        { return GetVessel(id).ColorOnMap; }
+
     /** Set a vessel's speed (1-based index). */
     public void SetSpeed(int id, float speed)
         { SetVessel(id, new Vessel(GetVessel(id)) { Speed = speed }); }
@@ -623,24 +650,41 @@ public class vesselData : NetworkBehaviour
     [Server]
     private void InitializeVessels()
     {
-        // Populate predefined vessels that always exist in the simulation.
-        AddVessel(new Vessel { Name = GetNameFromConfig(1), Position = new Vector3(-1f, -0.5f, 2000f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Name = GetNameFromConfig(2), Position = new Vector3(-2f, 2f, 8900f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Name = GetNameFromConfig(3), Position = new Vector3(2f, -2f, 7300f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Name = GetNameFromConfig(4), Position = new Vector3(0f, 0f, 7700f), OnMap = true, OnSonar = true });
-        AddVessel(new Vessel { Name = GetNameFromConfig(5), Position = new Vector3(0f, -2.5f, 8200f), OnMap = true, OnSonar = true, Icon = Icon.Warning });
-        AddVessel(new Vessel { Name = GetNameFromConfig(6), Position = new Vector3(2f, 2f, 8200f), OnMap = true, OnSonar = true });
+        // Populate predefined vessels from configuration.
+        var vessels = Configuration.GetJson("vessels");
+        if (vessels.IsArray)
+            for (var i = 0; i < vessels.Count; i++)
+                AddVesselFromConfig(vessels[i]);
     }
 
     /** Get a vessel's name from configuration. */
-    private string GetNameFromConfig(int vessel)
+    [Server]
+    private void AddVesselFromConfig(JSONObject json)
     {
-        // Retrieve vessel name from configuration.
-        var vesselNames = Configuration.GetJson("vessel-names");
-        if (vesselNames && vesselNames.IsArray && vessel <= vesselNames.Count)
-            return vesselNames[vessel - 1].str;
+        var vessel = new Vessel
+        {
+            Name = Unknown,
+            ColorOnMap = DefaultColorOnMap,
+            ColorOnSonar = DefaultColorOnSonar
+        };
 
-        return Unknown;
+        json.GetField(ref vessel.Name, "name");
+        json.GetField(ref vessel.ColorOnMap, "coloronmap");
+        json.GetField(ref vessel.ColorOnSonar, "coloronsonar");
+        json.GetField(ref vessel.Position, "position");
+        json.GetField(ref vessel.OnMap, "onmap");
+        json.GetField(ref vessel.OnSonar, "onsonar");
+
+        var iconName = "normal";
+        try
+        {
+            json.GetField(ref iconName, "icon");
+            vessel.Icon = (Icon) Enum.Parse(typeof(Icon), iconName, true);
+        }
+        catch (Exception)
+            { Debug.LogWarning("Unrecognized vessel icon in config: '" + iconName + "'."); }
+
+        AddVessel(vessel);
     }
 
     /** Parse a server data value key into vessel id and parameter key. */
