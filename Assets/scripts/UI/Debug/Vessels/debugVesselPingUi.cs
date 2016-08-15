@@ -45,6 +45,13 @@ public class debugVesselPingUi : MonoBehaviour
         { get { return serverUtils.VesselData; } }
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Graphical elements in the ping. */
+    private Graphic[] _graphics;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
@@ -62,6 +69,8 @@ public class debugVesselPingUi : MonoBehaviour
 
         if (PressGesture)
             PressGesture.Pressed += OnPressed;
+
+        _graphics = transform.GetComponentsInChildren<Graphic>();
     }
 
     void Update()
@@ -78,12 +87,16 @@ public class debugVesselPingUi : MonoBehaviour
             color.a *= 0.5f;
 
         // Update UI elements accordingly.
-        NameLabel.color = color;
-        Icon.color = color;
+        for (var i = 0; i < _graphics.Length; i++)
+            _graphics[i].color = color;
+
+        // NameLabel.color = color;
+        // Icon.color = color;
 
         var transforming = TransformGesture.State == Gesture.GestureState.Changed;
 	    Ping.enabled = !transforming;
-        
+        Ping.AutoPulse(selected ? 1 : 0);
+
         // Push selected ping in front of others so it gets preferentially transformed.
         Ping.DepthOffset = selected ? -1 : 0;
 

@@ -3,6 +3,7 @@ using System.Collections;
 using DG.Tweening;
 using Meg.Maths;
 using Meg.Networking;
+using UnityEngine.UI;
 
 public class SonarPing : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class SonarPing : MonoBehaviour
     public widgetText DepthLabel;
 
     /** Ping indicator. */
-    public Renderer Indicator;
+    public GameObject Indicator;
 
     /** Rotation root (for keeping ping upright on screen. */
     public Transform Rotator;
@@ -99,7 +100,14 @@ public class SonarPing : MonoBehaviour
         if (Indicator)
         {
             _indicatorScale = Indicator.transform.localScale;
-            _indicatorColor = Indicator.material.GetColor("_TintColor");
+
+            var r = Indicator.GetComponent<MeshRenderer>();
+            var g = Indicator.GetComponent<Graphic>();
+            if (r)
+                _indicatorColor = r.material.GetColor("_TintColor");
+            else if (g)
+                _indicatorColor = g.color;
+
             Indicator.gameObject.SetActive(false);
         }
 
@@ -165,6 +173,18 @@ public class SonarPing : MonoBehaviour
         return v;
     }
 
+    /** Start or stop auto-pulse indicator. */
+    public void AutoPulse(float interval)
+    {
+        if (Mathf.Approximately(AutoPulseInterval, interval))
+            return;
+
+        AutoPulseInterval = interval;
+        StopAllCoroutines();
+        if (AutoPulseInterval > 0)
+            StartCoroutine(AutoPulseRoutine(interval));
+    }
+
     /** Pulse this ping's visual indicator. */
     public void Pulse()
     {
@@ -174,8 +194,19 @@ public class SonarPing : MonoBehaviour
         Indicator.gameObject.SetActive(true);
         Indicator.transform.localScale = Vector3.zero;
         Indicator.transform.DOScale(_indicatorScale, 0.5f);
-        Indicator.material.SetColor("_TintColor", _indicatorColor);
-        Indicator.material.DOColor(new Color(0,0,0,0), "_TintColor", 0.5f).SetDelay(0.25f);
+
+        var r = Indicator.GetComponent<MeshRenderer>();
+        var g = Indicator.GetComponent<Graphic>();
+        if (r)
+        {
+            r.material.SetColor("_TintColor", _indicatorColor);
+            r.material.DOColor(new Color(0, 0, 0, 0), "_TintColor", 0.5f).SetDelay(0.25f);
+        }
+        else if (g)
+        {
+            g.color = _indicatorColor;
+            g.DOColor(new Color(0, 0, 0, 0), 0.5f).SetDelay(0.25f);
+        }
     }
 
 

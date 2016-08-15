@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class ObjectSpawner : MonoBehaviour
 {
@@ -11,12 +12,16 @@ public class ObjectSpawner : MonoBehaviour
 
     public bool Siblings;
 
+    private Graphic _graphic;
+
 
     private Vector3 _lastSpawnPosition;
 
 	void OnEnable()
 	{
         _lastSpawnPosition = transform.localPosition;
+	    _graphic = GetComponentInChildren<Graphic>();
+
         StopAllCoroutines();
 	    StartCoroutine(SpawnRoutine());
 	}
@@ -41,7 +46,17 @@ public class ObjectSpawner : MonoBehaviour
 
             go.transform.position = transform.position;
             go.transform.rotation = transform.rotation;
+
+            // Inherit color from spawner.
+            if (_graphic)
+                ApplyColor(go);
         }
+    }
+
+    private void ApplyColor(GameObject go)
+    {
+        var g = go.GetComponentInChildren<Graphic>();
+        g.color = _graphic.color;
     }
 
 }
