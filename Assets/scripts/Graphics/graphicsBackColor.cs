@@ -6,10 +6,12 @@ public class graphicsBackColor : MonoBehaviour
     private GameObject colourThemeObj;
     private Color bColor;
     private Color hColor;
+    private Color kColor;
     private Renderer r;
     private Material m;
     public bool useBackgroundColor = true;
     public bool useHighlightColor = false;
+    public bool useKeyColor = false;
     public bool overrideAlpha = false;
 
     public float BrightnessScale = 1;
@@ -25,6 +27,12 @@ public class graphicsBackColor : MonoBehaviour
         if (useHighlightColor)
         {
             var color = AdjustColor(hColor);
+            m.color = color;
+            m.SetColor("_TintColor", color);
+        }
+        if (useKeyColor)
+        {
+            var color = AdjustColor(kColor);
             m.color = color;
             m.SetColor("_TintColor", color);
         }
@@ -45,6 +53,7 @@ public class graphicsBackColor : MonoBehaviour
         {
             bColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.backgroundColor;
             hColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.highlightColor;
+            kColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.keyColor;
             updateColor();
         }
     }
