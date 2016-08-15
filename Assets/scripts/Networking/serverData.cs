@@ -833,8 +833,7 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
             default:
-                SetDynamicValue(new serverUtils.ServerValue
-                    { key = valueName.ToLower(), value = newValue }, add);
+                SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
         }
 
