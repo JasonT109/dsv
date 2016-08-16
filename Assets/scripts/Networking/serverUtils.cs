@@ -357,6 +357,9 @@ namespace Meg.Networking
             "dccquadscreen2",
             "dccquadscreen3",
             "dccquadscreen4",
+            "dccscreen3content",
+            "dccscreen4content",
+            "dccscreen5content",
             "depth",
             "disableinput",
             "divertpowertothrusters",
@@ -1229,6 +1232,12 @@ namespace Meg.Networking
                     return DCCScreenData.DCCquadScreen4;
                 case "dccfullscreen":
                     return DCCScreenData.DCCfullscreen;
+                case "dccscreen3content":
+                    return DCCScreenData.DCCScreen3Content;
+                case "dccscreen4content":
+                    return DCCScreenData.DCCScreen4Content;
+                case "dccscreen5content":
+                    return DCCScreenData.DCCScreen5Content;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":

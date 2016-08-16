@@ -5,10 +5,10 @@ using Meg.DCC;
 
 public class DCCScreenManager : MonoBehaviour
 {
-    [Header("Left Screen")]
+    [Header("Screen 1")]
     public GameObject controlScreen;
 
-    [Header("Middle Screen")]
+    [Header("Screen 2")]
     public GameObject quadScreen;
     public DCCQuadBox[] quadBoxes = new DCCQuadBox[5];
     public DCCWindow[] quadWindows;
@@ -17,11 +17,18 @@ public class DCCScreenManager : MonoBehaviour
     public int[] testPattern3 = { 2, 3, 4, 1, 5 };
     public int[] testPattern4 = { 1, 2, 3, 4, 5 };
 
-    [Header("Right Screen")]
-    public GameObject surfaceScreen;
+    [Header("Screen 3")]
+    public GameObject screen3;
 
     [Header("Registered non quad windows")]
     public DCCWindow[] nonQuadWindows;
+
+    [Header("Control screen buttons")]
+    public buttonControl resetButton;
+    public buttonControl clearButton;
+
+    [Header("Swipe indicator")]
+    public GameObject swipeIndicator;
 
     private int currentTestPattern = 1;
     private float initTimer = 0;
@@ -174,11 +181,9 @@ public class DCCScreenManager : MonoBehaviour
         }
     }
 
-    /** No quad windows register with this so we can sort them. */
+    /** Non quad windows register with this so we can sort them. */
     public void RegisterWindow(DCCWindow newWindow)
     {
-        //Debug.Log("Registering window: " + newWindow);
-
         if (nonQuadWindows.Length == 0)
         {
             nonQuadWindows = new DCCWindow[1];
@@ -196,9 +201,18 @@ public class DCCScreenManager : MonoBehaviour
         }
     }
 
+    /** Removes a window from the nonQuadWindows array. Called by a DCCWindow onDisable and ensures we don't have invisible windows in the sort order. */
+    public void UnregisterWindow(DCCWindow oldWindow)
+    {
+        int x = System.Array.IndexOf(nonQuadWindows, oldWindow);
+
+        nonQuadWindows = RemoveAt(nonQuadWindows, x);
+    }
+
+    /** Removes a window from a specified array at index. */
     DCCWindow[] RemoveAt(DCCWindow[] source, int index)
     {
-        Debug.Log("Removing window  " + source[index] + "at index: " + index);
+        //Debug.Log("Removing window  " + source[index] + "at index: " + index);
 
         DCCWindow[] dest = new DCCWindow[source.Length - 1];
         if (index > 0)
@@ -210,12 +224,13 @@ public class DCCScreenManager : MonoBehaviour
         return dest;
     }
 
+    /** Pushes a window to the front of the sorting order. */
     public void PushWindowToFront(DCCWindow focusedWindow)
     {
         //find the index of this window
         int x = System.Array.IndexOf(nonQuadWindows, focusedWindow);
 
-        Debug.Log("Window at index: " + x + " to be removed from shunted forward.");
+        //Debug.Log("Window at index: " + x + " to be removed from shunted forward.");
 
         //get an array with this removed, but in its original order
         DCCWindow[] tempWindows = RemoveAt(nonQuadWindows, x);
@@ -227,6 +242,60 @@ public class DCCScreenManager : MonoBehaviour
         nonQuadWindows[nonQuadWindows.Length - 1] = focusedWindow;
     }
 
+    /** Sets any window with specified content enabled/disabled on the specified screen. */
+    public void SetWindowActive(DCCWindow.contentID content, DCCScreenID._screenID id, bool state)
+    {
+        string screen = "dccscreen3content";
+
+        if (id == DCCScreenID._screenID.screen4)
+            screen = "dccscreen4content";
+        if (id == DCCScreenID._screenID.screen5)
+            screen = "dccscreen5content";
+
+        //get current content int and bit or against the content
+        int currentContent = (int)serverUtils.GetServerData(screen);
+        if (state)
+            currentContent = currentContent | (1 << 1 * ((int)content));
+        else
+            currentContent = currentContent ^ (1 << 1 * ((int)content));
+
+        serverUtils.PostServerData(screen, currentContent);
+
+        Debug.Log(GetIntBinaryString(currentContent));
+    }
+
+    /** Debug function to check binary values. */
+    static string GetIntBinaryString(int n)
+    {
+        char[] b = new char[32];
+        int pos = 31;
+        int i = 0;
+
+        while (i < 32)
+        {
+            if ((n & (1 << i)) != 0)
+            {
+                b[pos] = '1';
+            }
+            else
+            {
+                b[pos] = '0';
+            }
+            pos--;
+            i++;
+        }
+        return new string(b);
+    }
+
+    /** Resets the content of the top screens. */
+    public void ResetTopWindows()
+    {
+        serverUtils.PostServerData("dccscreen3content", 0);
+        serverUtils.PostServerData("dccscreen4content", 0);
+        serverUtils.PostServerData("dccscreen5content", 0);
+    }
+
+    /** Sorts the windows on the active screen. Each window has 2 units of depth, so each window should be carefull authored within this range. */
     void SetWindowsSortDepth()
     {
         float zDepth = 20;
@@ -243,7 +312,6 @@ public class DCCScreenManager : MonoBehaviour
         initTime += Time.deltaTime;
     }
 
-    // Update is called once per frame
     void Update ()
     {
         if (!initialised)
@@ -256,30 +324,54 @@ public class DCCScreenManager : MonoBehaviour
         CheckForOrphanedWindows();
         SetWindowsSortDepth();
 
+        if (resetButton.pressed)
+            ResetTopWindows();
+
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
             TestPattern();
         }
 
-        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenLeft"))
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha1))
         {
             controlScreen.SetActive(true);
             quadScreen.SetActive(false);
-            surfaceScreen.SetActive(false);
+            screen3.SetActive(false);
+            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
         }
 
-        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenMiddle"))
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha2))
         {
             controlScreen.SetActive(false);
             quadScreen.SetActive(true);
-            surfaceScreen.SetActive(false);
+            screen3.SetActive(false);
+            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
         }
 
-        if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenRight"))
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha3))
         {
             controlScreen.SetActive(false);
             quadScreen.SetActive(false);
-            surfaceScreen.SetActive(true);
+            screen3.SetActive(true);
+            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+        }
+
+
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha4))
+        {
+            controlScreen.SetActive(false);
+            quadScreen.SetActive(false);
+            screen3.SetActive(true);
+            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
+        }
+
+
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
+        {
+            controlScreen.SetActive(false);
+            quadScreen.SetActive(false);
+            screen3.SetActive(true);
+            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
         }
     }
 }
