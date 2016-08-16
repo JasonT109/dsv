@@ -43,6 +43,12 @@ public class SubControl : NetworkBehaviour
     public float MaxSpeed = 200f;
     [SyncVar]
     public float MinSpeed = -100f;
+	[SyncVar]
+	public bool isControlDecentMode = false;
+	[SyncVar]
+	public bool isControlModeOverride = false;
+	[SyncVar]
+	public bool isControlOverrideStandard = false;
 
 
     private float currentThrust = 0.0f;
@@ -95,38 +101,14 @@ public class SubControl : NetworkBehaviour
         if (movement && movement.Active)
             return;
 
-        Vector3 RollExtract = new Vector3(0,0,-1);
-        Vector3 PitchExtract = new Vector3(-1,0,0);
-        Vector3 YawExtract = new Vector3(0,1,0);
-
-        if (!disableInput)
-        {
-            // Apply the orientation forces
-            rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-            rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
-            rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
-
-            // Adjust mix for pitch when doing a banking turn.
-            rb.AddRelativeTorque(PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
-
-            // Apply the thrust forces.
-            if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
-                currentThrust = inputZaxis * (Acceleration * thrust);
-            
-            if (currentThrust > MaxSpeed)
-                currentThrust = MaxSpeed - 0.01f;
-            
-            if (currentThrust < MinSpeed)
-                currentThrust = MinSpeed + 0.01f;
-
-            rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
-        }
-
-        // If roll is almost right, stop adjusting (PID dampening todo here?)
-        if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
-            AutoStabilise();
-        else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
-            AutoStabilise();
+		if(!isControlDecentMode)
+		{
+			ApplyStandardControlForces();
+		}
+		else
+		{
+			ApplyDecentControlForces();
+		}
 
     }
 
@@ -156,10 +138,80 @@ public class SubControl : NetworkBehaviour
 
         if(!IsPitchAlsoStabilised)
         {
-            torqueVector = Vector3.Project(torqueVector, transform.forward);
+			if(!isControlDecentMode)
+			{
+				torqueVector = Vector3.Project(torqueVector, transform.forward);
+			}
         }
 
         rb.AddTorque(torqueVector * speed * speed);
     }
+
+	void ApplyStandardControlForces()
+	{
+		Vector3 RollExtract = new Vector3(0,0,1);
+		Vector3 PitchExtract = new Vector3(-1,0,0);
+		Vector3 YawExtract = new Vector3(0,1,0);
+
+		if (!disableInput)
+		{
+			// Apply the orientation forces
+			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
+			rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
+			rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+
+			// Adjust mix for pitch when doing a banking turn.
+			rb.AddRelativeTorque(-PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
+
+			// Apply the thrust forces.
+			if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
+				currentThrust = inputZaxis * (Acceleration * thrust);
+
+			if (currentThrust > MaxSpeed)
+				currentThrust = MaxSpeed - 0.01f;
+
+			if (currentThrust < MinSpeed)
+				currentThrust = MinSpeed + 0.01f;
+
+			rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
+		}
+
+		// If roll is almost right, stop adjusting (PID dampening todo here?)
+		if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
+			AutoStabilise();
+		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
+			AutoStabilise();
+	}
+
+	void ApplyDecentControlForces()
+	{
+		Vector3 PitchExtract = new Vector3(-1,0,0);
+		Vector3 YawExtract = new Vector3(0,1,0);
+
+		if (!disableInput)
+		{
+			// Apply the orientation forces
+			rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
+
+			// Apply the thrust forces.
+			if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
+				currentThrust = inputZaxis * (Acceleration * thrust);
+
+			if (currentThrust > MaxSpeed)
+				currentThrust = MaxSpeed - 0.01f;
+
+			if (currentThrust < MinSpeed)
+				currentThrust = MinSpeed + 0.01f;
+
+			rb.AddRelativeForce(0, -currentThrust * thrust * Time.deltaTime, 0);
+		}
+
+		// If roll is almost right, stop adjusting (PID dampening todo here?)
+		if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
+			AutoStabilise();
+		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
+			AutoStabilise();
+	}
         
 }

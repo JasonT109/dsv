@@ -110,7 +110,7 @@ namespace Meg.EventSystem
             if (paused)
                 return;
 
-            if (running && !completed)
+            if (running)
                 time += dt;
 
             for (var i = 0; i < events.Count; i++)
@@ -182,6 +182,8 @@ namespace Meg.EventSystem
         public megEvent AddEvent(megEventType type)
         {
             var e = CreateEvent(type);
+            e.triggerTime = time;
+
             events.Add(e);
             return e;
         }
@@ -190,6 +192,8 @@ namespace Meg.EventSystem
         public megEvent InsertEvent(megEventType type, megEvent insertAfter)
         {
             var e = CreateEvent(type);
+            e.triggerTime = time;
+
             var insertIndex = events.IndexOf(insertAfter);
             if (insertIndex >= 0)
                 events.Insert(insertIndex + 1, e);

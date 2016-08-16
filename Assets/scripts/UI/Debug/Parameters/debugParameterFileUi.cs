@@ -48,6 +48,15 @@ public class debugParameterFileUi : MonoBehaviour
     /** Parameter folder. */
     public debugSceneFolderUi Folder;
 
+    /** Info toggle. */
+    public Toggle InfoToggle;
+
+    /** Parameter info view. */
+    public GameObject InfoView;
+
+    /** Parameter list UI. */
+    public debugParameterListUi InfoList;
+
 
     [Header("Prefabs")]
 
@@ -143,7 +152,12 @@ public class debugParameterFileUi : MonoBehaviour
         if (_file.selectedGroup == null)
             return;
 
-        _file.selectedGroup.AddParameter(megParameterType.Value);
+        // Add a new parameter entry to the current group.
+        var value = _file.selectedGroup.AddParameter(megParameterType.Value) as megParameterValue;
+
+        // Apply selected server parameter (if there is one).
+        if (value != null && InfoList.Selected)
+            value.serverParam = InfoList.Selected.Text.text;
     }
 
     public void RemoveParameter()
@@ -195,6 +209,30 @@ public class debugParameterFileUi : MonoBehaviour
         {
             Debug.LogError("Failed to save parameter file: " + path + ", " + ex);
         }
+    }
+
+    /** Toggle info. */
+    public void ToggleInfo()
+    {
+        InfoView.SetActive(!InfoView.activeSelf);
+    }
+
+    /** Set the selected entry's parameter name. */
+    public void SetSelectedParameter(string valueName)
+    {
+        var p = File.selectedParameter;
+        if (p == null)
+            return;
+
+        var groupUi = _groups.FirstOrDefault(g => g.Group == p.group);
+        if (!groupUi)
+            return;
+
+        var valueUi = groupUi.GetParameterValueUi(p);
+        if (!valueUi)
+            return;
+
+        valueUi.SetName(valueName);
     }
 
 

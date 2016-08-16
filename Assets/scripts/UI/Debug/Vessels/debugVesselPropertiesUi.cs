@@ -4,6 +4,7 @@ using System.Collections;
 using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class debugVesselPropertiesUi : MonoBehaviour
 {
@@ -82,8 +83,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
                 return false;
 
             var file = megEventManager.Instance.File;
-            var group = file != null ? file.selectedGroup : null;
-            return (file != null && group != null && file.canAdd);
+            return (file != null && file.canAdd);
         }
     }
 
@@ -112,7 +112,12 @@ public class debugVesselPropertiesUi : MonoBehaviour
     private void Update()
     {
         UpdateUi();
+
+        // Keyboard shortcut for adding a vessel movement event.
+        if (Input.GetKeyDown(KeyCode.KeypadPlus) && CanAddEvents)
+            SimulateButtonPress(AddMovementEventButton);
     }
+
 
 
     // Public Methods
@@ -134,9 +139,15 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         var file = megEventManager.Instance.File;
-        var group = file != null ? file.selectedGroup : null;
-        if (file == null || group == null || !file.canAdd)
+        if (file == null || !file.canAdd)
             return;
+
+        var group = file.selectedGroup;
+        if (group == null)
+        {
+            group = file.AddGroup();
+            group.id = "MOVEMENTS";
+        }
 
         var vesselEvent = group.AddEvent(megEventType.VesselMovement) as megEventVesselMovement;
         if (vesselEvent == null)
@@ -249,6 +260,14 @@ public class debugVesselPropertiesUi : MonoBehaviour
         VesselData.SetIcon(Vessel.Id, icon);
         UpdateIconToggles();
     }
+
+    /** Simulate a button press. */
+    private void SimulateButtonPress(Button button)
+    {
+        var pointer = new PointerEventData(EventSystem.current);
+        ExecuteEvents.Execute(AddMovementEventButton.gameObject, pointer, ExecuteEvents.submitHandler);
+    }
+
 
 
     // Movements Interface

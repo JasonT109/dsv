@@ -45,6 +45,13 @@ public class debugVesselPingUi : MonoBehaviour
         { get { return serverUtils.VesselData; } }
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Graphical elements in the ping. */
+    private Graphic[] _graphics;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
@@ -62,6 +69,8 @@ public class debugVesselPingUi : MonoBehaviour
 
         if (PressGesture)
             PressGesture.Pressed += OnPressed;
+
+        _graphics = transform.GetComponentsInChildren<Graphic>();
     }
 
     void Update()
@@ -69,18 +78,27 @@ public class debugVesselPingUi : MonoBehaviour
         TransformGesture.enabled = VesselData.isServer
             && !megEventManager.Instance.Playing;
 
+        // Determine the proper color for this ping.
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
-        var color = selected ? SelectedColor : NormalColor;
-        if (Ping.Pings.Space == SonarPings.DisplaySpace.Sonar && !Vessel.OnSonar)
-            color.a *= 0.5f;
-        else if (Ping.Pings.Space == SonarPings.DisplaySpace.Vessel && !Vessel.OnMap)
+        var color = Ping.Color;
+        if (selected)
+            color = HSBColor.FromColor(color).Brighten(1.5f).ToColor();
+        if (!Ping.Visible)
             color.a *= 0.5f;
 
-        NameLabel.color = color;
-        Icon.color = color;
+        // Update UI elements accordingly.
+        for (var i = 0; i < _graphics.Length; i++)
+            _graphics[i].color = color;
+
+        // NameLabel.color = color;
+        // Icon.color = color;
 
         var transforming = TransformGesture.State == Gesture.GestureState.Changed;
 	    Ping.enabled = !transforming;
+        Ping.AutoPulse(selected ? 1 : 0);
+
+        // Push selected ping in front of others so it gets preferentially transformed.
+        Ping.DepthOffset = selected ? -1 : 0;
 
         if (transforming)
         {

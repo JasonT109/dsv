@@ -29,6 +29,9 @@ public class debugParameterGroupUi : MonoBehaviour
     /** Minimize toggle. */
     public Toggle MinimizeToggle;
 
+    /** Name editing toggle. */
+    public Toggle NameEditToggle;
+
 
     [Header("Prefabs")]
 
@@ -101,6 +104,15 @@ public class debugParameterGroupUi : MonoBehaviour
     // Public Methods
     // ------------------------------------------------------------
 
+    /** Toggle name input editability. */
+    public void ToggleNameEditing()
+    {
+        NameInput.interactable = !NameInput.interactable;
+
+        if (NameInput.interactable)
+            NameInput.Select();
+    }
+
     /** Sets the group's name. */
     public void NameInputChanged(string value)
     {
@@ -108,6 +120,12 @@ public class debugParameterGroupUi : MonoBehaviour
             return;
 
         _group.id = value;
+
+        if (NameEditToggle.isOn)
+        {
+            NameEditToggle.isOn = false;
+            NameInput.interactable = false;
+        }
     }
 
     /** Toggle an parameter's minimized state. */
@@ -184,6 +202,14 @@ public class debugParameterGroupUi : MonoBehaviour
             File.selectedGroup = null;
     }
 
+    /** Return the UI for a given parameter. */
+    public debugParameterUi GetParameterUi(megParameter parameter)
+        { return _parameters.FirstOrDefault(p => p.Parameter == parameter); }
+
+    /** Return the UI for a given value parameter. */
+    public debugParameterValueUi GetParameterValueUi(megParameter parameter)
+        { return GetParameterUi(parameter) as debugParameterValueUi; }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -235,7 +261,7 @@ public class debugParameterGroupUi : MonoBehaviour
         var index = 0;
         if (_group != null)
             foreach (var e in _group.parameters)
-                GetParameter(index++).Parameter = e;
+                GetParameter(index++).SetParameter(e, false);
 
         for (var i = 0; i < _parameters.Count; i++)
             _parameters[i].gameObject.SetActive(i < index);

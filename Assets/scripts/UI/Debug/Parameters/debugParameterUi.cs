@@ -32,7 +32,7 @@ public abstract class debugParameterUi : MonoBehaviour
     public megParameter Parameter
     {
         get { return _parameter; }
-        set { SetParameter(value); }
+        set { SetParameter(value, true); }
     }
 
     /** Whether an parameter is set. */
@@ -94,9 +94,12 @@ public abstract class debugParameterUi : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    private void SetParameter(megParameter value)
+    public void SetParameter(megParameter value, bool initUi)
     {
         _parameter = value;
+
+        if (initUi)
+            InitParameterUi();
     }
 
     private void ConfigureUi()

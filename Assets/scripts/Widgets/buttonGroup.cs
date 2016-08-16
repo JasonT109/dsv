@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class buttonGroup : MonoBehaviour {
 
@@ -39,5 +40,13 @@ public class buttonGroup : MonoBehaviour {
 
         // Restore compiler warning for other areas of the code.
         #pragma warning restore 0618
+    }
+
+    public void Add(GameObject b)
+    {
+        var list = buttons.ToList();
+        list.Add(b);
+
+        buttons = list.ToArray();
     }
 }

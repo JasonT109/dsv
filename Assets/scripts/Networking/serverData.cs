@@ -590,6 +590,9 @@ public class serverData : NetworkBehaviour
             case "error_oxygenpump":
                 ErrorData.error_oxygenPump = newValue;
                 break;
+            case "error_diagnostics":
+                ErrorData.error_diagnostics = newValue;
+                break;
             case "genericerror":
                 ErrorData.genericerror = newValue;
                 break;
@@ -842,8 +845,7 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCScreen5Content = (int)newValue;
                 break;
             default:
-                SetDynamicValue(new serverUtils.ServerValue
-                    { key = valueName.ToLower(), value = newValue }, add);
+                SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
         }
 

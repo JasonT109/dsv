@@ -107,10 +107,13 @@ public class debugEventFileUi : MonoBehaviour
     {
         File.Loaded += OnFileLoaded;
         File.Cleared += OnFileCleared;
+        File.GroupAdded += OnGroupAdded;
+        File.GroupRemoved += OnGroupRemoved;
 
         _playLabel = PlayButton.GetComponentInChildren<Text>();
         Properties.OnSelected += HandlePropertiesSelected;
 
+        InitUi();
         UpdateUi();
     }
 
@@ -167,10 +170,7 @@ public class debugEventFileUi : MonoBehaviour
         if (!File.canAdd)
             return;
 
-        var group = File.InsertGroup(File.selectedGroup);
-        var ui = AddGroupUi(group);
-
-        HandleGroupSelected(ui);
+        File.InsertGroup(File.selectedGroup);
     }
 
     /** Remove the selected group from the file. */
@@ -181,7 +181,6 @@ public class debugEventFileUi : MonoBehaviour
 
         var group = File.selectedGroup;
         File.RemoveGroup(group);
-        RemoveGroupUi(group);
     }
 
     /** Clear the file contents. */
@@ -236,6 +235,19 @@ public class debugEventFileUi : MonoBehaviour
     /** Handle the event file being cleared. */
     private void OnFileCleared(megEventFile file)
         { InitUi(); }
+
+    /** Handle a group being added to the event file. */
+    private void OnGroupAdded(megEventFile file, megEventGroup group)
+    {
+        var ui = AddGroupUi(group);
+        HandleGroupSelected(ui);
+    }
+
+    /** Handle a group being removed from from the event file. */
+    private void OnGroupRemoved(megEventFile file, megEventGroup group)
+    {
+        RemoveGroupUi(group);
+    }
 
     /** Initialize the file UI. */
     private void InitUi()

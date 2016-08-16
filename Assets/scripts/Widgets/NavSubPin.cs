@@ -31,6 +31,8 @@ public class NavSubPin : MonoBehaviour
     // Properties
     // ------------------------------------------------------------
 
+    [Header("Configuration")]
+
     /** Vessel that this pin represents. */
     public int VesselId;
 
@@ -56,14 +58,26 @@ public class NavSubPin : MonoBehaviour
     public bool OrientToHeading;
 
 
+    [Header("Prefabs")]
+
+    /** Prefab for a vessel height indicator. */
+    public GameObject HeightIndicatorPrefab;
+
+    /** Prefab for a vessel pin button. */
+    public GameObject ButtonPrefab;
+
+    /** Stats box prefab. */
+    public GameObject StatsBoxPrefab;
+
+
     // Private Properties
     // ------------------------------------------------------------
 
     private float LineXOffset
-    { get { return _manager.lineXOffset; } }
+        { get { return _manager.lineXOffset; } }
 
     private Vector2 ImageSize
-    { get { return _manager.imageSize; } }
+        { get { return _manager.imageSize; } }
 
     
     // Members
@@ -108,6 +122,9 @@ public class NavSubPin : MonoBehaviour
     /** Current position smoothing velocity. */
     private Vector3 _velocity;
 
+    /** The stats box for this pin. */
+    private GameObject _statsBox;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -115,10 +132,10 @@ public class NavSubPin : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
-        _manager = GetComponentInParent<NavSubPins>();
-        _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
-        _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
-        _icon = vesselButton.GetComponent<graphicsMapIcon>();
+        // If this pin is already set up for a vessel, configure it.
+        // Otherwise, assume that pin manager will do that explicitly.
+        if (VesselId > 0)
+            Configure(VesselId);
     }
 
     /** Enabling. */
@@ -139,6 +156,79 @@ public class NavSubPin : MonoBehaviour
 
     // Public Methods
     // ------------------------------------------------------------
+
+    /** Configure a pin. */
+
+    public void Configure(int id)
+    {
+        // Update pin's id.
+        VesselId = id;
+
+        // Try to get hold of the pin manager.
+        _manager = NavSubPins.Instance;
+
+        // Complain if manager lookup failed.
+        if (_manager == null)
+        {
+            Debug.LogError("Failed to locate nav pin manager.");
+            return;
+        }
+
+        // Get hold of all dependencies and objects we need.
+        if (!_mapCamera)
+            _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
+
+        if (!vesselModel)
+            vesselModel = gameObject;
+
+        if (!vesselButton)
+        {
+            vesselButton = Instantiate(ButtonPrefab);
+            vesselButton.transform.SetParent(_manager.VesselButtonRoot, false);
+        }
+
+        if (!vesselHeightIndicator)
+        {
+            vesselHeightIndicator = Instantiate(HeightIndicatorPrefab);
+            vesselHeightIndicator.transform.SetParent(_manager.VesselButtonRoot, false);
+        }
+
+        if (vesselButton && !_vesselButtonControl)
+        {
+            _vesselButtonControl = vesselButton.GetComponentInChildren<buttonControl>();
+            _vesselButtonControl.buttonGroup = _manager.VesselButtonRoot.gameObject;
+            _vesselButtonControl.buttonGroup.GetComponent<buttonGroup>()
+                .Add(_vesselButtonControl.gameObject);
+        }
+
+        if (!_icon)
+            _icon = vesselButton.GetComponent<graphicsMapIcon>();
+
+        // Set up button handler for stats boxes.
+        _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
+        _vesselButtonControl.onPress.AddListener(OnButtonPressed);
+
+        /*
+        // Create a stats box if needed.
+        if (VesselId <= vesselData.BaseVesselCount)
+        {
+            _statsBox = CreateStatsBox();
+            _vesselButtonControl.visGroup = _statsBox;
+        }
+        */
+    }
+
+    /** Handle the map pin button being pressed. */
+    private void OnButtonPressed()
+    {
+        if (!_statsBox)
+        {
+            _statsBox = CreateStatsBox();
+            _vesselButtonControl.visGroup = _statsBox;
+        }
+
+        _statsBox.gameObject.SetActive(true);
+    }
 
     /** Toggle pin's label. */
     public void ToggleLabel()
@@ -168,15 +258,17 @@ public class NavSubPin : MonoBehaviour
     /** Updating. */
     public void UpdatePin()
     {
+        // Check if pin is configured correctly.
+        if (!_manager)
+            return;
+
         // Update pin visibility.
         var visible = serverUtils.GetVesselVis(VesselId);
         vesselButton.SetActive(visible);
         vesselHeightIndicator.SetActive(visible);
 
         // Get vessel's server position and apply that to the vessel model.
-        Vector3 position;
-        float velocity;
-        serverUtils.GetVesselData(VesselId, out position, out velocity);
+        var position = serverUtils.GetVesselPosition(VesselId);
 
         // Apply smoothing to the position.
         if (Mathf.Approximately(_position.sqrMagnitude, 0))
@@ -187,7 +279,7 @@ public class NavSubPin : MonoBehaviour
         vesselModel.transform.localPosition = ConvertVesselCoords(_position);
 
         // Get position in map space and position button there.
-        var mapPos = ConvertToMap2DSpace(vesselModel.transform.position);
+        var mapPos = ConvertToMapScreenSpace(vesselModel.transform.position);
         vesselButton.transform.localPosition = mapPos;
 
         // Cast a ray down to the terrain from the original position.
@@ -198,7 +290,7 @@ public class NavSubPin : MonoBehaviour
         if (Distance > 0)
         {
             // Set the position of the height indicators to be at ground level
-            var groundPos = ConvertToMap2DSpace(_hit.point);
+            var groundPos = ConvertToMapScreenSpace(_hit.point);
             vesselHeightIndicator.transform.localPosition = groundPos;
 
             // Set the x position to be exactly the same as button plus offset
@@ -214,14 +306,21 @@ public class NavSubPin : MonoBehaviour
         vesselHeightIndicator.GetComponent<Renderer>()
             .material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
 
+        // Update pin colors. 
+        UpdateColor();
+
         // Update map icon with a direction indicator.
-        UpdateMapIconDirection();
+        UpdateMapIcon();
         
     }
 
     /** Update indicator lines for this vessel pin. */
     public void UpdateIndicators()
     {
+        // Check if pin is configured correctly.
+        if (!_manager)
+            return;
+
         // Set the correct camera for lines in nav screen.
         VectorLine.SetCamera3D(_mapCamera);
 
@@ -250,7 +349,18 @@ public class NavSubPin : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    private void UpdateMapIconDirection()
+    private void UpdateColor()
+    {
+        var color = serverUtils.VesselData.GetColorOnMap(VesselId);
+        var theme = _vesselButtonControl.colorTheme;
+
+        theme[1] = color;
+        theme[2] = HSBColor.FromColor(color).Brighten(0.75f).ToColor();
+        theme[3] = color;
+        theme[4] = color;
+    }
+
+    private void UpdateMapIcon()
     {
         // 0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
         int mapIconDirection = 0;
@@ -279,12 +389,13 @@ public class NavSubPin : MonoBehaviour
             mapIconDirection = 7;
 
         // Set the orientation of the child to indicate the direction.
+        _icon.VesselId = VesselId;
         _icon.UpdateIcon(mapIconDirection != 0, mapIconDirection);
     }
 
-    /** Convert a vessel's position into 2D map space. */
-    private Vector2 ConvertToMap2DSpace(Vector3 p)
-        { return _manager.ConvertToMap2DSpace(p); }
+    /** Convert a vessel's position into map screenspace. */
+    private Vector3 ConvertToMapScreenSpace(Vector3 p)
+        { return _manager.ConvertToMapScreenSpace(p); }
 
     /** Convert a vessel's position into 3D map space. */
     private Vector3 ConvertVesselCoords(Vector3 p)
@@ -293,7 +404,7 @@ public class NavSubPin : MonoBehaviour
     /** Convert a vessel's position into 2D screen space. */
     private Vector3 ConvertVesselToScreenSpace(Vector3 p)
     {
-        var map = ConvertToMap2DSpace(p);
+        var map = ConvertToMapScreenSpace(p);
         var world = vesselButton.transform.parent.TransformPoint(map);
         return Camera.main.WorldToScreenPoint(world);
     }
@@ -395,6 +506,27 @@ public class NavSubPin : MonoBehaviour
 
         var angle = -(90 + Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
         _icon.button.transform.localRotation = Quaternion.Euler(0, 0, angle);
+    }
+
+    /** Create a stats box for this pin. */
+    private GameObject CreateStatsBox()
+    {
+        var statsBox = Instantiate(StatsBoxPrefab);
+        statsBox.transform.SetParent(_manager.StatsBoxRoot, false);
+
+        // Set up server data to use the correct vessel id.
+        var overrides = statsBox.GetComponent<linkDataOverrides>();
+        overrides.Overrides[0].replacement = string.Format("vessel{0}", VesselId);
+        overrides.Apply();
+
+        // Ensure box follows the pin button.
+        var transition = statsBox.GetComponent<widgetTransition>();
+        transition.parentObject = vesselButton;
+
+        // Disable the box so it's initially hidden.
+        statsBox.gameObject.SetActive(false);
+
+        return statsBox;
     }
 
 }

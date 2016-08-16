@@ -34,6 +34,9 @@ public class SonarPings : MonoBehaviour
     /** Whether to display pings in vessel space. */
     public DisplaySpace Space = DisplaySpace.Sonar;
 
+    /** Whether to display depth relative to the player vessel (or absolute). */
+    public bool RelativeDepth = true;
+
     /** Whether to hide pings if out of range. */
     public bool HideIfOutOfRange = true;
 

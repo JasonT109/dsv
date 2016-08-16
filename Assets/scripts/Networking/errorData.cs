@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 
 public class errorData : NetworkBehaviour
 {
+    public const string DefaultErrorDescription = "Error indicator (1:Off, 0:On)";
+
     [SyncVar]
     public float error_bilgeLeak = 1f;
     [SyncVar]
@@ -54,4 +56,6 @@ public class errorData : NetworkBehaviour
     public float error_oxygenPump = 1f;
     [SyncVar]
     public float genericerror = 1f;
+    [SyncVar]
+    public float error_diagnostics = 1f;
 }

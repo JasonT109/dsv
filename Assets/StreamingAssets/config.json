@@ -5,7 +5,47 @@
 		"auto-save-folder" : "C:/Meg/Autosave/",
 		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json",
 		"auto-save-enabled" : true,
-		"vessel-names" : ["Marco", "Polo", "Glider 1", "Glider 2", "Unknown", "Target"]
+		"vessels" : 
+		[
+			{ 
+				"name" : "Marco", 
+				"coloronmap" : [0.965, 0.533, 0.122], 
+				"coloronsonar" : [0.965, 0.533, 0.122], 
+				"position" : [-1, -0.5, 2000],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Polo", 
+				"coloronmap" : [0.647, 0.745, 0.706],
+				"coloronsonar" : [0.647, 0.745, 0.706],
+				"position" : [-2, 2, 8900],
+			},
+			{ 
+				"name" : "Byrd", 
+				"coloronmap" : [0.929, 0.878, 0.596],
+				"coloronsonar" : [0.929, 0.878, 0.596],
+				"position" : [2, -2, 7300],
+			},
+			{ 
+				"name" : "Ernie", 
+				"coloronmap" : [0.973, 0.635, 0.314],
+				"coloronsonar" : [0.973, 0.635, 0.314],
+				"position" : [1, 0, 7700],
+			},
+			{ 
+				"name" : "Unknown", 
+				"coloronmap" : [0.745, 0.118, 0.176],
+				"coloronsonar" : [0.745, 0.118, 0.176],
+				"position" : [0, -2.5, 8200],
+				"icon" : "warning",
+			},
+			{ 
+				"name" : "Target", 
+				"coloronmap" : [0.8, 0.8, 0.8],
+				"position" : [2, 2, 8200],
+			},
+		],
 	},
 
 	"sub" :

@@ -1,12 +1,12 @@
 {
 	"metadata":{
-		"utc":"11/08/16 02:44:54.4",
+		"utc":"15/08/16 10:08:15.4",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
-			"id":"Group",
+			"id":"WATER TEMP RISE",
 			"events":[
 				{
 					"type":"Value",

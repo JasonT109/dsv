@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [System.Serializable]
 public struct HSBColor
@@ -32,6 +32,18 @@ public struct HSBColor
 		b = temp.b;
 		a = temp.a;
 	}
+
+    public HSBColor Add(float h, float s, float b, float a)
+    {
+        this.h += h;
+        this.s += s;
+        this.b += b;
+        this.a += a;
+        return this;
+    }
+
+    public HSBColor Brighten(float bScale)
+        { b *= bScale; return this; }
 	
 	public static HSBColor FromColor(Color color)
 	{

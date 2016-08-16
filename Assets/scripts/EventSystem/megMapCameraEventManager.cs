@@ -31,7 +31,6 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     public GameObject mapCameraPitch;
     public GameObject mapCameraObject;
     public GameObject mapPitchSliderButton;
-    public GameObject[] vessels;
 
     public float runTime;
     public bool running;
@@ -188,7 +187,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         if (runningEvent.goToPlayerVessel)
         {
             var playerVessel = serverUtils.GetPlayerVessel();
-            var p = vessels[playerVessel - 1].transform.position;
+            var p = NavSubPins.Instance.GetVesselPin(playerVessel).transform.position;
             runningEvent.toPosition = mapCameraRoot.transform.parent.InverseTransformPoint(p);
             runningEvent.toOrientation = new Vector3(initialOrientationX, initialOrientationY, 0);
             runningEvent.toZoom = initialZoom;

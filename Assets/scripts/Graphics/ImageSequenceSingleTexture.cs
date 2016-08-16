@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -29,6 +29,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
     public bool speedFromServer = false;
     public bool switchOnWarning = false;
+    public bool switchGreaterThan = false;
     public string serverParam = "inputZaxis";
     public float incomingMinValue = 0f;
     public float incomingMaxValue = 1f;
@@ -103,9 +104,13 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
         if (switchOnWarning)
         {
-            if (serverUtils.GetServerData(serverParam) <= switchSequenceThreshold)
+            var value = serverUtils.GetServerData(serverParam);
+            var warning = switchGreaterThan 
+                ? (value > switchSequenceThreshold) 
+                : (value <= switchSequenceThreshold);
+
+            if (warning)
             {
-                //Debug.Log("Param: " + serverUtils.GetServerData(serverObject, serverParam) + " Threshold:" + switchSequenceThreshold);
                 this.baseName = this.folderName2 + "/" + this.imageSequenceName2;
                 nFrames = numberOfFrames2;
             }

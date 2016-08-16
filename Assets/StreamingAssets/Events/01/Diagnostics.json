@@ -1,0 +1,21 @@
+{
+	"metadata":{
+		"utc":"16/08/16 05:12:21.8",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"DIAGNOSTIC ERRORS",
+			"paused":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":10,
+					"serverParam":"error_diagnostics",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

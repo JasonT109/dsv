@@ -63,6 +63,9 @@ public class HUDLinearGauge : MonoBehaviour
     /** Whether to fade ticks at edge of visible range. */
     public bool FadeTicks = true;
 
+    /** Whether gauge updates dynamically. */
+    public bool Dynamic = true;
+
 
     [Header("Ticks")]
 
@@ -180,6 +183,9 @@ public class HUDLinearGauge : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
+        if (!Dynamic)
+            return;
+
         UpdateValue(0);
         UpdateTicks();
     }
@@ -187,6 +193,9 @@ public class HUDLinearGauge : MonoBehaviour
     /** Update. */
     private void Update()
     {
+        if (!Dynamic)
+            return;
+
         UpdateValue(SmoothTime);
         UpdateTicks();
     }
