@@ -121,7 +121,7 @@ public class widgetThrusterControl : MonoBehaviour
         inZ = (serverUtils.GetServerData("inputZaxis") * 100f) * (1 - serverUtils.GetServerData("disableinput"));
         inX2 = serverUtils.GetServerData("inputXaxis2") * 100f;
 
-		if(serverUtils.GetServerData("iscontroldecent") == 0)
+		if(serverUtils.GetServerBool("iscontroldecentmode") == false)
 		{
 
         	//calculate the thruster power based on inputs
