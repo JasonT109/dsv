@@ -20,18 +20,24 @@
 				"coloronmap" : [0.647, 0.745, 0.706],
 				"coloronsonar" : [0.647, 0.745, 0.706],
 				"position" : [-2, 2, 8900],
+				"onmap" : true, 
+				"onsonar" : true 
 			},
 			{ 
 				"name" : "Byrd", 
 				"coloronmap" : [0.929, 0.878, 0.596],
 				"coloronsonar" : [0.929, 0.878, 0.596],
 				"position" : [2, -2, 7300],
+				"onmap" : true, 
+				"onsonar" : true 
 			},
 			{ 
 				"name" : "Ernie", 
 				"coloronmap" : [0.973, 0.635, 0.314],
 				"coloronsonar" : [0.973, 0.635, 0.314],
 				"position" : [1, 0, 7700],
+				"onmap" : true, 
+				"onsonar" : true 
 			},
 			{ 
 				"name" : "Unknown", 
@@ -39,11 +45,15 @@
 				"coloronsonar" : [0.745, 0.118, 0.176],
 				"position" : [0, -2.5, 8200],
 				"icon" : "warning",
+				"onmap" : true, 
+				"onsonar" : true 
 			},
 			{ 
 				"name" : "Target", 
 				"coloronmap" : [0.8, 0.8, 0.8],
 				"position" : [2, 2, 8200],
+				"onmap" : true, 
+				"onsonar" : true 
 			},
 		],
 	},
