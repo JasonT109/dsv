@@ -590,6 +590,9 @@ public class serverData : NetworkBehaviour
             case "error_oxygenpump":
                 ErrorData.error_oxygenPump = newValue;
                 break;
+            case "error_diagnostics":
+                ErrorData.error_diagnostics = newValue;
+                break;
             case "genericerror":
                 ErrorData.genericerror = newValue;
                 break;

@@ -261,7 +261,7 @@ public class debugParameterGroupUi : MonoBehaviour
         var index = 0;
         if (_group != null)
             foreach (var e in _group.parameters)
-                GetParameter(index++).Parameter = e;
+                GetParameter(index++).SetParameter(e, false);
 
         for (var i = 0; i < _parameters.Count; i++)
             _parameters[i].gameObject.SetActive(i < index);

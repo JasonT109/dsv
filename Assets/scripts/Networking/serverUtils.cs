@@ -375,6 +375,7 @@ namespace Meg.Networking
             "error_cpu",
             "error_datahd",
             "error_depthsonar",
+            "error_diagnostics",
             "error_doppler",
             "error_electricleak",
             "error_forwardsonar",
@@ -556,23 +557,22 @@ namespace Meg.Networking
         }
 
         /** Configuration data for a parameter. */
-        public struct ParameterInfo
+        public class ParameterInfo
         {
-            public ParameterType type;
-            public float minValue;
-            public float maxValue;
+            public ParameterType type = ParameterType.Float;
+            public float minValue = 0;
+            public float maxValue = 100;
             public bool readOnly;
             public bool hideInUi;
-            public string description;
+            public string description = "";
+
+            public ParameterInfo()
+            {
+            }
 
             public ParameterInfo(ParameterType type)
             {
                 this.type = type;
-                minValue = 0;
-                maxValue = 100;
-                readOnly = false;
-                hideInUi = false;
-                description = "";
             }
         }
 
@@ -682,6 +682,39 @@ namespace Meg.Networking
             { "domesquaretop", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "duetime", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "ETA / Time to Intercept (s)."} },
             { "duetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether ETA/TTI is automatically updated over time."} },
+            { "error_ballasttank", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_batteryleak", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_bilgeleak", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_bowlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_bowthruster", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_cpu", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_datahd", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_depthsonar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_diagnostics", new ParameterInfo { maxValue = 1, description = "Overall error indicator for diagnostics screen (drives sub display and datafeed)." } },
+            { "error_doppler", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_electricleak", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_forwardsonar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_gps", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_hydraulicpump", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_hyrdaulicres", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_jet_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_jet_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_oxygenext", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_oxygenpump", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_panel_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_panel_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_portlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_radar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_runninglights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_starboardlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_sternlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_thruster_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_thruster_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_tow", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_vertran_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_vertran_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_vhf", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_vidhd", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
             { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
@@ -996,6 +1029,8 @@ namespace Meg.Networking
                     return ErrorData.error_vidhd;
                 case "error_datahd":
                     return ErrorData.error_datahd;
+                case "error_diagnostics":
+                    return ErrorData.error_diagnostics;
                 case "error_tow":
                     return ErrorData.error_tow;
                 case "error_radar":
