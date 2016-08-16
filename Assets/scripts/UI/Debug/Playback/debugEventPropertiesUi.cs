@@ -65,6 +65,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public Button ServerParamClearButton;
     public Transform ServerParamEntriesContainer;
     public megScrollRect ServerParamEntriesScrollView;
+    public Button ServerParamUpdateButton;
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
 
@@ -135,6 +136,9 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     /** Server param entry UI. */
     public debugServerParamEntryUi ServerParamEntryPrefab;
+
+    /** The group UI that owns this event. */
+    public debugEventGroupPropertiesUi GroupUi { get; set; }
 
 
     // Properties
@@ -447,6 +451,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateValueProperties()
     {
         // ServerParamClearButton.interactable = !string.IsNullOrEmpty(ValueEvent.serverParam);
+        if (GroupUi)
+            ServerParamUpdateButton.interactable = GroupUi.InfoView.activeSelf;
 
         // Update the state of the server parameter list UI.
         if (_event.minimized)
@@ -501,6 +507,20 @@ public class debugEventPropertiesUi : MonoBehaviour
             ShowServerParamList();
             EventSystem.SetSelectedGameObject(ServerParamEntriesScrollView.gameObject);
         }
+    }
+
+    public void UpdateServerParameterToSelectedInfo()
+    {
+        var selected = GroupUi.InfoList.Selected;
+        if (_initializing || !selected)
+            return;
+
+        ValueEvent.serverParam = selected.Text.text;
+
+        _initializing = true;
+        UpdateServerParamInput();
+        UpdateServerParamList(null, false);
+        _initializing = false;
     }
 
     public void ServerParamInputChanged(string value)

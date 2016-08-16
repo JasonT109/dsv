@@ -62,6 +62,13 @@ public class debugEventTimelineUi : MonoBehaviour
     /** Vertical spacing between events. */
     public float ExpandedEventSpacing = 10;
 
+    /** Height of each event in minimized state. */
+    public float MinimizedEventHeight = 6;
+
+    /** Height of each event. */
+    public float ExpandedEventHeight = 10;
+
+
     /** The event group. */
     public megEventGroup Group
     {
@@ -158,9 +165,11 @@ public class debugEventTimelineUi : MonoBehaviour
         var width = Mathf.Clamp(scale * _group.endTime, MinWidth, maxWidth);
         var spacing = Minimized ? MinimizedEventSpacing : ExpandedEventSpacing;
         var margin = Minimized ? MinimizedMargin : ExpandedMargin;
+        var height = Minimized ? MinimizedEventHeight : ExpandedEventHeight;
+
 
         Layout.preferredWidth = width;
-        Layout.minHeight = _group.events.Count * spacing + margin;
+        Layout.minHeight = _group.events.Count * height + margin;
 
         // Force a UI reflow to ensure timeline layout is correct.
         Canvas.ForceUpdateCanvases();

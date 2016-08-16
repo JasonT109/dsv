@@ -41,6 +41,16 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** Event removal button. */
     public Button RemoveEventButton;
 
+    /** Parameter info toggle. */
+    public Toggle InfoToggle;
+
+    /** Parameter info view. */
+    public GameObject InfoView;
+
+    /** Parameter list UI. */
+    public debugParameterListUi InfoList;
+
+
 
     [Header("Prefabs")]
 
@@ -232,7 +242,13 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     /** Add a value event to the group. */
     public void AddValueEvent()
-        {  AddEvent(megEventType.Value); }
+    {
+        var valueEvent = AddEvent(megEventType.Value) as megEventValue;
+    
+        // Apply selected server parameter (if there is one).
+        if (valueEvent != null && InfoList.Selected)
+            valueEvent.serverParam = InfoList.Selected.Text.text;
+    }
 
     /** Add a physics event to the group. */
     public void AddPhysicsEvent()
@@ -286,6 +302,13 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         _group.RemoveEvent(toRemove);
     }
+
+    /** Toggle parameter info list. */
+    public void ToggleInfo()
+    {
+        InfoView.SetActive(!InfoView.activeSelf);
+    }
+
 
 
     // Private Methods
@@ -362,6 +385,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         {
             var eventProperties = Instantiate(EventPropertiesPrefab);
             eventProperties.transform.SetParent(EventPropertiesContainer, false);
+            eventProperties.GroupUi = this;
             eventProperties.OnSelected += HandleEventSelected;
             _eventProperties.Add(eventProperties);
         }
