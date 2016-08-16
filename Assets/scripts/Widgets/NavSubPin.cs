@@ -422,7 +422,8 @@ public class NavSubPin : MonoBehaviour
 
         // Check if we should draw the intercept indicator.
         var visible = serverUtils.GetVesselVis(VesselId);
-        _interceptLine.active = intercept != null && visible;
+        var interceptIsVisible = serverUtils.GetVesselVis(vesselData.InterceptId);
+        _interceptLine.active = intercept != null && visible && interceptIsVisible;
         if (!_interceptLine.active)
             return;
 
