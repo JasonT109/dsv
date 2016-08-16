@@ -144,5 +144,10 @@
 		"network-scene" : "screen_dcc",
 	},
 
+	"dccServer" :
+	{
+		"parent" : "dcc",
+		"network-role" : "server",
+	},
 
 }

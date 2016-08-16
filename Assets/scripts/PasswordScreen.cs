@@ -54,6 +54,7 @@ public class PasswordScreen : MonoBehaviour
 
     private void Start() 
     {
+        Debug.Log("PasswordScreen.Start()");
         _manager = ObjectFinder.Find<NetworkManagerCustom>();
 
         var scene = _manager.Scene;
@@ -97,6 +98,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleHost()
     {
+        Debug.Log("PasswordScreen.ToggleHost() - Configuring UI for Host mode.");
         _client = false;
         HostIPObject.SetActive(false);
         LocalIP.SetActive(true);
@@ -108,6 +110,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleClient()
     {
+        Debug.Log("PasswordScreen.ToggleClient() - Configuring UI for Client mode.");
         _client = true;
         HostIPObject.SetActive(true);
         LocalIP.SetActive(false);
@@ -119,6 +122,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleGlider()
     {
+        Debug.Log("PasswordScreen.ToggleGlider() - Configuring UI for Glider mode.");
         GliderButtonImg.color = SelectedColor;
         BigSubButtonImg.color = UnselectedColor;
         DCCButtonImg.color = UnselectedColor;
@@ -127,6 +131,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleBigSub()
     {
+        Debug.Log("PasswordScreen.ToggleBigSub() - Configuring UI for main sub mode.");
         GliderButtonImg.color = UnselectedColor;
         BigSubButtonImg.color = SelectedColor;
         DCCButtonImg.color = UnselectedColor;
@@ -135,6 +140,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void ToggleDCC()
     {
+        Debug.Log("PasswordScreen.ToggleDCC() - Configuring UI for DCC mode.");
         GliderButtonImg.color = UnselectedColor;
         BigSubButtonImg.color = UnselectedColor;
         DCCButtonImg.color = SelectedColor;
@@ -149,6 +155,9 @@ public class PasswordScreen : MonoBehaviour
 
     public void StartButton()
     {
+        var mode = _client ? "client" : "server";
+        Debug.Log(string.Format("PasswordScreen.StartButton() - Starting up in {0} mode.", mode));
+        
         if (_client)
             _manager.StartClient();
         else
