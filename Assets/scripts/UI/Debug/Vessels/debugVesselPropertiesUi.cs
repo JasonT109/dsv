@@ -212,6 +212,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         _updating = true;
         UpdateMovementProperties();
         AddMovementEventButton.interactable = CanAddEvents;
+        EtaGroup.interactable = !megEventManager.Instance.Playing;
         _updating = false;
         
     }
