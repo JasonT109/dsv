@@ -226,6 +226,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private screenData _screenData;
+    public screenData ScreenData
+    {
+        get
+        {
+            if (!_screenData)
+                _screenData = GetComponent<screenData>();
+            return _screenData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -738,6 +749,15 @@ public class serverData : NetworkBehaviour
                 break;
             case "divertpowertothrusters":
                 OperatingData.divertPowerToThrusters = newValue;
+                break;
+            case "screenglitchamount":
+                ScreenData.screenGlitch = newValue;
+                break;
+            case "screenglitchautodecay":
+                ScreenData.screenGlitchAutoDecay = newValue > 0;
+                break;
+            case "screenglitchautodecaytime":
+                ScreenData.screenGlitchAutoDecayTime = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue > 0;

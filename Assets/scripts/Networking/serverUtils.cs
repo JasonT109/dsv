@@ -240,6 +240,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the Screen data object. */
+        private static screenData _screenData;
+        public static screenData ScreenData
+        {
+            get
+            {
+                if (!_screenData && ServerObject)
+                    _screenData = ServerObject.GetComponent<screenData>();
+                return _screenData;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -471,6 +483,9 @@ namespace Meg.Networking
             "rollangle",
             "rollspeed",
             "scene",
+            "screenglitchamount",
+            "screenglitchautodecay",
+            "screenglitchautodecaytime",
             "scrubbedco2",
             "scrubbedhumidity",
             "scrubbedoxygen",
@@ -779,6 +794,9 @@ namespace Meg.Networking
             { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current roll angle (degrees)." } },
             { "rollspeed", new ParameterInfo { description = "Sub's rolling speed."} },
             { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int, description = "The scene currently being filmed." } },
+            { "screenglitchamount", new ParameterInfo { description = "Amount of screen glitch across all screens."} },
+            { "screenglitchautodecay", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether screen glitch automatically decays over time."} },
+            { "screenglitchautodecaytime", new ParameterInfo { maxValue = 1, description = "Time taken for screen glitch to decay to nothing (s)."} },
             { "scrubbedco2", new ParameterInfo { maxValue = 5, description = "CO2% in atmosphere after leaving the scrubber." } },
             { "scrubbedhumidity", new ParameterInfo { description = "Humidity leaving the scrubber (%)." } },
             { "scrubbedoxygen", new ParameterInfo { description = "Oxygen percentage leaving the scrubber." } },
@@ -1241,6 +1259,12 @@ namespace Meg.Networking
                     return (float)DomeData.domeSquareRight;
                 case "domesquaretop":
                     return (float) DomeData.domeSquareTop;
+                case "screenglitchamount":
+                    return ScreenData.screenGlitch;
+                case "screenglitchautodecay":
+                    return ScreenData.screenGlitchAutoDecay ? 1 : 0;
+                case "screenglitchautodecaytime":
+                    return ScreenData.screenGlitchAutoDecayTime;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }
@@ -1510,6 +1534,8 @@ namespace Meg.Networking
                     return SubControl.JoystickOverride;
                 case "joystickpilot":
                     return SubControl.JoystickPilot;
+                case "screenglitchautodecay":
+                    return ScreenData.screenGlitchAutoDecay;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);
