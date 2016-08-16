@@ -323,6 +323,13 @@ namespace Meg.EventSystem
         /** Set a server float value. */
         public void PostServerData(string key, float value)
         {
+            // Check that key is valid.
+            if (string.IsNullOrEmpty(key))
+                return;
+
+            // Force key to lowercase to avoid issues with varying capitalization.
+            key = key.ToLower();
+
             // Record initial value if this is the first time we've set it.
             // This will be used to reset the value when file playback stops.
             if (!_values.ContainsKey(key))
