@@ -6,6 +6,16 @@ using System.Collections.Generic;
 using Meg.EventSystem;
 
 
+/** 
+ * A visual representation of the Events in a single megEventGroup.
+ * Updates during playback to show which events are playing, which are complete, etc.
+ * Also has a playback 'needle' to indicate the current local Group time.
+ * 
+ * Can display in either normal or minimized modes, with the latter being useful
+ * when a Group contains a large number of Events.
+ * 
+ */
+
 public class debugEventTimelineUi : MonoBehaviour
 {
 

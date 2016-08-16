@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Meg.Parameters;
 
+/** Interface logic for a Group of megParameters (part of the Setup interface). */
+
 public class debugParameterGroupUi : MonoBehaviour
 {
 

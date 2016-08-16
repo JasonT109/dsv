@@ -134,17 +134,6 @@ namespace Meg.Scene
             return serverUtils.VesselData.Save();
         }
 
-        /** Save a vessel's state to JSON. */
-        private JSONObject SaveVessel(int vessel)
-        {
-            var json = new JSONObject();
-            json.AddField("position", serverUtils.GetVesselPosition(vessel));
-            json.AddField("velocity", serverUtils.GetVesselVelocity(vessel));
-            json.AddField("visible", serverUtils.GetVesselVis(vessel));
-
-            return json;
-        }
-
         /** Save state of vessel movements to JSON. */
         private JSONObject SaveMovements()
         {

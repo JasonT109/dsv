@@ -4,6 +4,14 @@ using System.Text.RegularExpressions;
 using Meg.Parameters;
 using Meg.Networking;
 
+/**
+ * Editing interface for a single server parameter value.
+ * Allows the user to edit the value by direct mouse/touch manipulation (slider)
+ * or by text input.  The user can also change which parameter is being edited
+ * via the ServerParamInput field.
+ *  
+ */
+
 public class debugParameterValueUi : debugParameterUi
 {
 

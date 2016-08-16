@@ -8,7 +8,19 @@ using Meg.Networking;
 namespace Meg.Parameters
 {
 
-    /** A file containing parameters of timed parameters. */
+    /** 
+     * A file containing a collection of editable parameters.  The File is organized 
+     * into named Groups, each containing a list of Parameters.  A Parameter represents any
+     * editable aspect of the simulation, but is currently limited to editing server 
+     * parameter values.
+     * 
+     * This is the primary backing data structure for the debug Setup screen, where users
+     * can load in and edit lists of server parameters in order to set the simulation into
+     * a desired state.
+     * 
+     * The interface logic for editing parameter files can be found in debugParameterFileUi.
+     * 
+     */
 
     [System.Serializable]
     public class megParameterFile

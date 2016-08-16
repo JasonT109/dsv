@@ -4,6 +4,11 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using Meg.Parameters;
 
+/** 
+ * Base class for a parameter editor in the Setup interface.
+ * For a concrete example of usage, see debugParameterValueUi.
+ */
+
 public abstract class debugParameterUi : MonoBehaviour
 {
 

@@ -2,6 +2,15 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
+/**
+ *
+ * Interface logic for the debug 2D viewport.  Most of the spatial configuration for
+ * the viewport is in the Unity scenegraph.  There are two primary display modes -
+ * Sonar and Map.  The former can be displayed in either North Up or Heading Up modes.
+ * Heading Up means that 'up' on the screen corresponds to the player sub's current direction.
+ * 
+ */
+
 public class debugVesselViewportUi : MonoBehaviour
 {
 

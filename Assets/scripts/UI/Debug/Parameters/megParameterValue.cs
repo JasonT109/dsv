@@ -4,7 +4,8 @@ using Meg.Networking;
 namespace Meg.Parameters
 {
 
-    /** An event that manipulates a server data value. */
+    /** Represents a server data parameter - part of the Setup interface backend. */
+
     [System.Serializable]
     public class megParameterValue : megParameter
     {

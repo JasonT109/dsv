@@ -9,7 +9,22 @@ using Meg.Scene;
 namespace Meg.EventSystem
 {
 
-    /** A file containing groups of timed events. */
+    /** 
+     * A file containing groups of timed events. 
+     * 
+     * An event file can 'played back' somewhat like a video.  Each Group in the file has its own timeline,
+     * and plays back a collection of Events at the appropriate start time ('triggerTime'). Events optionally
+     * have a duration ('completeTime'), which affects how long they take to achieve the desired effect
+     * (e.g. animating a server parameter to a specified value.)
+     * 
+     * When playback begins, the file is responsible for capturing the initial state of the world.
+     * It does this by querying various managers for state data and remembering those value.  When playback
+     * is Stopped, the file then asks each manager to reset to the stored initial state, and also asks the
+     * server to reset modified parameters back to their starting values.
+     * 
+     * The interface for editing event files centers around debugEventFileUi - see that file for more info.
+     * 
+     */
 
     [System.Serializable]
     public class megEventFile

@@ -7,6 +7,13 @@ using System.Linq;
 using Meg.Parameters;
 using Button = UnityEngine.UI.Button;
 
+/** 
+ * The interface logic for editing a megParameterFile. 
+ * 
+ * See megParameterFile for more information on the parameter setup system.
+ * 
+ */
+
 public class debugParameterFileUi : MonoBehaviour
 {
 

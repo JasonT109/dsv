@@ -6,6 +6,12 @@ using Meg.Networking;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/**
+ * Editing interface for a single vessel in the debug interface.
+ * Allows the user to modify the vessel's name, icon etc., as well as
+ * the movement properties of the vessel.
+ */
+
 public class debugVesselPropertiesUi : MonoBehaviour
 {
 

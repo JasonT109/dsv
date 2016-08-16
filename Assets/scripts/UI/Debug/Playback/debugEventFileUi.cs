@@ -11,6 +11,13 @@ using Meg.EventSystem;
 using Meg.Networking;
 using Button = UnityEngine.UI.Button;
 
+/** 
+ * The interface logic for editing an Event File. 
+ * 
+ * See megEventFile for more information on the event playback system.
+ * 
+ */
+
 public class debugEventFileUi : MonoBehaviour
 {
 

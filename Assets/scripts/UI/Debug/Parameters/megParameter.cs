@@ -12,7 +12,8 @@ namespace Meg.Parameters
     }
 
 
-    /** Base class for a shared state parameter. */
+    /** Base class for a shared state parameter - backing data for the Setup interface. */
+
     [System.Serializable]
     public class megParameter
     {

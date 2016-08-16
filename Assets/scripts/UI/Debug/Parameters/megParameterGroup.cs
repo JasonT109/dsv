@@ -6,7 +6,7 @@ using System.Linq;
 namespace Meg.Parameters
 {
 
-    /** A group of timed parameters. */
+    /** Represents a group of server parameters - part of the Setup interface backend. */
 
     [System.Serializable]
     public class megParameterGroup

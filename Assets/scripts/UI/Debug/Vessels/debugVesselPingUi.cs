@@ -6,6 +6,17 @@ using Meg.Networking;
 using TouchScript.Gestures;
 using UnityEngine.UI;
 
+/** 
+ * Represents a vessel in the debug map interface viewport.
+ * 
+ * Vessel pings can be directly selected, and dragged around to reposition
+ * the corresponding vessel in the simulation space.
+ * 
+ * Pings will also update in realtime during playback, and have a simple
+ * arrow visualization to help understand the vessel's current movement state.
+ * 
+ */
+
 public class debugVesselPingUi : MonoBehaviour
 {
 

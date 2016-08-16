@@ -7,6 +7,10 @@ using UnityEngine.UI;
 namespace Meg.UI
 {
 
+    /** 
+     * Customized version of the UGUI ScrollRect that adds a few useful facilities, such as scrolling to a given item. 
+     */
+
     public class megScrollRect : UnityEngine.UI.ScrollRect, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
     {
         public bool Dragging { get; private set; }
