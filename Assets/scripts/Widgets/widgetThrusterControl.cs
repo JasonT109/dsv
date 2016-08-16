@@ -139,12 +139,12 @@ public class widgetThrusterControl : MonoBehaviour
 		}
 		else
 		{
-			thrusterSideL1 = Mathf.Clamp(-inZ - (-inX * 0.5f) + inX2, -100, 100);
-			thrusterSideR1 = Mathf.Clamp(inZ + (inX * 0.5f) + inX2, -100, 100);
+			thrusterSideL1 = Mathf.Clamp(-inZ - (-inX * 0.5f) + inX2 + (inY * 0.5f), -100, 100);
+			thrusterSideR1 = Mathf.Clamp(inZ + (inX * 0.5f) + inX2 - (inY * 0.5f), -100, 100);
 			thrusterSideL2 = Mathf.Clamp(-inZ + inX2, -100, 100);
 			thrusterSideR2 = Mathf.Clamp(inZ + inX2, -100, 100);
-			thrusterSideL3 = Mathf.Clamp(-inZ + (-inX * 0.5f) + inX2, -100, 100);
-			thrusterSideR3 = Mathf.Clamp(inZ - (inX * 0.5f) + inX2, -100, 100);
+			thrusterSideL3 = Mathf.Clamp(-inZ + (-inX * 0.5f) + inX2  - (inY * 0.5f), -100, 100);
+			thrusterSideR3 = Mathf.Clamp(inZ - (inX * 0.5f) + inX2 + (inY * 0.5f), -100, 100);
 		}
 
         //assign the values to text objects
