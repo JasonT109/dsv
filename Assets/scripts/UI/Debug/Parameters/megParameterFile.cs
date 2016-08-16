@@ -108,12 +108,19 @@ namespace Meg.Parameters
         public void RemoveGroup(megParameterGroup group)
         {
             groups.Remove(group);
+
+            if (group == selectedGroup)
+                selectedGroup = null;
         }
 
         /** Clear the file of all groups. */
         public void Clear()
         {
             groups.Clear();
+
+            selectedGroup = null;
+            selectedParameter = null;
+
             if (Cleared != null)
                 Cleared(this);
         }

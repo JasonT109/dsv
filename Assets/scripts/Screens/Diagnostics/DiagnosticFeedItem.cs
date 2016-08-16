@@ -212,6 +212,8 @@ public class DiagnosticFeedItem : MonoBehaviour
             yield return characterDelay;
         }
 
+        control.Text = input;
+
         // Blink text for more serious stuff.
         if (State.Type > ItemType.Normal)
             StartCoroutine(BlinkRoutine());

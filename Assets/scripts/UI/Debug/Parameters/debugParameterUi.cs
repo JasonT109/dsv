@@ -94,7 +94,7 @@ public abstract class debugParameterUi : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    public void SetParameter(megParameter value, bool initUi)
+    public virtual void SetParameter(megParameter value, bool initUi)
     {
         _parameter = value;
 

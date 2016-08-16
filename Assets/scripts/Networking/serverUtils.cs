@@ -819,7 +819,7 @@ namespace Meg.Networking
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
             { "velocity", new ParameterInfo { description = "Sub's current speed (m/s)." } },
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
-            { "vesselmovementenabled", new ParameterInfo { description = "Whether vessel movement simulation is enabled during playback." } },
+            { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
             { "xpos", new ParameterInfo { description = "Sub's X coordinate (m) (Note that this is in the XZ plane, where Y is up/down.)" } },
             { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360, description = "Sub's current yaw angle (heading, degrees)." } },

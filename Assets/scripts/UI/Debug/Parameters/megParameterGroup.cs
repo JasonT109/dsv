@@ -91,12 +91,18 @@ namespace Meg.Parameters
         public void RemoveParameter(megParameter e)
         {
             parameters.Remove(e);
+
+            if (e == file.selectedParameter)
+                file.selectedParameter = null;
         }
 
         /** Clear parameters from group. */
         public void Clear()
         {
             parameters.Clear();
+
+            if (file.selectedParameter != null && file.selectedParameter.group == this)
+                file.selectedParameter = null;
         }
 
 

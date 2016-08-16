@@ -43,6 +43,29 @@ public class debugParameterValueUi : debugParameterUi
         _updating = false;
     }
 
+    public override void SetParameter(megParameter value, bool initUi)
+    {
+        // Get previous parameter name (if any).
+        var oldParam = ValueParameter != null ? ValueParameter.serverParam : null;
+
+        // Superclass implementation.
+        base.SetParameter(value, initUi);
+
+        // If UI initialization was forced, no need to proceed further.
+        if (initUi)
+            return;
+
+        // Check if parameter name has changed.
+        // If so, we need to update UI elements to match.
+        if (ValueParameter != null && oldParam != ValueParameter.serverParam)
+        {
+            _updating = true;
+            UpdateServerParamInput();
+            _updating = false;
+        }
+    }
+
+
 
     // Protected Methods
     // ------------------------------------------------------------

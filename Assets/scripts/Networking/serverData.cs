@@ -466,6 +466,9 @@ public class serverData : NetworkBehaviour
             case "reserveoxygentank6":
                 OxygenData.reserveOxygenTank6 = newValue;
                 break;
+            case "oxygenflow":
+                OxygenData.oxygenFlow = newValue;
+                break;
             case "airtank1":
                 AirData.airTank1 = newValue;
                 break;
