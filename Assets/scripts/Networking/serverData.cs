@@ -659,6 +659,7 @@ public class serverData : NetworkBehaviour
                 Quaternion qPitch = Quaternion.Euler(newValue, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
                 transform.rotation = qPitch;
                 break;
+            case "heading":
             case "yawangle":
                 Quaternion qYaw = Quaternion.Euler(transform.rotation.eulerAngles.x, newValue, transform.rotation.eulerAngles.z);
                 transform.rotation = qYaw;
