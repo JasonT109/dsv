@@ -1,8 +1,17 @@
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using Meg.Parameters;
 using Meg.Networking;
+
+/**
+ * Editing interface for a single server parameter value.
+ * Allows the user to edit the value by direct mouse/touch manipulation (slider)
+ * or by text input.  The user can also change which parameter is being edited
+ * via the ServerParamInput field.
+ *  
+ */
 
 public class debugParameterValueUi : debugParameterUi
 {
@@ -24,9 +33,27 @@ public class debugParameterValueUi : debugParameterUi
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
 
+    [Header("Configuration")]
+
+    public string ValueFormat = "{0:N2}";
+
+
     /** The value parameter. */
     public megParameterValue ValueParameter
         { get { return Parameter as megParameterValue; } }
+
+    /** Display name for this parameter. */
+    public override string DisplayName
+    {
+        get
+        {
+            if (ValueParameter == null)
+                return base.DisplayName;
+
+            var key = ValueParameter.serverParam;
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(key);
+        }
+    }
 
 
     // Public Methods
@@ -121,7 +148,7 @@ public class debugParameterValueUi : debugParameterUi
 
     private void UpdateServerValueInput()
     {
-        ServerValueInput.text = string.Format("{0:N2}", ValueParameter.serverValue);
+        ServerValueInput.text = string.Format(ValueFormat, ValueParameter.serverValue);
     }
 
     public void ServerParamInputChanged(string value)

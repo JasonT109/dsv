@@ -4,6 +4,11 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using Meg.Parameters;
 
+/** 
+ * Base class for a parameter editor in the Setup interface.
+ * For a concrete example of usage, see debugParameterValueUi.
+ */
+
 public abstract class debugParameterUi : MonoBehaviour
 {
 
@@ -42,6 +47,10 @@ public abstract class debugParameterUi : MonoBehaviour
     /** The event file. */
     public megParameterFile File
         { get { return _parameter.file; } }
+
+    /** Display name for this parameter. */
+    public virtual string DisplayName
+        { get { return Parameter != null ? Parameter.ToString() : ""; } }
 
     /** Event signature for a parameter selection event. */
     public delegate void ParameterSelectedHandler(debugParameterUi ui);
@@ -124,14 +133,14 @@ public abstract class debugParameterUi : MonoBehaviour
         _updating = true;
 
         var c = BackdropColor;
-        var isSelected = _parameter.file.selectedParameter == _parameter;
+        var isSelected = _parameter.selected;
         if (isSelected)
             c = BackdropSelectedColor;
 
         Backdrop.color = c;
 
         if (Name)
-            Name.text = Parameter.ToString();
+            Name.text = DisplayName;
 
         UpdateParameterUi();
 

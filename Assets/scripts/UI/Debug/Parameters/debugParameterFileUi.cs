@@ -7,6 +7,13 @@ using System.Linq;
 using Meg.Parameters;
 using Button = UnityEngine.UI.Button;
 
+/** 
+ * The interface logic for editing a megParameterFile. 
+ * 
+ * See megParameterFile for more information on the parameter setup system.
+ * 
+ */
+
 public class debugParameterFileUi : MonoBehaviour
 {
 
@@ -139,12 +146,20 @@ public class debugParameterFileUi : MonoBehaviour
     /** Remove the selected group from the file. */
     public void RemoveGroup()
     {
-        if (!_file.canRemove)
+        if (!_file.canRemove || _file.selectedGroup == null)
             return;
 
         var group = _file.selectedGroup;
-        _file.RemoveGroup(group);
-        RemoveGroupUi(group);
+        DialogManager.Instance.ShowYesNo("REMOVE GROUP?",
+            string.Format("Do you wish to remove the group '{0}'?", group.id),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                _file.RemoveGroup(group);
+                RemoveGroupUi(group);
+            });
     }
 
     public void AddValueParameter()
@@ -162,14 +177,32 @@ public class debugParameterFileUi : MonoBehaviour
 
     public void RemoveParameter()
     {
-        if (_file.selectedParameter != null)
-            _file.selectedParameter.group.RemoveParameter(_file.selectedParameter);
+        if (_file.selectedParameter == null)
+            return;
+
+        var toRemove = _file.selectedParameter;
+        DialogManager.Instance.ShowYesNo("REMOVE PARAMETER?",
+            string.Format("Are you sure you wish to remove the parameter '{0}'?", toRemove.name),
+            result =>
+            {
+                if (result == DialogYesNo.DialogResult.Yes)
+                    toRemove.group.RemoveParameter(toRemove);
+            });
     }
 
     public void ClearParameters()
     {
-        if (_file.selectedGroup != null)
-            _file.selectedGroup.Clear();
+        if (_file.selectedGroup == null)
+            return;
+
+        var toClear = _file.selectedGroup;
+        DialogManager.Instance.ShowYesNo("REMOVE PARAMETERS FROM GROUP?",
+            string.Format("Are you sure you wish to remove all parameters from the group '{0}'?", toClear.id),
+            result =>
+            {
+                if (result == DialogYesNo.DialogResult.Yes)
+                    toClear.Clear();
+            });
     }
 
     /** Clear the file contents. */
@@ -178,7 +211,13 @@ public class debugParameterFileUi : MonoBehaviour
         if (!_file.canClear)
             return;
 
-        _file.Clear();
+        DialogManager.Instance.ShowYesNo("REMOVE ALL GROUPS?",
+            "Are you sure you wish to remove all groups from view?",
+            result =>
+            {
+                if (result == DialogYesNo.DialogResult.Yes)
+                    _file.Clear();
+            });
     }
 
     /** Save the file. */

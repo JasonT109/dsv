@@ -11,6 +11,13 @@ using Meg.EventSystem;
 using Meg.Networking;
 using Button = UnityEngine.UI.Button;
 
+/** 
+ * The interface logic for editing an Event File. 
+ * 
+ * See megEventFile for more information on the event playback system.
+ * 
+ */
+
 public class debugEventFileUi : MonoBehaviour
 {
 
@@ -180,7 +187,15 @@ public class debugEventFileUi : MonoBehaviour
             return;
 
         var group = File.selectedGroup;
-        File.RemoveGroup(group);
+        DialogManager.Instance.ShowYesNo("REMOVE EVENT GROUP?",
+            string.Format("Are you sure you wish to remove the group '{0}'?", group.id),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                File.RemoveGroup(group);
+            });
     }
 
     /** Clear the file contents. */
@@ -189,9 +204,16 @@ public class debugEventFileUi : MonoBehaviour
         if (!File.canClear)
             return;
 
-        Properties.Group = null;
+        DialogManager.Instance.ShowYesNo("REMOVE ALL EVENT GROUPS?",
+            "Are you sure you wish to remove all event groups from view?",
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
 
-        File.Clear();
+                Properties.Group = null;
+                File.Clear();
+            });
     }
 
     /** Save the file. */

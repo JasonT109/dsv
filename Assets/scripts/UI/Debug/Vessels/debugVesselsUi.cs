@@ -4,6 +4,22 @@ using System.Collections.Generic;
 using Meg.Networking;
 using UnityEngine.UI;
 
+
+/**
+ * Interface logic for the Vessel setup screen.
+ * 
+ * Allows users to modify the positions, visibility and movements of Vessels (subs)
+ * in the simulation.  Users can also add and remove vessels from the simulation,
+ * set their names, icons, and so on.
+ * 
+ * The logic for editing properties of the selected vessel lives in debugVesselPropertiesUi.
+ * 
+ * Each vessel is represented by a 'ping' on the map viewport.  The ping is a customized
+ * version of the SonarPing as used in the long range Sonar screen, with the custom behaviour
+ * being defined in debugVesselPingUi.
+ * 
+ */
+
 public class debugVesselsUi : Singleton<debugVesselsUi>
 {
 
@@ -114,8 +130,17 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         if (!CanRemoveVessels)
             return;
 
-        serverUtils.PostRemoveLastVessel();
-        Select(VesselData.GetVessel(VesselData.LastVessel));
+        var vesselName = VesselData.GetName(VesselData.LastVessel);
+        DialogManager.Instance.ShowYesNo("REMOVE LAST VESSEL?",
+            string.Format("Are you sure you wish to remove the last vessel '{0}'?", vesselName),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                serverUtils.PostRemoveLastVessel();
+                Select(VesselData.GetVessel(VesselData.LastVessel));
+            });
     }
 
     /** Clear extra vessels. */
@@ -124,8 +149,17 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         if (!CanRemoveVessels)
             return;
 
-        serverUtils.PostClearExtraVessels();
-        Select(VesselData.GetVessel(VesselData.LastVessel));
+        DialogManager.Instance.ShowYesNo("REMOVE ALL EXTRA VESSELS?",
+            "Are you sure you wish to remove all extra vessels from view?",
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                serverUtils.PostClearExtraVessels();
+                Select(VesselData.GetVessel(VesselData.LastVessel));
+            });
+
     }
 
 

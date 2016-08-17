@@ -3,6 +3,12 @@ using UnityEngine.UI;
 using System.Collections;
 using Meg.Networking;
 
+/**
+ * List entry interface for a single vessel (non-spatial).
+ * Allows user to select a vessel for editing, and also control
+ * that vessel's visibility on map/sonar in a quick way. 
+ */
+
 public class debugVesselUi : MonoBehaviour
 {
 
@@ -22,7 +28,6 @@ public class debugVesselUi : MonoBehaviour
 
     /** The vessel's on sonar toggle button. */
     public Toggle OnSonarToggle;
-
 
 
     /** The vessel being displayed. */

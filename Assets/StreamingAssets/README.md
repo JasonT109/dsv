@@ -24,19 +24,29 @@ You can also specify any configuration option by passing it in as a commandline 
 ### save-folder
 Specifies where Scene save files are located.
 
+### save-format
+Specifies a C# string formatting pattern to use when determining Scene filenames.
+For example, '{save-folder}/Scene_{1:000}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}.json'.
+- {save-folder} is the value of the 'save-folder' config option.
+- {0} is the current vessel being simulated (e.g. Marco, Polo).
+- {1} is the current scene.
+- {2} is the current shot within the scene.
+- {3} is the current take.
+- {4} is the current date/time, in UTC.
+
 ### auto-save-folder
 Specifies where Playback autosave files are located.
 
 ### auto-save-format
 Specifies a C# string formatting pattern to use when determining Playback autosave filenames.
-For example, '{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json'.
-- {0} is the auto-save-folder.
-- {1} is the current vessel being simulated (e.g. Marco, Polo).
-- {2} is the current scene.
-- {3} is the current shot within the scene.
-- {4} is the current take
-- {5} is the current date/time, in UTC.
-- {6} is a suffix such as 'Start' or 'Stop' (denotes autosaves taken at different points in playback.)
+For example, '{auto-save-folder}/Scene_{1:000}/{5}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}_{5}.json'.
+- {auto-save-folder} is the value of the 'auto-save-folder' config option.
+- {0} is the current vessel being simulated (e.g. Marco, Polo).
+- {1} is the current scene.
+- {2} is the current shot within the scene.
+- {3} is the current take.
+- {4} is the current date/time, in UTC.
+- {5} is a suffix such as 'Start' or 'Stop' (denotes autosaves taken at different points in playback.)
 
 ### auto-save-enabled
 Whether to perform autosaving during usage of the Playback interface.

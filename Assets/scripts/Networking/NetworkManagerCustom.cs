@@ -99,6 +99,7 @@ public class NetworkManagerCustom : MonoBehaviour
         Host = Configuration.Get("server-ip", Network.player.ipAddress);
         Port = Configuration.Get("server-port", Port);
         Scene = Configuration.Get("network-scene", _manager.onlineScene);
+        Debug.Log(string.Format("NetworkManagerCustom.Awake(id:{0}): Selected ip:{1}:{2}, scene:{3}", Id, Host, Port, Scene));
 
         // Configure UNET network manager with default connection.
         _manager.networkAddress = Host;
@@ -165,7 +166,7 @@ public class NetworkManagerCustom : MonoBehaviour
         if (!CanAttemptStartup())
             return false;
 
-        Debug.Log(string.Format("NetworkManagerCustom.StartClient(id:{0}): Starting server session - scene '{1}'..", Id, Scene));
+        Debug.Log(string.Format("NetworkManagerCustom.StartCServer(id:{0}): Starting server session - scene '{1}'..", Id, Scene));
         _manager.onlineScene = Scene;
         _manager.StartHost();
 

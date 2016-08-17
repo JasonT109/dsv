@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.Parameters
 {
@@ -12,7 +13,8 @@ namespace Meg.Parameters
     }
 
 
-    /** Base class for a shared state parameter. */
+    /** Base class for a shared state parameter - backing data for the Setup interface. */
+
     [System.Serializable]
     public class megParameter
     {
@@ -90,15 +92,15 @@ namespace Meg.Parameters
 
         /** Set a server value. */
         protected void PostServerData(string key, float value, bool add)
-            { file.PostServerData(key, value, add); }
+            { serverUtils.PostServerData(key, value, add); }
 
         /** Set a server value. */
         protected void PostServerData(string key, string value)
-            { file.PostServerData(key, value); }
+            { serverUtils.PostServerData(key, value); }
 
         /** Return a server value. */
         public float GetServerData(string key)
-            { return file.GetServerData(key); }
+            { return serverUtils.GetServerData(key); }
 
     }
 

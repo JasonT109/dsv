@@ -7,6 +7,13 @@ using Meg.Networking;
 using Meg.UI;
 using UnityEngine.Events;
 
+/**
+ * A list of server parameters, used for parameter selection and documentation.
+ * Each parameter has an associated brief description to help with locating the 
+ * proper parameter for a given use case.
+ * 
+ */
+
 public class debugParameterListUi : MonoBehaviour
 {
 

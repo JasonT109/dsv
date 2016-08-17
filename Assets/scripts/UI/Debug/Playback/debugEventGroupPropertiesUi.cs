@@ -300,7 +300,16 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         if (toRemove == null)
             return;
 
-        _group.RemoveEvent(toRemove);
+        DialogManager.Instance.ShowYesNo("REMOVE EVENT?",
+            string.Format("Are you sure you wish to remove the event '{0}'?", toRemove),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                _group.RemoveEvent(toRemove);
+            });
+        
     }
 
     /** Toggle parameter info list. */

@@ -2,9 +2,12 @@
 	"default" :
 	{
 		"save-folder" : "C:/Meg/",
-		"auto-save-folder" : "C:/Meg/Autosave/",
-		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json",
+		"save-format" : "{save-folder}/Scene_{1:000}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}.json",
+		
+		"auto-save-folder" : "C:/Meg/",
+		"auto-save-format" : "{auto-save-folder}/Scene_{1:000}/{5}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}_{5}.json",
 		"auto-save-enabled" : true,
+
 		"vessels" : 
 		[
 			{ 
@@ -144,5 +147,10 @@
 		"network-scene" : "screen_dcc",
 	},
 
+	"dccServer" :
+	{
+		"parent" : "dcc",
+		"network-role" : "server",
+	},
 
 }
