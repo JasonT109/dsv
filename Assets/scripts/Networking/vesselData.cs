@@ -195,6 +195,14 @@ public class vesselData : NetworkBehaviour
     [Server]
     public void AddVessel(Vessel vessel)
     {
+        // Check if vessel already exists in the list.
+        // If so, just overwrite the existing vessel with this one.
+        if (vessel.Id > 0 && vessel.Id <= Vessels.Count)
+        {
+            SetVessel(vessel.Id, vessel);
+            return;
+        }
+
         // Assign vessel an id based on the highest existing id in list.
         var id = Vessels.Count + 1;
         vessel.Id = id;
@@ -637,8 +645,13 @@ public class vesselData : NetworkBehaviour
     [Server]
     public void Load(JSONObject json)
     {
+        // Reinitialize vessels to default states.
+        InitializeVessels();
+
+        // Load in vessel data from file.
         var vesselsJson = json.GetField("Vessels");
-        Vessels.Clear();
+        if (vesselsJson == null || vesselsJson.IsNull)
+            return;
         for (var i = 0; i < vesselsJson.Count; i++)
             AddVessel(LoadVessel(vesselsJson[i]));
 
@@ -659,6 +672,8 @@ public class vesselData : NetworkBehaviour
         json.AddField("OnMap", vessel.OnMap);
         json.AddField("OnSonar", vessel.OnSonar);
         json.AddField("Icon", (int) vessel.Icon);
+        json.AddField("ColorOnMap", vessel.ColorOnMap);
+        json.AddField("ColorOnSonar", vessel.ColorOnSonar);
 
         return json;
     }
@@ -666,15 +681,25 @@ public class vesselData : NetworkBehaviour
     /** Load vessel state from JSON. */
     private Vessel LoadVessel(JSONObject json)
     {
-        var vessel = new Vessel();
+        var vessel = new Vessel
+        {
+            Name = Unknown,
+            OnMap = true,
+            OnSonar = true,
+            ColorOnMap = DefaultColorOnMap,
+            ColorOnSonar = DefaultColorOnSonar
+        };
+
         json.GetField(ref vessel.Id, "Id");
         json.GetField(ref vessel.Name, "Name");
         json.GetField(ref vessel.Position, "Position");
         json.GetField(ref vessel.Speed, "Speed");
         json.GetField(ref vessel.OnMap, "OnMap");
         json.GetField(ref vessel.OnSonar, "OnSonar");
+        json.GetField(ref vessel.ColorOnMap, "ColorOnMap");
+        json.GetField(ref vessel.ColorOnSonar, "ColorOnSonar");
 
-        int icon = 0;
+        var icon = 0;
         json.GetField(ref icon, "Icon");
         vessel.Icon = (Icon) icon;
 
@@ -701,6 +726,9 @@ public class vesselData : NetworkBehaviour
     [Server]
     private void InitializeVessels()
     {
+        // Remove any existing vessels.
+        Vessels.Clear();
+
         // Populate predefined vessels from configuration.
         var vessels = Configuration.GetJson("vessels");
         if (vessels.IsArray)

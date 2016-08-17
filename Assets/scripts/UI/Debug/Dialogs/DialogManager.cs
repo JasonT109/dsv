@@ -24,7 +24,7 @@ public class DialogManager : Singleton<DialogManager>
 
         Current = Instantiate(DialogYesNoPrefab);
         Current.transform.SetParent(transform, false);
-        Current.Configure(title, message);
+        Current.Configure(title.ToUpper(), message);
 
         if (action != null)
             Current.OnClosed.AddListener(action);

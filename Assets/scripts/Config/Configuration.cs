@@ -115,6 +115,18 @@ public class Configuration : AutoSingleton<Configuration>
         return HasFieldFromId(key, id);
     }
 
+    /** Look for and replace configuration path references with their current values. */
+    public static string ExpandPaths(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+            return path;
+
+        path = path.Replace("{save-folder}", Get("save-folder", "C:/Meg/"));
+        path = path.Replace("{auto-save-folder}", Get("auto-save-folder", "C:/Meg/Autosave/"));
+
+        return path;
+    }
+
 
     // Members
     // ------------------------------------------------------------

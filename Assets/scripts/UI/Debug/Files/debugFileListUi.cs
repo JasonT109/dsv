@@ -31,6 +31,9 @@ public class debugFileListUi : MonoBehaviour
     /** Filter for files. */
     public string Filter = ".json$";
 
+    /** Optional folder path to start in. */
+    public string InitialFolder;
+
 
     // Members
     // ------------------------------------------------------------
@@ -47,6 +50,13 @@ public class debugFileListUi : MonoBehaviour
 
     // Unity Methods
     // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Start()
+    {
+        if (!string.IsNullOrEmpty(InitialFolder))
+            Folder = InitialFolder;
+    }
 
     /** Enabling. */
     private void OnEnable()
@@ -85,6 +95,12 @@ public class debugFileListUi : MonoBehaviour
 
     private void SetFolder(string value)
     {
+        if (string.IsNullOrEmpty(value))
+            return;
+
+        // Look for and replace common configuration folders.
+        value = Configuration.ExpandPaths(value);
+
         _folder = value;
         Refresh();
     }

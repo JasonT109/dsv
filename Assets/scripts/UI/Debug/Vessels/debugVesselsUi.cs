@@ -130,8 +130,17 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         if (!CanRemoveVessels)
             return;
 
-        serverUtils.PostRemoveLastVessel();
-        Select(VesselData.GetVessel(VesselData.LastVessel));
+        var vesselName = VesselData.GetName(VesselData.LastVessel);
+        DialogManager.Instance.ShowYesNo("REMOVE LAST VESSEL?",
+            string.Format("Are you sure you wish to remove the last vessel '{0}'?", vesselName),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                serverUtils.PostRemoveLastVessel();
+                Select(VesselData.GetVessel(VesselData.LastVessel));
+            });
     }
 
     /** Clear extra vessels. */
@@ -140,8 +149,17 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         if (!CanRemoveVessels)
             return;
 
-        serverUtils.PostClearExtraVessels();
-        Select(VesselData.GetVessel(VesselData.LastVessel));
+        DialogManager.Instance.ShowYesNo("REMOVE ALL EXTRA VESSELS?",
+            "Are you sure you wish to remove all extra vessels from view?",
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                serverUtils.PostClearExtraVessels();
+                Select(VesselData.GetVessel(VesselData.LastVessel));
+            });
+
     }
 
 

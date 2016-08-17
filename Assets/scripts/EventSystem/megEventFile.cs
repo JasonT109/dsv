@@ -423,7 +423,8 @@ namespace Meg.EventSystem
         {
             // Load in value events.
             var groupsJson = json.GetField("groups");
-            for (var i = 0; i < groupsJson.Count; i++)
+            var n = groupsJson != null ? groupsJson.Count : 0;
+            for (var i = 0; i < n; i++)
             {
                 var group = new megEventGroup(this);
                 groups.Add(group);

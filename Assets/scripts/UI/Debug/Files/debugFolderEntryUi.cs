@@ -4,7 +4,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
 
-public class debugFileEntryUi : MonoBehaviour
+public class debugFolderEntryUi : MonoBehaviour
 {
 
     // Properties
@@ -13,16 +13,20 @@ public class debugFileEntryUi : MonoBehaviour
     /** Button for this entry. */
     public Toggle Toggle;
 
-    /** The file info for this entry. */
-    public FileInfo FileInfo
+    /** The directory info for this entry. */
+    public DirectoryInfo DirectoryInfo
     {
         get { return _info; }
         set
         {
             _info = value;
 
-            var label = Path.GetFileNameWithoutExtension(value.Name);
-            label = Regex.Replace(label, "[A-Z]", " $0");
+            var label = value.Name;
+            if (InsertSpacesBetweenCaps)
+                label = Regex.Replace(value.Name, "[A-Z]+", " $0");
+            if (ReplaceUnderscoresWithSpaces)
+                label = Regex.Replace(label, "_", " ");
+
             Toggle.GetComponentInChildren<Text>().text = label;
         }
     }
@@ -38,12 +42,14 @@ public class debugFileEntryUi : MonoBehaviour
         }
     }
 
+    public bool InsertSpacesBetweenCaps = true;
+    public bool ReplaceUnderscoresWithSpaces = true;
 
     // Members
     // ------------------------------------------------------------
 
-    /** The file info for this entry. */
-    private FileInfo _info;
+    /** The folder info for this entry. */
+    private DirectoryInfo _info;
 
     /** Whether entry is selected. */
     private bool _selected;
