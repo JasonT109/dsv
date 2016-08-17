@@ -408,14 +408,14 @@ public class debugVesselPropertiesUi : MonoBehaviour
         {
             var toggle = MovementTypeToggles[i];
             toggle.isOn = _vesselMovementTypes[i] == type;
-            toggle.interactable = CanSetMovementType(type);
+            toggle.interactable = CanSetMovementType(_vesselMovementTypes[i]);
         }
     }
 
     private bool CanSetMovementType(string type)
     {
         // Don't allow the intercept pin to intercept itself.
-        if (Vessel.Id == vesselData.InterceptId && type != vesselMovements.InterceptType)
+        if (Vessel.Id == vesselData.InterceptId && type == vesselMovements.InterceptType)
             return false;
 
         return true;
