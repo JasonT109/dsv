@@ -26,6 +26,8 @@ public class debugFolderEntryUi : MonoBehaviour
                 label = Regex.Replace(value.Name, "[A-Z]+", " $0");
             if (ReplaceUnderscoresWithSpaces)
                 label = Regex.Replace(label, "_", " ");
+            if (UpperCase)
+                label = label.ToUpper();
 
             Toggle.GetComponentInChildren<Text>().text = label;
         }
@@ -44,6 +46,8 @@ public class debugFolderEntryUi : MonoBehaviour
 
     public bool InsertSpacesBetweenCaps = true;
     public bool ReplaceUnderscoresWithSpaces = true;
+    public bool UpperCase = true;
+
 
     // Members
     // ------------------------------------------------------------

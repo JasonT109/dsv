@@ -21,11 +21,13 @@ public class debugFileEntryUi : MonoBehaviour
         {
             _info = value;
 
-            var label = value.Name;
+            var label = Path.GetFileNameWithoutExtension(value.Name);
             if (InsertSpacesBetweenCaps)
                 label = Regex.Replace(value.Name, "[A-Z]+", " $0");
             if (ReplaceUnderscoresWithSpaces)
                 label = Regex.Replace(label, "_", " ");
+            if (UpperCase)
+                label = label.ToUpper();
 
             Toggle.GetComponentInChildren<Text>().text = label;
         }
@@ -44,6 +46,7 @@ public class debugFileEntryUi : MonoBehaviour
 
     public bool InsertSpacesBetweenCaps = true;
     public bool ReplaceUnderscoresWithSpaces = true;
+    public bool UpperCase = true;
 
 
     // Members
