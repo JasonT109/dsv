@@ -71,7 +71,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
             }
             else
             {
-                float sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex);
+                float sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex + phase);
                 if (usingTintColor)
                     m.SetColor("_TintColor", Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave)));
                 else

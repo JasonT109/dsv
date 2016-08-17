@@ -102,7 +102,6 @@ public class graphicsDCCWindowSize : MonoBehaviour
         currentXScale = (slicer.Width / defaultWidth);
         currentYScale = (slicer.Height / defaultHeight);
 
-
         for (int i = 0; i < repositionItems.Length; i++)
         {
             repositionItems[i].transform.localPosition = new Vector3((rPositions[i].x * currentXScale), (rPositions[i].y * currentYScale));
@@ -110,7 +109,11 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
         for (int i = 0; i < scaleItems.Length; i++)
         {
-            scaleItems[i].transform.localScale = new Vector3((sScales[i].x * currentXScale) * scaleTweakFactor, (sScales[i].y * currentYScale) * scaleTweakFactor, 1);
+            currentXScale = ((slicer.Width - (slicer.Border * 2)) / (defaultWidth - (slicer.Border * 2)));
+            currentYScale = ((slicer.Height - (slicer.Border * 2)) / (defaultHeight - (slicer.Border * 2)));
+
+            scaleItems[i].transform.localScale = new Vector3((currentXScale / sScales[i].x), (currentYScale / sScales[i].y), 1);
+            //scaleItems[i].transform.localScale = new Vector3((sScales[i].x * currentXScale) * scaleTweakFactor, (sScales[i].y * currentYScale) * scaleTweakFactor, 1);
         }
     }
 
