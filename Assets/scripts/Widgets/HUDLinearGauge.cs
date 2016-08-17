@@ -183,11 +183,8 @@ public class HUDLinearGauge : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
-        if (!Dynamic)
-            return;
-
         UpdateValue(0);
-        UpdateTicks();
+        UpdateTicks(false);
     }
 
     /** Update. */
@@ -240,25 +237,26 @@ public class HUDLinearGauge : MonoBehaviour
             }
 
             var tick = Instantiate(prefab);
+            _renderers.Add(tick.GetComponentInChildren<Renderer>());
+            _labels.Add(tick.GetComponentInChildren<widgetText>());
+            _ticks.Add(tick);
+
             tick.transform.SetParent(gameObject.transform, false);
             tick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
             tick.transform.localScale = Vector3.Scale(tick.transform.localScale, scaling);
-
-            _ticks.Add(tick);
-            _renderers.Add(tick.GetComponentInChildren<Renderer>());
-            _labels.Add(tick.GetComponentInChildren<widgetText>());
         }
 
         // Create the zero tick (if specified).
         if (ZeroTickPrefab)
         {
             _zeroTick = Instantiate(ZeroTickPrefab);
+            _zeroRenderer = _zeroTick.GetComponentInChildren<Renderer>();
+            _zeroLabel = _zeroTick.GetComponentInChildren<widgetText>();
+
             _zeroTick.transform.SetParent(gameObject.transform, false);
             _zeroTick.transform.localRotation = Quaternion.Euler(TickLocalRotation);
             _zeroTick.transform.localScale = Vector3.Scale(_zeroTick.transform.localScale, ZeroTickScaling);
             _zeroTick.SetActive(false);
-            _zeroRenderer = _zeroTick.GetComponentInChildren<Renderer>();
-            _zeroLabel = _zeroTick.GetComponentInChildren<widgetText>();
         }
     }
 
@@ -275,7 +273,7 @@ public class HUDLinearGauge : MonoBehaviour
     }
 
     /** Position ticks according to current value. */
-    private void UpdateTicks()
+    private void UpdateTicks(bool reposition = true)
     {
         // Disable the zero tick by default.
         if (_zeroTick)
@@ -299,8 +297,11 @@ public class HUDLinearGauge : MonoBehaviour
                 _zeroTick.SetActive(visible);
 
             // Position the tick.
-            tick.transform.localPosition = ValueToLocal(value);
-            tick.transform.localRotation = ValueToLocalRotation(value);
+            if (reposition)
+            {
+                tick.transform.localPosition = ValueToLocal(value);
+                tick.transform.localRotation = ValueToLocalRotation(value);
+            }
 
             // Update tick label.
             var label = isNonZero ? _labels[i] : _zeroLabel;
