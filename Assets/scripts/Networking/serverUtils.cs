@@ -1797,7 +1797,7 @@ namespace Meg.Networking
         public static void SetPlayerVessel(int vessel)
         {
             if (VesselData)
-                VesselData.PlayerVessel = vessel;
+                VesselData.SetPlayerVessel(vessel);
         }
 
         /** Returns which vessel is controlled by the player (1-based index). */

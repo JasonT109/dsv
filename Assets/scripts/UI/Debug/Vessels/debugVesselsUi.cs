@@ -40,6 +40,9 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Button for clearing extra vessels. */
     public Button ClearButton;
 
+    /** Button for setting the player vessel. */
+    public Button SetPlayerButton;
+
     /** Properties interface. */
     public debugVesselPropertiesUi Properties;
 
@@ -159,7 +162,24 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
                 serverUtils.PostClearExtraVessels();
                 Select(VesselData.GetVessel(VesselData.LastVessel));
             });
+    }
 
+    /** Swap the current player vessel to selected vessel. */
+    public void SetSelectedAsPlayer()
+    {
+        // Check if we can reassign the player vessel.
+        if (!Selected.CanBePlayer || !serverUtils.IsServer())
+            return;
+
+        DialogManager.Instance.ShowYesNo("SWITCH PLAYER VESSEL?",
+            string.Format("Are you sure you wish to switch the player vessel to be '{0}'?", Selected.Name),
+            result =>
+            {
+                if (result != DialogYesNo.DialogResult.Yes)
+                    return;
+
+                VesselData.SetPlayerVessel(Selected.Id);
+            });
     }
 
 
@@ -171,6 +191,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         AddButton.interactable = true;
         RemoveButton.interactable = CanRemoveVessels;
         ClearButton.interactable = CanRemoveVessels;
+        SetPlayerButton.interactable = Selected.CanBePlayer;
 
         var vessels = VesselData.Vessels;
         var index = 0;
