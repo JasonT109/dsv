@@ -19,7 +19,7 @@ public class graphicsAnimatedGraph : MonoBehaviour {
 
     private float minH;
     private float maxH;
-    private float[] graphHeights;
+    public float[] graphHeights;
     private int n;
     private float tickTime;
     private float timeIndex = 0.0f;

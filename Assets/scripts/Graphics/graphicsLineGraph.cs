@@ -32,6 +32,11 @@ public class graphicsLineGraph : MonoBehaviour
     public bool useServerValue = false;
     public string linkDataString;
 
+    [Header("Using Animated Graph Widget")]
+    public bool useAnimatedGraphWidget = false;
+    public graphicsAnimatedGraph aGraph;
+
+    [Header("Setup")]
     public float valueMin = 0f;
     public float valueMax = 100f;
 
@@ -139,7 +144,14 @@ public class graphicsLineGraph : MonoBehaviour
         if (doNoise)
             noise.Update();
 
-        if (Time.time > tickTime)
+        if (useAnimatedGraphWidget && aGraph)
+        {
+            for (int i = 0; i < numPoints; i++)
+                line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, graphicsMaths.remapValue(aGraph.graphHeights[i], 0, 1, 0, graphMax));
+
+            line.vectorLine.Draw();
+        }
+        else if (Time.time > tickTime)
         {
             // Move previous points back one step.
             System.Array.Copy(graphHeights, 1, graphHeights, 0, numPoints - 1);
@@ -177,9 +189,10 @@ public class graphicsLineGraph : MonoBehaviour
             for (int i = 0; i < numPoints; i++)
                 line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, Mathf.Clamp(graphHeights[i], 0, graphMax));
 
+            tickTime = Time.time + updateSpeed;
+
             // Draw the updated graph line.
             line.vectorLine.Draw();
-            tickTime = Time.time + updateSpeed;
         }
     }
 }

@@ -5,6 +5,9 @@ public class UpdateDynamicText : MonoBehaviour
 {
     public const float RegenerateExtraInterval = 0.25f;
 
+    public bool scaleTextMinSize = false;
+    public int minTextSize = 19;
+
     void OnEnable()
         { StartCoroutine(UpdateTextRoutine()); }
 
@@ -16,6 +19,7 @@ public class UpdateDynamicText : MonoBehaviour
         foreach (var text in texts)
         {
             var widget = text.GetComponent<widgetText>();
+
             if (widget && !widget.PixelSnapping)
                 continue;
             
@@ -35,4 +39,24 @@ public class UpdateDynamicText : MonoBehaviour
             text.GenerateMesh();
     }
 
+    void UpdateTextSize()
+    {
+        var texts = GetComponentsInChildren<DynamicText>();
+        foreach (var text in texts)
+        {
+            float parentScale = transform.parent.transform.localScale.x;
+            float t = minTextSize;
+
+            t *= parentScale;
+            text.minFontPxSize = Mathf.RoundToInt(t);
+
+            text.GenerateMesh();
+        }
+    }
+
+    void Update()
+    {
+        if (scaleTextMinSize)
+            UpdateTextSize();
+    }
 }
