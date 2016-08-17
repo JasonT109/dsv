@@ -103,6 +103,9 @@ public class CameraGlitches : MonoBehaviour
     /** Updating. */
     private void Update()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         // Get the current glitch amount.
         var glitch = serverUtils.GetServerData(GlitchKey, 0);
 

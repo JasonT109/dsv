@@ -29,6 +29,9 @@ public class InstrumentsTextValues : MonoBehaviour
 
     private void UpdateValues()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         ScientificDataValues.Text = GetScientificValues();
         OperatingDataValues.Text = GetOperatingDataValues();
         AcousticNavigationDataValues.Text = GetAcousticNavigationDataValues();

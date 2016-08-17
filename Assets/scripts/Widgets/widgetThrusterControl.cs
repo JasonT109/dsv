@@ -115,13 +115,16 @@ public class widgetThrusterControl : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         //get the current input
         inX = serverUtils.GetServerData("inputXaxis") * 100f;
         inY = serverUtils.GetServerData("inputYaxis") * 100f;
         inZ = (serverUtils.GetServerData("inputZaxis") * 100f) * (1 - serverUtils.GetServerData("disableinput"));
         inX2 = serverUtils.GetServerData("inputXaxis2") * 100f;
 
-		if(serverUtils.GetServerBool("iscontroldecentmode") == false)
+		if (serverUtils.GetServerBool("iscontroldecentmode") == false)
 		{
 
         	//calculate the thruster power based on inputs
