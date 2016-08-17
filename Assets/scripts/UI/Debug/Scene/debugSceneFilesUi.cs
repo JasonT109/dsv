@@ -141,9 +141,12 @@ public class debugSceneFilesUi : MonoBehaviour
             });
     }
 
-    /** Refresh the scene file list. */
+    /** Refresh the scene file/folder lists. */
     public void Refresh()
-        { Files.Refresh(); }
+    {
+        Scenes.Refresh();
+        Files.Refresh();
+    }
 
 
     // Private Methods
