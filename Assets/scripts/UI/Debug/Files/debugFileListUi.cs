@@ -99,7 +99,7 @@ public class debugFileListUi : MonoBehaviour
             return;
 
         // Look for and replace common configuration folders.
-        value = Configuration.ExpandPaths(value);
+        value = Configuration.ExpandedPath(value);
 
         _folder = value;
         Refresh();

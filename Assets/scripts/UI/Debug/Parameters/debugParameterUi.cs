@@ -48,6 +48,10 @@ public abstract class debugParameterUi : MonoBehaviour
     public megParameterFile File
         { get { return _parameter.file; } }
 
+    /** Display name for this parameter. */
+    public virtual string DisplayName
+        { get { return Parameter != null ? Parameter.ToString() : ""; } }
+
     /** Event signature for a parameter selection event. */
     public delegate void ParameterSelectedHandler(debugParameterUi ui);
 
@@ -129,14 +133,14 @@ public abstract class debugParameterUi : MonoBehaviour
         _updating = true;
 
         var c = BackdropColor;
-        var isSelected = _parameter.file.selectedParameter == _parameter;
+        var isSelected = _parameter.selected;
         if (isSelected)
             c = BackdropSelectedColor;
 
         Backdrop.color = c;
 
         if (Name)
-            Name.text = Parameter.ToString();
+            Name.text = DisplayName;
 
         UpdateParameterUi();
 

@@ -24,6 +24,9 @@ public class debugSceneFilesUi : MonoBehaviour
     /** Button for loading a scene file. */
     public Button LoadButton;
 
+    /** Title for the scene file list. */
+    public Text Title;
+
 
     [Header("Configuration")]
 
@@ -126,8 +129,9 @@ public class debugSceneFilesUi : MonoBehaviour
         if (!File.Exists(info.FullName))
             return;
 
-        DialogManager.Instance.ShowYesNo("LOAD SCENE FILE?",
-            string.Format("Are you sure you wish to load the scene file '{0}'?", info.Name),
+        DialogManager.Instance.ShowYesNo(
+            string.Format("LOAD {0} FILE?", FolderType.Name.ToUpper()),
+            string.Format("Are you sure you wish to load the {0} file '{1}'?", FolderType.Name, info.Name),
             result =>
             {
                 if (result != DialogYesNo.DialogResult.Yes)
@@ -137,6 +141,10 @@ public class debugSceneFilesUi : MonoBehaviour
             });
     }
 
+    /** Refresh the scene file list. */
+    public void Refresh()
+        { Files.Refresh(); }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -144,8 +152,10 @@ public class debugSceneFilesUi : MonoBehaviour
     /** Update the file list to match current scene and folder type. */
     private void UpdateFiles()
     {
+        Title.text = FolderType.Name.ToUpper() + " FILES";
+
         // Replace config folders in the folder pattern expression.
-        var pattern = Configuration.ExpandPaths(FolderType.Pattern);
+        var pattern = Configuration.ExpandedPath(FolderType.Pattern);
 
         // Update the file listing with new folder.
         Files.Folder = string.Format(pattern, Scene);

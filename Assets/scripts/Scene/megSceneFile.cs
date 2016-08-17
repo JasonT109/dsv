@@ -12,11 +12,11 @@ namespace Meg.Scene
         // Constants
         // ------------------------------------------------------------
 
-        /** Default folder for autosave files. */
-        public const string DefaultAutoSaveFolder = @"C:/Meg/";
+        /** Default format for scene filenames. */
+        public const string DefaultSaveFormat = @"{save-folder}/Scene_{1:000}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}.json";
 
         /** Default format for autosave filenames. */
-        public const string DefaultAutoSaveFormat = @"{0}/Scene_{2:000}/{6}/{1}_Scene_{2:000}_{3:000}_{4:000}_UTC_{5:yyyy.MM.dd}_{5:HH.mm.ss.f}_{6}.json";
+        public const string DefaultAutoSaveFormat = @"{auto-save-folder}/Scene_{1:000}/{5}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}_{5}.json";
 
 
         // Load / Save
@@ -50,21 +50,41 @@ namespace Meg.Scene
         public static bool AutoSaveEnabled()
             { return Configuration.Get("auto-save-enabled", true); }
 
+        /** Save out scene state to a scene file. */
+        public static void SaveScene()
+            { SaveToFile(GetSceneSaveFilename()); }
+
         /** Save out scene state to an autosave file. */
         public static void AutoSave(string suffix)
+            { SaveToFile(GetAutoSaveFilename(suffix)); }
+
+        /** Save out scene state to file. */
+        public static void Save(string format, string suffix)
+            { SaveToFile(GetSaveFilename(format, suffix)); }
+
+        /** Return a save filename for the current scene state. */
+        public static string GetSceneSaveFilename()
+            { return GetSaveFilename(Configuration.Get("save-format", DefaultSaveFormat)); }
+
+        /** Return a autosave filename for the current scene state. */
+        public static string GetAutoSaveFilename(string suffix)
+            { return GetSaveFilename(Configuration.Get("auto-save-format", DefaultAutoSaveFormat), suffix); }
+
+        /** Return a save filename for the current scene state. */
+        public static string GetSaveFilename(string format, string suffix = "")
         {
-            // Gather all information required to determine the auto-save filename.
-            var folder = Configuration.Get("auto-save-folder", DefaultAutoSaveFolder);
-            var format = Configuration.Get("auto-save-format", DefaultAutoSaveFormat);
+            // Expand out any config paths in the save file format string.
+            format = Configuration.ExpandedPath(format);
+
+            // Gather all information required to determine the save filename.
             var vessel = serverUtils.GetServerDataAsText("playerVesselName");
             var scene = serverUtils.GetServerData("scene");
             var shot = serverUtils.GetServerData("shot");
             var take = serverUtils.GetServerData("take");
             var utc = DateTime.UtcNow;
-            var path = string.Format(format, folder, vessel, scene, shot, take, utc, suffix);
+            var path = string.Format(format, vessel, scene, shot, take, utc, suffix);
 
-            // Save file to nominated path.
-            SaveToFile(path);
+            return path;
         }
 
         /** Load state from JSON. */

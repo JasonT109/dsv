@@ -81,13 +81,6 @@ namespace Meg.Parameters
         }
 
 
-        // Members
-        // ------------------------------------------------------------
-
-        /** Tracking data for server values. */
-        private readonly Dictionary<string, ParameterRecord<float>> _values = new Dictionary<string, ParameterRecord<float>>();
-
-
         // Public Methods
         // ------------------------------------------------------------
 
@@ -136,36 +129,6 @@ namespace Meg.Parameters
             if (Cleared != null)
                 Cleared(this);
         }
-
-
-        // Server State
-        // ------------------------------------------------------------
-
-        /** Set a server float value. */
-        public void PostServerData(string key, float value, bool add)
-        {
-            // Record initial value if this is the first time we've set it.
-            // This will be used to reset the value when file playback stops.
-            if (!_values.ContainsKey(key))
-                _values[key] = new ParameterRecord<float>
-                    { time = Time.time, value = serverUtils.GetServerData(key) };
-
-            // Set the server data value.
-            serverUtils.PostServerData(key, value, add);
-        }
-
-        /** Return a server value. */
-        public float GetServerData(string key)
-            { return serverUtils.GetServerData(key); }
-
-        /** Set a server string value. */
-        public void PostServerData(string key, string value)
-            { serverUtils.PostServerData(key, value); }
-
-        /** Set a server boolean value. */
-        public void PostServerData(string key, bool value)
-            { serverUtils.PostServerData(key, value ? 1 : 0); }
-
 
         // Load / Save
         // ------------------------------------------------------------
@@ -220,21 +183,6 @@ namespace Meg.Parameters
 
             if (SavedToFile != null)
                 SavedToFile(this);
-        }
-
-
-        // Private Methods
-        // ------------------------------------------------------------
-
-        /** Reset server state to initial settings. */
-        private void ResetServerState()
-        {
-            // Reset data values from parameters.
-            foreach (var e in _values)
-                serverUtils.PostServerData(e.Key, e.Value.value);
-
-            // Clear all tracking data.
-            _values.Clear();
         }
 
     }

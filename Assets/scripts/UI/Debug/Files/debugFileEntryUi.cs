@@ -23,7 +23,7 @@ public class debugFileEntryUi : MonoBehaviour
 
             var label = Path.GetFileNameWithoutExtension(value.Name);
             if (InsertSpacesBetweenCaps)
-                label = Regex.Replace(value.Name, "[A-Z]+", " $0");
+                label = Regex.Replace(label, "[A-Z]+", " $0");
             if (ReplaceUnderscoresWithSpaces)
                 label = Regex.Replace(label, "_", " ");
             if (UpperCase)

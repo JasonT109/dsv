@@ -1,3 +1,4 @@
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
@@ -32,9 +33,27 @@ public class debugParameterValueUi : debugParameterUi
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
 
+    [Header("Configuration")]
+
+    public string ValueFormat = "{0:N2}";
+
+
     /** The value parameter. */
     public megParameterValue ValueParameter
         { get { return Parameter as megParameterValue; } }
+
+    /** Display name for this parameter. */
+    public override string DisplayName
+    {
+        get
+        {
+            if (ValueParameter == null)
+                return base.DisplayName;
+
+            var key = ValueParameter.serverParam;
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(key);
+        }
+    }
 
 
     // Public Methods
@@ -129,7 +148,7 @@ public class debugParameterValueUi : debugParameterUi
 
     private void UpdateServerValueInput()
     {
-        ServerValueInput.text = string.Format("{0:N2}", ValueParameter.serverValue);
+        ServerValueInput.text = string.Format(ValueFormat, ValueParameter.serverValue);
     }
 
     public void ServerParamInputChanged(string value)
