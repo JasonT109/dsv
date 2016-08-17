@@ -13,10 +13,10 @@ namespace Meg.Scene
         // ------------------------------------------------------------
 
         /** Default folder for autosave files. */
-        public const string DefaultAutoSaveFolder = @"C:/Meg/Autosave/";
+        public const string DefaultAutoSaveFolder = @"C:/Meg/";
 
         /** Default format for autosave filenames. */
-        public const string DefaultAutoSaveFormat = @"{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:dd.MM.yyyy}_{5:HH.mm.ss.f}_{6}.json";
+        public const string DefaultAutoSaveFormat = @"{0}/Scene_{2:000}/{6}/{1}_Scene_{2:000}_{3:000}_{4:000}_UTC_{5:yyyy.MM.dd}_{5:HH.mm.ss.f}_{6}.json";
 
 
         // Load / Save
@@ -108,7 +108,7 @@ namespace Meg.Scene
         private JSONObject SaveMetadata()
         {
             var json = new JSONObject();
-            json.AddField("utc", string.Format("{0:dd/MM/yy hh:mm:ss.f}", DateTime.UtcNow));
+            json.AddField("utc", string.Format("{0:yyyy/MM/dd hh:mm:ss.f}", DateTime.UtcNow));
             json.AddField("scene", serverUtils.GetServerData("scene"));
             json.AddField("shot", serverUtils.GetServerData("shot"));
             json.AddField("take", serverUtils.GetServerData("take"));

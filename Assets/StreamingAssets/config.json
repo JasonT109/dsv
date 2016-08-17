@@ -2,8 +2,8 @@
 	"default" :
 	{
 		"save-folder" : "C:/Meg/",
-		"auto-save-folder" : "C:/Meg/Autosave/",
-		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_{2:000}_{3:00}_{4:00}_{5:yyyy.MM.dd}_{5:HH.mm.ss.f}_{6}.json",
+		"auto-save-folder" : "C:/Meg/",
+		"auto-save-format" : "{0}/Scene_{2:000}/{6}/{1}_Scene_{2:000}_{3:000}_{4:000}_UTC_{5:yyyy.MM.dd}_{5:HH.mm.ss.f}_{6}.json",
 		"auto-save-enabled" : true,
 		"vessels" : 
 		[
