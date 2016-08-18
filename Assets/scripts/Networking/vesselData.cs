@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Text.RegularExpressions;
 using Meg.Networking;
-using Meg.Graphics;
 
 public class vesselData : NetworkBehaviour
 {
@@ -14,9 +14,6 @@ public class vesselData : NetworkBehaviour
 
     /** The number of predefined vessels (can't be removed.) */
     public const int BaseVesselCount = 6;
-
-    /** The number of vessels that can be occupied by the player [1..n].) */
-    public const int PlayerVesselCount = 4;
 
     /** Id of the 'meg' vessel. */
     public const int MegId = 5;
@@ -38,9 +35,6 @@ public class vesselData : NetworkBehaviour
 
     /** Default vessel color on sonar. */
     public static readonly Color DefaultColorOnSonar = new Color(0.196f, 0.643f, 0.878f, 1);
-
-    /** Default vessel theme backdrop color. */
-    public static readonly Color DefaultColorThemeBackground = new Color(0.04f, 0.04f, 0.04f, 1);
 
 
 
@@ -71,18 +65,12 @@ public class vesselData : NetworkBehaviour
         public Icon Icon;
         public Color ColorOnSonar;
         public Color ColorOnMap;
-        public Color ColorThemeBackground;
-        public Color ColorThemeKey;
-        public Color ColorThemeHighlight;
 
         public float Depth
             { get { return Position.z; } }
 
         public vesselMovement Movement
             { get { return serverUtils.VesselMovements.GetVesselMovement(Id); } }
-
-        public bool CanBePlayer
-            { get { return Id >= 1 && Id <= PlayerVesselCount; } }
 
         public Vessel(Vessel vessel)
         {
@@ -95,9 +83,6 @@ public class vesselData : NetworkBehaviour
             Icon = vessel.Icon;
             ColorOnSonar = vessel.ColorOnSonar;
             ColorOnMap = vessel.ColorOnMap;
-            ColorThemeBackground = vessel.ColorThemeBackground;
-            ColorThemeKey = vessel.ColorThemeKey;
-            ColorThemeHighlight = vessel.ColorThemeHighlight;
         }
     };
 
@@ -205,26 +190,6 @@ public class vesselData : NetworkBehaviour
 
     // Public Methods
     // ------------------------------------------------------------
-
-    /** Sets which vessel is controlled by the player (1-based index). */
-    public void SetPlayerVessel(int vessel)
-    {
-        // Check if the supplied id is valid.
-        if (vessel <= 0 || vessel > PlayerVesselCount)
-            return;
-
-        // Update the current player vessel id.
-        var oldPlayer = PlayerVessel;
-        PlayerVessel = vessel;
-
-        // Move player over to the new vessel when it changes.
-        if (oldPlayer != vessel)
-        {
-            PlayerPosition = VesselToWorldSpace(GetPosition(vessel));
-            PlayerWorldVelocity = Vector3.zero;
-            UpdateColorTheme();
-        }
-    }
 
     /** Add a vessel. */
     [Server]
@@ -691,9 +656,9 @@ public class vesselData : NetworkBehaviour
             AddVessel(LoadVessel(vesselsJson[i]));
 
         // Reset player's world position and velocity.
-        var playerId = (int) json.GetField("PlayerVessel").i;
-        SetPlayerVessel(playerId);
-        UpdateColorTheme();
+        PlayerVessel = (int) json.GetField("PlayerVessel").i;
+        PlayerPosition = VesselToWorldSpace(GetPosition(PlayerVessel));
+        PlayerWorldVelocity = Vector3.zero;
     }
 
     /** Save a vessel state to JSON. */
@@ -709,9 +674,6 @@ public class vesselData : NetworkBehaviour
         json.AddField("Icon", (int) vessel.Icon);
         json.AddField("ColorOnMap", vessel.ColorOnMap);
         json.AddField("ColorOnSonar", vessel.ColorOnSonar);
-        json.AddField("ColorThemeBackground", vessel.ColorThemeBackground);
-        json.AddField("ColorThemeKey", vessel.ColorThemeKey);
-        json.AddField("ColorThemeHighlight", vessel.ColorThemeHighlight);
 
         return json;
     }
@@ -725,8 +687,7 @@ public class vesselData : NetworkBehaviour
             OnMap = true,
             OnSonar = true,
             ColorOnMap = DefaultColorOnMap,
-            ColorOnSonar = DefaultColorOnSonar,
-            ColorThemeBackground = DefaultColorThemeBackground
+            ColorOnSonar = DefaultColorOnSonar
         };
 
         json.GetField(ref vessel.Id, "Id");
@@ -737,12 +698,6 @@ public class vesselData : NetworkBehaviour
         json.GetField(ref vessel.OnSonar, "OnSonar");
         json.GetField(ref vessel.ColorOnMap, "ColorOnMap");
         json.GetField(ref vessel.ColorOnSonar, "ColorOnSonar");
-
-        vessel.ColorThemeKey = vessel.ColorOnMap;
-        vessel.ColorThemeHighlight = vessel.ColorOnMap;
-        json.GetField(ref vessel.ColorThemeBackground, "ColorThemeBackground");
-        json.GetField(ref vessel.ColorThemeKey, "ColorThemeKey");
-        json.GetField(ref vessel.ColorThemeHighlight, "ColorThemeHighlight");
 
         var icon = 0;
         json.GetField(ref icon, "Icon");
@@ -793,14 +748,11 @@ public class vesselData : NetworkBehaviour
         };
 
         json.GetField(ref vessel.Name, "name");
+        json.GetField(ref vessel.ColorOnMap, "coloronmap");
+        json.GetField(ref vessel.ColorOnSonar, "coloronsonar");
         json.GetField(ref vessel.Position, "position");
         json.GetField(ref vessel.OnMap, "onmap");
         json.GetField(ref vessel.OnSonar, "onsonar");
-        json.GetField(ref vessel.ColorOnMap, "coloronmap");
-        json.GetField(ref vessel.ColorOnSonar, "coloronsonar");
-        json.GetField(ref vessel.ColorThemeBackground, "colorthemebackground");
-        json.GetField(ref vessel.ColorThemeKey, "colorthemekey");
-        json.GetField(ref vessel.ColorThemeHighlight, "colorthemehighlight");
 
         var iconName = "normal";
         try
@@ -841,22 +793,6 @@ public class vesselData : NetworkBehaviour
 
         // Successfully parsed key into components.
         return true;
-    }
-
-    /** Update color theme for the current player vessel. */
-    private void UpdateColorTheme()
-    {
-        var player = GetVessel(PlayerVessel);
-
-        megColorTheme theme = new megColorTheme()
-        {
-            name = player.Name,
-            backgroundColor = player.ColorThemeBackground,
-            keyColor = player.ColorThemeKey,
-            highlightColor = player.ColorThemeKey
-        };
-
-        serverUtils.SetColorTheme(theme);
     }
 
 }

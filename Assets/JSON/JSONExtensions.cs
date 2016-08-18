@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Text.RegularExpressions;
 
 public static class JSONExtensions
 {
@@ -68,22 +67,11 @@ public static class JSONExtensions
         if (!o)
             return false;
 
-        if (o.IsArray && o.Count >= 3)
-        {
-            c.r = o[0].f;
-            c.g = o[1].f;
-            c.b = o[2].f;
-            if (o.Count > 3)
-                c.a = o[3].f;
-        }
-        else if (o.IsString)
-        {
-            var match = Regex.Match(o.str, @"^(#|0x)?([0-9A-F]{6,8})$", RegexOptions.IgnoreCase);
-            if (match.Success)
-                return ColorUtility.TryParseHtmlString("#" + match.Groups[2].Value, out c);
-            else
-                return false;
-        }
+        c.r = o[0].f;
+        c.g = o[1].f;
+        c.b = o[2].f;
+        if (o.Count > 3)
+            c.a = o[3].f;
 
         return true;
     }

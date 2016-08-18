@@ -29,15 +29,27 @@ public class debugVesselUi : MonoBehaviour
     /** The vessel's on sonar toggle button. */
     public Toggle OnSonarToggle;
 
-    /** Icon to indicate the player vessel. */
-    public Graphic PlayerIcon;
-
 
     /** The vessel being displayed. */
     public vesselData.Vessel Vessel { get; set; }
 
     /** Parent vessel list. */
     public debugVesselsUi Vessels { get; set; }
+
+
+    [Header("Configuration")]
+
+    /** Color to use for backdrop when vessel is inactive. */
+    public Color BackdropInactiveColor;
+
+    /** Color to use for backdrop when vessel is selected. */
+    public Color BackdropSelectedColor;
+
+    /** Color to use for backdrop when vessel is the player vessel. */
+    public Color BackdropPlayerColor;
+
+    /** Color to use for backdrop when vessel is the player vessel and is selected. */
+    public Color BackdropPlayerSelectedColor;
 
 
     // Private Properties
@@ -104,18 +116,15 @@ public class debugVesselUi : MonoBehaviour
         _updating = true;
 
         var isPlayer = Vessel.Id == VesselData.PlayerVessel;
-        var isSelected = Vessels.Selected.Id == Vessel.Id;
-        Backdrop.color = HSBColor.FromColor(Vessel.ColorOnMap)
-            .Brighten(isSelected ? 0.75f : 0.15f)
-            .ToColor();
+        var c = isPlayer ? BackdropPlayerColor : BackdropInactiveColor;
+        if (Vessels.Selected.Id == Vessel.Id)
+            c = isPlayer ? BackdropPlayerSelectedColor : BackdropSelectedColor;
+
+        Backdrop.color = c;
 
         OnMapToggle.isOn = Vessel.OnMap;
         OnSonarToggle.isOn = Vessel.OnSonar;
-
         NameLabel.text = VesselData.GetDebugName(Vessel.Id);
-        NameLabel.fontStyle = isPlayer ? FontStyle.Bold : FontStyle.Normal;
-
-        PlayerIcon.gameObject.SetActive(isPlayer);
 
         _updating = false;
     }
