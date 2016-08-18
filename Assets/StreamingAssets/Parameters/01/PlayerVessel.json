@@ -1,0 +1,13 @@
+{
+	"groups":[
+		{
+			"id":"Player vessel",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"playerVessel"
+				}
+			]
+		}
+	]
+}

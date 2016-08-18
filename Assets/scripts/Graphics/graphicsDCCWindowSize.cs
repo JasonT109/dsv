@@ -57,7 +57,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
     private float currentYScale = 1;
     private graphicsSlicedMesh slicer;
     private graphicsSlicedMesh titleBarSlicer;
-    private Vector3[] childPositions = { new Vector3(-94.96f, 53.42f, 0f), new Vector3(-94.99f, -53.35f, 0f), new Vector3(0, 53.43f, 0f) };
+    private Vector3[] childPositions = { new Vector3(-95f, 53.4375f, 0f), new Vector3(-95f, -53.4375f, 0f), new Vector3(0, 53.4375f, 0f), new Vector3(95, 53.4375f, 0f) };
 
     public void ResetWindowSize()
     {
