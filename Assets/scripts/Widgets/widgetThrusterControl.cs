@@ -139,7 +139,9 @@ public class widgetThrusterControl : MonoBehaviour
 		}
 		else
 		{
-			thrusterSideL1 = Mathf.Clamp(-inZ - (-inX * 0.5f) + inX2 + (inY * 0.5f), -100, 100);
+            thrusterMainL = 0;
+            thrusterMainR = 0;
+            thrusterSideL1 = Mathf.Clamp(-inZ - (-inX * 0.5f) + inX2 + (inY * 0.5f), -100, 100);
 			thrusterSideR1 = Mathf.Clamp(inZ + (inX * 0.5f) + inX2 - (inY * 0.5f), -100, 100);
 			thrusterSideL2 = Mathf.Clamp(-inZ + inX2, -100, 100);
 			thrusterSideR2 = Mathf.Clamp(inZ + inX2, -100, 100);

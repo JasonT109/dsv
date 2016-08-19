@@ -1144,6 +1144,12 @@ namespace Meg.Networking
                     return SubControl.MaxSpeed;
                 case "minspeed":
                     return SubControl.MinSpeed;
+                case "isControlDecentMode":
+                    return SubControl.isControlDecentMode ? 1 : 0;
+                case "isControlModeOverride":
+                    return SubControl.isControlModeOverride ? 1 : 0;
+                case "isControlOverrideStandard":
+                    return SubControl.isControlOverrideStandard ? 1 : 0;
                 case "verticalvelocity":
                     return ServerData.verticalVelocity;
                 case "horizontalvelocity":

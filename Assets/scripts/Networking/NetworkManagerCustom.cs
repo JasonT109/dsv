@@ -43,7 +43,16 @@ public class NetworkManagerCustom : MonoBehaviour
     [Header("Configuration")]
 
     /** Server host to connect to. */
-    public string Host = "localhost";
+    public string _Host = "localHost";
+    public string Host
+    {
+        get { return _Host; }
+        set
+        {
+            _Host = value;
+            _manager.networkAddress = _Host;
+        }
+    }
 
     /** Server port to connect to. */
     public int Port = 25001;

@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.Linq;
 using Rewired;
+using Meg.Networking;
 
 public class gameInputs : NetworkBehaviour
 {
@@ -112,6 +113,9 @@ public class gameInputs : NetworkBehaviour
         // Update input if this is the local player.
         if (_input != null)
             UpdateInput();
+
+        if (_input.GetButtonDown("DescentMode"))
+            ToggleDescentMode();
     }
 
 
@@ -171,9 +175,21 @@ public class gameInputs : NetworkBehaviour
         //Debug.Log("Toggling map labels.");
     }
 
+    [Command]
+    void CmdToggleDescentMode(int descentState)
+    {
+        Debug.Log("Descent mode toggled");
+        serverUtils.PostServerData("iscontroldecentmode", descentState);
+    }
 
     // Private Methods
     // ------------------------------------------------------------
+
+    private void ToggleDescentMode()
+    {
+        bool descentMode = serverUtils.GetServerData("iscontroldecentmode") > 0;
+        CmdToggleDescentMode(descentMode ? 0 : 1);
+    }
 
     /** Update input from the local player, and send it to the server. */
     private void UpdateInput()

@@ -868,6 +868,15 @@ public class serverData : NetworkBehaviour
             case "dccscreen5content":
                 DCCScreenData.DCCScreen5Content = (int)newValue;
                 break;
+            case "iscontroldecentmode":
+                SubControl.isControlDecentMode = newValue > 0;
+                break;
+            case "iscontrolmodeoverride":
+                SubControl.isControlModeOverride = newValue > 0;
+                break;
+            case "iscontroloverridestandard":
+                SubControl.isControlOverrideStandard = newValue > 0;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
@@ -998,6 +1007,15 @@ public class serverData : NetworkBehaviour
                 break;
             case "batterytimeenabled":
                 BatteryData.batteryTimeEnabled = newValue;
+                break;
+            case "iscontroldecentmode":
+                SubControl.isControlDecentMode = newValue;
+                break;
+            case "iscontrolmodeoverride":
+                SubControl.isControlModeOverride = newValue;
+                break;
+            case "iscontroloverridestandard":
+                SubControl.isControlOverrideStandard = newValue;
                 break;
         }
     }

@@ -149,6 +149,7 @@ public class PasswordScreen : MonoBehaviour
 
     public void HostIPChanged(string value)
     {
+        Debug.Log("IP Address changed: " + value);
         if (!string.IsNullOrEmpty(value))
             _manager.Host = value;
     }
