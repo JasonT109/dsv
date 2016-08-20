@@ -22,4 +22,6 @@ public class DCCScreenData : NetworkBehaviour
     public int DCCScreen4Content = 0;
     [SyncVar]
     public int DCCScreen5Content = 0;
+    [SyncVar]
+    public int DCCcommsContent = 0;
 }

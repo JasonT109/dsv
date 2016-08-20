@@ -360,6 +360,7 @@ namespace Meg.Networking
             "dccscreen3content",
             "dccscreen4content",
             "dccscreen5content",
+            "dcccommscontent",
             "depth",
             "disableinput",
             "divertpowertothrusters",
@@ -678,6 +679,10 @@ namespace Meg.Networking
             { "dccquadscreen2", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 2." } },
             { "dccquadscreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 3." } },
             { "dccquadscreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 4." } },
+            { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
+            { "dccscreen3content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 3." } },
+            { "dccscreen4content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 4." } },
+            { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input to sub is completely disabled."} },
             { "divertpowertothrusters", new ParameterInfo { description = "Amount of power diverted from systems to thrusters (0..100%)."} },
@@ -1244,6 +1249,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCScreen4Content;
                 case "dccscreen5content":
                     return DCCScreenData.DCCScreen5Content;
+                case "dcccommscontent":
+                    return DCCScreenData.DCCcommsContent;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":

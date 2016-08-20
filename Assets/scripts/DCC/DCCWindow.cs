@@ -45,6 +45,20 @@ public class DCCWindow : MonoBehaviour
     private DCCScreenID._screenID swipeScreenID;
     private float pressTimer = 0;
     private float colorLerpTimer = 0;
+    private int _commsContent = 0;
+    private int hitCount = 0;
+
+    public int commsContent
+    {
+        get
+        {
+            return _commsContent;
+        }
+        set
+        {
+            _commsContent = value;
+        }
+    }
 
     /** Moves a window to a destination position. */
     public void MoveWindow(DCCScreenContentPositions.positionID destination)
@@ -59,6 +73,9 @@ public class DCCWindow : MonoBehaviour
 
             toScale = DCCScreenContentPositions.GetScreenScale(destination);
             fromScale = new Vector2(window.windowWidth, window.windowHeight);
+
+            if (!quadWindow)
+                screenManager.PushWindowToFront(this);
         }
     }
 
@@ -104,6 +121,8 @@ public class DCCWindow : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
+        hitCount = gesture.NumTouches;
+
         pressTimer += Time.deltaTime;
 
         hasFocus = true;
@@ -117,7 +136,7 @@ public class DCCWindow : MonoBehaviour
 
         hasFocus = false;
 
-        if (transformSpeed > minSwipeSpeed)
+        if (transformSpeed > minSwipeSpeed || hitCount > 1)
         {
             DCCScreenID._screenID screenDirection = DCCScreenID._screenID.control;
 
@@ -139,6 +158,7 @@ public class DCCWindow : MonoBehaviour
         transformSpeedHistory = new float[8];
         screenManager.swipeIndicator.SetActive(false);
         pressTimer = 0;
+        hitCount = 0;
     }
 
     private void transformHandler(object sender, EventArgs e)

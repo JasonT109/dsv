@@ -15,6 +15,7 @@ public class DCCCameraDragDrop : MonoBehaviour
     private Color defaultColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
     private float lerpValue = 0;
     private Renderer r;
+    private Transform child;
 
     private void OnEnable()
     {
@@ -44,9 +45,9 @@ public class DCCCameraDragDrop : MonoBehaviour
         gesture.GetTargetHitResult(out hit);
 
         var droptarget = GetDropTarget();
-        if (droptarget && (droptarget.position == DCCCameraFeed.positions.midLeft || droptarget.position == DCCCameraFeed.positions.midRight))
+        if (droptarget && (droptarget.position == DCCCameraFeed.positions.midLeft || droptarget.position == DCCCameraFeed.positions.midRight) && droptarget != gameObject.GetComponent<DCCCameraFeed>())
         {
-            Debug.Log("Dropped camera on to: " + droptarget);
+            //Debug.Log("Dropped camera on to: " + droptarget);
             droptarget.materialID = parent.materialID;
         }
         hovering = false;
@@ -73,22 +74,34 @@ public class DCCCameraDragDrop : MonoBehaviour
         r.material.SetColor("_TintColor", lerpColor);
         r.material.SetColor("_MainColor", lerpColor);
     }
+
+    void Start ()
+    {
+        child = gameObject.transform.GetChild(0);
+    }
+
 	void Update ()
     {
-        if (!hovering)
-            transform.localPosition = Vector3.zero;
-
-        if (lerpValue > 0 && !hovering)
+        if (hovering)
         {
-            lerpValue = Mathf.Clamp01(lerpValue -= Time.deltaTime);
-            lerpColor = Color.Lerp(defaultColor, fadecolor, lerpValue);
-            SetMaterialColor();
+            child.transform.localPosition = new Vector3(0, 0, -5);
+            if (lerpValue < 1)
+            {
+                lerpValue = Mathf.Clamp01(lerpValue += Time.deltaTime * 3f);
+                lerpColor = Color.Lerp(defaultColor, hilightColor, lerpValue);
+                SetMaterialColor();
+            }
         }
-        if (lerpValue < 1 && hovering)
+        else
         {
-            lerpValue = Mathf.Clamp01(lerpValue += Time.deltaTime * 3f);
-            lerpColor = Color.Lerp(defaultColor, hilightColor, lerpValue);
-            SetMaterialColor();
+            transform.localPosition = Vector3.zero;
+            child.transform.localPosition = new Vector3(0, 0, 0);
+            if (lerpValue > 0)
+            {
+                lerpValue = Mathf.Clamp01(lerpValue -= Time.deltaTime);
+                lerpColor = Color.Lerp(defaultColor, fadecolor, lerpValue);
+                SetMaterialColor();
+            }
         }
 	}
 }

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Networking;
+
 [ExecuteInEditMode]
 public class DCCCameraFeed : MonoBehaviour
 {
@@ -40,17 +42,22 @@ public class DCCCameraFeed : MonoBehaviour
         }
         set
         {
-            feedMaterialID = value;
-            SetMaterial(feedMaterialID);
+            if (value != materialID)
+            {
+                feedMaterialID = value;
+                SetMaterial(feedMaterialID);
+            }
         }
     }
     public string titleText = "Camera feed";
+    public bool isTopScreen = false;
 
     [Header ("Required Components")]
     public Transform videoPlane;
     public Transform titleBox;
     public widgetText title;
     public graphicsSlicedMesh frame;
+    public DCCWindow window;
 
     [Header("Initial Setup")]
     public Vector2[] frameSizes = new Vector2[3];
@@ -60,6 +67,14 @@ public class DCCCameraFeed : MonoBehaviour
     public float smallOffsetX = 100f;
     public float smallOffsetY = 100f;
     public Material[] materials = new Material[10];
+
+
+    private Color fadecolor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
+    private Color defaultColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+    private Color lerpColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+    private float lerpValue = 0;
+    private bool isLerping = false;
+    private Renderer r;
 
     public void SetPosition()
     {
@@ -142,18 +157,21 @@ public class DCCCameraFeed : MonoBehaviour
                 videoPlane.localScale = Vector3.one * windowScales[0];
                 frame.Width = frameSizes[0].x;
                 frame.Height = frameSizes[0].y;
+                GetComponent<BoxCollider>().size = frameSizes[0];
                 break;
             case sizes.medium:
                 titleBox.localScale = Vector3.one * windowScales[1];
                 videoPlane.localScale = Vector3.one * windowScales[1];
                 frame.Width = frameSizes[1].x;
                 frame.Height = frameSizes[1].y;
+                GetComponent<BoxCollider>().size = frameSizes[1];
                 break;
             case sizes.small:
                 titleBox.localScale = Vector3.one * windowScales[2];
                 videoPlane.localScale = Vector3.one * windowScales[2];
                 frame.Width = frameSizes[2].x;
                 frame.Height = frameSizes[2].y;
+                GetComponent<BoxCollider>().size = frameSizes[2];
                 break;
         }
     }
@@ -162,8 +180,16 @@ public class DCCCameraFeed : MonoBehaviour
     {
         if (materials[ID])
         {
-            Renderer r = videoPlane.GetComponentInChildren<Renderer>();
+            //Renderer r = videoPlane.GetComponentInChildren<Renderer>();
             r.material = materials[ID];
+            isLerping = true;
+            lerpValue = 0;
+
+            if (position == positions.midLeft && !isTopScreen)
+            {
+                window.commsContent = ID;
+                serverUtils.PostServerData("dcccommscontent", ID);
+            }
         }
     }
 
@@ -174,13 +200,36 @@ public class DCCCameraFeed : MonoBehaviour
 
 	void Start ()
     {
+        r = videoPlane.GetComponentInChildren<Renderer>();
+        window = GetComponentInParent<DCCWindow>();
         Update();
-        
     }
 
 	void Update ()
     {
         SetPosition();
         SetTitle(titleText + " " + (feedMaterialID + 1));
+
+        if (isLerping)
+        {
+            lerpValue += Time.deltaTime;
+            lerpColor = Color.Lerp(fadecolor, defaultColor, Mathf.Clamp01(lerpValue));
+
+            //Renderer r = videoPlane.GetComponentInChildren<Renderer>();
+            r.material.SetColor("_TintColor", lerpColor);
+
+            if (lerpValue > 1)
+            {
+                isLerping = false;
+                lerpValue = 0;
+            }
+        }
+
+        if (isTopScreen)
+        {
+            int feed = (int)serverUtils.GetServerData("dcccommscontent");
+            if (feed != materialID)
+                materialID = feed;
+        }
     }
 }

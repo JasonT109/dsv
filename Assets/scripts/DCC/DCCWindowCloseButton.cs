@@ -7,6 +7,7 @@ using TouchScript.Hit;
 public class DCCWindowCloseButton : MonoBehaviour
 {
     public bool pressed = false;
+    public buttonControl linkedButton;
 
     private void OnEnable()
     {
@@ -37,6 +38,9 @@ public class DCCWindowCloseButton : MonoBehaviour
 
         pressed = false;
 
-        gameObject.transform.parent.gameObject.SetActive(false);
+        if (linkedButton)
+            linkedButton.toggleButton(linkedButton.gameObject);
+        else
+            gameObject.transform.parent.gameObject.SetActive(false);
     }
 }
