@@ -54,7 +54,7 @@ public class SubControl : NetworkBehaviour
     private float currentThrust = 0.0f;
     private Rigidbody rb;
     private Vector3 rotation;
-    private float thrust = 25.258f;
+	private float thrust = 0f;//25.258f;
     private float rollResult;
     private float pitchResult;
     private float yawResult;
@@ -62,6 +62,8 @@ public class SubControl : NetworkBehaviour
     private float roll;
     private float pitch;
 
+	private float forwardThrust = 50f;
+	private float AccelRatio = 0.0f;
 
 	// Use this for initialization
 	void Awake() 
@@ -153,6 +155,29 @@ public class SubControl : NetworkBehaviour
 		Vector3 PitchExtract = new Vector3(-1,0,0);
 		Vector3 YawExtract = new Vector3(0,1,0);
 
+		//if (!disableInput)
+		//{
+		//	// Apply the orientation forces
+		//	rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
+		//	rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
+		//	rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+		//
+		//	// Adjust mix for pitch when doing a banking turn.
+		//	rb.AddRelativeTorque(-PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
+		//
+		//	// Apply the thrust forces.
+		//	if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
+		//		currentThrust = inputZaxis * (Acceleration * thrust);
+		//
+		//	if (currentThrust > MaxSpeed)
+		//		currentThrust = MaxSpeed - 0.01f;
+		//
+		//	if (currentThrust < MinSpeed)
+		//		currentThrust = MinSpeed + 0.01f;
+		//
+		//	rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
+		//}
+
 		if (!disableInput)
 		{
 			// Apply the orientation forces
@@ -164,16 +189,16 @@ public class SubControl : NetworkBehaviour
 			rb.AddRelativeTorque(-PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
 
 			// Apply the thrust forces.
-			if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
-				currentThrust = inputZaxis * (Acceleration * thrust);
-
-			if (currentThrust > MaxSpeed)
-				currentThrust = MaxSpeed - 0.01f;
-
-			if (currentThrust < MinSpeed)
-				currentThrust = MinSpeed + 0.01f;
-
-			rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
+			//if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
+			//	currentThrust = inputZaxis * ((Acceleration) * thrust);
+			//
+			//if (currentThrust > MaxSpeed)
+			//	currentThrust = MaxSpeed - 0.01f;
+			//
+			//if (currentThrust < MinSpeed)
+			//	currentThrust = MinSpeed + 0.01f;
+			//
+			//rb.AddRelativeForce(0, 0, currentThrust, ForceMode.Acceleration);
 		}
 
 		// If roll is almost right, stop adjusting (PID dampening todo here?)
@@ -181,6 +206,8 @@ public class SubControl : NetworkBehaviour
 			AutoStabilise();
 		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
 			AutoStabilise();
+
+		ThrustControl();
 	}
 
 	void ApplyDecentControlForces()
@@ -191,20 +218,8 @@ public class SubControl : NetworkBehaviour
 		if (!disableInput)
 		{
 			// Apply the orientation forces
-			rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+			rb.AddTorque(YawExtract * (yawSpeed * inputXaxis));
 			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-
-			// Apply the thrust forces.
-			if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
-				currentThrust = inputZaxis * (Acceleration * thrust);
-
-			if (currentThrust > MaxSpeed)
-				currentThrust = MaxSpeed - 0.01f;
-
-			if (currentThrust < MinSpeed)
-				currentThrust = MinSpeed + 0.01f;
-
-			rb.AddRelativeForce(0, -currentThrust * thrust * Time.deltaTime, 0);
 		}
 
 		// If roll is almost right, stop adjusting (PID dampening todo here?)
@@ -212,6 +227,36 @@ public class SubControl : NetworkBehaviour
 			AutoStabilise();
 		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
 			AutoStabilise();
+
+		ThrustControl();
+	}
+
+	public void ThrustControl()
+	{
+		currentThrust = thrust;
+
+		if(inputZaxis > 0.01f || inputZaxis < -0.01f)
+		{
+			rb.drag = ((Acceleration/100f))/2;
+		}
+		else
+		{
+			rb.drag = 0.5f;
+		}
+
+		if(isControlDecentMode)
+		{
+			thrust = inputZaxis * 0.0337f * (MaxSpeed/2f);
+			currentThrust*= forwardThrust * 15.0f;
+			rb.AddRelativeForce(0f,currentThrust * Time.deltaTime * ((Acceleration/100f)),0f);
+		}
+		else
+		{
+			thrust = inputZaxis * 0.0337f * MaxSpeed;
+			currentThrust*= forwardThrust * 15.0f;
+			rb.AddRelativeForce(0f,0f,currentThrust * Time.deltaTime * ((Acceleration/100f)));
+		}
+			
 	}
         
 }
