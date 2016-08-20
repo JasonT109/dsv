@@ -51,10 +51,7 @@ public class LiveFeedInputManager : MonoBehaviour
 
     public void ToggleCameras()
     {
-        ButtonHeld = !ButtonHeld;
-
-        if(ButtonHeld)
-        {
+        
             iNumCameras++;
             if(iNumCameras > 4)
             {
@@ -62,7 +59,6 @@ public class LiveFeedInputManager : MonoBehaviour
             }
 
             RefreshButtonText();
-        }
     }
 
     public void StartCameras()
