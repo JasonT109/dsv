@@ -252,7 +252,15 @@ public class SubControl : NetworkBehaviour
 		}
 		else
 		{
-			thrust = inputZaxis * 0.0337f * MaxSpeed;
+			if(inputZaxis > 0)
+			{
+				thrust = inputZaxis * 0.0337f * MaxSpeed;
+			}
+			else
+			{
+				thrust = inputZaxis * 0.0337f * MaxSpeed/2f;
+			}
+
 			currentThrust*= forwardThrust * 15.0f;
 			rb.AddRelativeForce(0f,0f,currentThrust * Time.deltaTime * ((Acceleration/100f)));
 		}
