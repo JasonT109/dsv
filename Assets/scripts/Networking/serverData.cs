@@ -871,6 +871,9 @@ public class serverData : NetworkBehaviour
             case "dcccommscontent":
                 DCCScreenData.DCCcommsContent = (int)newValue;
                 break;
+            case "dccquadcycle":
+                DCCScreenData.DCCcommsContent = (int)newValue;
+                break;
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue > 0;
                 break;

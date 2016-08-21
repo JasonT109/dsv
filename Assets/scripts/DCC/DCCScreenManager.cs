@@ -25,7 +25,7 @@ public class DCCScreenManager : MonoBehaviour
 
     [Header("Control screen buttons")]
     public buttonControl resetButton;
-    public buttonControl clearButton;
+    public buttonControl cycleButton;
 
     [Header("Swipe indicator")]
     public GameObject swipeIndicator;
@@ -34,6 +34,9 @@ public class DCCScreenManager : MonoBehaviour
     private float initTimer = 0;
     private float initTime = 2;
     private bool initialised = false;
+    private float updateTimer = 0;
+    private float updateTick = 0.2f;
+
 
     void TestPattern()
     {
@@ -295,6 +298,12 @@ public class DCCScreenManager : MonoBehaviour
         serverUtils.PostServerData("dccscreen5content", 0);
     }
 
+    public void CycleWindows()
+    {
+        Debug.Log("Cycling quad windows.");
+        serverUtils.PostServerData("DCCquadcycle", 1);
+    }
+
     /** Sorts the windows on the active screen. Each window has 2 units of depth, so each window should be carefull authored within this range. */
     void SetWindowsSortDepth()
     {
@@ -304,6 +313,46 @@ public class DCCScreenManager : MonoBehaviour
         {
             nonQuadWindows[i].transform.localPosition = new Vector3(nonQuadWindows[i].transform.localPosition.x, nonQuadWindows[i].transform.localPosition.y, zDepth);
             zDepth -= 2;
+        }
+    }
+
+    /** Set the screen to its position on the DCC set. 1 left screen, 2 middle screen, 3 overhead left, 4 overhead middle, 5 overhead right.*/
+    void SetScreen(int ID)
+    {
+        switch (ID)
+        {
+            case 0:
+                break;
+            case 1:
+                controlScreen.SetActive(true);
+                quadScreen.SetActive(false);
+                screen3.SetActive(false);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                break;
+            case 2:
+                controlScreen.SetActive(false);
+                quadScreen.SetActive(true);
+                screen3.SetActive(false);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                break;
+            case 3:
+                controlScreen.SetActive(false);
+                quadScreen.SetActive(false);
+                screen3.SetActive(true);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                break;
+            case 4:
+                controlScreen.SetActive(false);
+                quadScreen.SetActive(false);
+                screen3.SetActive(true);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
+                break;
+            case 5:
+                controlScreen.SetActive(false);
+                quadScreen.SetActive(false);
+                screen3.SetActive(true);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
+                break;
         }
     }
 
@@ -327,6 +376,9 @@ public class DCCScreenManager : MonoBehaviour
         if (resetButton.pressed)
             ResetTopWindows();
 
+        if (cycleButton.pressed)
+            CycleWindows();
+
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
             TestPattern();
@@ -334,44 +386,40 @@ public class DCCScreenManager : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha1))
         {
-            controlScreen.SetActive(true);
-            quadScreen.SetActive(false);
-            screen3.SetActive(false);
-            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+            SetScreen(1);
         }
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha2))
         {
-            controlScreen.SetActive(false);
-            quadScreen.SetActive(true);
-            screen3.SetActive(false);
-            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+            SetScreen(2);
         }
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha3))
         {
-            controlScreen.SetActive(false);
-            quadScreen.SetActive(false);
-            screen3.SetActive(true);
-            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+            SetScreen(3);
         }
 
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha4))
         {
-            controlScreen.SetActive(false);
-            quadScreen.SetActive(false);
-            screen3.SetActive(true);
-            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
+            SetScreen(4);
         }
 
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
         {
-            controlScreen.SetActive(false);
-            quadScreen.SetActive(false);
-            screen3.SetActive(true);
-            screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
+            SetScreen(5);
+        }
+
+        if (Time.time < updateTimer)
+            return;
+
+        updateTimer += updateTick;
+
+        if (serverUtils.GetServerData("DCCquadcycle") == 1)
+        {
+            TestPattern();
+            serverUtils.PostServerData("DCCquadcycle", 0);
         }
     }
 }

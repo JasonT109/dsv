@@ -361,6 +361,7 @@ namespace Meg.Networking
             "dccscreen4content",
             "dccscreen5content",
             "dcccommscontent",
+            "dccquadcycle",
             "depth",
             "disableinput",
             "divertpowertothrusters",
@@ -683,6 +684,7 @@ namespace Meg.Networking
             { "dccscreen3content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 3." } },
             { "dccscreen4content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 4." } },
             { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
+            { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input to sub is completely disabled."} },
             { "divertpowertothrusters", new ParameterInfo { description = "Amount of power diverted from systems to thrusters (0..100%)."} },
@@ -1251,6 +1253,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCScreen5Content;
                 case "dcccommscontent":
                     return DCCScreenData.DCCcommsContent;
+                case "dccquadcycle":
+                    return DCCScreenData.DCCquadcycle;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":
