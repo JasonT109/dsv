@@ -47,6 +47,14 @@
 				{
 					"type":"Value",
 					"serverParam":"joystickPilot"
+				},
+				{
+					"type":"Value",
+					"serverParam":"iscontroldecentmode"
+				},
+				{
+					"type":"Value",
+					"serverParam":"isautopilot"
 				}
 			]
 		},

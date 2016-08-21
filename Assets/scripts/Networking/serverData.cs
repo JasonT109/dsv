@@ -871,9 +871,12 @@ public class serverData : NetworkBehaviour
             case "dcccommscontent":
                 DCCScreenData.DCCcommsContent = (int)newValue;
                 break;
+			case "isautopilot":
+				SubControl.isAutoPilot = newValue > 0;
+				break;
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue > 0;
-                break;
+				break;
             case "iscontrolmodeoverride":
                 SubControl.isControlModeOverride = newValue > 0;
                 break;
@@ -1011,6 +1014,9 @@ public class serverData : NetworkBehaviour
             case "batterytimeenabled":
                 BatteryData.batteryTimeEnabled = newValue;
                 break;
+			case "isautopilot":
+				SubControl.isAutoPilot = newValue;
+				break;
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue;
                 break;
