@@ -44,6 +44,8 @@ public class SubControl : NetworkBehaviour
     [SyncVar]
     public float MinSpeed = -100f;
 	[SyncVar]
+	public bool isAutoPilot = false;
+	[SyncVar]
 	public bool isControlDecentMode = false;
 	[SyncVar]
 	public bool isControlModeOverride = false;

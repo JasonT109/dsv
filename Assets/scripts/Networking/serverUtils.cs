@@ -431,6 +431,7 @@ namespace Meg.Networking
             "inputyaxis2",
             "inputzaxis",
 			"iscontroldecentmode",
+			"isautopilot",
 			"iscontrolmodeoverride",
 			"iscontroloverridestandard",
             "isautostabilised",
@@ -753,6 +754,7 @@ namespace Meg.Networking
             { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y input axis (pitch)." } },
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y2 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
+			{ "isautopilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control auto pilot toggle. does nothing but change a button light." } },
 			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode boolean." } },
 			{ "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
 			{ "iscontroloverridestandard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode when server is overriding." } },
@@ -1125,6 +1127,8 @@ namespace Meg.Networking
                     return SubControl.inputXaxis2;
                 case "inputyaxis2":
 					return SubControl.inputYaxis2;
+				case "isautopilot":
+					return SubControl.isAutoPilot ? 1 : 0;
 				case "iscontroldecentmode":
 					return SubControl.isControlDecentMode ? 1 : 0;
 				case "iscontrolmodeoverride":
@@ -1151,6 +1155,8 @@ namespace Meg.Networking
                     return SubControl.MaxSpeed;
                 case "minspeed":
                     return SubControl.MinSpeed;
+				case "isAutoPilot":
+					return SubControl.isAutoPilot ? 1 : 0;
                 case "isControlDecentMode":
                     return SubControl.isControlDecentMode ? 1 : 0;
                 case "isControlModeOverride":
@@ -1546,6 +1552,8 @@ namespace Meg.Networking
                     return VesselMovements.Enabled;
                 case "disableinput":
                     return SubControl.disableInput;
+				case "isautopilot":
+					return SubControl.isAutoPilot;
 				case "iscontroldecentmode":
 					return SubControl.isControlDecentMode;
 				case "iscontrolmodeoverride":
