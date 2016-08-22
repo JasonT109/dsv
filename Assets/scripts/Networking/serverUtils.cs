@@ -337,6 +337,7 @@ namespace Meg.Networking
             "cabinpressure",
             "cabinpressurepsi",
             "cabintemp",
+            "camerabrightness",
             "co2",
             "co2ppm",
             "commssignalstrength",
@@ -672,6 +673,7 @@ namespace Meg.Networking
             { "cabinpressure", new ParameterInfo { maxValue = 1.25f, description = "Cabin pressure (in bar)." } },
             { "cabinpressurepsi", new ParameterInfo { readOnly = true, description = "Cabin pressure (derived, in psi)." } },
             { "cabintemp", new ParameterInfo { description = "Cabin temperature (degrees c)."} },
+            { "camerabrightness", new ParameterInfo { maxValue = 2, description = "Overall brightness of all screens. Can be used for powering down / low power mode effects." } },
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
@@ -1297,6 +1299,8 @@ namespace Meg.Networking
                     return ScreenData.screenGlitchAutoDecay ? 1 : 0;
                 case "screenglitchautodecaytime":
                     return ScreenData.screenGlitchAutoDecayTime;
+                case "camerabrightness":
+                    return ScreenData.cameraBrightness;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

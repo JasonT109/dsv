@@ -17,5 +17,7 @@ public class screenData : NetworkBehaviour
     [SyncVar]
     public bool screenGlitchAutoDecay = true;
 
+    [SyncVar]
+    public float cameraBrightness = 1f;
 
 }

@@ -872,7 +872,7 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCcommsContent = (int)newValue;
                 break;
             case "dccquadcycle":
-                DCCScreenData.DCCcommsContent = (int)newValue;
+                DCCScreenData.DCCquadcycle = (int)newValue;
                 break;
 			case "isautopilot":
 				SubControl.isAutoPilot = newValue > 0;
@@ -885,6 +885,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "iscontroloverridestandard":
                 SubControl.isControlOverrideStandard = newValue > 0;
+                break;
+            case "camerabrightness":
+                ScreenData.cameraBrightness = newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
