@@ -10,16 +10,21 @@ public class SliderValue : MonoBehaviour
     public bool isFloat3;
 
     public sliderWidget Slider;
+    private float updateTimer = 0f;
+    private float updateTick = 0.2f;
 
-	// Use this for initialization
-	void Start () 
+    void OnEnable()
     {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () 
+        updateTimer = Time.time;
+    }
+
+    void Update () 
     {
+        if (Time.time < updateTimer)
+            return;
+
+        updateTimer = Time.time + updateTick;
+
         if (isDynamicText)
         {
             if (isInt)
@@ -62,7 +67,5 @@ public class SliderValue : MonoBehaviour
                 this.GetComponent<TextMesh>().text = Slider.returnValue.ToString("F3");
             }
         }
-
-
 	}
 }
