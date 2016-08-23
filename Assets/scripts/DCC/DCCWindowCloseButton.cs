@@ -38,6 +38,11 @@ public class DCCWindowCloseButton : MonoBehaviour
 
         pressed = false;
 
+        closeWindow();
+    }
+
+    public void closeWindow()
+    {
         if (linkedButton)
             linkedButton.toggleButton(linkedButton.gameObject);
         else

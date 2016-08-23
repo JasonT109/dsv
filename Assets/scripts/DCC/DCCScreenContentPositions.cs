@@ -26,22 +26,22 @@ namespace Meg.DCC
             new Vector3(2f, -2.65f, 10f),       //3 bottomRight
             new Vector3(-3.25f, 0f, 0f),        //4 middle
             new Vector3(0f, -6f, 10f),          //5 hidden
-            new Vector3(-1.26f, 0.57f, 10f),          //5 screenPos1
-            new Vector3(0.86f, 0.25f, 10f),          //5 screenPos2
-            new Vector3(-0.83f, -0.52f, 10f)           //5 screenPos3
+            new Vector3(-0.42f, 0.57f, 10f),    //5 screenPos1
+            new Vector3(0.31f, 0.25f, 10f),     //5 screenPos2
+            new Vector3(-0.5f, -0.37f, 10f)     //5 screenPos3
         };
 
         public static Vector2[] screenScales = 
         {
-            new Vector2(95f, 53.4375f),     //0 topLeft
-            new Vector2(95f, 53.4375f),     //1 topRight
-            new Vector2(95f, 53.4375f),     //2 bottomLeft
-            new Vector2(95f, 53.4375f),     //3 bottomRight
-            new Vector2(152f, 85.5f),       //4 middle
-            new Vector2(190f, 106.875f),    //5 hidden
-            new Vector2(161.5f, 90.84375f),    //5 screenPos1
-            new Vector2(161.5f, 90.84375f),    //5 screenPos2
-            new Vector2(161.5f, 90.84375f)     //5 screenPos3
+            new Vector2(95f, 53.4375f),         //0 topLeft
+            new Vector2(95f, 53.4375f),         //1 topRight
+            new Vector2(95f, 53.4375f),         //2 bottomLeft
+            new Vector2(95f, 53.4375f),         //3 bottomRight
+            new Vector2(152f, 85.5f),           //4 middle
+            new Vector2(190f, 106.875f),        //5 hidden
+            new Vector2(161.5f, 90.84375f),     //5 screenPos1
+            new Vector2(161.5f, 90.84375f),     //5 screenPos2
+            new Vector2(161.5f, 90.84375f)      //5 screenPos3
         };
 
         public static Vector3 GetScreenPosition(DCCScreenContentPositions.positionID id)

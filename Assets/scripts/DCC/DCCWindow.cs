@@ -47,6 +47,11 @@ public class DCCWindow : MonoBehaviour
     private float colorLerpTimer = 0;
     private int _commsContent = 0;
     private int hitCount = 0;
+    private bool transformOffscreen;
+    private float offscreenLerpTimer = 0f;
+    private Vector2 offscreenDirection;
+    private float offscreenSpeed;
+    private Vector3 offscreenInitPos;
 
     public int commsContent
     {
@@ -103,6 +108,8 @@ public class DCCWindow : MonoBehaviour
         GetComponent<ReleaseGesture>().Released += releaseHandler;
         GetComponent<TransformGesture>().Transformed += transformHandler;
 
+        transformOffscreen = false;
+
         if (!window)
             window = GetComponent<graphicsDCCWindowSize>();
 
@@ -136,23 +143,32 @@ public class DCCWindow : MonoBehaviour
 
         hasFocus = false;
 
-        if (transformSpeed > minSwipeSpeed || hitCount > 1)
+        if (transformSpeed > minSwipeSpeed)
         {
             DCCScreenID._screenID screenDirection = DCCScreenID._screenID.control;
 
             if (transformDirection.x < -0.2f && transformDirection.y > 0)
+            {
                 screenDirection = DCCScreenID._screenID.screen3;
+                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
+            }
 
             if (transformDirection.x >= -0.2f &&  transformDirection.x <= 0.2f && transformDirection.y > 0)
+            {
                 screenDirection = DCCScreenID._screenID.screen4;
+                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
+            }
 
             if (transformDirection.x > 0.2f && transformDirection.y > 0)
+            {
                 screenDirection = DCCScreenID._screenID.screen5;
+                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
+            }
 
             if (screenDirection != DCCScreenID._screenID.control)
                 screenManager.SetWindowActive(windowContent, screenDirection, true);
 
-            Debug.Log("Swipe detected in direction of screen: " + screenDirection + " " + transformDirection + " at a speed of " + transformSpeed);
+            //Debug.Log("Swipe detected in direction of screen: " + screenDirection + " " + transformDirection + " at a speed of " + transformSpeed);
         }
 
         transformSpeedHistory = new float[8];
@@ -184,6 +200,15 @@ public class DCCWindow : MonoBehaviour
         Quaternion q = new Quaternion();    
         q.SetLookRotation(-Vector3.forward, transformDirection);
         screenManager.swipeIndicator.transform.rotation = q;
+    }
+
+    private void TransformOffscreen(Vector2 direction, float speed)
+    {
+        offscreenLerpTimer = 0;
+        offscreenInitPos = transform.localPosition;
+        transformOffscreen = true;
+        offscreenDirection = direction;
+        offscreenSpeed = speed;
     }
 
     /** Registers a window with the screen manager. */
@@ -282,6 +307,21 @@ public class DCCWindow : MonoBehaviour
             if (hasFocus)
             {
                 screenManager.PushWindowToFront(this);
+            }
+        }
+
+        if (transformOffscreen)
+        {
+            offscreenLerpTimer += Time.deltaTime;
+            transform.localPosition = new Vector3 (transform.localPosition.x + (offscreenDirection.x * offscreenSpeed), transform.localPosition.y + (offscreenDirection.y * offscreenSpeed), transform.localPosition.z);
+            //GetComponent<graphicsDCCWindowSize>().windowWidth *= 1 - offscreenLerpTimer;
+            //GetComponent<graphicsDCCWindowSize>().windowHeight *= 1 - offscreenLerpTimer;
+
+            if (offscreenLerpTimer > 1)
+            {
+                transformOffscreen = false;
+                transform.localPosition = offscreenInitPos;
+                GetComponentInChildren<DCCWindowCloseButton>().closeWindow();
             }
         }
 	}
