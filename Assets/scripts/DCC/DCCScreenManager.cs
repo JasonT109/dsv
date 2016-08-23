@@ -35,8 +35,8 @@ public class DCCScreenManager : MonoBehaviour
     private float initTime = 2;
     private bool initialised = false;
     private float updateTimer = 0;
-    private float updateTick = 0.2f;
-
+    private float updateTick = 0.3f;
+    private bool canPress = true;
 
     void TestPattern()
     {
@@ -301,7 +301,7 @@ public class DCCScreenManager : MonoBehaviour
     public void CycleWindows()
     {
         Debug.Log("Cycling quad windows.");
-        serverUtils.PostServerData("DCCquadcycle", 1);
+        serverUtils.PostServerData("dccquadcycle", 1);
     }
 
     /** Sorts the windows on the active screen. Each window has 2 units of depth, so each window should be carefull authored within this range. */
@@ -356,9 +356,20 @@ public class DCCScreenManager : MonoBehaviour
         }
     }
 
+    IEnumerator wait(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        canPress = true;
+    }
+
     void Awake ()
     {
         initTime += Time.deltaTime;
+    }
+
+    void Start ()
+    {
+        SetScreen(1);
     }
 
     void Update ()
@@ -376,8 +387,12 @@ public class DCCScreenManager : MonoBehaviour
         if (resetButton.pressed)
             ResetTopWindows();
 
-        if (cycleButton.pressed)
+        if (cycleButton.pressed && canPress)
+        {
             CycleWindows();
+            canPress = false;
+            StartCoroutine(wait(0.6f));
+        }
 
         if (Input.GetKeyDown(KeyCode.PageUp))
         {
@@ -416,10 +431,10 @@ public class DCCScreenManager : MonoBehaviour
 
         updateTimer += updateTick;
 
-        if (serverUtils.GetServerData("DCCquadcycle") == 1)
+        if (serverUtils.GetServerData("dccquadcycle") == 1)
         {
             TestPattern();
-            serverUtils.PostServerData("DCCquadcycle", 0);
+            serverUtils.PostServerData("dccquadcycle", 0);
         }
     }
 }

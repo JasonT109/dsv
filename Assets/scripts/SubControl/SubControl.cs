@@ -250,7 +250,7 @@ public class SubControl : NetworkBehaviour
 		{
 			thrust = inputZaxis * 0.0337f * (MaxSpeed/2f);
 			currentThrust*= forwardThrust * 15.0f;
-			rb.AddRelativeForce(0f,currentThrust * Time.deltaTime * ((Acceleration/100f)),0f);
+			rb.AddRelativeForce(0f, -currentThrust * Time.deltaTime * ((Acceleration/100f)),0f);
 		}
 		else
 		{
