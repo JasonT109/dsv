@@ -39,6 +39,8 @@ public class widgetStartSequence : MonoBehaviour
         running[id] = false;
         runFrames[id] = 0;
         imageSequencers[id].frameCounter = 0;
+
+        
     }
 
     void Start ()
@@ -71,27 +73,20 @@ public class widgetStartSequence : MonoBehaviour
 
         for (int i = 0; i < running.Length; i++)
         {
-            bool isStillRunning = false;
-
-            if (running[i] && imageSequencers[i].gameObject.activeSelf)
+            if (running[i])
             {
                 runFrames[i] = imageSequencers[i].frameCounter;
 
                 if (runFrames[i] == imageSequencers[i].numberOfFrames - 1)
                 {
-                    if (type[i] == ImageSequenceSingleTexture.playbackType.loop)
-                        isStillRunning = true;
-                    else
-                        DisableSequence(imageSequencers[i], i);  
-                }
-                else
-                {
-                    isStillRunning = true;
+                    if (type[i] != ImageSequenceSingleTexture.playbackType.loop)
+                    {
+                        DisableSequence(imageSequencers[i], i);
+                        if (resetServerVarOnFinish)
+                            serverUtils.PostServerData(serverTrigger, serverTriggerOffValue);
+                    }
                 }
             }
-
-            if (!isStillRunning && resetServerVarOnFinish)
-                serverUtils.PostServerData(serverTrigger, serverTriggerOffValue);
         }
     }
 }
