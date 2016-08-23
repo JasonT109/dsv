@@ -26,8 +26,8 @@ public class ImageSequenceSingleTexture : MonoBehaviour
     public string folderName;
 
     //The name of the image sequence  
-
     public string imageSequenceName;
+
     //The number of frames the animation has
     public int numberOfFrames;
 
@@ -84,10 +84,6 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             {
                 StartCoroutine("PlayLoop", frameTime);
             }
-            else if (type == playbackType.once)
-            {
-                StartCoroutine("Play", frameTime);
-            }
             else
             {
                 StartCoroutine("Play", frameTime);
@@ -99,6 +95,10 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             if (notPlaying)
             {
                 goMaterial.mainTexture = notPlaying;
+            }
+            else
+            {
+                goMaterial.mainTexture = (Texture)Resources.Load(baseName + (numberOfFrames -1), typeof(Texture));
             }
         }
         if (frameCounter >= nFrames)
@@ -136,6 +136,9 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             ++frameCounter;
             this.texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
         }
+
+        if (type == playbackType.hold)
+            playing = false;
 
         StopCoroutine("Play");
     }
