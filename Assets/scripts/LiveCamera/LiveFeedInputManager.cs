@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class LiveFeedInputManager : MonoBehaviour 
 {
-    int iNumCameras = 0;
+    public int iNumCameras = 0;
     public Text ButtonText;
     bool ButtonHeld = false;
     public Image StartImg;
@@ -77,4 +77,9 @@ public class LiveFeedInputManager : MonoBehaviour
             AVCameraOutputs[i].SetActive(true);
         }
     }
+
+	public int getNumCams()
+	{
+		return (iNumCameras);
+	}
 }
