@@ -505,6 +505,7 @@ namespace Meg.Networking
             "sonarshortgain",
             "sonarshortrange",
             "sonarshortsensitivity",
+            "startimagesequence",
             "take",
             "thruster_heat_l",
             "thruster_heat_r",
@@ -823,6 +824,7 @@ namespace Meg.Networking
             { "sonarshortgain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for front-scanning (short-range) sonar (%)."} },
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
             { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for front-scanning (short-range) sonar (%)."} },
+            { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
             { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
             { "towwinchload", new ParameterInfo { description = "Tow winch load (kg)."} },
@@ -1301,6 +1303,8 @@ namespace Meg.Networking
                     return ScreenData.screenGlitchAutoDecayTime;
                 case "camerabrightness":
                     return ScreenData.cameraBrightness;
+                case "startimagesequence":
+                    return ScreenData.startImageSequence;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

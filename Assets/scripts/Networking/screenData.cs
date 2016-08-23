@@ -20,4 +20,7 @@ public class screenData : NetworkBehaviour
     [SyncVar]
     public float cameraBrightness = 1f;
 
+    [SyncVar]
+    public int startImageSequence = 0;
+
 }
