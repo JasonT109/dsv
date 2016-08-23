@@ -6,6 +6,14 @@ public class widgetSliderText : MonoBehaviour
     public GameObject sliderWidget;
     public string suffix = "%";
 
+    private float updateTimer = 0f;
+    private float updateTick = 0.2f;
+
+    void OnEnable ()
+    {
+        updateTimer = Time.time;
+    }
+
 	void Start ()
     {
         if (isDynamicText)
@@ -20,6 +28,11 @@ public class widgetSliderText : MonoBehaviour
 
 	void Update ()
     {
+        if (Time.time < updateTimer)
+            return;
+
+        updateTimer = Time.time + updateTick;
+
         if (isDynamicText)
         {
             if (sliderWidget.GetComponent<sliderWidget>().valueChanged)

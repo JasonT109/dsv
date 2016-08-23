@@ -77,4 +77,9 @@ public class LiveFeedInputManager : MonoBehaviour
             AVCameraOutputs[i].SetActive(true);
         }
     }
+
+	public int getNumCams()
+	{
+		return (iNumCameras);
+	}
 }
