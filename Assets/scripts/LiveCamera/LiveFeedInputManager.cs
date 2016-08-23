@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class LiveFeedInputManager : MonoBehaviour 
 {
-    int iNumCameras = 0;
+    public int iNumCameras = 0;
     public Text ButtonText;
     bool ButtonHeld = false;
     public Image StartImg;

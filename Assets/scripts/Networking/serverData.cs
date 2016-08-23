@@ -889,6 +889,9 @@ public class serverData : NetworkBehaviour
             case "camerabrightness":
                 ScreenData.cameraBrightness = newValue;
                 break;
+            case "startimagesequence":
+                ScreenData.startImageSequence = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
