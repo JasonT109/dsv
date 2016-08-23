@@ -31,21 +31,24 @@ public class LiveFeedOutputComms : MonoBehaviour
 				}
 			}
 
-			CameraMesh[4]._liveCamera = Outputs.GetOutput(0);
-			LivePlane[4].SetActive(true);
-			FakePlane[4].SetActive(false);
+			//works
+			//CameraMesh[4]._liveCamera = Outputs.GetOutput(0);		
 
-			if(Outputs.getNumCams() > 1)
-			{
-				CameraMesh[5]._liveCamera = Outputs.GetOutput(1);
-				LivePlane[5].SetActive(true);
-				FakePlane[5].SetActive(false);
-			}
-			else
-			{
-				LivePlane[5].SetActive(false);
-				FakePlane[5].SetActive(true);
-			}
+			//CameraMesh[4]._liveCamera = Outputs.GetOutput(0);
+			//LivePlane[4].SetActive(true);
+			//FakePlane[4].SetActive(false);
+			//
+			//if(Outputs.getNumCams() > 1)
+			//{
+			//	CameraMesh[5]._liveCamera = Outputs.GetOutput(1);
+			//	LivePlane[5].SetActive(true);
+			//	FakePlane[5].SetActive(false);
+			//}
+			//else
+			//{
+			//	LivePlane[5].SetActive(false);
+			//	FakePlane[5].SetActive(true);
+			//}
 		
 			//for(int i = 4; i < 6; ++i)
 			//{

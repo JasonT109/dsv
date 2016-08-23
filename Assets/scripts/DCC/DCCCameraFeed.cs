@@ -190,7 +190,9 @@ public class DCCCameraFeed : MonoBehaviour
 		{
         	if (materials[ID])
         	{
-        	    //Renderer r = videoPlane.GetComponentInChildren<Renderer>();
+        	    //works
+				Renderer r = videoPlane.GetComponentInChildren<Renderer>();
+				//Renderer r = FakePlane.GetComponentInChildren<Renderer>();
         	    r.material = materials[ID];
         	    isLerping = true;
         	    lerpValue = 0;

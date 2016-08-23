@@ -16,7 +16,10 @@ public class LiveCameraOutputFinder : MonoBehaviour
 			if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
 			{
 				LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-				isLive = true;
+				if(LiveFeeds.getNumCams() >0)
+				{
+					isLive = true;
+				}
 			}
 		}
 	}
@@ -28,7 +31,10 @@ public class LiveCameraOutputFinder : MonoBehaviour
 			if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
 			{
 				LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-				isLive = true;
+				if(LiveFeeds.getNumCams() >0)
+				{
+					isLive = true;
+				}
 			}
 		}
 	}
@@ -48,7 +54,10 @@ public class LiveCameraOutputFinder : MonoBehaviour
 				if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
 				{
 					LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-					isLive = true;
+					if(LiveFeeds.getNumCams() >0)
+					{
+						isLive = true;
+					}
 				}
 			}
 		}
