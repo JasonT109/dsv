@@ -69,7 +69,7 @@ public class batteryData : NetworkBehaviour
 
     /** Whether battery life is automatically updated. */
     [SyncVar]
-    public bool batteryLifeEnabled = true;
+    public bool batteryLifeEnabled = false;
 
     /** Battery life maximum (KWh). */
     [SyncVar]
