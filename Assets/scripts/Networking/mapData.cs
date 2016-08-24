@@ -27,4 +27,7 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public string mapEventName;
 
+    [SyncVar]
+    public int acidLayer;
+
 }
