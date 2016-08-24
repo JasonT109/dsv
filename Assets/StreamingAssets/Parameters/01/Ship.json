@@ -55,6 +55,10 @@
 				{
 					"type":"Value",
 					"serverParam":"isautopilot"
+				},
+				{
+					"type":"Value",
+					"serverParam":"ispitchalsostabilised"
 				}
 			]
 		},

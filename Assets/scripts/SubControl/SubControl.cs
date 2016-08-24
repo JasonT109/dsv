@@ -186,9 +186,11 @@ public class SubControl : NetworkBehaviour
 			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
 			rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
 			rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
+			//this.gameObject.transform.rotation = Quaternion.Euler(this.gameObject.transform.rotation.eulerAngles + new Vector3(0f,inputXaxis*Time.deltaTime*yawSpeed,0f));
+			//this.gameObject.transform.Rotate(0f,inputXaxis*yawSpeed*Time.deltaTime,0f);
 
 			// Adjust mix for pitch when doing a banking turn.
-			rb.AddRelativeTorque(-PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
+			rb.AddRelativeTorque(-PitchExtract * (yawSpeed*0.5f * Mathf.Abs(inputXaxis)));
 
 			// Apply the thrust forces.
 			//if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
