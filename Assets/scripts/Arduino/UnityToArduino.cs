@@ -8,7 +8,7 @@ public class UnityToArduino : MonoBehaviour
 	private SerialPort port;
 	public serverData Server;
 	public SubControl Controls;
-	public string COMPort = "COM6";
+	public string COMPort = "";
 
 	ArduinoManager Settings;
 
@@ -22,7 +22,7 @@ public class UnityToArduino : MonoBehaviour
 				Settings = GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>();
 				COMPort = Settings.ComPort;
 			
-				port = new SerialPort(COMPort, 115200);
+				port = new SerialPort(COMPort, 57600);
 				if (!port.IsOpen)
 				{
 					port.Open();
@@ -59,7 +59,7 @@ public class UnityToArduino : MonoBehaviour
 			); 
 				
 
-			yield return new WaitForSeconds(0.0083f);
+			yield return new WaitForSeconds(0.016f);
 		}
 	} 
 
