@@ -16,6 +16,19 @@
 					"serverParam":"screenglitchautodecaytime"
 				}
 			]
+		},
+		{
+			"id":"SCREEN SETTINGS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"cameraBrightness"
+				},
+				{
+					"type":"Value",
+					"serverParam":"greenScreenBrightness"
+				}
+			]
 		}
 	]
 }

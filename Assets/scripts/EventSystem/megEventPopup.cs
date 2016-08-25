@@ -15,7 +15,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         public popupData.Type Type = popupData.Type.Warning;
-        public string Title = "WARNING";
+        public string Title = "";
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;

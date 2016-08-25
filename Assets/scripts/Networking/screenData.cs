@@ -23,4 +23,7 @@ public class screenData : NetworkBehaviour
     [SyncVar]
     public int startImageSequence = 0;
 
+    [SyncVar]
+    public float greenScreenBrightness = 1f;
+
 }
