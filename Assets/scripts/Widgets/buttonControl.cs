@@ -256,8 +256,15 @@ public class buttonControl : MonoBehaviour
             doublePressed = true;
             StartCoroutine(disableDoublePress(0.05f));
 
-            var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
-            bGroupScript.toggleButtons(gameObject);
+            if (buttonGroup)
+            {
+                var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
+                bGroupScript.toggleButtons(gameObject);
+            }
+            else
+            {
+                toggleButton(gameObject);
+            }
 
         }
 
