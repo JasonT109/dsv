@@ -1,21 +1,60 @@
 {
 	"metadata":{
-		"utc":"25/08/16 04:19:15.2",
-		"startedTimestamp":"01/01/01 12:00:00.0",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"25/08/16 09:30:17.2",
+		"startedTimestamp":"25/08/16 09:29:14.3",
+		"stoppedTimestamp":"25/08/16 09:29:41.1"
 	},
 	"groups":[
 		{
 			"id":"POPUP TEST",
+			"looping":true,
+			"canLoop":true,
 			"events":[
 				{
 					"type":"Popup",
-					"Title":"WATCH OUT",
-					"Target":"Hello",
+					"triggerTime":5,
+					"completeTime":5,
+					"Title":"COMMS ERROR",
+					"Target":"Comms",
 					"Position":[
 						0,
 						0,
 						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2
+				},
+				{
+					"type":"Popup",
+					"completeTime":5,
+					"Title":"LIGHTS WARNING",
+					"Target":"Lights",
+					"Position":[
+						0,
+						-10,
+						0
+					],
+					"Size":[
+						1865,
+						820
+					],
+					"Icon":2
+				},
+				{
+					"type":"Popup",
+					"Title":"IMPACT ALERT!",
+					"Target":"DiagnosticsSub",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						760,
+						440
 					],
 					"Icon":2
 				}

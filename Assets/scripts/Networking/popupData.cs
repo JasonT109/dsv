@@ -48,6 +48,7 @@ public class popupData : NetworkBehaviour
         public string Title;
         public string Target;
         public Vector3 Position;
+        public Vector2 Size;
         public Icon Icon;
 
         /** Constructor. */
@@ -56,6 +57,7 @@ public class popupData : NetworkBehaviour
             Title = popup.Title;
             Target = popup.Target;
             Position = popup.Position;
+            Size = popup.Size;
             Icon = popup.Icon;
         }
 
@@ -69,6 +71,7 @@ public class popupData : NetworkBehaviour
             return string.Equals(Title, other.Title) 
                 && string.Equals(Target, other.Target) 
                 && Position.Equals(other.Position) 
+                && Size.Equals(other.Size)
                 && Icon == other.Icon;
         }
 
@@ -80,6 +83,7 @@ public class popupData : NetworkBehaviour
                 var hashCode = (Title != null ? Title.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Target != null ? Target.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Position.GetHashCode();
+                hashCode = (hashCode * 397) ^ Size.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Icon;
                 return hashCode;
             }
@@ -146,19 +150,25 @@ public class popupData : NetworkBehaviour
 
     /** Look up a popup target by id. */
     public bool TryGetTarget(string id, out PopupTarget target)
-        { return _popupTargets.TryGetValue(id, out target); }
+    {
+        if (!string.IsNullOrEmpty(id))
+            return _popupTargets.TryGetValue(id.ToLower(), out target);
+
+        target = null;
+        return false;
+    }
+    
+    /** Register a popup target. */
+    public void RegisterTarget(PopupTarget target)
+        { _popupTargets[target.Id.ToLower()] = target; }
+
+    /** Unregister a popup target. */
+    public void UnregisterTarget(PopupTarget target)
+        { _popupTargets.Remove(target.Id.ToLower()); }
 
 
     // Unity Methods
     // ------------------------------------------------------------
-
-    /** Initialization. */
-    private void Awake()
-    {
-        var targets = ObjectFinder.FindAll<PopupTarget>();
-        foreach (var target in targets)
-            _popupTargets[target.Id] = target;
-    }
 
     /** Per-frame update. */
     private void Update()

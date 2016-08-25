@@ -16,6 +16,7 @@ namespace Meg.EventSystem
         public string Title = "WARNING";
         public string Target = "";
         public Vector3 Position = Vector3.zero;
+        public Vector2 Size = Vector2.zero;
         public popupData.Icon Icon = popupData.Icon.Exclamation;
 
 
@@ -32,6 +33,7 @@ namespace Meg.EventSystem
                     Title = Title,
                     Target = Target,
                     Position = Position,
+                    Size = Size,
                     Icon = Icon
                 };
             }
@@ -67,6 +69,7 @@ namespace Meg.EventSystem
             json.AddField("Title", Title);
             json.AddField("Target", Target);
             json.AddField("Position", Position);
+            json.AddField("Size", Size);
             json.AddField("Icon", (int) Icon);
 
             return json;
@@ -79,6 +82,7 @@ namespace Meg.EventSystem
             json.GetField(ref Title, "Title");
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
+            json.GetField(ref Size, "Size");
 
             var icon = 0;
             json.GetField(ref icon, "Icon");

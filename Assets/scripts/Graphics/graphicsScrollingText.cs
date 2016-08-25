@@ -26,6 +26,9 @@ public class graphicsScrollingText : widgetText
 
     private void OnEnable()
     {
+        if (string.IsNullOrEmpty(Lines))
+            Lines = Text;
+
         Text = "";
         StopAllCoroutines();
         StartCoroutine(TextRoutine());
@@ -45,7 +48,7 @@ public class graphicsScrollingText : widgetText
 
         yield return initialDelay;
 
-        while (true)
+        while (inputLines.Count > 0)
         {
             // Rebuild the display with currently visible lines.
             var input = inputLines.Dequeue();
