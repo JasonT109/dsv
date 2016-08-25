@@ -892,6 +892,9 @@ public class serverData : NetworkBehaviour
             case "startimagesequence":
                 ScreenData.startImageSequence = (int)newValue;
                 break;
+            case "greenscreenbrightness":
+                ScreenData.greenScreenBrightness = newValue;
+                break;
             case "acidlayer":
                 MapData.acidLayer = (int)newValue;
                 break;

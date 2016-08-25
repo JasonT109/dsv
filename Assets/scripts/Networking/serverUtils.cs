@@ -438,6 +438,7 @@ namespace Meg.Networking
             "floordepth",
             "floordistance",
             "genericerror",
+            "greenscreenbrightness",
             "heading",
             "horizontalvelocity",
             "hydraulicpressure",
@@ -766,6 +767,7 @@ namespace Meg.Networking
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
             { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
+            { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
             { "heading", new ParameterInfo { description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
             { "horizontalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the horizontal direction (m/s)." } },
             { "hydraulicpressure", new ParameterInfo { description = "Hydraulic system pressure (psi)."} },
@@ -1325,6 +1327,8 @@ namespace Meg.Networking
                     return ScreenData.cameraBrightness;
                 case "startimagesequence":
                     return ScreenData.startImageSequence;
+                case "greenscreenbrightness":
+                    return ScreenData.greenScreenBrightness;
                 case "acidlayer":
                     return MapData.acidLayer;
                 case "maxwildlife":

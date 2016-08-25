@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
@@ -13,23 +14,21 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        public string Title = "WARNING";
+        public popupData.Type Type = popupData.Type.Warning;
+        public string Title = "";
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;
         public popupData.Icon Icon = popupData.Icon.Exclamation;
 
-
-        // Private Properties
-        // ------------------------------------------------------------
-
         /** Popup configuration data. */
-        private popupData.Popup Popup
+        public popupData.Popup Popup
         {
             get
             {
                 return new popupData.Popup
                 {
+                    Type = Type,
                     Title = Title,
                     Target = Target,
                     Position = Position,
@@ -66,6 +65,7 @@ namespace Meg.EventSystem
         public override JSONObject Save()
         {
             var json = base.Save();
+            json.AddField("Type", (int) Type);
             json.AddField("Title", Title);
             json.AddField("Target", Target);
             json.AddField("Position", Position);
@@ -79,6 +79,11 @@ namespace Meg.EventSystem
         public override void Load(JSONObject json)
         {
             base.Load(json);
+
+            var type = 0;
+            json.GetField(ref type, "Type");
+            Type = (popupData.Type) type;
+
             json.GetField(ref Title, "Title");
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
@@ -95,10 +100,14 @@ namespace Meg.EventSystem
             if (!string.IsNullOrEmpty(triggerLabel))
                 return triggerLabel;
 
+            var typeName = Enum.GetName(typeof(popupData.Type), Type);
+            var result = string.Format("Popup {0}", typeName);
             if (!string.IsNullOrEmpty(Title))
-                return string.Format("Popup: '{0}'", Title);
+                result += string.Format(" '{0}'", Title);
+            if (!string.IsNullOrEmpty(Target))
+                result += string.Format(" @ '{0}'", Target);
 
-            return base.ToString();
+            return result;
         }
 
 

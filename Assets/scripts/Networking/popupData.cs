@@ -22,12 +22,22 @@ public class popupData : NetworkBehaviour
 
     [Header("Prefabs")]
 
-    /** Prefab to use when instantiating popup widgets. */
-    public widgetPopup PopupPrefab;
+    /** Prefab to use when instantiating warning popups. */
+    public widgetPopup PopupWarningPrefab;
+
+    /** Prefab to use when instantiating greenscreen popups. */
+    public widgetPopup PopupGreenPrefab;
 
 
     // Enumerations
     // ------------------------------------------------------------
+
+    /** Possible popup types. */
+    public enum Type
+    {
+        Warning,
+        Green
+    }
 
     /** Possible popup icons. */
     public enum Icon
@@ -35,7 +45,8 @@ public class popupData : NetworkBehaviour
         None,
         Question,
         Exclamation,
-        Forbidden
+        Forbidden,
+        Dots
     }
 
     // Structures
@@ -45,6 +56,7 @@ public class popupData : NetworkBehaviour
     [Serializable]
     public struct Popup
     {
+        public Type Type;
         public string Title;
         public string Target;
         public Vector3 Position;
@@ -54,6 +66,7 @@ public class popupData : NetworkBehaviour
         /** Constructor. */
         public Popup(Popup popup)
         {
+            Type = popup.Type;
             Title = popup.Title;
             Target = popup.Target;
             Position = popup.Position;
@@ -68,7 +81,8 @@ public class popupData : NetworkBehaviour
         /** Equality operator. */
         public bool Equals(Popup other)
         {
-            return string.Equals(Title, other.Title) 
+            return Type.Equals(other.Type)
+                && string.Equals(Title, other.Title) 
                 && string.Equals(Target, other.Target) 
                 && Position.Equals(other.Position) 
                 && Size.Equals(other.Size)
@@ -80,12 +94,27 @@ public class popupData : NetworkBehaviour
         {
             unchecked
             {
-                var hashCode = (Title != null ? Title.GetHashCode() : 0);
+                var hashCode = (int) Type;
+                hashCode = (hashCode * 397) ^ (Title != null ? Title.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Target != null ? Target.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Position.GetHashCode();
                 hashCode = (hashCode * 397) ^ Size.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Icon;
                 return hashCode;
+            }
+        }
+
+        /** Returns whether a given icon can be applied to this icon. */
+        public bool IsIconValid(Icon icon)
+        {
+            switch (Type)
+            {
+                case Type.Warning:
+                    return icon != Icon.Dots;
+                case Type.Green:
+                    return icon == Icon.None || icon == Icon.Dots;
+                default:
+                    return true;
             }
         }
 
@@ -199,9 +228,24 @@ public class popupData : NetworkBehaviour
         var newPopups = Popups.Where(key => !_popupWidgets.ContainsKey(key)).ToList();
         foreach (var popup in newPopups)
         {
-            _popupWidgets[popup] = Instantiate(PopupPrefab);
+            _popupWidgets[popup] = Instantiate(GetPrefabForPopup(popup));
             _popupWidgets[popup].Show(popup);
         }
     }
+
+    /** Return a prefab to use for the given popup type. */
+    private widgetPopup GetPrefabForPopup(Popup popup)
+    {
+        switch (popup.Type)
+        {
+            case Type.Warning:
+                return PopupWarningPrefab;
+            case Type.Green:
+                return PopupGreenPrefab;
+            default:
+                return PopupWarningPrefab;
+        }
+    }
+
 
 }
