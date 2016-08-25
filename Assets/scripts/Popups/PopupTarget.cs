@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 
 public class PopupTarget : MonoBehaviour
 {
@@ -22,6 +23,25 @@ public class PopupTarget : MonoBehaviour
     public Bounds Bounds
         { get { return GetBounds(); } }
 
+    /** Popup shared data. */
+    public popupData PopupData { get { return serverUtils.PopupData; } }
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Enabling. */
+    private void OnEnable()
+    {
+        if (PopupData)
+            PopupData.RegisterTarget(this);
+    }
+
+    /** Disabling. */
+    private void OnDisable()
+    {
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -35,29 +55,7 @@ public class PopupTarget : MonoBehaviour
         if (BoundingRenderer)
             return BoundingRenderer.bounds;
 
-        // If that fails, look for a collider or renderer component.
-        if (!BoundingCollider)
-            BoundingCollider = GetComponent<Collider>();
-        if (BoundingCollider)
-            return BoundingCollider.bounds;
-
-        if (!BoundingRenderer)
-            BoundingRenderer = GetComponent<Renderer>();
-        if (BoundingRenderer)
-            return BoundingRenderer.bounds;
-
-        // Lastly, fall back to a child collider or renderer.
-        if (!BoundingCollider)
-            BoundingCollider = GetComponentInChildren<Collider>();
-        if (BoundingCollider)
-            return BoundingCollider.bounds;
-
-        if (!BoundingRenderer)
-            BoundingRenderer = GetComponentInChildren<Renderer>();
-        if (BoundingRenderer)
-            return BoundingRenderer.bounds;
-
-        // Worst case - return empty bounds.
+        // If no bounds are specified, return empty bounds.
         return new Bounds(transform.position, Vector3.zero);
     }
 

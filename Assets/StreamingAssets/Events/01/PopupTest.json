@@ -1,18 +1,33 @@
 {
 	"metadata":{
-		"utc":"25/08/16 06:05:07.2",
+		"utc":"25/08/16 08:37:25.6",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
 			"id":"POPUP TEST",
+			"looping":true,
+			"canLoop":true,
 			"events":[
 				{
 					"type":"Popup",
-					"triggerTime":3,
-					"Title":"CONNECTION ERROR",
-					"Target":"",
+					"triggerTime":5,
+					"completeTime":5,
+					"Title":"COMMS ERROR",
+					"Target":"Comms",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Icon":2
+				},
+				{
+					"type":"Popup",
+					"completeTime":5,
+					"Title":"LIGHTS WARNING",
+					"Target":"Lights",
 					"Position":[
 						0,
 						0,

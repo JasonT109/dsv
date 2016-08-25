@@ -146,19 +146,25 @@ public class popupData : NetworkBehaviour
 
     /** Look up a popup target by id. */
     public bool TryGetTarget(string id, out PopupTarget target)
-        { return _popupTargets.TryGetValue(id, out target); }
+    {
+        if (!string.IsNullOrEmpty(id))
+            return _popupTargets.TryGetValue(id.ToLower(), out target);
+
+        target = null;
+        return false;
+    }
+    
+    /** Register a popup target. */
+    public void RegisterTarget(PopupTarget target)
+        { _popupTargets[target.Id.ToLower()] = target; }
+
+    /** Unregister a popup target. */
+    public void UnregisterTarget(PopupTarget target)
+        { _popupTargets.Remove(target.Id.ToLower()); }
 
 
     // Unity Methods
     // ------------------------------------------------------------
-
-    /** Initialization. */
-    private void Awake()
-    {
-        var targets = ObjectFinder.FindAll<PopupTarget>();
-        foreach (var target in targets)
-            _popupTargets[target.Id] = target;
-    }
 
     /** Per-frame update. */
     private void Update()

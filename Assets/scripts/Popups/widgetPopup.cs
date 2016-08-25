@@ -15,26 +15,24 @@ public class widgetPopup : MonoBehaviour
     /** Dialog's root panel. */
     public CanvasGroup Root;
 
-    /** Backdrop graphic. */
-    // public Graphic Backdrop;
-
     /** Title text. */
     public Text Title;
     
     /** Popup configuration. */
     public popupData.Popup Popup { get; private set; }
 
-    /** Popup's target. */
-    public PopupTarget Target { get { return _target; } }
-
-    /** Popup shared data. */
-    public popupData PopupData { get { return serverUtils.PopupData; } }
-
     /** Popup icon graphics. */
     public Image[] Icons;
 
     /** Popup icon sprites. */
     public Sprite[] IconSprites;
+
+
+    // Private Properties
+    // ------------------------------------------------------------
+
+    /** Popup shared data. */
+    private popupData PopupData { get { return serverUtils.PopupData; } }
 
 
     // Members
@@ -51,13 +49,10 @@ public class widgetPopup : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Updating. */
-    private void Update()
+    private void LateUpdate()
     {
-        // Update the popup's visibility.
-        if (_target)
-            Root.gameObject.SetActive(_target.gameObject.activeInHierarchy);
-        else
-            Root.gameObject.SetActive(!serverUtils.IsInDebugScreen());
+        // Update popup's visibility and positioning.
+        UpdatePopup();
     }
 
 
@@ -83,17 +78,13 @@ public class widgetPopup : MonoBehaviour
             icon.DOFade(0, 0.25f).From().SetLoops(-1, LoopType.Yoyo);
         }
 
-        // Position popup over the target, or fall back to center of screen.
+        // Place popup in the UI heirarchy and give it an initial update.
         transform.SetParent(Camera.main.transform, false);
-        if (PopupData.TryGetTarget(popup.Target, out _target))
-            PositionOverTarget(_target);
-        else
-            Root.transform.localPosition = Popup.Position;
+        UpdatePopup();
 
         // Transition the popup into view..
         Root.transform.DOScale(Vector3.zero, 0.25f).From();
         Root.DOFade(0, 0.25f).From();
-        // Backdrop.DOFade(0, 0.25f).From();
     }
 
     /** Hide this popup. */
@@ -103,7 +94,27 @@ public class widgetPopup : MonoBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
-    
+
+    /** Update popup's visibility and position. */
+    private void UpdatePopup()
+    {
+        // Try to locate popup target (if any)
+        if (!_target && !string.IsNullOrEmpty(Popup.Target))
+            PopupData.TryGetTarget(Popup.Target, out _target);
+
+        // Update the popup's position.
+        if (_target)
+            PositionOverTarget(_target);
+        else
+            Root.transform.localPosition = Popup.Position;
+
+        // Update the popup's visibility.
+        if (!string.IsNullOrEmpty(Popup.Target))
+            Root.gameObject.SetActive(_target && _target.gameObject.activeInHierarchy);
+        else
+            Root.gameObject.SetActive(!serverUtils.IsInDebugScreen());
+    }
+
     /** Position this popup over the target. */
     private void PositionOverTarget(PopupTarget target)
     {
@@ -128,7 +139,6 @@ public class widgetPopup : MonoBehaviour
         Root.interactable = false;
         Root.transform.DOScale(Vector3.zero, 0.25f);
         Root.DOFade(0, 0.25f);
-        // Backdrop.DOFade(0, 0.25f);
 
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
