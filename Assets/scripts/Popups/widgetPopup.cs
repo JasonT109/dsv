@@ -28,7 +28,7 @@ public class widgetPopup : MonoBehaviour
     public Sprite[] IconSprites;
 
     /** Popup area box. */
-    public Graphic Box;
+    public CanvasGroup Area;
 
 
     // Private Properties
@@ -82,8 +82,8 @@ public class widgetPopup : MonoBehaviour
         }
 
         // Resize and display the popup area box.
-        Box.rectTransform.sizeDelta = Popup.Size;
-        Box.DOFade(0, 1.0f).From().SetLoops(-1, LoopType.Yoyo);
+        Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
+        Area.DOFade(0, 1.0f).From().SetLoops(-1, LoopType.Yoyo);
 
         // Place popup in the UI heirarchy and give it an initial update.
         transform.SetParent(Camera.main.transform, false);
@@ -126,7 +126,7 @@ public class widgetPopup : MonoBehaviour
     private void SetActive(bool value)
     {
         Root.gameObject.SetActive(value);
-        Box.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
+        Area.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
     }
 
     /** Position this popup over the target. */
@@ -144,7 +144,7 @@ public class widgetPopup : MonoBehaviour
     private void SetPosition(Vector3 p)
     {
         Root.transform.localPosition = new Vector3(p.x, p.y, 0);
-        Box.transform.localPosition = new Vector3(p.x, p.y, 0);
+        Area.transform.localPosition = new Vector3(p.x, p.y, 0);
     }
 
     /** Routine to close the dialog. */
@@ -162,8 +162,8 @@ public class widgetPopup : MonoBehaviour
         Root.DOFade(0, 0.25f);
 
         // Fade out the area box (if any).
-        Box.DOKill();
-        Box.DOFade(0, 0.25f);
+        Area.DOKill();
+        Area.DOFade(0, 0.25f);
 
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
