@@ -892,6 +892,9 @@ public class serverData : NetworkBehaviour
             case "startimagesequence":
                 ScreenData.startImageSequence = (int)newValue;
                 break;
+            case "acidlayer":
+                MapData.acidLayer = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;

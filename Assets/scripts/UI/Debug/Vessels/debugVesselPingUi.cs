@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using Meg.EventSystem;
 using Meg.Networking;
+using TouchScript.Behaviors;
 using TouchScript.Gestures;
 using UnityEngine.UI;
 
@@ -26,8 +27,11 @@ public class debugVesselPingUi : MonoBehaviour
     [Header("Components")]
 
     public SonarPing Ping;
+
+    public Transformer Transformer;
     public TransformGesture TransformGesture;
     public PressGesture PressGesture;
+    public ReleaseGesture ReleaseGesture;
     public Text NameLabel;
     public Graphic Icon;
     public Image Arrow;
@@ -38,10 +42,13 @@ public class debugVesselPingUi : MonoBehaviour
     public Color NormalColor;
     public Color SelectedColor;
 
+
     [Header("Movements")]
 
     public float MinScale = 0.1f;
     public float MaxScale = 1;
+
+    public float DistanceToSpeedScale = 1f;
 
 
     public vesselData.Vessel Vessel
@@ -54,6 +61,18 @@ public class debugVesselPingUi : MonoBehaviour
     /** Vessel data. */
     private vesselData VesselData
         { get { return serverUtils.VesselData; } }
+
+    private vesselMovements Movements
+        { get { return serverUtils.VesselMovements; } }
+
+    private vesselMovement Movement
+        { get { return Movements.GetVesselMovement(Vessel.Id); } }
+
+    private vesselSetVector SetVector
+        { get { return Movement as vesselSetVector; } }
+
+    private float MaxSpeed
+        { get { return Movement ? Movement.GetMaxSpeed() : 36; } }
 
 
     // Members
@@ -71,24 +90,25 @@ public class debugVesselPingUi : MonoBehaviour
         if (!Ping)
             Ping = GetComponent<SonarPing>();
         if (!TransformGesture)
-            TransformGesture = GetComponent<TransformGesture>();
+            TransformGesture = Transformer.GetComponent<TransformGesture>();
         if (!PressGesture)
-            PressGesture = GetComponent<PressGesture>();
+            PressGesture = Transformer.GetComponent<PressGesture>();
+        if (!ReleaseGesture)
+            ReleaseGesture = Transformer.GetComponent<ReleaseGesture>();
 
         if (Arrow)
             Arrow.gameObject.SetActive(false);
 
         if (PressGesture)
             PressGesture.Pressed += OnPressed;
+        if (ReleaseGesture)
+            ReleaseGesture.Released += OnReleased;
 
         _graphics = transform.GetComponentsInChildren<Graphic>();
     }
 
     void Update()
     {
-        TransformGesture.enabled = VesselData.isServer
-            && !megEventManager.Instance.Playing;
-
         // Determine the proper color for this ping.
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var color = Ping.Color;
@@ -101,9 +121,6 @@ public class debugVesselPingUi : MonoBehaviour
         for (var i = 0; i < _graphics.Length; i++)
             _graphics[i].color = color;
 
-        // NameLabel.color = color;
-        // Icon.color = color;
-
         var transforming = TransformGesture.State == Gesture.GestureState.Changed;
 	    Ping.enabled = !transforming;
         Ping.AutoPulse(selected ? 1 : 0);
@@ -111,13 +128,42 @@ public class debugVesselPingUi : MonoBehaviour
         // Push selected ping in front of others so it gets preferentially transformed.
         Ping.DepthOffset = selected ? -1 : 0;
 
-        if (transforming)
-        {
-            if (debugVesselsUi.Instance.Selected.Id != Vessel.Id)
-                debugVesselsUi.Instance.Selected = Vessel;
+        // Reparent transformer to be a sibling of the ping.
+        // This allows us to decouple transform interactions from the ping visuals.
+        if (Transformer.transform.parent != Ping.transform.parent)
+            Transformer.transform.SetParent(Ping.transform.parent);
 
+        // Update vessel during transform interactions.
+        if (transforming)
+            UpdateWhileTransforming();
+        else
+            Transformer.transform.localPosition = Ping.transform.localPosition;
+    }
+
+    void OnDestroy()
+    {
+        // Clean up transformer (since we decoupled it and made it a sibling).
+        if (Transformer)
+            Destroy(Transformer.gameObject);
+    }
+
+    private void UpdateWhileTransforming()
+    {
+        // UPdate the current selection.
+        if (debugVesselsUi.Instance.Selected.Id != Vessel.Id)
+            debugVesselsUi.Instance.Selected = Vessel;
+
+        // If not playing, directly manipulate vessel position.
+        var playing = megEventManager.Instance.Playing;
+        if (!playing)
+        {
+            Ping.transform.localPosition = Transformer.transform.localPosition;
             VesselData.SetPosition(Vessel.Id, Ping.ToVesselSpace());
         }
+
+        // If playing, affect vessel movement vector.
+        if (playing)
+            UpdateVectorFromPing();
     }
 
     void LateUpdate()
@@ -138,7 +184,13 @@ public class debugVesselPingUi : MonoBehaviour
     // ------------------------------------------------------------
 
     private void OnPressed(object sender, EventArgs e)
-        { Select(); }
+    {
+        Select();
+    }
+
+    private void OnReleased(object sender, EventArgs e)
+    {
+    }
 
     private void UpdateArrow()
     {
@@ -173,5 +225,18 @@ public class debugVesselPingUi : MonoBehaviour
         Arrow.transform.localScale = Vector3.one * scale;
     }
 
+    private void UpdateVectorFromPing()
+    {
+        // If dragging vessel during playback, make sure it's in vector movement mode.
+        if (!SetVector)
+            Movements.SetVector(Vessel.Id);
 
+        var vector = SetVector;
+        if (!vector)
+            return;
+
+        var p = Transformer.transform.localPosition - Ping.transform.localPosition;
+        vector.Heading = Mathf.Repeat(90 - Mathf.Atan2(p.y, p.x) * Mathf.Rad2Deg, 360);
+        vector.Speed = p.magnitude * DistanceToSpeedScale;
+    }
 }

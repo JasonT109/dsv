@@ -42,6 +42,10 @@ public class vesselIntercept : vesselMovement
     [SyncVar]
     public float Speed;
 
+    /** Maximum speed that the vehicle should travel at. */
+    [SyncVar]
+    public float MaxSpeed = 36;
+
     /** The vessel we're intercepting. */
     public int TargetVessel
         { get { return InterceptVessel; } }
@@ -75,6 +79,7 @@ public class vesselIntercept : vesselMovement
         var json = base.Save();
         json.AddField("AutoSpeed", AutoSpeed);
         json.AddField("Speed", Speed);
+        json.AddField("MaxSpeed", MaxSpeed);
         return json;
     }
 
@@ -84,6 +89,7 @@ public class vesselIntercept : vesselMovement
         base.Load(json, mapData);
         json.GetField(ref AutoSpeed, "AutoSpeed");
         json.GetField(ref Speed, "Speed");
+        json.GetField(ref MaxSpeed, "MaxSpeed");
     }
 
     /** Return the movement save type. */
@@ -177,6 +183,14 @@ public class vesselIntercept : vesselMovement
     /** Set the movement's speed. */
     public override  void SetSpeed(float value)
         { Speed = value; }
+
+    /** Return the movement's maximum speed. */
+    public override float GetMaxSpeed()
+        { return MaxSpeed; }
+
+    /** Set the movement's maximum speed. */
+    public override void SetMaxSpeed(float value)
+        { MaxSpeed = value; }
 
 
 }

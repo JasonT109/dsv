@@ -69,43 +69,26 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
 	    if (b16x9.GetComponent<buttonControl>().active)
         {
             mainPanel.transform.localPosition = new Vector3(offset_16x9_X, mainPanel.transform.localPosition.y, mainPanel.transform.localPosition.z);
-            panelLeftSmall.SetActive(false);
-            panelRightSmall.SetActive(false);
-            panelLeftLarge.SetActive(false);
-            panelRightLarge.SetActive(false);
+
         }
         if (b16x10.GetComponent<buttonControl>().active)
         {
             mainPanel.transform.localPosition = new Vector3(offset_16x10_X, mainPanel.transform.localPosition.y, mainPanel.transform.localPosition.z);
-            panelLeftSmall.SetActive(false);
-            panelRightSmall.SetActive(false);
-            panelLeftLarge.SetActive(false);
-            panelRightLarge.SetActive(false);
+
         }
         if (b21x9l.GetComponent<buttonControl>().active)
         {
             mainPanel.transform.localPosition = new Vector3(offset_21x9l_X, mainPanel.transform.localPosition.y, mainPanel.transform.localPosition.z);
-            panelLeftSmall.SetActive(false);
-            panelRightSmall.SetActive(false);
-            panelLeftLarge.SetActive(false);
-            panelRightLarge.SetActive(true);
+
         }
         if (b21x9c.GetComponent<buttonControl>().active)
         {
             mainPanel.transform.localPosition = new Vector3(offset_21x9c_X, mainPanel.transform.localPosition.y, mainPanel.transform.localPosition.z);
-            panelLeftSmall.SetActive(true);
-            panelRightSmall.SetActive(true);
-            panelLeftLarge.SetActive(false);
-            panelRightLarge.SetActive(false);
+
         }
         if (b21x9r.GetComponent<buttonControl>().active)
         {
             mainPanel.transform.localPosition = new Vector3(offset_21x9r_X, mainPanel.transform.localPosition.y, mainPanel.transform.localPosition.z);
-            panelLeftSmall.SetActive(false);
-            panelRightSmall.SetActive(false);
-            panelLeftLarge.SetActive(true);
-            panelRightLarge.SetActive(false);
-            panelLeftLarge.transform.localPosition = new Vector3(leftLargePanelXOffset, panelLeftLarge.transform.localPosition.y, panelLeftLarge.transform.localPosition.z);
         }
 
         // Update camera scaling state.

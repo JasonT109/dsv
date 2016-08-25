@@ -302,6 +302,7 @@ namespace Meg.Networking
         private static readonly HashSet<string> _parameterSet = new HashSet<string>
         {
             "acceleration",
+            "acidlayer",
             "air",
             "airtank1",
             "airtank2",
@@ -639,6 +640,7 @@ namespace Meg.Networking
         private static readonly Dictionary<string, ParameterInfo> ParameterData = new Dictionary<string, ParameterInfo>
         {
             { "acceleration", new ParameterInfo { description = "Sub's acceleration (scaling factor)."} },
+            { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Acid layer map visibility."} },
             { "air", new ParameterInfo { readOnly = true } },
             { "airtank1", new ParameterInfo { description = "Main air tank 1 capacity (%)."} },
             { "airtank2", new ParameterInfo { description = "Main air tank 2 capacity (%)."} },
@@ -1305,6 +1307,8 @@ namespace Meg.Networking
                     return ScreenData.cameraBrightness;
                 case "startimagesequence":
                     return ScreenData.startImageSequence;
+                case "acidlayer":
+                    return MapData.acidLayer;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

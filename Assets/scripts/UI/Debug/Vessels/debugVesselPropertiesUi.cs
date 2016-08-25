@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.UI;
@@ -46,6 +47,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public Slider MovementTargetSlider;
     public InputField MovementTargetInput;
     public Text MovementTargetLabel;
+    public debugVesselVectorDialUi MovementVectorDialUi;
 
     [Header("Time To Intercept")]
     public CanvasGroup EtaGroup;
@@ -62,7 +64,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
     {
         get { return _vessel; }
         set { SetVessel(value); }
-
     }
 
 
@@ -99,6 +100,9 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
     /** The vessel being edited. */
     private vesselData.Vessel _vessel;
+
+    /** Last known movement type. */
+    private string _lastMovementType = vesselMovements.NoType;
 
     /** Whether ui is being updated. */
     private bool _updating;
@@ -318,6 +322,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementPeriodInput.onEndEdit.AddListener(OnMovementPeriodInputChanged);
         MovementTargetSlider.onValueChanged.AddListener(OnMovementTargetSliderChanged);
         MovementTargetInput.onEndEdit.AddListener(OnMovementTargetInputChanged);
+        MovementVectorDialUi.onValueChanged.AddListener(OnMovementDialChanged);
 
         ConfigureEtaProperties();
     }
@@ -335,6 +340,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     private void InitMovementProperties()
     {
         _updating = true;
+        _lastMovementType = Movements.GetMovementType(Vessel.Id);
 
         UpdateMovementTypeToggles();
         MovementStateProperties.gameObject.SetActive(Movement);
@@ -345,6 +351,9 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementSpeedSlider.value = Movement.GetSpeed();
         MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
         MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
+
+        MovementVectorDialUi.MaxSpeed = MovementSpeedSlider.maxValue;
+        MovementVectorDialUi.Vessel = Vessel;
 
         if (SetVector)
         {
@@ -373,7 +382,14 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
     private void UpdateMovementProperties()
     {
+        // Update movement properties if needed.
+        if (_lastMovementType != Movements.GetMovementType(Vessel.Id))
+            InitMovementProperties();
+
         _updating = true;
+
+        if (Movement)
+            UpdatePropertiesFromMovement();
 
         MovementStateProperties.gameObject.SetActive(Movement != null);
         MovementAutoSpeedToggle.gameObject.SetActive(Intercept);
@@ -383,14 +399,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementDiveAngleSlider.transform.parent.gameObject.SetActive(SetVector);
         MovementPeriodSlider.transform.parent.gameObject.SetActive(Holding);
         MovementTargetSlider.transform.parent.gameObject.SetActive(Pursue);
-
-        if (Movement != null && MovementAutoSpeedToggle.isOn)
-        {
-            MovementSpeedSlider.value = Movement.GetSpeed();
-            MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
-            MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
-        }
-
+        MovementVectorDialUi.gameObject.SetActive(SetVector);
+        MovementVectorDialUi.MaxSpeed = MovementSpeedSlider.maxValue;
         MovementTargetLabel.gameObject.SetActive(Pursue);
         MovementTargetLabel.text = Pursue ? "PURSUE " + VesselData.GetDebugName(Pursue.TargetVessel) : "";
 
@@ -399,6 +409,21 @@ public class debugVesselPropertiesUi : MonoBehaviour
             InitEtaUi();
 
         _updating = false;
+    }
+
+    private void UpdatePropertiesFromMovement()
+    {
+        if (SetVector && !Mathf.Approximately(MovementHeadingSlider.value, SetVector.Heading))
+        {
+            MovementHeadingSlider.value = SetVector.Heading;
+            MovementHeadingInput.text = string.Format("{0:N1}", SetVector.Heading);
+        }
+        if (!Mathf.Approximately(MovementSpeedSlider.value, Movement.GetSpeed()))
+        {
+            MovementSpeedSlider.value = Movement.GetSpeed();
+            MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
+            MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
+        }
     }
 
     private void UpdateMovementTypeToggles()
@@ -410,6 +435,15 @@ public class debugVesselPropertiesUi : MonoBehaviour
             toggle.isOn = _vesselMovementTypes[i] == type;
             toggle.interactable = CanSetMovementType(_vesselMovementTypes[i]);
         }
+    }
+
+    private string GetSelectedMovementType()
+    {
+        for (var i = 0; i < MovementTypeToggles.Length; i++)
+            if (MovementTypeToggles[i].isOn)
+                return _vesselMovementTypes[i];
+
+        return vesselMovements.NoType;
     }
 
     private bool CanSetMovementType(string type)
@@ -444,6 +478,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetSpeed(value);
+        Movement.SetMaxSpeed(Mathf.Max(value, Movement.GetMaxSpeed()));
         MovementSpeedInput.text = string.Format("{0:N1}", value);
     }
 
@@ -457,6 +492,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetSpeed(result);
+        Movement.SetMaxSpeed(Mathf.Max(result, Movement.GetMaxSpeed()));
         MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, result);
         MovementSpeedSlider.value = result;
     }
@@ -504,6 +540,20 @@ public class debugVesselPropertiesUi : MonoBehaviour
         SetVector.DiveAngle = result;
         MovementDiveAngleSlider.value = result;
     }
+
+    private void OnMovementDialChanged()
+    {
+        if (_updating || !SetVector)
+            return;
+
+        _updating = true;
+        MovementSpeedSlider.value = SetVector.Speed;
+        MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
+        MovementHeadingSlider.value = SetVector.Heading;
+        MovementHeadingInput.text = string.Format("{0:N1}", SetVector.Heading);
+        _updating = false;
+    }
+
 
     private void OnMovementPeriodSliderChanged(float value)
     {
