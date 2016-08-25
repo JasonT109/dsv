@@ -264,6 +264,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the Popup data object. */
+        private static clientCalcValues _clientCalcValues;
+        public static clientCalcValues ClientCalcValues
+        {
+            get
+            {
+                if (!_clientCalcValues && ServerObject)
+                    _clientCalcValues = ServerObject.GetComponent<clientCalcValues>();
+                return _clientCalcValues;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -896,8 +908,6 @@ namespace Meg.Networking
                     return ServerObject.transform.position.x;
                 case "zpos":
                     return ServerObject.transform.position.z;
-                case "pressure":
-                    return ServerData.pressure;
                 case "heading":
                     return ServerData.heading;
                 case "pitchangle":
@@ -920,8 +930,10 @@ namespace Meg.Networking
                     return ServerData.dueTime;
                 case "duetimeactive":
                     return ServerData.dueTimeActive ? 1 : 0;
+                case "pressure":
+                    return ClientCalcValues.pressureResult;
                 case "watertemp":
-                    return ServerData.waterTemp;
+                    return ClientCalcValues.waterTempResult;
                 case "battery":
                     return BatteryData.battery;
                 case "batterycurrent":
@@ -1357,8 +1369,6 @@ namespace Meg.Networking
                 case "depth":
                     int dInt = (int)ServerData.depth;
                     return dInt.ToString();
-                case "pressure":
-                    return ServerData.pressure.ToString();
                 case "heading":
                     return (ServerData.heading.ToString("n1") + "°");
                 case "pitchangle":
@@ -1383,8 +1393,6 @@ namespace Meg.Networking
                     return string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
                 case "duetimeactive":
                     return ServerData.dueTimeActive.ToString();
-                case "watertemp":
-                    return ServerData.waterTemp.ToString();
                 case "b1":
                     return BatteryData.bank1.ToString("n1");
                 case "b2":
