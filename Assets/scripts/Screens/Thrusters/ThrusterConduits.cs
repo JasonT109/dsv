@@ -27,6 +27,9 @@ public class ThrusterConduits : MonoBehaviour
     public widgetPowerConduit DivertL;
     public widgetPowerConduit DivertR;
 
+    public widgetPowerConduit[] AuxillaryL;
+    public widgetPowerConduit[] AuxillaryR;
+
     public float SmoothTime = 0.25f;
 
     /** Smoothing velocities for the various power conduits. */
@@ -79,6 +82,7 @@ public class ThrusterConduits : MonoBehaviour
         {
             SetConduitValue(DivertL, (divert * 0.01f) * mainL, smoothed);
             DivertL.gameObject.SetActive(divert > 0);
+
         }
         if (DivertR)
         {
@@ -86,6 +90,23 @@ public class ThrusterConduits : MonoBehaviour
             DivertR.gameObject.SetActive(divert > 0);
         }
 
+        if (AuxillaryL.Length > 0)
+        {
+            foreach (var conduit in AuxillaryL)
+            {
+                conduit.gameObject.SetActive(divert > 0);
+                SetConduitValue(conduit, (divert * 0.01f) * mainL, smoothed);
+            }
+        }
+
+        if (AuxillaryR.Length > 0)
+        {
+            foreach (var conduit in AuxillaryR)
+            {
+                conduit.gameObject.SetActive(divert > 0);
+                SetConduitValue(conduit, (divert * 0.01f) * mainR, smoothed);
+            }
+        }
     }
 
     private void SetConduitValue(widgetPowerConduit conduit, float target, bool smoothed)
