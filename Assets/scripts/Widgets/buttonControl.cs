@@ -26,6 +26,11 @@ public class buttonControl : MonoBehaviour
     [Header("Appearance")]
     public Color[] colorTheme;
     public float Brightness = 1;
+    public DynamicText optionalLabel;
+    public string labelInactiveText;
+    public string labelActiveText;
+    public Color labelInactiveColor = Color.grey;
+    public Color labelActiveColor = Color.white;
 
     [Header("Groups")]
     public GameObject buttonGroup;
@@ -398,6 +403,20 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (optionalLabel)
+        {
+            if (!active)
+            {
+                optionalLabel.SetText(labelInactiveText);
+                optionalLabel.color = labelInactiveColor;
+            }
+            else
+            {
+                optionalLabel.SetText(labelActiveText);
+                optionalLabel.color = labelActiveColor;
+            }
+        }
+
         if (doublePressCheck)
             doublePressTime += Time.deltaTime;
         else

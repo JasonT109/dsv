@@ -444,6 +444,7 @@ namespace Meg.Networking
             "joystickpilot",
             "latitude",
             "longitude",
+            "maxwildlife",
             "maxspeed",
             "meg1posx",
             "meg1posy",
@@ -769,6 +770,7 @@ namespace Meg.Networking
             { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether input updates from pilot's joysticks (turn off for manual input editing)."} },
             { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees)." } },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees)." } },
+            { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
             { "megturnspeed", new ParameterInfo { description = "Speed that the Meg turns in the short-range sonar display."} },
@@ -1309,6 +1311,8 @@ namespace Meg.Networking
                     return ScreenData.startImageSequence;
                 case "acidlayer":
                     return MapData.acidLayer;
+                case "maxwildlife":
+                    return SonarData.MaxWildlife;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

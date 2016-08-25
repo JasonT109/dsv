@@ -76,6 +76,9 @@ public class SonarData : NetworkBehaviour
     [SyncVar]
     public float DefaultScale;
 
+    [SyncVar]
+    public int MaxWildlife = 0;
+
 
     // Public Methods
     // ------------------------------------------------------------

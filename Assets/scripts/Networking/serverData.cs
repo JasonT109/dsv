@@ -895,6 +895,9 @@ public class serverData : NetworkBehaviour
             case "acidlayer":
                 MapData.acidLayer = (int)newValue;
                 break;
+            case "maxwildlife":
+                SonarData.MaxWildlife = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
