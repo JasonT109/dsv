@@ -14,10 +14,6 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float depth;
     [SyncVar]
-    public float pressure;
-    [SyncVar]
-    public float waterTemp;
-    [SyncVar]
     public float floorDistance;
     [SyncVar]
     public float floorDepth = mapData.DefaultFloorDepth;
@@ -351,9 +347,6 @@ public class serverData : NetworkBehaviour
                 break;
             case "divetimeactive":
                 diveTimeActive = newValue > 0;
-                break;
-            case "watertemp":
-                waterTemp = newValue;
                 break;
             case "disableinput":
                 SubControl.disableInput = newValue > 0;
