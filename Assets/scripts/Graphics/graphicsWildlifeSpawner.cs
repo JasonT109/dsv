@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Networking;
 
 public class graphicsWildlifeSpawner : MonoBehaviour {
 
@@ -9,41 +10,30 @@ public class graphicsWildlifeSpawner : MonoBehaviour {
     public bool spawnOnEvent = false;
     public float maxSpawnDistance = 100f;
     public float minSpawnDistance = 10f;
-
     private int numSpawnedCreatures = 0;
     private GameObject[] spawnedCreatures;
 
-	// Use this for initialization
-	void Start ()
+    void SpawnCreature()
     {
-	    
-	}
+        Vector3 spawnPos = new Vector3(Random.Range(transform.position.x - maxSpawnDistance, transform.position.x + maxSpawnDistance), transform.position.y, Random.Range(transform.position.z - maxSpawnDistance, transform.position.z + maxSpawnDistance));
 
-	// Update is called once per frame
+        if (spawnPos.x < transform.position.x + minSpawnDistance && spawnPos.x > transform.position.x - minSpawnDistance)
+            spawnPos.x = transform.position.x + minSpawnDistance;
+
+        if (spawnPos.z < transform.position.z + minSpawnDistance && spawnPos.z > transform.position.z - minSpawnDistance)
+            spawnPos.z = transform.position.z + minSpawnDistance;
+
+        Instantiate(creature, spawnPos, Quaternion.identity);
+    }
+
 	void Update ()
     {
-	    if (!spawnOnEvent)
+        spawnedCreatures = GameObject.FindGameObjectsWithTag(creatureTag);
+        numSpawnedCreatures = spawnedCreatures.Length;
+
+        if (numSpawnedCreatures < serverUtils.GetServerData("maxwildlife"))
         {
-            spawnedCreatures = GameObject.FindGameObjectsWithTag(creatureTag);
-            numSpawnedCreatures = spawnedCreatures.Length;
-
-            if (numSpawnedCreatures < minNumCreatures)
-            {
-                //spawn another one
-                Vector3 spawnPos = new Vector3(Random.Range (transform.position.x - maxSpawnDistance, transform.position.x + maxSpawnDistance), transform.position.y, Random.Range(transform.position.z - maxSpawnDistance, transform.position.z + maxSpawnDistance));
-
-                if (spawnPos.x < transform.position.x + minSpawnDistance && spawnPos.x > transform.position.x - minSpawnDistance)
-                {
-                    spawnPos.x = transform.position.x + minSpawnDistance;
-                }
-                if (spawnPos.z < transform.position.z + minSpawnDistance && spawnPos.z > transform.position.z - minSpawnDistance)
-                {
-                    spawnPos.z = transform.position.z + minSpawnDistance;
-                }
-                Instantiate(creature, spawnPos, Quaternion.identity);
-                //NetworkServer.Spawn(c);
-            }
+            SpawnCreature();
         }
-
 	}
 }

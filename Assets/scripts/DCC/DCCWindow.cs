@@ -46,7 +46,6 @@ public class DCCWindow : MonoBehaviour
     private float pressTimer = 0;
     private float colorLerpTimer = 0;
     private int _commsContent = 0;
-    private int hitCount = 0;
     private bool transformOffscreen;
     private float offscreenLerpTimer = 0f;
     private Vector2 offscreenDirection;
@@ -128,8 +127,6 @@ public class DCCWindow : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        hitCount = gesture.NumTouches;
-
         pressTimer += Time.deltaTime;
 
         hasFocus = true;
@@ -174,7 +171,6 @@ public class DCCWindow : MonoBehaviour
         transformSpeedHistory = new float[8];
         screenManager.swipeIndicator.SetActive(false);
         pressTimer = 0;
-        hitCount = 0;
     }
 
     private void transformHandler(object sender, EventArgs e)

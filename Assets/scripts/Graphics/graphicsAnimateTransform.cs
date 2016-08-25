@@ -70,10 +70,42 @@ public class graphicsAnimateTransform : MonoBehaviour
         canPress = true;
     }
 
+    void SetFromValues()
+    {
+        for (int i = 0; i < animateAxis.Length; i++)
+        {
+            if (animateAxis[i])
+            {
+                switch (i)
+                {
+                    case 0:
+                        transform.localPosition = new Vector3(fromValue[i], transform.localPosition.y, transform.localPosition.z);
+                        break;
+                    case 1:
+                        transform.localPosition = new Vector3(transform.localPosition.x, fromValue[i], transform.localPosition.z);
+                        break;
+                    case 2:
+                        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, fromValue[i]);
+                        break;
+                    case 6:
+                        transform.localScale = new Vector3(fromValue[i], transform.localScale.y, transform.localScale.z);
+                        break;
+                    case 7:
+                        transform.localScale = new Vector3(transform.localScale.x, fromValue[i], transform.localScale.z);
+                        break;
+                    case 8:
+                        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, fromValue[i]);
+                        break;
+                }
+            }
+        }
+    }
+
     void OnEnable()
     {
         if (animateOnActive)
         {
+            SetFromValues();
             triggerOn();
         }
     }
@@ -82,33 +114,7 @@ public class graphicsAnimateTransform : MonoBehaviour
     {
         if (animateOnActive)
         {
-            for (int i = 0; i < animateAxis.Length; i++)
-            {
-                if (animateAxis[i])
-                {
-                    switch (i)
-                    {
-                        case 0:
-                            transform.localPosition = new Vector3(fromValue[i], transform.localPosition.y, transform.localPosition.z);
-                            break;
-                        case 1:
-                            transform.localPosition = new Vector3(transform.localPosition.x, fromValue[i], transform.localPosition.z);
-                            break;
-                        case 2:
-                            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, fromValue[i]);
-                            break;
-                        case 6:
-                            transform.localScale = new Vector3(fromValue[i], transform.localScale.y, transform.localScale.z);
-                            break;
-                        case 7:
-                            transform.localScale = new Vector3(transform.localScale.x, fromValue[i], transform.localScale.z);
-                            break;
-                        case 8:
-                            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, fromValue[i]);
-                            break;
-                    }
-                }
-            }
+            SetFromValues();
         }
     }
     void Update()
