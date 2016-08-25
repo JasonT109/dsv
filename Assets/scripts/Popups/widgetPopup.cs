@@ -30,6 +30,12 @@ public class widgetPopup : MonoBehaviour
     /** Popup shared data. */
     public popupData PopupData { get { return serverUtils.PopupData; } }
 
+    /** Popup icon graphics. */
+    public Image[] Icons;
+
+    /** Popup icon sprites. */
+    public Sprite[] IconSprites;
+
 
     // Members
     // ------------------------------------------------------------
@@ -65,12 +71,20 @@ public class widgetPopup : MonoBehaviour
 
         // Configure popup.
         Title.text = popup.Title;
+        var titleSequence = DOTween.Sequence();
+        titleSequence.Append(Title.transform.DOPunchScale(Vector3.one * 0.05f, 0.25f).SetDelay(3));
+        titleSequence.SetLoops(-1, LoopType.Restart);
 
-        // TODO: Icon.
-        // TODO: Position (from target).
-        transform.SetParent(Camera.main.transform, false);
+        // Configure icons.
+        var iconSprite = IconSprites[(int) popup.Icon];
+        foreach (var icon in Icons)
+        {
+            icon.sprite = iconSprite;
+            icon.DOFade(0, 0.25f).From().SetLoops(-1, LoopType.Yoyo);
+        }
 
         // Position popup over the target, or fall back to center of screen.
+        transform.SetParent(Camera.main.transform, false);
         if (PopupData.TryGetTarget(popup.Target, out _target))
             PositionOverTarget(_target);
         else
