@@ -1,0 +1,156 @@
+{
+	"default" :
+	{
+		"save-folder" : "C:/Meg/",
+		"save-format" : "{save-folder}/Scene_{1:000}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}.json",
+		
+		"auto-save-folder" : "C:/Meg/",
+		"auto-save-format" : "{auto-save-folder}/Scene_{1:000}/{5}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}_{5}.json",
+		"auto-save-enabled" : true,
+
+		"vessels" : 
+		[
+			{ 
+				"name" : "Marco", 
+				"coloronmap" : [0.965, 0.533, 0.122], 
+				"coloronsonar" : [0.965, 0.533, 0.122], 
+				"position" : [-1, -0.5, 2000],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Polo", 
+				"coloronmap" : [0.647, 0.745, 0.706],
+				"coloronsonar" : [0.647, 0.745, 0.706],
+				"position" : [-2, 2, 8900],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Byrd", 
+				"coloronmap" : [0.929, 0.878, 0.596],
+				"coloronsonar" : [0.929, 0.878, 0.596],
+				"position" : [2, -2, 7300],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Ernie", 
+				"coloronmap" : [0.973, 0.635, 0.314],
+				"coloronsonar" : [0.973, 0.635, 0.314],
+				"position" : [1, 0, 7700],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Unknown", 
+				"coloronmap" : [0.745, 0.118, 0.176],
+				"coloronsonar" : [0.745, 0.118, 0.176],
+				"position" : [0, -2.5, 8200],
+				"icon" : "warning",
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+			{ 
+				"name" : "Target", 
+				"coloronmap" : [0.8, 0.8, 0.8],
+				"position" : [2, 2, 8200],
+				"onmap" : true, 
+				"onsonar" : true 
+			},
+		],
+	},
+
+	"sub" :
+	{
+		"parent" : "default",
+		"network-role" : "client",
+		"network-scene" : "screen_subs",
+		"screen-mode" : "16x9",
+	},
+
+	"subServer" :
+	{
+		"parent" : "sub",
+		"network-role" : "server",
+		"screen-initial" : "debug",
+	},
+	
+
+	"subPilot" :
+	{
+		"parent" : "sub",
+	},
+
+	"subPilotLeft" :
+	{
+		"parent" : "subPilot",
+		"screen-initial" : "thrusters",
+		"screen-position-x" : -1920,
+	},
+
+	"subPilotMid" :
+	{
+		"parent" : "subPilot",
+		"screen-initial" : "instruments",
+		"screen-position-x" : 0,
+	},
+
+	"subPilotRight" :
+	{
+		"parent" : "subPilot",
+		"screen-initial" : "navigation",
+		"screen-position-x" : 1920,
+	},
+
+
+
+	"glider" :
+	{
+		"parent" : "default",
+		"network-role" : "client",
+		"network-scene" : "screen_gliders",
+		"screen-mode" : "16x10",
+		"screen-scaling" : true,
+	},
+
+	"gliderServer" :
+	{
+		"parent" : "glider",
+		"network-role" : "server",
+		"screen-initial" : "debug",
+	},
+
+	"gliderLeft" :
+	{
+		"parent" : "glider",
+		"screen-position-x" : -1920,
+	},
+
+	"gliderMid" :
+	{
+		"parent" : "glider",
+		"screen-position-x" : 0,
+	},
+
+	"gliderRight" :
+	{
+		"parent" : "glider",
+		"screen-position-x" : 1920,
+	},
+
+
+	"dcc" :
+	{
+		"parent" : "default",
+		"network-role" : "client",
+		"network-scene" : "screen_dcc",
+	},
+
+	"dccServer" :
+	{
+		"parent" : "dcc",
+		"network-role" : "server",
+	},
+
+}

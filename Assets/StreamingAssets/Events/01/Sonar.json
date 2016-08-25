@@ -1,0 +1,36 @@
+{
+	"groups":
+	[
+		{
+			"id" : "Sonar",
+			"hideTimeline" : true,
+			"events" :
+			[
+				{
+					"type" : "Sonar",
+					"triggerLabel" : "Meg Pattern 1",
+					"completeTime" : 30,
+					"eventName" : "megPattern1"
+				},
+				{
+					"type" : "Sonar",
+					"triggerLabel" : "Meg Pattern 2",
+					"completeTime" : 30,
+					"eventName" : "megPattern2"
+				},
+				{
+					"type" : "Sonar",
+					"triggerLabel" : "Meg Pattern 3",
+					"completeTime" : 30,
+					"eventName" : "megPattern3"
+				},
+				{
+					"type" : "Sonar",
+					"triggerLabel" : "Meg Pattern 4",
+					"completeTime" : 30,
+					"eventName" : "megPattern4"
+				},
+			]
+		},
+	]
+}

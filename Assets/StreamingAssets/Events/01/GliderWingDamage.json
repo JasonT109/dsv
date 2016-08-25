@@ -1,0 +1,36 @@
+{
+	"metadata":{
+		"utc":"15/08/16 10:07:48.9",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"GLIDER WING DAMAGE",
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":1.522625,
+					"serverParam":"error_panel_r",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.647987,
+					"serverParam":"error_vertran_r",
+					"serverValue":0
+				},
+				{
+					"type":"Physics",
+					"physicsDirection":[
+						0.814257,
+						-0.2124156,
+						0
+					],
+					"physicsMagnitude":0.5769953
+				}
+			]
+		}
+	]
+}

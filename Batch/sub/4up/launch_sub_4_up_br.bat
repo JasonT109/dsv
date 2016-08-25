@@ -1,0 +1,1 @@
+START dsv.exe -id subPilotRight -screen-initial vitals -screen-position-x 960 -screen-position-y 540 -screen-fullscreen 0 -popupwindow -screen-width 960 -screen-height 540

@@ -1,0 +1,21 @@
+{
+	"metadata":{
+		"utc":"15/08/16 10:08:15.4",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"WATER TEMP RISE",
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":1.031577,
+					"completeTime":9.11228,
+					"serverParam":"watertemp",
+					"serverValue":16.1
+				}
+			]
+		}
+	]
+}

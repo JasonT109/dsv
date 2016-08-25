@@ -1,0 +1,20 @@
+{
+	"metadata":{
+		"utc":"23/08/16 03:22:53.2",
+		"startedTimestamp":"23/08/16 03:21:54.3",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"Group",
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":5,
+					"serverParam":"startimagesequence",
+					"serverValue":1
+				}
+			]
+		}
+	]
+}

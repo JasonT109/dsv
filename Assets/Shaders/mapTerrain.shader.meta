@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 39fcc31416fca9d499dde4088398c7fb
+timeCreated: 1469473731
+licenseType: Pro
+ShaderImporter:
+  defaultTextures:
+  - _MapEdgeAlpha: {fileID: 2800000, guid: 6bf88b1e1947c3b428e685b1e43ebc13, type: 3}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
