@@ -135,6 +135,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     [Header("Popup Event Components")]
 
     public Transform PopupProperties;
+    public Toggle[] PopupTypeToggles;
     public InputField PopupTitleInput;
     public InputField PopupTargetInput;
     public InputField PopupXInput;
@@ -1279,12 +1280,20 @@ public class debugEventPropertiesUi : MonoBehaviour
             PopupIconToggles[i].onValueChanged.AddListener(
                 on => OnPopupIconToggled(icon, on));
         }
+
+        for (var i = 0; i < PopupTypeToggles.Length; i++)
+        {
+            var type = (popupData.Type) i;
+            PopupTypeToggles[i].onValueChanged.AddListener(
+                on => OnPopupTypeToggled(type, on));
+        }
     }
 
     private void InitPopupProperties()
     {
         _initializing = true;
 
+        UpdatePopupTypeToggles();
         UpdatePopupTitleInput();
         UpdatePopupTargetInput();
         UpdatePopupPositionInputs();
@@ -1399,11 +1408,16 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupIconToggles()
     {
-        var index = (int) PopupEvent.Icon;
+        var popup = PopupEvent.Popup;
+        if (!popup.IsIconValid(popup.Icon))
+            PopupEvent.Icon = popupData.Icon.None;
+
         for (var i = 0; i < PopupIconToggles.Length; i++)
         {
+            var icon = (popupData.Icon) i;
             var toggle = PopupIconToggles[i];
-            toggle.isOn = (i == index);
+            toggle.isOn = (icon == PopupEvent.Icon);
+            toggle.gameObject.SetActive(popup.IsIconValid(icon));
         }
     }
 
@@ -1415,6 +1429,29 @@ public class debugEventPropertiesUi : MonoBehaviour
         PopupEvent.Icon = icon;
 
         _initializing = true;
+        UpdatePopupIconToggles();
+        _initializing = false;
+    }
+
+    private void UpdatePopupTypeToggles()
+    {
+        var index = (int) PopupEvent.Type;
+        for (var i = 0; i < PopupTypeToggles.Length; i++)
+        {
+            var toggle = PopupTypeToggles[i];
+            toggle.isOn = (i == index);
+        }
+    }
+
+    private void OnPopupTypeToggled(popupData.Type type, bool value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Type = type;
+
+        _initializing = true;
+        UpdatePopupTypeToggles();
         UpdatePopupIconToggles();
         _initializing = false;
     }

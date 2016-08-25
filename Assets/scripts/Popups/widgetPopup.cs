@@ -7,6 +7,16 @@ using UnityEngine.UI;
 public class widgetPopup : MonoBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Popup in animation duration. */
+    protected const float AnimateInDuration = 0.25f;
+
+    /** Popup out animation duration. */
+    protected const float AnimateOutDuration = 0.25f;
+
+
     // Properties
     // ------------------------------------------------------------
 
@@ -15,11 +25,11 @@ public class widgetPopup : MonoBehaviour
     /** Dialog's root panel. */
     public CanvasGroup Root;
 
+    /** Popup area box. */
+    public CanvasGroup Area;
+
     /** Title text. */
     public Text Title;
-    
-    /** Popup configuration. */
-    public popupData.Popup Popup { get; private set; }
 
     /** Popup icon graphics. */
     public Image[] Icons;
@@ -27,25 +37,27 @@ public class widgetPopup : MonoBehaviour
     /** Popup icon sprites. */
     public Sprite[] IconSprites;
 
-    /** Popup area box. */
-    public CanvasGroup Area;
 
 
-    // Private Properties
+    // Protected Properties
     // ------------------------------------------------------------
 
+    /** Popup configuration. */
+    protected popupData.Popup Popup { get; private set; }
+
     /** Popup shared data. */
-    private popupData PopupData { get { return serverUtils.PopupData; } }
+    protected popupData PopupData { get { return serverUtils.PopupData; } }
+
 
 
     // Members
     // ------------------------------------------------------------
 
-    /** Whether dialog has been closed. */
-    private bool _closed;
-
     /** Popup's target. */
     private PopupTarget _target;
+
+    /** Whether popup is closed. */
+    private bool _closed;
 
 
     // Unity Methods
@@ -63,35 +75,32 @@ public class widgetPopup : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Show this popup. */
-    public void Show(popupData.Popup popup)
+    public virtual void Show(popupData.Popup popup)
     {
         Popup = popup;
 
         // Configure popup.
-        Title.text = popup.Title;
-        var titleSequence = DOTween.Sequence();
-        titleSequence.Append(Title.transform.DOPunchScale(Vector3.one * 0.05f, 0.25f).SetDelay(3));
-        titleSequence.SetLoops(-1, LoopType.Restart);
+        if (Title)
+            Title.text = popup.Title;
 
         // Configure icons.
-        var iconSprite = IconSprites[(int) popup.Icon];
+        var iconIndex = (int) popup.Icon;
+        var iconSprite = (IconSprites.Length > iconIndex) ? IconSprites[iconIndex] : null;
         foreach (var icon in Icons)
         {
             icon.sprite = iconSprite;
-            icon.DOFade(0, 0.25f).From().SetLoops(-1, LoopType.Yoyo);
+            icon.gameObject.SetActive(iconSprite != null);
         }
 
         // Resize and display the popup area box.
         Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
-        Area.DOFade(0, 1.0f).From().SetLoops(-1, LoopType.Yoyo);
 
         // Place popup in the UI heirarchy and give it an initial update.
         transform.SetParent(Camera.main.transform, false);
         UpdatePopup();
 
-        // Transition the popup into view..
-        Root.transform.DOScale(Vector3.zero, 0.25f).From();
-        Root.DOFade(0, 0.25f).From();
+        // Animate the popup into view.
+        AnimateIn();
     }
 
     /** Hide this popup. */
@@ -99,11 +108,34 @@ public class widgetPopup : MonoBehaviour
         { StartCoroutine(CloseRoutine()); }
 
 
-    // Private Methods
+    // Protected Methods
     // ------------------------------------------------------------
 
+    /** Animate the popup into place. */
+    protected virtual void AnimateIn()
+    {
+        var duration = AnimateInDuration;
+
+        Root.transform.DOScale(Vector3.zero, duration).From();
+        Root.DOFade(0, duration).From();
+        Area.DOFade(0, duration).From();
+    }
+
+    /** Animate the popup away. */
+    protected virtual void AnimateOut()
+    {
+        var duration = AnimateOutDuration;
+
+        Root.DOKill();
+        Root.transform.DOScale(Vector3.zero, duration);
+        Root.DOFade(0, duration);
+
+        Area.DOKill();
+        Area.DOFade(0, duration);
+    }
+
     /** Update popup's visibility and position. */
-    private void UpdatePopup()
+    protected virtual void UpdatePopup()
     {
         // Try to locate popup target (if any)
         if (!_target && !string.IsNullOrEmpty(Popup.Target))
@@ -121,6 +153,10 @@ public class widgetPopup : MonoBehaviour
         else
             SetActive(!serverUtils.IsInDebugScreen());
     }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
 
     /** Set whether the popup is active. */
     private void SetActive(bool value)
@@ -156,14 +192,12 @@ public class widgetPopup : MonoBehaviour
 
         _closed = true;
 
-        // Fade out the dialog.
+        // Disable popup interactions.
         Root.interactable = false;
-        Root.transform.DOScale(Vector3.zero, 0.25f);
-        Root.DOFade(0, 0.25f);
+        Area.interactable = false;
 
-        // Fade out the area box (if any).
-        Area.DOKill();
-        Area.DOFade(0, 0.25f);
+        // Animate the popup away.
+        AnimateOut();
 
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
