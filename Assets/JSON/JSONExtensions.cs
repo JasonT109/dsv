@@ -41,6 +41,33 @@ public static class JSONExtensions
         return true;
     }
 
+    public static void Add(this JSONObject json, Vector2 v)
+    {
+        var o = new JSONObject(JSONObject.Type.ARRAY);
+        o.Add(v.x);
+        o.Add(v.y);
+        json.Add(o);
+    }
+
+    public static void AddField(this JSONObject json, string field, Vector2 v)
+    {
+        var o = new JSONObject(JSONObject.Type.ARRAY);
+        o.Add(v.x);
+        o.Add(v.y);
+        json.AddField(field, o);
+    }
+
+    public static bool GetField(this JSONObject json, ref Vector2 v, string field)
+    {
+        var o = json[field];
+        if (!o)
+            return false;
+
+        v.x = o[0].f;
+        v.y = o[1].f;
+        return true;
+    }
+
     public static void Add(this JSONObject json, Color c)
     {
         var o = new JSONObject(JSONObject.Type.ARRAY);

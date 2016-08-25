@@ -140,6 +140,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField PopupXInput;
     public InputField PopupYInput;
     public InputField PopupZInput;
+    public InputField PopupWidthInput;
+    public InputField PopupHeightInput;
     public Toggle[] PopupIconToggles;
 
 
@@ -1268,6 +1270,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
         PopupYInput.onEndEdit.AddListener(PopupYInputChanged);
         PopupZInput.onEndEdit.AddListener(PopupZInputChanged);
+        PopupWidthInput.onEndEdit.AddListener(PopupWidthInputChanged);
+        PopupHeightInput.onEndEdit.AddListener(PopupHeightInputChanged);
 
         for (var i = 0; i < PopupIconToggles.Length; i++)
         {
@@ -1284,6 +1288,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdatePopupTitleInput();
         UpdatePopupTargetInput();
         UpdatePopupPositionInputs();
+        UpdatePopupSizeInputs();
         UpdatePopupIconToggles();
 
         _initializing = false;
@@ -1321,9 +1326,15 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupPositionInputs()
     {
-        PopupXInput.text = string.Format("{0:N1}", PopupEvent.Position.x);
-        PopupYInput.text = string.Format("{0:N1}", PopupEvent.Position.y);
-        PopupZInput.text = string.Format("{0:N1}", PopupEvent.Position.z);
+        PopupXInput.text = string.Format("{0:N0}", PopupEvent.Position.x);
+        PopupYInput.text = string.Format("{0:N0}", PopupEvent.Position.y);
+        PopupZInput.text = string.Format("{0:N0}", PopupEvent.Position.z);
+    }
+
+    private void UpdatePopupSizeInputs()
+    {
+        PopupWidthInput.text = string.Format("{0:N0}", PopupEvent.Size.x);
+        PopupHeightInput.text = string.Format("{0:N0}", PopupEvent.Size.y);
     }
 
     public void PopupXInputChanged(string value)
@@ -1360,6 +1371,30 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PopupEvent.Position.z = result;
+    }
+
+    public void PopupWidthInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Size.x = result;
+    }
+
+    public void PopupHeightInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Size.y = result;
     }
 
     private void UpdatePopupIconToggles()
