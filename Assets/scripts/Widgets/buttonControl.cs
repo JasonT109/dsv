@@ -93,7 +93,7 @@ public class buttonControl : MonoBehaviour
     private float pressDelay = 0.05f;
     private bool canPress = true;
     private int frame = 0;
-    private float doublePressTime = 0f;
+    public float doublePressTime = 0f;
     private bool doublePressCheck = false;
 
     private buttonControl[] _autoWarningsInVisGroup;
@@ -255,6 +255,10 @@ public class buttonControl : MonoBehaviour
         {
             doublePressed = true;
             StartCoroutine(disableDoublePress(0.05f));
+
+            var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
+            bGroupScript.toggleButtons(gameObject);
+
         }
 
         if (!disabled && canPress)
@@ -303,7 +307,7 @@ public class buttonControl : MonoBehaviour
         {
             if (buttonGroup)
             {
-                if (!requiresDoublePress && (!active || canToggleOff))
+                if ((!requiresDoublePress) && (!active || canToggleOff))
                 {
                     var bGroupScript = buttonGroup.GetComponent<buttonGroup>();
                     bGroupScript.toggleButtons(gameObject);
@@ -313,14 +317,11 @@ public class buttonControl : MonoBehaviour
                     pressed = false;
                     Color = GetThemeColor(1);
                 }
-                if (requiresDoublePress && doublePressed)
-                {
-                    toggleButton(gameObject);
-                }
             }
             else
             {
-                toggleButton(gameObject);
+                if (!requiresDoublePress)
+                    toggleButton(gameObject);
             }
 
             //broadcast that this button has changed state
@@ -563,8 +564,8 @@ public class buttonControl : MonoBehaviour
     {
         yield return new WaitWhile(() => frame < 1);
         changed = false;
-        if (doublePressed)
-            doublePressed = false;
+        //if (doublePressed)
+            //doublePressed = false;
     }
 
     IEnumerator waitToDestroy(float waitTime, GameObject g)
