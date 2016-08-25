@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"25/08/16 08:37:25.6",
-		"startedTimestamp":"01/01/01 12:00:00.0",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"25/08/16 09:30:17.2",
+		"startedTimestamp":"25/08/16 09:29:14.3",
+		"stoppedTimestamp":"25/08/16 09:29:41.1"
 	},
 	"groups":[
 		{
@@ -21,6 +21,10 @@
 						0,
 						0
 					],
+					"Size":[
+						0,
+						0
+					],
 					"Icon":2
 				},
 				{
@@ -30,8 +34,27 @@
 					"Target":"Lights",
 					"Position":[
 						0,
+						-10,
+						0
+					],
+					"Size":[
+						1865,
+						820
+					],
+					"Icon":2
+				},
+				{
+					"type":"Popup",
+					"Title":"IMPACT ALERT!",
+					"Target":"DiagnosticsSub",
+					"Position":[
+						0,
 						0,
 						0
+					],
+					"Size":[
+						760,
+						440
 					],
 					"Icon":2
 				}

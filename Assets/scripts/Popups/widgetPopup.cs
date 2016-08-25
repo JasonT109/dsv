@@ -27,6 +27,9 @@ public class widgetPopup : MonoBehaviour
     /** Popup icon sprites. */
     public Sprite[] IconSprites;
 
+    /** Popup area box. */
+    public Graphic Box;
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -78,6 +81,10 @@ public class widgetPopup : MonoBehaviour
             icon.DOFade(0, 0.25f).From().SetLoops(-1, LoopType.Yoyo);
         }
 
+        // Resize and display the popup area box.
+        Box.rectTransform.sizeDelta = Popup.Size;
+        Box.DOFade(0, 1.0f).From().SetLoops(-1, LoopType.Yoyo);
+
         // Place popup in the UI heirarchy and give it an initial update.
         transform.SetParent(Camera.main.transform, false);
         UpdatePopup();
@@ -106,13 +113,20 @@ public class widgetPopup : MonoBehaviour
         if (_target)
             PositionOverTarget(_target);
         else
-            Root.transform.localPosition = Popup.Position;
+            SetPosition(Popup.Position);
 
         // Update the popup's visibility.
         if (!string.IsNullOrEmpty(Popup.Target))
-            Root.gameObject.SetActive(_target && _target.gameObject.activeInHierarchy);
+            SetActive(_target && _target.gameObject.activeInHierarchy);
         else
-            Root.gameObject.SetActive(!serverUtils.IsInDebugScreen());
+            SetActive(!serverUtils.IsInDebugScreen());
+    }
+
+    /** Set whether the popup is active. */
+    private void SetActive(bool value)
+    {
+        Root.gameObject.SetActive(value);
+        Box.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
     }
 
     /** Position this popup over the target. */
@@ -123,7 +137,14 @@ public class widgetPopup : MonoBehaviour
         var p = transform.InverseTransformPoint(bounds.center) + Popup.Position;
 
         // Place popup at the center of the target, and add on position offset.
+        SetPosition(p);
+    }
+
+    /** Set the popup's current position. */
+    private void SetPosition(Vector3 p)
+    {
         Root.transform.localPosition = new Vector3(p.x, p.y, 0);
+        Box.transform.localPosition = new Vector3(p.x, p.y, 0);
     }
 
     /** Routine to close the dialog. */
@@ -135,10 +156,14 @@ public class widgetPopup : MonoBehaviour
 
         _closed = true;
 
-        // Zoom out the dialog.
+        // Fade out the dialog.
         Root.interactable = false;
         Root.transform.DOScale(Vector3.zero, 0.25f);
         Root.DOFade(0, 0.25f);
+
+        // Fade out the area box (if any).
+        Box.DOKill();
+        Box.DOFade(0, 0.25f);
 
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
