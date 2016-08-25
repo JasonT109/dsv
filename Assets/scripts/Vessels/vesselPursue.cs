@@ -27,6 +27,11 @@ public class vesselPursue : vesselMovement
     [SyncVar]
     public float Speed;
 
+    /** Maximum speed that the vehicle should travel at. */
+    [SyncVar]
+    public float MaxSpeed = 36;
+
+
 
     // Load / Save
     // ------------------------------------------------------------
@@ -36,6 +41,7 @@ public class vesselPursue : vesselMovement
     {
         var json = base.Save();
         json.AddField("Speed", Speed);
+        json.AddField("MaxSpeed", MaxSpeed);
         json.AddField("TargetVessel", TargetVessel);
         return json;
     }
@@ -46,6 +52,7 @@ public class vesselPursue : vesselMovement
         base.Load(json, mapData);
         json.GetField(ref Speed, "Speed");
         json.GetField(ref TargetVessel, "TargetVessel");
+        json.GetField(ref MaxSpeed, "MaxSpeed");
     }
 
     /** Return the movement save type. */
@@ -104,6 +111,14 @@ public class vesselPursue : vesselMovement
     /** Set the movement's speed. */
     public override void SetSpeed(float value)
         { Speed = value; }
+
+    /** Return the movement's maximum speed. */
+    public override float GetMaxSpeed()
+        { return MaxSpeed; }
+
+    /** Set the movement's maximum speed. */
+    public override void SetMaxSpeed(float value)
+        { MaxSpeed = value; }
 
 
 }

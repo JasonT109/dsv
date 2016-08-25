@@ -169,4 +169,10 @@ public abstract class vesselMovement : NetworkBehaviour
     /** Set the movement's speed. */
     public abstract void SetSpeed(float value);
 
+    /** Return the movement's maximum speed. */
+    public abstract float GetMaxSpeed();
+
+    /** Set the movement's maximum speed. */
+    public abstract void SetMaxSpeed(float value);
+
 }

@@ -27,6 +27,10 @@ public class vesselHoldingPattern : vesselMovement
     [SyncVar]
     public float Speed = 0;
 
+    /** Maximum speed that the vehicle should travel at. */
+    [SyncVar]
+    public float MaxSpeed = 36;
+
 
     // Members
     // ------------------------------------------------------------
@@ -45,6 +49,7 @@ public class vesselHoldingPattern : vesselMovement
         json.AddField("Period", Period);
         json.AddField("DepthFraction", DepthFraction);
         json.AddField("Speed", Speed);
+        json.AddField("MaxSpeed", MaxSpeed);
 
         return json;
     }
@@ -57,6 +62,7 @@ public class vesselHoldingPattern : vesselMovement
         json.GetField(ref Period, "Period");
         json.GetField(ref DepthFraction, "DepthFraction");
         json.GetField(ref Speed, "Speed");
+        json.GetField(ref MaxSpeed, "MaxSpeed");
     }
 
     /** Return the movement save type. */
@@ -105,5 +111,13 @@ public class vesselHoldingPattern : vesselMovement
     /** Set the movement's speed. */
     public override  void SetSpeed(float value)
         { Speed = value; }
+
+    /** Return the movement's maximum speed. */
+    public override float GetMaxSpeed()
+        { return MaxSpeed; }
+
+    /** Set the movement's maximum speed. */
+    public override void SetMaxSpeed(float value)
+        { MaxSpeed = value; }
 
 }

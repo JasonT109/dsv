@@ -146,7 +146,6 @@ namespace Meg.EventSystem
         /** Stop this event. */
         protected override void Stop()
         {
-            file.PostSonarClear();
         }
 
     }

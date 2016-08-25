@@ -145,6 +145,9 @@ namespace Meg.EventSystem
         /** Whether vessel movements have been altered. */
         private bool _movementEventsTriggered;
 
+        /** Whether popup events have been triggered. */
+        private bool _popupEventsTriggered;
+
         /** Initial camera state. */
         private megMapCameraEventManager.State _initialCamera;
 
@@ -382,10 +385,6 @@ namespace Meg.EventSystem
             serverUtils.PostSonarEvent(sonar);
         }
 
-        /** Post a sonar clear to the server. */
-        public void PostSonarClear()
-            { serverUtils.PostSonarClear(); }
-
         /** Post a custom camera event by name. */
         public void PostMapCameraEvent(string eventName)
         {
@@ -400,7 +399,19 @@ namespace Meg.EventSystem
             serverUtils.PostMapCameraState(state);
         }
 
-        
+        /** Add a popup to the set of active popups. */
+        public void PostAddPopup(popupData.Popup popup)
+        {
+            _popupEventsTriggered = true;
+            serverUtils.PostAddPopup(popup);
+        }
+
+        /** Remove a popup from the set of active popups. */
+        public void PostRemovePopup(popupData.Popup popup)
+            { serverUtils.PostRemovePopup(popup); }
+
+
+
         // Load / Save
         // ------------------------------------------------------------
 
@@ -509,6 +520,9 @@ namespace Meg.EventSystem
 
             if (_sonarEventsTriggered)
                 serverUtils.PostSonarClear();
+
+            if (_popupEventsTriggered)
+                serverUtils.PostClearPopups();
 
             if (_cameraEventsTriggered && _initialCameraValid)
                 serverUtils.PostMapCameraState(_initialCamera);

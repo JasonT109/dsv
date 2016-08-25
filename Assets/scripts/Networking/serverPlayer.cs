@@ -84,6 +84,33 @@ public class serverPlayer : NetworkBehaviour
             CmdPostSonarClear();
     }
 
+    /** Add a popup (works on both clients and host). */
+    public void PostAddPopup(popupData.Popup popup)
+    {
+        if (isServer)
+            ServerAddPopup(popup);
+        else if (isClient)
+            CmdAddPopup(popup);
+    }
+
+    /** Remove a popup (works on both clients and host). */
+    public void PostRemovePopup(popupData.Popup popup)
+    {
+        if (isServer)
+            ServerRemovePopup(popup);
+        else if (isClient)
+            CmdRemovePopup(popup);
+    }
+
+    /** Clear all popups (works on both clients and host). */
+    public void PostClearPopups()
+    {
+        if (isServer)
+            ServerClearPopups();
+        else if (isClient)
+            CmdClearPopups();
+    }
+
     /** Post a custom camera event by name. */
     public void PostMapCameraEvent(string eventName)
     {
@@ -214,6 +241,21 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearExtraVessels()
         { serverUtils.VesselData.ClearExtraVessels(); }
 
+    /** Add a popup (works on both clients and host). */
+    [Command]
+    public void CmdAddPopup(popupData.Popup popup)
+        { ServerAddPopup(popup); }
+
+    /** Remove a popup (works on both clients and host). */
+    [Command]
+    public void CmdRemovePopup(popupData.Popup popup)
+        { ServerRemovePopup(popup); }
+
+    /** Clear all popups (works on both clients and host). */
+    [Command]
+    public void CmdClearPopups()
+        { ServerClearPopups(); }
+
 
 
     // Private Methods
@@ -262,6 +304,21 @@ public class serverPlayer : NetworkBehaviour
     {
         serverUtils.VesselMovements.LoadVessel(json);
     }
+
+    /** Add a popup on the server. */
+    [Server]
+    public void ServerAddPopup(popupData.Popup popup)
+        { serverUtils.PopupData.AddPopup(popup);}
+
+    /** Remove a popup on the server. */
+    [Server]
+    public void ServerRemovePopup(popupData.Popup popup)
+        { serverUtils.PopupData.RemovePopup(popup); }
+
+    /** Clear all popups on the server. */
+    [Server]
+    public void ServerClearPopups()
+        { serverUtils.PopupData.Clear(); }
 
 
     // Client Methods

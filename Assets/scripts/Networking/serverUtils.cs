@@ -252,6 +252,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the Popup data object. */
+        private static popupData _popupData;
+        public static popupData PopupData
+        {
+            get
+            {
+                if (!_popupData && ServerObject)
+                    _popupData = ServerObject.GetComponent<popupData>();
+                return _popupData;
+            }
+        }
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -260,9 +272,13 @@ namespace Meg.Networking
         public static bool IsReady()
             { return ServerObject != null; }
 
-        /** Whether this machine is the server. */
+        /** Whether this instance is the server. */
         public static bool IsServer()
             { return ServerData && ServerData.isServer; }
+
+        /** Whether this instance is in the debug screen. */
+        public static bool IsInDebugScreen()
+            { return widgetDebugButton.Instance && widgetDebugButton.Instance.IsDebug; }
 
         /** The set of all server data parameters that can be written to. */
         private static HashSet<string> _writeableParameters;
@@ -1693,6 +1709,27 @@ namespace Meg.Networking
         {
             if (LocalPlayer)
                 LocalPlayer.PostSonarClear();
+        }
+
+        /** Add a popup (works on both clients and host). */
+        public static void PostAddPopup(popupData.Popup popup)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddPopup(popup);
+        }
+
+        /** Remove a popup (works on both clients and host). */
+        public static void PostRemovePopup(popupData.Popup popup)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemovePopup(popup);
+        }
+
+        /** Clear all popups (works on both clients and host). */
+        public static void PostClearPopups()
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearPopups();
         }
 
         /** Post a custom camera event by name (works on both clients and host). */

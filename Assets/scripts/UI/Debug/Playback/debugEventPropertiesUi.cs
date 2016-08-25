@@ -130,7 +130,18 @@ public class debugEventPropertiesUi : MonoBehaviour
     public Slider VesselTargetSlider;
     public InputField VesselTargetInput;
     public Button VesselCaptureButton;
-    
+
+
+    [Header("Popup Event Components")]
+
+    public Transform PopupProperties;
+    public InputField PopupTitleInput;
+    public InputField PopupTargetInput;
+    public InputField PopupXInput;
+    public InputField PopupYInput;
+    public InputField PopupZInput;
+    public Toggle[] PopupIconToggles;
+
 
     [Header("Prefabs")]
 
@@ -174,6 +185,10 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Event interpreted as a vessels event. */
     public megEventVesselMovement VesselEvent
         { get { return _event as megEventVesselMovement; } }
+
+    /** Event interpreted as a popup event. */
+    public megEventPopup PopupEvent
+        { get { return _event as megEventPopup; } }
 
     /** Whether event is minimized. */
     public bool Minimized
@@ -273,6 +288,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         ServerParamInput.onValidateInput += ValidateIdentifierInput;
         MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
         ConfigureVesselsProperties();
+        ConfigurePopupProperties();
     }
 
     private char ValidateIdentifierInput(string text, int index, char addedChar)
@@ -299,6 +315,8 @@ public class debugEventPropertiesUi : MonoBehaviour
             InitSonarProperties();
         else if (_event is megEventVesselMovement)
             InitVesselsProperties();
+        else if (_event is megEventPopup)
+            InitPopupProperties();
 
         _initializing = false;
     }
@@ -322,6 +340,8 @@ public class debugEventPropertiesUi : MonoBehaviour
             UpdateSonarProperties();
         else if (_event is megEventVesselMovement)
             UpdateVesselsProperties();
+        else if (_event is megEventPopup)
+            UpdatePopupProperties();
 
         _updating = false;
     }
@@ -334,6 +354,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         PhysicsProperties.gameObject.SetActive(false);
         SonarProperties.gameObject.SetActive(false);
         VesselProperties.gameObject.SetActive(false);
+        PopupProperties.gameObject.SetActive(false);
     }
 
 
@@ -362,6 +383,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraProperties.gameObject.SetActive(!minimized && MapCameraEvent != null);
         SonarProperties.gameObject.SetActive(!minimized && SonarEvent != null);
         VesselProperties.gameObject.SetActive(!minimized && VesselEvent != null);
+        PopupProperties.gameObject.SetActive(!minimized && PopupEvent != null);
     }
 
     private void UpdateTriggerTimeSlider()
@@ -1233,6 +1255,133 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         VesselEvent.Capture();
         InitVesselsProperties();
+    }
+
+
+    // Popup Event Interface
+    // ------------------------------------------------------------
+
+    private void ConfigurePopupProperties()
+    {
+        PopupTitleInput.onEndEdit.AddListener(PopupTitleInputChanged);
+        PopupTargetInput.onEndEdit.AddListener(PopupTargetInputChanged);
+        PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
+        PopupYInput.onEndEdit.AddListener(PopupYInputChanged);
+        PopupZInput.onEndEdit.AddListener(PopupZInputChanged);
+
+        for (var i = 0; i < PopupIconToggles.Length; i++)
+        {
+            var icon = (popupData.Icon) i;
+            PopupIconToggles[i].onValueChanged.AddListener(
+                on => OnPopupIconToggled(icon, on));
+        }
+    }
+
+    private void InitPopupProperties()
+    {
+        _initializing = true;
+
+        UpdatePopupTitleInput();
+        UpdatePopupTargetInput();
+        UpdatePopupPositionInputs();
+        UpdatePopupIconToggles();
+
+        _initializing = false;
+    }
+
+    private void UpdatePopupProperties()
+    {
+    }
+
+    private void UpdatePopupTitleInput()
+    {
+        PopupTitleInput.text = PopupEvent.Title;
+    }
+
+    public void PopupTitleInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Title = value;
+    }
+
+    private void UpdatePopupTargetInput()
+    {
+        PopupTargetInput.text = PopupEvent.Target;
+    }
+
+    public void PopupTargetInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Target = value;
+    }
+
+    private void UpdatePopupPositionInputs()
+    {
+        PopupXInput.text = string.Format("{0:N1}", PopupEvent.Position.x);
+        PopupYInput.text = string.Format("{0:N1}", PopupEvent.Position.y);
+        PopupZInput.text = string.Format("{0:N1}", PopupEvent.Position.z);
+    }
+
+    public void PopupXInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Position.x = result;
+    }
+
+    public void PopupYInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Position.y = result;
+    }
+
+    public void PopupZInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Position.z = result;
+    }
+
+    private void UpdatePopupIconToggles()
+    {
+        var index = (int) PopupEvent.Icon;
+        for (var i = 0; i < PopupIconToggles.Length; i++)
+        {
+            var toggle = PopupIconToggles[i];
+            toggle.isOn = (i == index);
+        }
+    }
+
+    private void OnPopupIconToggled(popupData.Icon icon, bool value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Icon = icon;
+
+        _initializing = true;
+        UpdatePopupIconToggles();
+        _initializing = false;
     }
 
 }
