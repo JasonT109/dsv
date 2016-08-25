@@ -277,6 +277,10 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         }
     }
 
+    /** Add a popup event to the group. */
+    public void AddPopupEvent()
+        { AddEvent(megEventType.Popup); }
+
     /** Add an event of a given type to the group. */
     public megEvent AddEvent(megEventType type)
     {

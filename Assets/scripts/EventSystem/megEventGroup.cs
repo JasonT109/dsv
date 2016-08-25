@@ -218,6 +218,8 @@ namespace Meg.EventSystem
                     return new megEventMapCamera(this);
                 case megEventType.VesselMovement:
                     return new megEventVesselMovement(this);
+                case megEventType.Popup:
+                    return new megEventPopup(this);
                 default:
                     return new megEventValue(this);
             }

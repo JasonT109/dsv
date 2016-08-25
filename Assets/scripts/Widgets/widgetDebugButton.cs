@@ -7,7 +7,7 @@ using Meg.Networking;
  * Requires multiple presses on client machines (so it isn't easy to accidentally open).
  */
 
-public class widgetDebugButton : MonoBehaviour
+public class widgetDebugButton : Singleton<widgetDebugButton>
 {
 
     // Properties
@@ -48,6 +48,10 @@ public class widgetDebugButton : MonoBehaviour
             return pressesToActivateOnClient;
         }
     }
+
+    /** Whether debug screen is active. */
+    public bool IsDebug
+        { get { return debugVisGroup.activeInHierarchy; } }
 
 
     // Members

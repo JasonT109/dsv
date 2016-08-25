@@ -6,14 +6,14 @@ namespace Meg.EventSystem
 {
 
     /** Possible types of timed event. */
-
     public enum megEventType
     {
         Value = 0,
         Physics = 1,
         Sonar = 2,
         MapCamera = 3,
-        VesselMovement = 4
+        VesselMovement = 4,
+        Popup = 5
     }
 
 
