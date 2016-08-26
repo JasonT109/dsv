@@ -71,19 +71,39 @@ public class UnityToArduino : MonoBehaviour
 				Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
 			}
 
-			//port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-			//	(Server.yawAngle.ToString("F3")),
-			//	(Server.pitchAngle.ToString("F3")),
-			//	(Server.rollAngle.ToString("F3")),
-			//
-			//	(Controls.inputXaxis.ToString("F3")),
-			//	(Controls.inputYaxis.ToString("F3")),
-			//	(Controls.inputZaxis.ToString("F3")))
-			//); 
+			if(Controls.MotionBaseRoll > 33f)
+			{
+				Controls.MotionBaseRoll = 33f;
+			}
 
-			port.Write(String.Format("${0}\0",
-				(motionBase.eulerAngles.x.ToString("F3")))
-			);
+			if(Controls.MotionBaseRoll < -33f)
+			{
+				Controls.MotionBaseRoll = -33f;
+			}
+
+			if(Controls.MotionBasePitch > 37f)
+			{
+				Controls.MotionBasePitch = 37f;
+			}
+
+			if(Controls.MotionBasePitch < -37f)
+			{
+				Controls.MotionBasePitch = -37f;
+			}
+
+			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+				(Controls.MotionBaseYaw.ToString("F3")),
+				(Controls.MotionBasePitch.ToString("F3")),
+				(Controls.MotionBaseRoll.ToString("F3")),
+			
+				(Controls.inputXaxis.ToString("F3")),
+				(Controls.inputYaxis.ToString("F3")),
+				(Controls.inputZaxis.ToString("F3")))
+			); 
+
+			//port.Write(String.Format("${0}\0",
+			//	(Controls.MotionBasePitch.ToString("F3")))
+			//);
 				
 				
 

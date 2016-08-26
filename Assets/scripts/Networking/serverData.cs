@@ -768,15 +768,15 @@ public class serverData : NetworkBehaviour
             case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
 				break;
-			case "motionbasepitch":
-				SubControl.MotionBasePitch = newValue;
-                break;
-			case "motionbaseyaw":
-				SubControl.MotionBaseYaw = newValue;
-				break;
-			case "motionbaseroll":
-				SubControl.MotionBaseRoll = newValue;
-				break;
+			//case "motionbasepitch":
+			//	SubControl.MotionBasePitch = newValue;
+            //    break;
+			//case "motionbaseyaw":
+			//	SubControl.MotionBaseYaw = newValue;
+			//	break;
+			//case "motionbaseroll":
+			//	SubControl.MotionBaseRoll = newValue;
+			//	break;
 			case "motionsafety":
 				SubControl.MotionSafety = newValue > 0;
 				break;
