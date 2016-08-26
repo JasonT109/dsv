@@ -190,6 +190,7 @@ public class vesselData : NetworkBehaviour
     {
         base.OnStartServer();
         InitializeVessels();
+        UpdateColorTheme();
     }
 
     /** Physics update. */
