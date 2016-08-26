@@ -712,7 +712,7 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
             case "playervessel":
-                VesselData.PlayerVessel = Mathf.RoundToInt(newValue);
+                VesselData.SetPlayerVessel(Mathf.RoundToInt(newValue));
                 break;
             case "latitude":
                 MapData.latitude = newValue;

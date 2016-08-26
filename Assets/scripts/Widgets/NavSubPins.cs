@@ -181,6 +181,10 @@ public class NavSubPins : Singleton<NavSubPins>
 
     private void UpdatePins()
     {
+        // Check if server is ready.
+        if (!serverUtils.IsReady())
+            return;
+
         // Create new pins if necessary.
         var vesselCount = serverUtils.VesselData.VesselCount;
         for (var i = _pins.Count; i < vesselCount; i++)

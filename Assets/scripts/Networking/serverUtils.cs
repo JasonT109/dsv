@@ -1589,6 +1589,10 @@ namespace Meg.Networking
         /** Return the current value of a shared boolean state value by name. */
         public static bool GetServerBool(string boolName)
         {
+            // Check whether server object is ready.
+            if (ServerObject == null)
+                return false;
+
             // Check if we're looking for a vessel state value.
             if (VesselData.IsVesselKey(boolName))
                 return VesselData.GetServerData(boolName, Unknown) > 0;
@@ -1905,7 +1909,7 @@ namespace Meg.Networking
         public static void SetPlayerVessel(int vessel)
         {
             if (VesselData)
-                VesselData.PlayerVessel = vessel;
+                VesselData.SetPlayerVessel(vessel);
         }
 
         /** Returns which vessel is controlled by the player (1-based index). */
