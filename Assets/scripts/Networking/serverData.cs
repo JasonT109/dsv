@@ -1064,7 +1064,8 @@ public class serverData : NetworkBehaviour
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
-        gameObject.GetComponent<Rigidbody>().AddTorque(impactVector, ForceMode.VelocityChange);
+        // Delegate impact handling to the sub controller.
+        SubControl.Impact(impactVector);
     }
 
 
