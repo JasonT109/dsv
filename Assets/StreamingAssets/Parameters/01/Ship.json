@@ -18,6 +18,18 @@
 				{
 					"type":"Value",
 					"serverParam":"velocity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionbasepitch"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionbaseyaw"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionbaseroll"
 				}
 			]
 		},
