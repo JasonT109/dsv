@@ -14,6 +14,10 @@
 				{
 					"type":"Value",
 					"serverParam":"screenglitchautodecaytime"
+				},
+				{
+					"type":"Value",
+					"serverParam":"screenglitchmaxdelay"
 				}
 			]
 		},

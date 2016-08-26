@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using Kino;
 using Meg.Maths;
 using Meg.Networking;
@@ -24,8 +24,14 @@ public class CameraGlitches : MonoBehaviour
     /** Server value for glitch auto-decay time. */
     public const string AutoDecayTimeKey = "screenGlitchAutoDecayTime";
 
+    /** Server value for glitch maximum delay. */
+    public const string MaxDelayKey = "screenGlitchMaxDelay";
+
     /** Minimum value of normalized glitch for effect to be enabled. */
     public const float GlitchThreshold = 0.001f;
+
+    /** Default maximum delay for glitch signal (in seconds). */
+    public const float GlitchBufferDelayMax = 1f;
 
 
     // Public Properties
@@ -79,6 +85,14 @@ public class CameraGlitches : MonoBehaviour
     /** Glitch smoothing velocity. */
     private float _glitchVelocity;
 
+    /** Queue of saved glitch levels (used to introduce a random delay per instance.) */
+    private Queue<float> _glitchSamples = new Queue<float>();
+
+    /** Random delay (in frames) to introduce when sampling glitch level. */
+    private int _glitchBufferDelay;
+
+    /** Last known maximum delay value for glitches. */
+    private float _lastMaxDelay;
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -92,12 +106,6 @@ public class CameraGlitches : MonoBehaviour
         if (!Digital)
             Digital = GetComponent<DigitalGlitch>();
 
-        /*
-        serverUtils.RegisterServerValue(GlitchKey, new serverUtils.ParameterInfo
-            { description = "The amount of digital noise on the screen.." });
-        serverUtils.RegisterServerValue(AutoDecayKey, new serverUtils.ParameterInfo
-            { description = "The amount of digital noise on the screen.." });
-        */
     }
 
     /** Updating. */
@@ -106,8 +114,30 @@ public class CameraGlitches : MonoBehaviour
         if (!serverUtils.IsReady())
             return;
 
-        // Get the current glitch amount.
+        // Randomly assign this instance a glitch delay.
+        var maxDelay = serverUtils.GetServerData(MaxDelayKey, GlitchBufferDelayMax);
+        if (!Mathf.Approximately(maxDelay, _lastMaxDelay))
+        {
+            _glitchBufferDelay = Mathf.Max(1, (int) Random.Range(1f, maxDelay * 60.0f));
+            _lastMaxDelay = maxDelay;
+        }
+
+        // Sample the current glitch amount.
         var glitch = serverUtils.GetServerData(GlitchKey, 0);
+
+        // Apply glitch auto-decay on the server (if enabled).
+        var autoDecay = serverUtils.GetServerBool(AutoDecayKey);
+        if (autoDecay && serverUtils.IsServer())
+        {
+            var autoDecayTime = serverUtils.GetServerData(AutoDecayTimeKey);
+            glitch = Mathf.SmoothDamp(glitch, 0, ref _glitchVelocity, autoDecayTime);
+            serverUtils.SetServerData(GlitchKey, glitch);
+        }
+
+        // Store glitch samples in a queue, and buffer them to introduce a random delay.
+        _glitchSamples.Enqueue(glitch);
+        while (_glitchSamples.Count >= _glitchBufferDelay)
+            glitch = _glitchSamples.Dequeue();
 
         // Determine glitch parameters based on amount.
         var normalized = graphicsMaths.remapValue(glitch, GlitchRange.x, GlitchRange.y, 0, 1);
@@ -141,14 +171,6 @@ public class CameraGlitches : MonoBehaviour
         Digital.enabled = digitalEnabled;
         Digital.intensity = digitalIntensity * (1 + Random.Range(-DigitalIntensityRandomness, DigitalIntensityRandomness));
 
-        // Apply glitch auto-decay on the server (if enabled).
-        var autoDecay = serverUtils.GetServerBool(AutoDecayKey);
-        if (autoDecay && serverUtils.IsServer())
-        {
-            var autoDecayTime = serverUtils.GetServerData(AutoDecayTimeKey);
-            glitch = Mathf.SmoothDamp(glitch, 0, ref _glitchVelocity, autoDecayTime);
-            serverUtils.SetServerData(GlitchKey, glitch);
-        }
     }
 
 }

@@ -767,6 +767,9 @@ public class serverData : NetworkBehaviour
             case "screenglitchautodecaytime":
                 ScreenData.screenGlitchAutoDecayTime = newValue;
                 break;
+            case "screenglitchmaxdelay":
+                ScreenData.screenGlitchMaxDelay = newValue;
+                break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue > 0;
                 break;

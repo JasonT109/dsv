@@ -559,6 +559,7 @@ namespace Meg.Networking
             "screenglitchamount",
             "screenglitchautodecay",
             "screenglitchautodecaytime",
+            "screenglitchmaxdelay",
             "scrubbedco2",
             "scrubbedhumidity",
             "scrubbedoxygen",
@@ -895,6 +896,7 @@ namespace Meg.Networking
             { "screenglitchamount", new ParameterInfo { description = "Amount of screen glitch across all screens."} },
             { "screenglitchautodecay", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether screen glitch automatically decays over time."} },
             { "screenglitchautodecaytime", new ParameterInfo { maxValue = 1, description = "Time taken for screen glitch to decay to nothing (s)."} },
+            { "screenglitchmaxdelay", new ParameterInfo { maxValue = 1, description = "Maximum delay to introduce when screen glitch is in effect."} },
             { "scrubbedco2", new ParameterInfo { maxValue = 5, description = "CO2% in atmosphere after leaving the scrubber." } },
             { "scrubbedhumidity", new ParameterInfo { description = "Humidity leaving the scrubber (%)." } },
             { "scrubbedoxygen", new ParameterInfo { description = "Oxygen percentage leaving the scrubber." } },
@@ -1392,6 +1394,8 @@ namespace Meg.Networking
                     return ScreenData.screenGlitchAutoDecay ? 1 : 0;
                 case "screenglitchautodecaytime":
                     return ScreenData.screenGlitchAutoDecayTime;
+                case "screenglitchmaxdelay":
+                    return ScreenData.screenGlitchMaxDelay;
                 case "camerabrightness":
                     return ScreenData.cameraBrightness;
                 case "startimagesequence":
