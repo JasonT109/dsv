@@ -270,5 +270,13 @@ public class SubControl : NetworkBehaviour
 		}
 			
 	}
-        
+
+    /** Apply an impact impulse vector to the sub's rigidbody. */
+    public void Impact(Vector3 impactVector)
+    {
+        // TODO: Apply limits to impactVector (or scale it down, or both) when
+        // UnityToArduino is actively piping data out to the motion control rig.
+        rb.AddTorque(impactVector, ForceMode.VelocityChange);
+    }
+
 }
