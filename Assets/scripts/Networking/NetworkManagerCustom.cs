@@ -34,12 +34,6 @@ public class NetworkManagerCustom : MonoBehaviour
     // Properties
     // ------------------------------------------------------------
 
-    [Header("Components")]
-
-    /** The server data object. */
-    public GameObject ServerObject;
-
-
     [Header("Configuration")]
 
     /** Server host to connect to. */
