@@ -25,6 +25,9 @@ public class CameraBrightness : MonoBehaviour {
     {
         EnsureMaterialExists();
 
+        if (serverUtils.IsServer())
+            return;
+
         var b = serverUtils.GetServerData("camerabrightness");
         _effectMaterial.SetFloat("_Brightness", b);
 
