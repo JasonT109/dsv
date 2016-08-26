@@ -56,7 +56,7 @@ public class vesselIntercept : vesselMovement
 
     /** Returns the current time to intercept. */
     private float TimeToIntercept
-    { get { return serverUtils.GetVesselMovements().TimeToIntercept; } }
+        { get { return Movements ? Movements.TimeToIntercept : 0; } }
 
 
 
@@ -119,7 +119,7 @@ public class vesselIntercept : vesselMovement
         serverUtils.GetVesselData(InterceptVessel, out interceptPosition, out interceptVelocity);
 
         // Adjust intercept point according to target's velocity and time to intercept.
-        var movement = serverUtils.GetVesselMovements().GetVesselMovement(InterceptVessel);
+        var movement = Movements.GetVesselMovement(InterceptVessel);
         if (movement)
         {
             var predicted = movement.Velocity * (TimeToIntercept * InterceptPredictionFactor);
@@ -181,8 +181,8 @@ public class vesselIntercept : vesselMovement
         { return Speed;}
 
     /** Set the movement's speed. */
-    public override  void SetSpeed(float value)
-        { Speed = value; }
+    public override void SetSpeed(float value)
+        { Speed = Mathf.Clamp(value, 0, MaxSpeed); }
 
     /** Return the movement's maximum speed. */
     public override float GetMaxSpeed()
@@ -190,7 +190,10 @@ public class vesselIntercept : vesselMovement
 
     /** Set the movement's maximum speed. */
     public override void SetMaxSpeed(float value)
-        { MaxSpeed = value; }
+    {
+        MaxSpeed = value;
+        Speed = Mathf.Clamp(Speed, 0, MaxSpeed);
+    }
 
 
 }

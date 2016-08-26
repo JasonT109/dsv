@@ -63,7 +63,7 @@ public class debugVessels : Singleton<debugVessels>
     private bool initialized;
 
     private vesselMovements Movements
-        { get { return serverUtils.GetVesselMovements(); } }
+        { get { return serverUtils.VesselMovements; } }
 
     private void OnEnable()
     {

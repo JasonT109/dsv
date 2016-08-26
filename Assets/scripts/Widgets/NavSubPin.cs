@@ -324,7 +324,7 @@ public class NavSubPin : MonoBehaviour
         // Set the correct camera for lines in nav screen.
         VectorLine.SetCamera3D(_mapCamera);
 
-        var movement = serverUtils.GetVesselMovements().GetVesselMovement(VesselId);
+        var movement = serverUtils.GetVesselMovement(VesselId);
         var intercept = movement as vesselIntercept;
 
         // Update the interception indicator (if any).

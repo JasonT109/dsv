@@ -43,7 +43,7 @@ public abstract class vesselMovement : NetworkBehaviour
         get
         {
             if (!_movements)
-                _movements = serverUtils.GetVesselMovements();
+                _movements = serverUtils.VesselMovements;
 
             return _movements;
         }
@@ -59,6 +59,9 @@ public abstract class vesselMovement : NetworkBehaviour
 
     /** The vessel movements manager. */
     private vesselMovements _movements;
+
+    /** Whether movement has been spawned on clients. */
+    private bool _spawned;
 
 
     // Unity Methods
@@ -123,6 +126,14 @@ public abstract class vesselMovement : NetworkBehaviour
     protected abstract string GetSaveKey();
 
 
+    // Networking
+    // ------------------------------------------------------------
+
+    /** Post this movement's local state up to the server. */
+    public void PostState()
+        { serverUtils.PostVesselMovementState(Save()); }
+
+
     // Protected Methods
     // ------------------------------------------------------------
 
@@ -135,9 +146,17 @@ public abstract class vesselMovement : NetworkBehaviour
     public virtual void Configure(int vessel, bool active)
     {
         Vessel = vessel;
+        EnsureSpawned();
+    }
 
-        // Spawn this movement module on remote clients.
+    /** Ensure that this movement is spawned on remote clients. */
+    protected void EnsureSpawned()
+    {
+        if (_spawned)
+            return;
+
         NetworkServer.Spawn(gameObject);
+        _spawned = true;
     }
 
     /** Sets the vessel's state (position + velocity). */
@@ -159,9 +178,7 @@ public abstract class vesselMovement : NetworkBehaviour
 
     /** Returns the vessel's state (position + velocity). */
     protected void GetVesselState(out Vector3 position, out float velocity)
-    {
-        serverUtils.GetVesselData(Vessel, out position, out velocity);
-    }
+        { serverUtils.GetVesselData(Vessel, out position, out velocity); }
 
     /** Return the movement's speed. */
     public abstract float GetSpeed();

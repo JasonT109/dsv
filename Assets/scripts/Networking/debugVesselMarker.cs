@@ -67,11 +67,11 @@ public class debugVesselMarker : MonoBehaviour
 
     /** Returns the vessel movements module. */
     private vesselMovements Movements
-        { get { return serverUtils.GetVesselMovements(); } }
+        { get { return serverUtils.VesselMovements; } }
 
     /** Returns the marked vessel's movement, if any. */
     private vesselMovement Movement
-        { get { return Movements.GetVesselMovement(Vessel); } }
+        { get { return Movements ? Movements.GetVesselMovement(Vessel) : null; } }
 
 
     // Members
