@@ -12,7 +12,7 @@ public class PowerAllLights : MonoBehaviour
 
 	private float speed = 1.0f;
 
-	int iDistance = 30;
+	//int iDistance = 30;
 
 
 	// Use this for initialization
