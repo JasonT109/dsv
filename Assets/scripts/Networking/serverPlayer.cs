@@ -13,27 +13,11 @@ public class serverPlayer : NetworkBehaviour
 
     /** The sonar event manager. */
     private megSonarEventManager Sonar
-    {
-        get
-        {
-            if (megEventManager.HasInstance)
-                return megEventManager.Instance.GetSonarEventManager();
-            else
-                return null;
-        }
-    }
+        { get { return megEventManager.Instance.GetSonarEventManager(); } }
 
     /** The map camera event manager. */
     private megMapCameraEventManager MapCamera
-    {
-        get
-        {
-            if (megEventManager.HasInstance)
-                return megEventManager.Instance.GetMapCameraEventManager();
-            else
-                return null;
-        }
-    }
+        { get { return megEventManager.Instance.GetMapCameraEventManager(); } }
 
 
     // Public Methods
