@@ -60,7 +60,7 @@ public class MenuHotkeys : MonoBehaviour
         ////////////////////////////////////
 
 
-        if(Input.GetKeyDown("return"))
+		if(Input.GetKeyDown("return") || Input.GetKeyDown("enter"))
         {
             LoginScreen.StartButton();
         }

@@ -157,7 +157,7 @@ namespace Meg.Scene
         /** Save state of vessel movements to JSON. */
         private JSONObject SaveMovements()
         {
-            return serverUtils.GetVesselMovements().Save();
+            return serverUtils.VesselMovements.Save();
         }
 
         /** Save current events to JSON. */
@@ -192,7 +192,7 @@ namespace Meg.Scene
         /** Load vessel movements from JSON. */
         private void LoadMovements(JSONObject json)
         {
-            serverUtils.GetVesselMovements().Load(json);
+            serverUtils.VesselMovements.Load(json);
         }
 
         /** Load current events from JSON. */

@@ -10,7 +10,11 @@ public class UnityToArduino : MonoBehaviour
 	public SubControl Controls;
 	public string COMPort = "";
 
+	private Quaternion motionBase;
+
 	ArduinoManager Settings;
+
+	float time = 0.0f;
 
 	// initialization
 	void Start()
@@ -22,7 +26,7 @@ public class UnityToArduino : MonoBehaviour
 				Settings = GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>();
 				COMPort = Settings.ComPort;
 			
-				port = new SerialPort(COMPort, 57600);
+				port = new SerialPort(COMPort, 115200);
 				if (!port.IsOpen)
 				{
 					port.Open();
@@ -42,29 +46,61 @@ public class UnityToArduino : MonoBehaviour
 		//	COMPort = Settings.ComPort;
 		//}
 	}
+
 	IEnumerator SendData()
 	{
 		while (port.IsOpen)
 		{
+			motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*2f);
+			Controls.MotionBasePitch = motionBase.eulerAngles.x;
+			Controls.MotionBaseYaw = motionBase.eulerAngles.y;
+			Controls.MotionBaseRoll = motionBase.eulerAngles.z;
 
+			if(Controls.MotionBasePitch > 180f)
+			{
+				Controls.MotionBasePitch = motionBase.eulerAngles.x-360f;
+			}
 
-			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-				(Server.yawAngle.ToString("F3")),
-				(Server.pitchAngle.ToString("F3")),
-				(Server.rollAngle.ToString("F3")),
+			if(Controls.MotionBaseYaw > 180f)
+			{
+				Controls.MotionBaseYaw = motionBase.eulerAngles.y-360f;
+			}
 
-				(Controls.inputXaxis.ToString("F3")),
-				(Controls.inputYaxis.ToString("F3")),
-				(Controls.inputZaxis.ToString("F3")))
-			); 
+			if(Controls.MotionBaseRoll > 180f)
+			{
+				Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
+			}
+
+			//port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+			//	(Server.yawAngle.ToString("F3")),
+			//	(Server.pitchAngle.ToString("F3")),
+			//	(Server.rollAngle.ToString("F3")),
+			//
+			//	(Controls.inputXaxis.ToString("F3")),
+			//	(Controls.inputYaxis.ToString("F3")),
+			//	(Controls.inputZaxis.ToString("F3")))
+			//); 
+
+			port.Write(String.Format("${0}\0",
+				(motionBase.eulerAngles.x.ToString("F3")))
+			);
+				
 				
 
-			yield return new WaitForSeconds(0.016f);
+			//yield return new WaitForSeconds(0.016f);
+			yield return new WaitForSeconds(0.0083f);
 		}
 	} 
 
 	void OnDestroy()
-	{ 
-		port.Close(); 
-	}
+	{
+        try
+        {
+            port.Close();
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log(e);
+        }
+    }
 }

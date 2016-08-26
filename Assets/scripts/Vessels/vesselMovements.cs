@@ -315,15 +315,27 @@ public class vesselMovements : NetworkBehaviour
     [Server]
     public void LoadVessel(JSONObject json)
     {
+        // Inspect JSON to determine vessel and movement type.
         var vessel = 0;
         string type = null;
         json.GetField(ref type, "Type");
         json.GetField(ref vessel, "Vessel");
-        var movement = CreateVesselMovement(type);
+
+        // Check if the correct movement type is already in place.
+        var old = GetVesselMovement(vessel);
+        var movement = old;
+
+        // If not, create a new movement object.
+        if (!movement || movement.Type != type)
+            movement = CreateVesselMovement(type);
+
+        // Load movement state data in from JSON.
         if (movement)
             movement.Load(json, MapData);
-
-        SetVesselMovement(vessel, movement);
+        
+        // Update movement for this vessel if it has changed.
+        if (movement != old)
+            SetVesselMovement(vessel, movement);
     }
 
     /** Capture the initial state of vessel movements. */

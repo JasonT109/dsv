@@ -38,6 +38,9 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public CanvasGroup MovementSpeedGroup;
     public Slider MovementSpeedSlider;
     public InputField MovementSpeedInput;
+    public CanvasGroup MovementMaxSpeedGroup;
+    public Slider MovementMaxSpeedSlider;
+    public InputField MovementMaxSpeedInput;
     public Slider MovementHeadingSlider;
     public InputField MovementHeadingInput;
     public Slider MovementDiveAngleSlider;
@@ -288,7 +291,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         { get { return serverUtils.VesselMovements; } }
 
     private vesselMovement Movement
-        { get { return Movements.GetVesselMovement(Vessel.Id); } }
+        { get { return Movements ? Movements.GetVesselMovement(Vessel.Id) : null; } }
 
     private vesselIntercept Intercept
         { get { return Movement as vesselIntercept; } }
@@ -302,6 +305,12 @@ public class debugVesselPropertiesUi : MonoBehaviour
     private vesselHoldingPattern Holding
         { get { return Movement as vesselHoldingPattern; } }
 
+    private void UpdateMovement()
+    {
+        if (Movement && !Movement.isServer)
+            Movement.PostState();
+    }
+
     private void ConfigureMovementProperties()
     {
         for (var i = 0; i < MovementTypeToggles.Length; i++)
@@ -314,6 +323,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementAutoSpeedToggle.onValueChanged.AddListener(OnMovementAutoSpeedToggleChanged);
         MovementSpeedSlider.onValueChanged.AddListener(OnMovementSpeedSliderChanged);
         MovementSpeedInput.onEndEdit.AddListener(OnMovementSpeedInputChanged);
+        MovementMaxSpeedSlider.onValueChanged.AddListener(OnMovementMaxSpeedSliderChanged);
+        MovementMaxSpeedInput.onEndEdit.AddListener(OnMovementMaxSpeedInputChanged);
         MovementHeadingSlider.onValueChanged.AddListener(OnMovementHeadingSliderChanged);
         MovementHeadingInput.onEndEdit.AddListener(OnMovementHeadingInputChanged);
         MovementDiveAngleSlider.onValueChanged.AddListener(OnMovementDiveAngleSliderChanged);
@@ -349,10 +360,11 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         MovementAutoSpeedToggle.isOn = Intercept && Intercept.AutoSpeed;
         MovementSpeedSlider.value = Movement.GetSpeed();
-        MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
+        MovementSpeedSlider.maxValue = Movement.GetMaxSpeed();
         MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
-
-        MovementVectorDialUi.MaxSpeed = MovementSpeedSlider.maxValue;
+        MovementMaxSpeedSlider.value = Movement.GetMaxSpeed();
+        MovementMaxSpeedSlider.maxValue = Mathf.Max(MovementMaxSpeedSlider.maxValue, Movement.GetMaxSpeed());
+        MovementMaxSpeedInput.text = string.Format("{0:N1}", Movement.GetMaxSpeed());
         MovementVectorDialUi.Vessel = Vessel;
 
         if (SetVector)
@@ -395,12 +407,13 @@ public class debugVesselPropertiesUi : MonoBehaviour
         MovementAutoSpeedToggle.gameObject.SetActive(Intercept);
         MovementSpeedGroup.interactable = !MovementAutoSpeedToggle.isOn;
         MovementSpeedGroup.alpha = MovementAutoSpeedToggle.isOn ? 0.5f : 1;
+        MovementMaxSpeedGroup.interactable = !MovementAutoSpeedToggle.isOn;
+        MovementMaxSpeedGroup.alpha = MovementAutoSpeedToggle.isOn ? 0.5f : 1;
         MovementHeadingSlider.transform.parent.gameObject.SetActive(SetVector);
         MovementDiveAngleSlider.transform.parent.gameObject.SetActive(SetVector);
         MovementPeriodSlider.transform.parent.gameObject.SetActive(Holding);
         MovementTargetSlider.transform.parent.gameObject.SetActive(Pursue);
         MovementVectorDialUi.gameObject.SetActive(SetVector);
-        MovementVectorDialUi.MaxSpeed = MovementSpeedSlider.maxValue;
         MovementTargetLabel.gameObject.SetActive(Pursue);
         MovementTargetLabel.text = Pursue ? "PURSUE " + VesselData.GetDebugName(Pursue.TargetVessel) : "";
 
@@ -418,10 +431,16 @@ public class debugVesselPropertiesUi : MonoBehaviour
             MovementHeadingSlider.value = SetVector.Heading;
             MovementHeadingInput.text = string.Format("{0:N1}", SetVector.Heading);
         }
+        if (!Mathf.Approximately(MovementMaxSpeedSlider.value, Movement.GetMaxSpeed()))
+        {
+            MovementMaxSpeedSlider.value = Movement.GetMaxSpeed();
+            MovementMaxSpeedSlider.maxValue = Mathf.Max(MovementMaxSpeedSlider.maxValue, Movement.GetMaxSpeed());
+            MovementMaxSpeedInput.text = string.Format("{0:N1}", Movement.GetMaxSpeed());
+            MovementSpeedSlider.maxValue = Movement.GetMaxSpeed();
+        }
         if (!Mathf.Approximately(MovementSpeedSlider.value, Movement.GetSpeed()))
         {
             MovementSpeedSlider.value = Movement.GetSpeed();
-            MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, Movement.GetSpeed());
             MovementSpeedInput.text = string.Format("{0:N1}", Movement.GetSpeed());
         }
     }
@@ -460,7 +479,10 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        Movements.SetMovementType(Vessel.Id, value ? type : vesselMovements.NoType);
+        // Request an update to the movement type.
+        serverUtils.PostVesselMovementType(Vessel.Id, 
+            value ? type : vesselMovements.NoType);
+
         InitMovementProperties();
     }
 
@@ -470,6 +492,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Intercept.AutoSpeed = on;
+        UpdateMovement();
     }
 
     private void OnMovementSpeedSliderChanged(float value)
@@ -478,8 +501,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetSpeed(value);
-        Movement.SetMaxSpeed(Mathf.Max(value, Movement.GetMaxSpeed()));
         MovementSpeedInput.text = string.Format("{0:N1}", value);
+        UpdateMovement();
     }
 
     private void OnMovementSpeedInputChanged(string value)
@@ -492,9 +515,35 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetSpeed(result);
-        Movement.SetMaxSpeed(Mathf.Max(result, Movement.GetMaxSpeed()));
-        MovementSpeedSlider.maxValue = Mathf.Max(MovementSpeedSlider.maxValue, result);
         MovementSpeedSlider.value = result;
+        UpdateMovement();
+    }
+
+    private void OnMovementMaxSpeedSliderChanged(float value)
+    {
+        if (_updating || !Movement)
+            return;
+
+        Movement.SetMaxSpeed(value);
+        MovementSpeedSlider.maxValue = value;
+        MovementMaxSpeedInput.text = string.Format("{0:N1}", value);
+        UpdateMovement();
+    }
+
+    private void OnMovementMaxSpeedInputChanged(string value)
+    {
+        if (_updating || !Movement)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        Movement.SetMaxSpeed(result);
+        MovementSpeedSlider.maxValue = result;
+        MovementMaxSpeedSlider.maxValue = Mathf.Max(MovementMaxSpeedSlider.maxValue, result);
+        MovementMaxSpeedSlider.value = result;
+        UpdateMovement();
     }
 
     private void OnMovementHeadingSliderChanged(float value)
@@ -504,6 +553,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         SetVector.Heading = value;
         MovementHeadingInput.text = string.Format("{0:N1}", value);
+        UpdateMovement();
     }
 
     private void OnMovementHeadingInputChanged(string value)
@@ -517,6 +567,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         SetVector.Heading = result;
         MovementHeadingSlider.value = result;
+        UpdateMovement();
     }
 
     private void OnMovementDiveAngleSliderChanged(float value)
@@ -526,6 +577,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         SetVector.DiveAngle = value;
         MovementDiveAngleInput.text = string.Format("{0:N1}", value);
+        UpdateMovement();
     }
 
     private void OnMovementDiveAngleInputChanged(string value)
@@ -539,6 +591,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         SetVector.DiveAngle = result;
         MovementDiveAngleSlider.value = result;
+        UpdateMovement();
     }
 
     private void OnMovementDialChanged()
@@ -562,6 +615,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         Holding.Period = value;
         MovementPeriodInput.text = string.Format("{0:N1}", value);
+        UpdateMovement();
     }
 
     private void OnMovementPeriodInputChanged(string value)
@@ -575,6 +629,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         Holding.Period = result;
         MovementPeriodSlider.value = result;
+        UpdateMovement();
     }
 
     private void OnMovementTargetSliderChanged(float value)
@@ -584,6 +639,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         Pursue.TargetVessel = Mathf.RoundToInt(value);
         MovementTargetInput.text = string.Format("{0:N0}", value);
+        UpdateMovement();
     }
 
     private void OnMovementTargetInputChanged(string value)
@@ -597,6 +653,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         Pursue.TargetVessel = Mathf.RoundToInt(result);
         MovementTargetSlider.value = result;
+        UpdateMovement();
     }
 
     private void OnEtaSliderChanged(float value)
@@ -610,6 +667,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         Movements.SetTimeToIntercept(eta);
         InitEtaUi();
+        UpdateMovement();
     }
 
     private void OnEtaInputChanged(string value)
@@ -628,6 +686,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         var eta = hours * 3600 + minutes * 60 + seconds;
         Movements.SetTimeToIntercept(eta);
         InitEtaUi();
+        UpdateMovement();
     }
 
     private void InitEtaUi()

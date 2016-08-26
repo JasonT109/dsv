@@ -128,9 +128,9 @@ public class widgetThrusterControl : MonoBehaviour
 		{
 
         	//calculate the thruster power based on inputs
-        	thrusterMainL = Mathf.Clamp(inZ + (-inX * 0.5f), -100, 100);
-        	thrusterMainR = Mathf.Clamp(inZ + (inX * 0.5f), -100, 100);
-        	thrusterSideL1 = Mathf.Clamp(-inY + (-inX * 0.5f) + inX2, -100, 100);
+        	thrusterMainL = Mathf.Clamp(inZ, -100, 100); //thrusterMainL = Mathf.Clamp(inZ + (-inX * 0.5f), -100, 100);
+            thrusterMainR = Mathf.Clamp(inZ, -100, 100); //thrusterMainR = Mathf.Clamp(inZ + (inX * 0.5f), -100, 100);
+            thrusterSideL1 = Mathf.Clamp(-inY + (-inX * 0.5f) + inX2, -100, 100);
         	thrusterSideR1 = Mathf.Clamp(-inY + (inX * 0.5f) + inX2, -100, 100);
         	thrusterSideL2 = Mathf.Clamp(-inX + inX2, -100, 100);
         	thrusterSideR2 = Mathf.Clamp(inX + inX2, -100, 100);

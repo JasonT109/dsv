@@ -767,7 +767,19 @@ public class serverData : NetworkBehaviour
                 break;
             case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
+				break;
+			case "motionbasepitch":
+				SubControl.MotionBasePitch = newValue;
                 break;
+			case "motionbaseyaw":
+				SubControl.MotionBaseYaw = newValue;
+				break;
+			case "motionbaseroll":
+				SubControl.MotionBaseRoll = newValue;
+				break;
+			case "motionsafety":
+				SubControl.MotionSafety = newValue > 0;
+				break;
             case "sonarlongfrequency":
                 SonarData.LongFrequency = newValue;
                 break;
@@ -1037,6 +1049,9 @@ public class serverData : NetworkBehaviour
             case "iscontroloverridestandard":
                 SubControl.isControlOverrideStandard = newValue;
                 break;
+			case "motionsafety":
+				SubControl.MotionSafety = newValue;
+				break;
         }
     }
 
@@ -1064,7 +1079,8 @@ public class serverData : NetworkBehaviour
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
-        gameObject.GetComponent<Rigidbody>().AddTorque(impactVector, ForceMode.VelocityChange);
+        // Delegate impact handling to the sub controller.
+        SubControl.Impact(impactVector);
     }
 
 

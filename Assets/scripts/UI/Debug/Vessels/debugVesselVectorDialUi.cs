@@ -30,9 +30,6 @@ public class debugVesselVectorDialUi : MonoBehaviour
 
     [Header("Configuration")]
 
-    /** Maximum speed to apply to vessel movement. */
-    public float MaxSpeed = 100;
-
     /** Thumb's active color. */
     public Color ThumbActiveColor;
 
@@ -62,7 +59,7 @@ public class debugVesselVectorDialUi : MonoBehaviour
         { get { return serverUtils.VesselMovements; } }
 
     private vesselMovement Movement
-        { get { return Movements.GetVesselMovement(Vessel.Id); } }
+        { get { return Movements ? Movements.GetVesselMovement(Vessel.Id) : null; } }
 
     private vesselSetVector SetVector
         { get { return Movement as vesselSetVector; } }
@@ -168,7 +165,7 @@ public class debugVesselVectorDialUi : MonoBehaviour
             return;
 
         var extent = Dial.rectTransform.sizeDelta.x * 0.5f;
-        var d = (vector.Speed/MaxSpeed) * extent;
+        var d = (vector.Speed / vector.MaxSpeed) * extent;
         var p = Quaternion.Euler(0, 0, -vector.Heading) * new Vector3(0, d, 0);
 
         Thumb.transform.localPosition = p;
@@ -184,7 +181,10 @@ public class debugVesselVectorDialUi : MonoBehaviour
         var extent = Dial.rectTransform.sizeDelta.x * 0.5f;
         var p = Thumb.transform.localPosition;
         vector.Heading = Mathf.Repeat(90 - Mathf.Atan2(p.y, p.x) * Mathf.Rad2Deg, 360);
-        vector.Speed = (p.magnitude / extent) * MaxSpeed;
+        vector.Speed = Mathf.Clamp01(p.magnitude / extent) * vector.MaxSpeed;
+
+        if (!vector.isServer)
+            vector.PostState();
 
         if (onValueChanged != null)
             onValueChanged.Invoke();

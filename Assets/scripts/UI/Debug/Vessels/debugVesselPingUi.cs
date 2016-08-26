@@ -21,6 +21,15 @@ using UnityEngine.UI;
 public class debugVesselPingUi : MonoBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    public const float MaxSpeedDistance = 200f;
+    public const float ArrowSpeedScale = 1 / 100.0f;
+    public const float ArrowMinScale = 0.05f;
+    public const float ArrowMaxScale = 1.5f;
+
+
     // Properties
     // ------------------------------------------------------------
 
@@ -43,36 +52,20 @@ public class debugVesselPingUi : MonoBehaviour
     public Color SelectedColor;
 
 
-    [Header("Movements")]
-
-    public float MinScale = 0.1f;
-    public float MaxScale = 1;
-
-    public float DistanceToSpeedScale = 1f;
-
-
-    public vesselData.Vessel Vessel
-        { get { return Ping.Vessel; } }
-
-
     // Private Properties
     // ------------------------------------------------------------
-
-    /** Vessel data. */
-    private vesselData VesselData
-        { get { return serverUtils.VesselData; } }
 
     private vesselMovements Movements
         { get { return serverUtils.VesselMovements; } }
 
     private vesselMovement Movement
-        { get { return Movements.GetVesselMovement(Vessel.Id); } }
+        { get { return Movements ? Movements.GetVesselMovement(Vessel.Id) : null; } }
 
     private vesselSetVector SetVector
         { get { return Movement as vesselSetVector; } }
 
-    private float MaxSpeed
-        { get { return Movement ? Movement.GetMaxSpeed() : 36; } }
+    private vesselData.Vessel Vessel
+        { get { return Ping.Vessel; } }
 
 
     // Members
@@ -153,16 +146,16 @@ public class debugVesselPingUi : MonoBehaviour
         if (debugVesselsUi.Instance.Selected.Id != Vessel.Id)
             debugVesselsUi.Instance.Selected = Vessel;
 
-        // If not playing, directly manipulate vessel position.
-        var playing = megEventManager.Instance.Playing;
-        if (!playing)
+        // If vessel simulation is inactive, directly manipulate vessel position.
+        var moving = serverUtils.VesselMovements.Active;
+        if (!moving)
         {
             Ping.transform.localPosition = Transformer.transform.localPosition;
-            VesselData.SetPosition(Vessel.Id, Ping.ToVesselSpace());
+            serverUtils.PostVesselPosition(Vessel.Id, Ping.ToVesselSpace());
         }
 
-        // If playing, affect vessel movement vector.
-        if (playing)
+        // If already moving, affect vessel movement vector.
+        if (moving)
             UpdateVectorFromPing();
     }
 
@@ -217,9 +210,7 @@ public class debugVesselPingUi : MonoBehaviour
             color.a *= 0.5f;
 
         var w = movement.WorldVelocity;
-        var max = serverUtils.GetServerData("maxspeed");
-        var t = Mathf.Clamp01(w.magnitude / max);
-        var scale = Mathf.Lerp(MinScale, MaxScale, t);
+        var scale = Mathf.Clamp(w.magnitude * ArrowSpeedScale, ArrowMinScale, ArrowMaxScale);
 
         Arrow.color = color;
         Arrow.transform.localScale = Vector3.one * scale;
@@ -229,7 +220,7 @@ public class debugVesselPingUi : MonoBehaviour
     {
         // If dragging vessel during playback, make sure it's in vector movement mode.
         if (!SetVector)
-            Movements.SetVector(Vessel.Id);
+            serverUtils.PostVesselMovementType(Vessel.Id, vesselMovements.SetVectorType);
 
         var vector = SetVector;
         if (!vector)
@@ -237,6 +228,10 @@ public class debugVesselPingUi : MonoBehaviour
 
         var p = Transformer.transform.localPosition - Ping.transform.localPosition;
         vector.Heading = Mathf.Repeat(90 - Mathf.Atan2(p.y, p.x) * Mathf.Rad2Deg, 360);
-        vector.Speed = p.magnitude * DistanceToSpeedScale;
+        vector.Speed = Mathf.Clamp01(p.magnitude / MaxSpeedDistance) * vector.MaxSpeed;
+
+        // Post the modified state to server if needed.
+        if (!vector.isServer)
+            vector.PostState();
     }
 }

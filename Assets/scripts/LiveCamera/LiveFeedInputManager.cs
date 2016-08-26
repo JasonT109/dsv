@@ -6,7 +6,7 @@ public class LiveFeedInputManager : MonoBehaviour
 {
     public int iNumCameras = 0;
     public Text ButtonText;
-    bool ButtonHeld = false;
+    //bool ButtonHeld = false;
     public Image StartImg;
 
     public int defaultModeIndex = 40;

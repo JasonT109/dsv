@@ -277,8 +277,16 @@ namespace Meg.Networking
         }
 
         /** Return the vessel movements controller. */
+        private static vesselMovements _vesselMovements;
         public static vesselMovements VesselMovements
-            { get { return GetVesselMovements(); } }
+        {
+            get
+            {
+                if (!_vesselMovements && ServerObject)
+                    _vesselMovements = ServerObject.GetComponent<vesselMovements>();
+                return _vesselMovements;
+            }
+        }
 
         /** Whether the server object is available for use yet. */
         public static bool IsReady()
@@ -483,6 +491,10 @@ namespace Meg.Networking
             "megspeed",
             "megturnspeed",
             "minspeed",
+			"motionbasepitch",
+			"motionbaseyaw",
+			"motionbaseroll",
+			"motionbasesafety",
             "o1",
             "o2",
             "o3",
@@ -805,6 +817,10 @@ namespace Meg.Networking
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
             { "megturnspeed", new ParameterInfo { description = "Speed that the Meg turns in the short-range sonar display."} },
             { "minspeed", new ParameterInfo { description = "Sub's minimum speed at 100% reverse throttle (m/s)."} },
+			{ "motionbasepitch", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
+			{ "motionbaseyaw", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
+			{ "motionbaseroll", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base."} },
+			{ "motionsafety", new ParameterInfo { description = "Safety first"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1261,6 +1277,14 @@ namespace Meg.Networking
                     return SonarData.MegSpeed;
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed;
+				case "motionsafety":
+					return SubControl.MotionSafety ? 1 : 0;
+				case "motionbasepitch":
+					return SubControl.MotionBasePitch;
+				case "motionbaseyaw":
+					return SubControl.MotionBaseYaw;
+				case "motionbaseroll":
+					return SubControl.MotionBaseRoll;
                 case "sonarlongfrequency":
                     return SonarData.LongFrequency;
                 case "sonarlonggain":
@@ -1529,6 +1553,12 @@ namespace Meg.Networking
                     return SonarData.MegSpeed.ToString("n1");
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
+				case "motionbasepitch":
+					return SubControl.MotionBasePitch.ToString("n1");
+				case "motionbaseyaw":
+					return SubControl.MotionBaseYaw.ToString("n1");
+				case "motionbaseroll":
+					return SubControl.MotionBaseRoll.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
@@ -1614,6 +1644,8 @@ namespace Meg.Networking
                     return SubControl.JoystickPilot;
                 case "screenglitchautodecay":
                     return ScreenData.screenGlitchAutoDecay;
+				case "motionsafety":
+					return SubControl.MotionSafety;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);
@@ -1758,6 +1790,13 @@ namespace Meg.Networking
                 LocalPlayer.PostMapCameraState(state);
         }
 
+        /** Post vessel movement type to the server. */
+        public static void PostVesselMovementType(int id, string type)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselMovementType(id, type);
+        }
+
         /** Post vessel movements state to the server (works on both clients and host). */
         public static void PostVesselMovementState(JSONObject json)
         {
@@ -1821,7 +1860,7 @@ namespace Meg.Networking
             if (playerVessel <= 0)
                 return 0;
 
-            var movement = GetVesselMovements().GetVesselMovement(playerVessel);
+            var movement = VesselMovements.GetVesselMovement(playerVessel);
             var intercept = movement as vesselIntercept;
             var pursue = movement as vesselPursue;
 
@@ -1860,6 +1899,13 @@ namespace Meg.Networking
         public static void SetVesselPosition(int vessel, Vector3 p)
             { VesselData.SetPosition(vessel, p); }
 
+        /** Set a vessel's current position (1-based index). */
+        public static void PostVesselPosition(int vessel, Vector3 p)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselPosition(vessel, p);
+        }
+
         /** Set a vessel's current speed (1-based index). */
         public static void SetVesselVelocity(int vessel, float v)
             { VesselData.SetSpeed(vessel, v); }
@@ -1878,10 +1924,6 @@ namespace Meg.Networking
         /** Return a vessel's current position as a latitude/longitude pair (1-based index). */
         public static Vector2 GetVesselLatLong(int vessel)
             { return VesselData.GetLatLong(vessel); }
-
-        /** Return the vessel movements manager. */
-        public static vesselMovements GetVesselMovements()
-            { return ServerObject ? ServerObject.GetComponent<vesselMovements>() : null; }
 
         /** Sets which vessel is controlled by the player (1-based index). */
         public static void SetPlayerVessel(int vessel)
@@ -1911,6 +1953,14 @@ namespace Meg.Networking
             if (VesselData)
                 VesselData.SetVisible(vessel, state);
         }
+
+        /** Return the current movement mode (if any) for a vessel. */
+        public static vesselMovement GetVesselMovement(int vessel)
+            { return VesselMovements ? VesselMovements.GetVesselMovement(vessel) : null; }
+
+        /** Return the current player vessel movement mode (if any). */
+        public static vesselMovement GetPlayerVesselMovement()
+            { return VesselMovements ? VesselMovements.GetPlayerVesselMovement() : null; }
 
         /** Set the current vessel color theme. */
         public static void SetColorTheme(megColorTheme theme)
