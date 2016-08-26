@@ -10,6 +10,8 @@ public class UnityToArduino : MonoBehaviour
 	public SubControl Controls;
 	public string COMPort = "";
 
+	private Vector3 desiredOrientation;
+
 	ArduinoManager Settings;
 
 	// initialization
@@ -22,7 +24,7 @@ public class UnityToArduino : MonoBehaviour
 				Settings = GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>();
 				COMPort = Settings.ComPort;
 			
-				port = new SerialPort(COMPort, 57600);
+				port = new SerialPort(COMPort, 115200);
 				if (!port.IsOpen)
 				{
 					port.Open();
@@ -48,18 +50,23 @@ public class UnityToArduino : MonoBehaviour
 		{
 
 
-			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-				(Server.yawAngle.ToString("F3")),
-				(Server.pitchAngle.ToString("F3")),
-				(Server.rollAngle.ToString("F3")),
+			//port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+			//	(Server.yawAngle.ToString("F3")),
+			//	(Server.pitchAngle.ToString("F3")),
+			//	(Server.rollAngle.ToString("F3")),
+			//
+			//	(Controls.inputXaxis.ToString("F3")),
+			//	(Controls.inputYaxis.ToString("F3")),
+			//	(Controls.inputZaxis.ToString("F3")))
+			//); 
 
-				(Controls.inputXaxis.ToString("F3")),
-				(Controls.inputYaxis.ToString("F3")),
-				(Controls.inputZaxis.ToString("F3")))
-			); 
+			port.Write(String.Format("${0}\0",
+				(Server.yawAngle.ToString("F3")))
+			);
 				
 
-			yield return new WaitForSeconds(0.016f);
+			//yield return new WaitForSeconds(0.016f);
+			yield return new WaitForSeconds(0.0083f);
 		}
 	} 
 
