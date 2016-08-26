@@ -276,6 +276,19 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the light data object. */
+        private static lightData _lightData;
+        public static lightData LightData
+        {
+            get
+            {
+                if (!_lightData && ServerObject)
+                    _lightData = ServerObject.GetComponent<lightData>();
+                return _lightData;
+            }
+        }
+
+
         /** Return the vessel movements controller. */
         public static vesselMovements VesselMovements
             { get { return GetVesselMovements(); } }
@@ -472,6 +485,16 @@ namespace Meg.Networking
             "joystickoverride",
             "joystickpilot",
             "latitude",
+            "lightarray1",
+            "lightarray2",
+            "lightarray3",
+            "lightarray4",
+            "lightarray5",
+            "lightarray6",
+            "lightarray7",
+            "lightarray8",
+            "lightarray9",
+            "lightarray10",
             "longitude",
             "maxwildlife",
             "maxspeed",
@@ -799,6 +822,16 @@ namespace Meg.Networking
             { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether pilot input is overridden by joysticks attached to the server."} },
             { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether input updates from pilot's joysticks (turn off for manual input editing)."} },
             { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees)." } },
+            { "lightarray1", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray2", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray3", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray4", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray5", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray6", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray7", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray8", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees)." } },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
@@ -1343,6 +1376,26 @@ namespace Meg.Networking
                     return ScreenData.greenScreenBrightness;
                 case "acidlayer":
                     return MapData.acidLayer;
+                case "lightarray1":
+                    return LightData.lightArray1;
+                case "lightarray2":
+                    return LightData.lightArray2;
+                case "lightarray3":
+                    return LightData.lightArray3;
+                case "lightarray4":
+                    return LightData.lightArray4;
+                case "lightarray5":
+                    return LightData.lightArray5;
+                case "lightarray6":
+                    return LightData.lightArray6;
+                case "lightarray7":
+                    return LightData.lightArray7;
+                case "lightarray8":
+                    return LightData.lightArray8;
+                case "lightarray9":
+                    return LightData.lightArray9;
+                case "lightarray10":
+                    return LightData.lightArray10;
                 case "maxwildlife":
                     return SonarData.MaxWildlife;
                 default:

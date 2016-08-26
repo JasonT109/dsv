@@ -233,6 +233,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private lightData _lightData;
+    public lightData LightData
+    {
+        get
+        {
+            if (!_lightData)
+                _lightData = GetComponent<lightData>();
+            return _lightData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -893,6 +904,36 @@ public class serverData : NetworkBehaviour
                 break;
             case "maxwildlife":
                 SonarData.MaxWildlife = (int)newValue;
+                break;
+            case "lightarray1":
+                LightData.lightArray1 = (int)newValue;
+                break;
+            case "lightarray2":
+                LightData.lightArray2 = (int)newValue;
+                break;
+            case "lightarray3":
+                LightData.lightArray3 = (int)newValue;
+                break;
+            case "lightarray4":
+                LightData.lightArray4 = (int)newValue;
+                break;
+            case "lightarray5":
+                LightData.lightArray5 = (int)newValue;
+                break;
+            case "lightarray6":
+                LightData.lightArray6 = (int)newValue;
+                break;
+            case "lightarray7":
+                LightData.lightArray7 = (int)newValue;
+                break;
+            case "lightarray8":
+                LightData.lightArray8 = (int)newValue;
+                break;
+            case "lightarray9":
+                LightData.lightArray9 = (int)newValue;
+                break;
+            case "lightarray10":
+                LightData.lightArray10 = (int)newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);

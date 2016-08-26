@@ -2,19 +2,22 @@
 using System.Collections;
 using UnityEngine.UI;
 using DG.Tweening;
+using Meg.Networking;
 
 public class DeployLights : MonoBehaviour 
 {
 	private GameObject colourThemeObj;
 	private Color kColor;
 
+    public int lightID = 0;
 	public bool light1 = false;
 	public bool light2 = false;
 	private int oldStatus = 10; //forces a state pass
 	private int deployStatus = 0;
 	// 0 = default off state
 	// 1 = ready to launch
-	// 2 = deployed
+	// 2 = light 1 launched
+    // 3 = both lights launched
 
 	public Image ReadyLeft;
 	public Image ReadyRight;
@@ -41,8 +44,7 @@ public class DeployLights : MonoBehaviour
 
 
 	}
-	
-	// Update is called once per frame
+
 	void Update () 
 	{
 		if(deployStatus == oldStatus)
@@ -65,14 +67,69 @@ public class DeployLights : MonoBehaviour
 				ReadyState();
 			}
 			return;
-		case 2:
-			{
-				DeployedState();
-			}
-			return;
+        case 2:
+            {
+                //ReadyState();
+            }
+            return;
+        case 3:
+		    {
+			    DeployedState();
+		    }
+		    return;
 		}
 			
 	}
+
+    /** Gets the color theme from the server object. */
+    void ObtainThemeColour()
+    {
+        if (colourThemeObj == null)
+            colourThemeObj = GameObject.FindWithTag("ServerData");
+
+        if (colourThemeObj)
+        {
+            kColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.keyColor;
+        }
+    }
+
+    /** Post server data so everyone stays in sync. */
+    private void PostData(int ID, float value)
+    {
+        switch(ID)
+        {
+            case 1:
+                serverUtils.PostServerData("lightarray1", value);
+                break;
+            case 2:
+                serverUtils.PostServerData("lightarray2", value);
+                break;
+            case 3:
+                serverUtils.PostServerData("lightarray3", value);
+                break;
+            case 4:
+                serverUtils.PostServerData("lightarray4", value);
+                break;
+            case 5:
+                serverUtils.PostServerData("lightarray5", value);
+                break;
+            case 6:
+                serverUtils.PostServerData("lightarray6", value);
+                break;
+            case 7:
+                serverUtils.PostServerData("lightarray7", value);
+                break;
+            case 8:
+                serverUtils.PostServerData("lightarray8", value);
+                break;
+            case 9:
+                serverUtils.PostServerData("lightarray9", value);
+                break;
+            case 10:
+                serverUtils.PostServerData("lightarray10", value);
+                break;
+        }
+    }
 
 	public void PowerUp()
 	{
@@ -86,27 +143,50 @@ public class DeployLights : MonoBehaviour
 
 	public void buttonPress()
 	{
-		if(deployStatus == 0)
-		{
-			deployStatus = 1;
-			return;
-		}
 
-		if(deployStatus == 1)
-		{
-			if(light1)
-			{
-				light1 = false;
-				Deploy1();
-				return;
-			}
-			else if(light2)
-			{
-				light2 = false;
-				Deploy2();
-			}
-		}
-	}
+        /*
+        if(deployStatus == 0)
+        {
+            deployStatus = 1;
+            return;
+        }
+
+
+        if(deployStatus == 1)
+        {
+            if(light1)
+            {
+                light1 = false;
+                Deploy1();
+                return;
+            }
+            else if(light2)
+            {
+                light2 = false;
+                Deploy2();
+            }
+        }
+        */
+
+        if (deployStatus == 3)
+            return;
+
+        if (deployStatus == 1)
+        {
+            light1 = false;
+            Deploy1();
+        }
+
+        if (deployStatus == 2)
+        {
+            light2 = false;
+            Deploy2();
+        }
+
+        //set the current state
+        deployStatus++;
+
+    }
 
 	public void DefaultState()
 	{
@@ -148,39 +228,34 @@ public class DeployLights : MonoBehaviour
 		
 	}
 
-	void Deploy1()
+    /** Sets the left paddle to Deployed. */
+    void Deploy1()
 	{
+
+        Debug.Log("Deploy state: " + deployStatus + "Launching light 1");
+
 		LeftText.SetText("DEPLOYED");
 
 		ReadyLeft.DOColor(new Color(kColor.r, kColor.g, kColor.b, 0f),0.2f);
 
 		StartCoroutine(Deploy1State1());
-		//StartCoroutine(Deploy1State2());
 	}
 
-	void Deploy2()
+
+    /** Sets the right paddle to Deployed. */
+    void Deploy2()
 	{
-		RightText.SetText("DEPLOYED");
+        Debug.Log("Deploy state: " + deployStatus + "Launching light 2");
+
+        RightText.SetText("DEPLOYED");
 		
 		ReadyRight.DOColor(new Color(kColor.r, kColor.g, kColor.b, 0f),0.2f);
 		
 		StartCoroutine(Deploy2State1());
-		//StartCoroutine(Deploy2State1());
-		//StartCoroutine(Deploy2State2());
 	}
 
-	void ObtainThemeColour()
-	{
-		if (colourThemeObj == null)
-			colourThemeObj = GameObject.FindWithTag("ServerData");
-
-		if(colourThemeObj)
-		{
-			kColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.keyColor;
-		}
-	}
-
-	IEnumerator ReadyState1()
+    /** Sets the ready state to launch. */
+    IEnumerator ReadyState1()
 	{
 		yield return new WaitForSeconds(0.1f);
 
@@ -191,9 +266,12 @@ public class DeployLights : MonoBehaviour
 
 	}
 
-	IEnumerator ReadyState2()
+    /** Sets left paddle color and text. */
+    IEnumerator ReadyState2()
 	{
-		yield return new WaitForSeconds(0.1f);
+        Debug.Log("Deploy state: " + deployStatus + "Powering up light 1");
+
+        yield return new WaitForSeconds(0.1f);
 
 		ReadyLeft.DOColor(new Color(kColor.r, kColor.g, kColor.b, 1),0.2f);
 		LeftText.SetText("READY");
@@ -201,15 +279,21 @@ public class DeployLights : MonoBehaviour
 
 	}
 
-	IEnumerator ReadyState3()
+
+    /** Sets right paddle color and text. */
+    IEnumerator ReadyState3()
 	{
-		yield return new WaitForSeconds(0.2f);
+        Debug.Log("Deploy state: " + deployStatus + "Powering up light 2");
+
+        yield return new WaitForSeconds(0.2f);
 
 		ReadyRight.DOColor(new Color(kColor.r, kColor.g, kColor.b, 1),0.2f);
 		RightText.SetText("READY");
 
 	}
 
+
+    /** Launches the left light, always first. */
 	IEnumerator Deploy1State1()
 	{
 		ReadyHighlight.DOColor(new Color(kColor.r, kColor.g, kColor.b, 0.1f),0.2f);
@@ -224,7 +308,8 @@ public class DeployLights : MonoBehaviour
 	
 	}
 
-	IEnumerator Deploy2State1()
+    /** Launches the right light and sets the launched text. */
+    IEnumerator Deploy2State1()
 	{
 		ReadyHighlight.DOColor(new Color(kColor.r, kColor.g, kColor.b, 0.0f),0.2f);
 		this.GetComponent<Image>().DOColor(new Color(1f, 1f, 1f, 1.0f),0.1f);
