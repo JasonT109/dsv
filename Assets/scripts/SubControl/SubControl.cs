@@ -101,7 +101,7 @@ public class SubControl : NetworkBehaviour
         UpdateData();
 
         // Don't apply sub control if vessel is being moved by the vessel simulation.
-        var movement = serverUtils.GetVesselMovements().GetPlayerVesselMovement();
+        var movement = serverUtils.GetPlayerVesselMovement();
         if (movement && movement.Active)
             return;
 

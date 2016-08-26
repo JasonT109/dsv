@@ -12,13 +12,13 @@ public class vesselSetVector : vesselMovement
     // ------------------------------------------------------------
 
     /** Smoothing time for actual speed. */
-    public const float SpeedSmoothTime = 30;
+    public const float SpeedSmoothTime = 0.5f;
 
     /** Smoothing time for actual heading . */
-    public const float HeadingSmoothTime = 15;
+    public const float HeadingSmoothTime = 0.5f;
 
     /** Smoothing time for actual dive angle. */
-    public const float DiveAngleSmoothTime = 20;
+    public const float DiveAngleSmoothTime = 0.5f;
 
 
     // Properties
@@ -106,9 +106,9 @@ public class vesselSetVector : vesselMovement
 
         // Apply smoothing to actual speed, etc.
         var dt = GetDeltaTime();
-        _speed = Mathf.SmoothDamp(_speed, Speed, ref _speedVelocity, SpeedSmoothTime * dt);
-        _heading = Mathf.SmoothDampAngle(_heading, Heading, ref _headingVelocity, HeadingSmoothTime * dt);
-        _diveAngle = Mathf.SmoothDamp(_diveAngle, DiveAngle, ref _diveAngleVelocity, DiveAngleSmoothTime * dt);
+        _speed = Mathf.SmoothDamp(_speed, Speed, ref _speedVelocity, SpeedSmoothTime);
+        _heading = Mathf.SmoothDampAngle(_heading, Heading, ref _headingVelocity, HeadingSmoothTime);
+        _diveAngle = Mathf.SmoothDamp(_diveAngle, DiveAngle, ref _diveAngleVelocity, DiveAngleSmoothTime);
 
         // Determine change in position based on direction and velocity.
         var direction = Quaternion.Euler(0, 0, -_heading) * Quaternion.Euler(_diveAngle, 0, 0) * Vector3.up;
@@ -128,7 +128,7 @@ public class vesselSetVector : vesselMovement
 
     /** Set the movement's speed. */
     public override void SetSpeed(float value)
-        { Speed = value; }
+        { Speed = Mathf.Clamp(value, 0, MaxSpeed); }
 
     /** Return the movement's maximum speed. */
     public override float GetMaxSpeed()
@@ -136,7 +136,9 @@ public class vesselSetVector : vesselMovement
 
     /** Set the movement's maximum speed. */
     public override void SetMaxSpeed(float value)
-        { MaxSpeed = value; }
-
+    {
+        MaxSpeed = value;
+        Speed = Mathf.Clamp(Speed, 0, MaxSpeed);
+    }
 
 }

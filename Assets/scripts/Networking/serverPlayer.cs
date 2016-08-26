@@ -113,6 +113,24 @@ public class serverPlayer : NetworkBehaviour
             CmdTriggerMapCameraState(state);
     }
 
+    /** Post vessel position to the server. */
+    public void PostVesselPosition(int id, Vector3 position)
+    {
+        if (isServer)
+            ServerSetVesselPosition(id, position);
+        else
+            CmdSetVesselPosition(id, position);
+    }
+
+    /** Post vessel movement type to the server. */
+    public void PostVesselMovementType(int id, string type)
+    {
+        if (isServer)
+            ServerSetVesselMovementType(id, type);
+        else
+            CmdSetVesselMovementType(id, type);
+    }
+
     /** Post vessel movements state to the server. */
     public void PostVesselMovementState(JSONObject json)
     {
@@ -194,6 +212,16 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdTriggerMapCameraState(megMapCameraEventManager.State state)
         { ServerTriggerMapCameraState(state); }
+
+    /** Set vessel position to the server. */
+    [Command]
+    public void CmdSetVesselPosition(int id, Vector3 position)
+        { ServerSetVesselPosition(id, position); }
+
+    /** Set vessel movement type on the server. */
+    [Command]
+    public void CmdSetVesselMovementType(int id, string type)
+        { ServerSetVesselMovementType(id, type); }
 
     /** Command to set vessel movements state on the server. */
     [Command]
@@ -282,12 +310,20 @@ public class serverPlayer : NetworkBehaviour
         RpcTriggerMapCameraState(state);
     }
 
+    /** Set vessel position to the server. */
+    [Server]
+    public void ServerSetVesselPosition(int id, Vector3 position)
+        { serverUtils.VesselData.SetPosition(id, position); }
+
+    /** Set vessel movement type on the server. */
+    [Server]
+    public void ServerSetVesselMovementType(int id, string type)
+        { serverUtils.VesselMovements.SetMovementType(id, type); }
+
     /** Set vessel movements state on the server. */
     [Server]
     public void ServerSetVesselMovementState(JSONObject json)
-    {
-        serverUtils.VesselMovements.LoadVessel(json);
-    }
+        { serverUtils.VesselMovements.LoadVessel(json); }
 
     /** Add a popup on the server. */
     [Server]
