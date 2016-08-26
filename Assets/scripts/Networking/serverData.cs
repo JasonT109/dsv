@@ -806,6 +806,9 @@ public class serverData : NetworkBehaviour
             case "sonarlongsensitivity":
                 SonarData.LongSensitivity = newValue;
                 break;
+            case "sonarproximity":
+                SonarData.Proximity = newValue;
+                break;
             case "sonarshortfrequency":
                 SonarData.ShortFrequency = newValue;
                 break;

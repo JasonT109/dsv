@@ -568,6 +568,7 @@ namespace Meg.Networking
             "sonarlonggain",
             "sonarlongrange",
             "sonarlongsensitivity",
+            "sonarproximity",
             "sonarshortfrequency",
             "sonarshortgain",
             "sonarshortrange",
@@ -905,6 +906,7 @@ namespace Meg.Networking
             { "sonarlonggain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for 360 (long-range) sonar. (%)" } },
             { "sonarlongrange", new ParameterInfo { minValue = 1000, maxValue = 6000, type = ParameterType.Int, description = "Range setting for 360 (long-range) sonar (m)." } },
             { "sonarlongsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for 360 (long-range) sonar. (%)" } },
+            { "sonarproximity", new ParameterInfo { maxValue = 1, description = "Proximity alert for long range sonar (0 = full alert)." } },
             { "sonarshortfrequency", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Frequency setting for front-scanning (short-range) sonar (kHz)." } },
             { "sonarshortgain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for front-scanning (short-range) sonar (%)."} },
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
@@ -1328,6 +1330,8 @@ namespace Meg.Networking
                     return SonarData.LongRange;
                 case "sonarlongsensitivity":
                     return SonarData.LongSensitivity;
+                case "sonarproximity":
+                    return SonarData.Proximity;
                 case "sonarshortfrequency":
                     return SonarData.ShortFrequency;
                 case "sonarshortgain":
