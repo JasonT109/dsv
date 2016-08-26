@@ -64,7 +64,14 @@ public class UnityToArduino : MonoBehaviour
 	} 
 
 	void OnDestroy()
-	{ 
-		port.Close(); 
-	}
+	{
+        try
+        {
+            port.Close();
+        }
+        catch (NullReferenceException e)
+        {
+            Debug.Log(e);
+        }
+    }
 }

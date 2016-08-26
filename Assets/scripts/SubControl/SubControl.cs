@@ -65,7 +65,7 @@ public class SubControl : NetworkBehaviour
     private float pitch;
 
 	private float forwardThrust = 50f;
-	private float AccelRatio = 0.0f;
+	//private float AccelRatio = 0.0f;
 
 	// Use this for initialization
 	void Awake() 
