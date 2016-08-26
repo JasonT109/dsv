@@ -853,7 +853,7 @@ namespace Meg.Networking
 			{ "motionbasepitch", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
 			{ "motionbaseyaw", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
 			{ "motionbaseroll", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base."} },
-			{ "motionsafety", new ParameterInfo { description = "Safety first"} },
+			{ "motionsafety", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool,description = "Safety first"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
