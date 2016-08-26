@@ -10,9 +10,11 @@ public class UnityToArduino : MonoBehaviour
 	public SubControl Controls;
 	public string COMPort = "";
 
-	private Vector3 desiredOrientation;
+	private Quaternion motionBase;
 
 	ArduinoManager Settings;
+
+	float time = 0.0f;
 
 	// initialization
 	void Start()
@@ -44,25 +46,65 @@ public class UnityToArduino : MonoBehaviour
 		//	COMPort = Settings.ComPort;
 		//}
 	}
+
 	IEnumerator SendData()
 	{
 		while (port.IsOpen)
 		{
+			motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*2f);
+			Controls.MotionBasePitch = motionBase.eulerAngles.x;
+			Controls.MotionBaseYaw = motionBase.eulerAngles.y;
+			Controls.MotionBaseRoll = motionBase.eulerAngles.z;
 
+			if(Controls.MotionBasePitch > 180f)
+			{
+				Controls.MotionBasePitch = motionBase.eulerAngles.x-360f;
+			}
 
-			//port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-			//	(Server.yawAngle.ToString("F3")),
-			//	(Server.pitchAngle.ToString("F3")),
-			//	(Server.rollAngle.ToString("F3")),
-			//
-			//	(Controls.inputXaxis.ToString("F3")),
-			//	(Controls.inputYaxis.ToString("F3")),
-			//	(Controls.inputZaxis.ToString("F3")))
-			//); 
+			if(Controls.MotionBaseYaw > 180f)
+			{
+				Controls.MotionBaseYaw = motionBase.eulerAngles.y-360f;
+			}
 
-			port.Write(String.Format("${0}\0",
-				(Server.yawAngle.ToString("F3")))
-			);
+			if(Controls.MotionBaseRoll > 180f)
+			{
+				Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
+			}
+
+			if(Controls.MotionBaseRoll > 33f)
+			{
+				Controls.MotionBaseRoll = 33f;
+			}
+
+			if(Controls.MotionBaseRoll < -33f)
+			{
+				Controls.MotionBaseRoll = -33f;
+			}
+
+			if(Controls.MotionBasePitch > 37f)
+			{
+				Controls.MotionBasePitch = 37f;
+			}
+
+			if(Controls.MotionBasePitch < -37f)
+			{
+				Controls.MotionBasePitch = -37f;
+			}
+
+			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+				(Controls.MotionBaseYaw.ToString("F3")),
+				(Controls.MotionBasePitch.ToString("F3")),
+				(Controls.MotionBaseRoll.ToString("F3")),
+			
+				(Controls.inputXaxis.ToString("F3")),
+				(Controls.inputYaxis.ToString("F3")),
+				(Controls.inputZaxis.ToString("F3")))
+			); 
+
+			//port.Write(String.Format("${0}\0",
+			//	(Controls.MotionBasePitch.ToString("F3")))
+			//);
+				
 				
 
 			//yield return new WaitForSeconds(0.016f);

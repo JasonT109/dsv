@@ -52,6 +52,17 @@ public class SubControl : NetworkBehaviour
 	[SyncVar]
 	public bool isControlOverrideStandard = false;
 
+	[SyncVar]
+	public float MotionBasePitch;
+	[SyncVar]
+	public float MotionBaseYaw;
+	[SyncVar]
+	public float MotionBaseRoll;
+	[SyncVar]
+	public float MotionDampen;
+	[SyncVar] 
+	public bool MotionSafety;
+
 
     private float currentThrust = 0.0f;
     private Rigidbody rb;

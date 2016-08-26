@@ -491,6 +491,10 @@ namespace Meg.Networking
             "megspeed",
             "megturnspeed",
             "minspeed",
+			"motionbasepitch",
+			"motionbaseyaw",
+			"motionbaseroll",
+			"motionbasesafety",
             "o1",
             "o2",
             "o3",
@@ -813,6 +817,10 @@ namespace Meg.Networking
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
             { "megturnspeed", new ParameterInfo { description = "Speed that the Meg turns in the short-range sonar display."} },
             { "minspeed", new ParameterInfo { description = "Sub's minimum speed at 100% reverse throttle (m/s)."} },
+			{ "motionbasepitch", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
+			{ "motionbaseyaw", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
+			{ "motionbaseroll", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base."} },
+			{ "motionsafety", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool,description = "Safety first"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1269,6 +1277,14 @@ namespace Meg.Networking
                     return SonarData.MegSpeed;
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed;
+				case "motionsafety":
+					return SubControl.MotionSafety ? 1 : 0;
+				case "motionbasepitch":
+					return SubControl.MotionBasePitch;
+				case "motionbaseyaw":
+					return SubControl.MotionBaseYaw;
+				case "motionbaseroll":
+					return SubControl.MotionBaseRoll;
                 case "sonarlongfrequency":
                     return SonarData.LongFrequency;
                 case "sonarlonggain":
@@ -1537,6 +1553,12 @@ namespace Meg.Networking
                     return SonarData.MegSpeed.ToString("n1");
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
+				case "motionbasepitch":
+					return SubControl.MotionBasePitch.ToString("n1");
+				case "motionbaseyaw":
+					return SubControl.MotionBaseYaw.ToString("n1");
+				case "motionbaseroll":
+					return SubControl.MotionBaseRoll.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
@@ -1626,6 +1648,8 @@ namespace Meg.Networking
                     return SubControl.JoystickPilot;
                 case "screenglitchautodecay":
                     return ScreenData.screenGlitchAutoDecay;
+				case "motionsafety":
+					return SubControl.MotionSafety;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);
