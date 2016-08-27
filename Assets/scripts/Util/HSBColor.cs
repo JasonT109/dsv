@@ -44,8 +44,11 @@ public struct HSBColor
 
     public HSBColor Brighten(float bScale)
         { b *= bScale; return this; }
-	
-	public static HSBColor FromColor(Color color)
+
+    public HSBColor Fade(float aScale)
+        { a *= aScale; return this; }
+
+    public static HSBColor FromColor(Color color)
 	{
 		HSBColor ret = new HSBColor(0f, 0f, 0f, color.a);
 		

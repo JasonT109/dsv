@@ -19,7 +19,7 @@ public class graphicsScrollingText : widgetText
     public string Suffix;
 
     public Vector2 InitialDelayRange = new Vector2(0, 0.5f);
-    public Vector2 CharactersPerSecondRange = new Vector2(0, 10000);
+    public Vector2 CharactersPerSecondRange = new Vector2(120, 180);
     public Vector2 DelayBetweenLinesRange = new Vector2(0.25f, 0.5f);
 
     public int MaxVisibleLines = 0;

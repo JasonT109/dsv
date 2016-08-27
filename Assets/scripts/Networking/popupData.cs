@@ -23,10 +23,16 @@ public class popupData : NetworkBehaviour
     [Header("Prefabs")]
 
     /** Prefab to use when instantiating warning popups. */
-    public widgetPopup PopupWarningPrefab;
+    public widgetPopup PopupInfoPrefab;
 
     /** Prefab to use when instantiating greenscreen popups. */
     public widgetPopup PopupGreenPrefab;
+
+    /** Prefab to use for bootup popup. */
+    public widgetPopup PopupBoot;
+
+    /** Prefab to use for low power bootup popup. */
+    public widgetPopup PopupBootLowPower;
 
 
     // Enumerations
@@ -35,8 +41,10 @@ public class popupData : NetworkBehaviour
     /** Possible popup types. */
     public enum Type
     {
-        Warning,
-        Green
+        Info,
+        GreenScreen,
+        Boot,
+        BootLowPower
     }
 
     /** Possible popup icons. */
@@ -62,6 +70,7 @@ public class popupData : NetworkBehaviour
         public Vector3 Position;
         public Vector2 Size;
         public Icon Icon;
+        public Color Color;
 
         /** Constructor. */
         public Popup(Popup popup)
@@ -72,6 +81,7 @@ public class popupData : NetworkBehaviour
             Position = popup.Position;
             Size = popup.Size;
             Icon = popup.Icon;
+            Color = popup.Color;
         }
 
         /** Equality operator. */
@@ -86,7 +96,8 @@ public class popupData : NetworkBehaviour
                 && string.Equals(Target, other.Target) 
                 && Position.Equals(other.Position) 
                 && Size.Equals(other.Size)
-                && Icon == other.Icon;
+                && Icon == other.Icon
+                && Color == other.Color;
         }
 
         /** Hashcode (used for collection keys). */
@@ -100,6 +111,7 @@ public class popupData : NetworkBehaviour
                 hashCode = (hashCode * 397) ^ Position.GetHashCode();
                 hashCode = (hashCode * 397) ^ Size.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Icon;
+                hashCode = (hashCode * 397) ^ Color.GetHashCode();
                 return hashCode;
             }
         }
@@ -109,12 +121,42 @@ public class popupData : NetworkBehaviour
         {
             switch (Type)
             {
-                case Type.Warning:
+                case Type.Info:
                     return icon != Icon.Dots;
-                case Type.Green:
+                case Type.GreenScreen:
                     return icon == Icon.None || icon == Icon.Dots;
+                case Type.Boot:
+                case Type.BootLowPower:
+                    return false;
                 default:
                     return true;
+            }
+        }
+
+        /** Whether popup's title can be changed. */
+        public bool CanSetTitle
+            { get { return Type == Type.Info; } }
+
+        /** Whether popup's color can be changed. */
+        public bool CanSetColor
+            { get { return Type == Type.Info; } }
+
+        /** Whether popup's position can be changed. */
+        public bool CanSetPosition
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case Type.Info:
+                    case Type.GreenScreen:
+                        return true;
+                    case Type.Boot:
+                    case Type.BootLowPower:
+                        return false;
+                    default:
+                        return true;
+                }
             }
         }
 
@@ -238,12 +280,16 @@ public class popupData : NetworkBehaviour
     {
         switch (popup.Type)
         {
-            case Type.Warning:
-                return PopupWarningPrefab;
-            case Type.Green:
+            case Type.Info:
+                return PopupInfoPrefab;
+            case Type.GreenScreen:
                 return PopupGreenPrefab;
+            case Type.Boot:
+                return PopupBoot;
+            case Type.BootLowPower:
+                return PopupBootLowPower;
             default:
-                return PopupWarningPrefab;
+                return PopupInfoPrefab;
         }
     }
 

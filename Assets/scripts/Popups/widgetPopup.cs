@@ -79,6 +79,11 @@ public class widgetPopup : MonoBehaviour
     {
         Popup = popup;
 
+        // Apply color theming.
+        var themed = GetComponentsInChildren<PopupColorThemed>();
+        foreach (var t in themed)
+            t.UpdateColor(popup);
+
         // Configure popup.
         if (Title)
             Title.text = popup.Title;

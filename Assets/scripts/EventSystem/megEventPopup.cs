@@ -14,12 +14,13 @@ namespace Meg.EventSystem
         // Properties
         // ------------------------------------------------------------
 
-        public popupData.Type Type = popupData.Type.Warning;
+        public popupData.Type Type = popupData.Type.Info;
         public string Title = "";
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;
         public popupData.Icon Icon = popupData.Icon.Exclamation;
+        public Color Color = Color.white;
 
         /** Popup configuration data. */
         public popupData.Popup Popup
@@ -33,7 +34,8 @@ namespace Meg.EventSystem
                     Target = Target,
                     Position = Position,
                     Size = Size,
-                    Icon = Icon
+                    Icon = Icon,
+                    Color = Color
                 };
             }
         }
@@ -71,6 +73,7 @@ namespace Meg.EventSystem
             json.AddField("Position", Position);
             json.AddField("Size", Size);
             json.AddField("Icon", (int) Icon);
+            json.AddField("Color", Color);
 
             return json;
         }
@@ -88,6 +91,7 @@ namespace Meg.EventSystem
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
             json.GetField(ref Size, "Size");
+            json.GetField(ref Color, "Color");
 
             var icon = 0;
             json.GetField(ref icon, "Icon");

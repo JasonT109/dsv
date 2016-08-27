@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"25/08/16 09:24:14.7",
-		"startedTimestamp":"25/08/16 09:23:41.0",
-		"stoppedTimestamp":"25/08/16 09:24:06.1"
+		"utc":"26/08/16 11:35:36.6",
+		"startedTimestamp":"26/08/16 11:35:24.2",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
@@ -26,7 +26,13 @@
 						0,
 						0
 					],
-					"Icon":2
+					"Icon":2,
+					"Color":[
+						0.6745098,
+						0.1176471,
+						0.1686275,
+						1
+					]
 				},
 				{
 					"type":"Popup",
@@ -43,39 +49,13 @@
 						1865,
 						820
 					],
-					"Icon":2
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"IMPACT ALERT!",
-					"Target":"DiagnosticsSub",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						760,
-						440
-					],
-					"Icon":4
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Target":"Instruments",
-					"Position":[
-						-740,
-						-50,
-						0
-					],
-					"Size":[
-						370,
-						700
-					],
-					"Icon":0
+					"Icon":2,
+					"Color":[
+						0.9333334,
+						0.3137255,
+						0.1882353,
+						1
+					]
 				}
 			]
 		}
