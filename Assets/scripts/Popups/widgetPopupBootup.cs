@@ -34,6 +34,8 @@ public class widgetPopupBootup : widgetPopup
         Logo.alpha = 0;
         Logo.DOFade(1, 2).SetDelay(1);
 
+        Flash.gameObject.SetActive(false);
+        Burst.gameObject.SetActive(false);
         Black.gameObject.SetActive(false);
         Code.gameObject.SetActive(false);
         Online.gameObject.SetActive(false);
@@ -47,14 +49,12 @@ public class widgetPopupBootup : widgetPopup
         // Wait a bit on the boot screen
         yield return new WaitForSeconds(1f);
 
-        // Kick off logo fade.
+        // Kick off screen flash and burst animations.
         Flash.gameObject.SetActive(true);
-        Flash.alpha = 0;
-        Flash.DOFade(0, 0.25f);
-
+        Flash.DOFade(0, 0.5f);
         Burst.gameObject.SetActive(true);
-        Burst.transform.DOScale(Vector3.zero, 0.5f).From();
-        Burst.DOFade(0, 0.5f);
+        Burst.transform.DOScale(Vector3.zero, 1f).From();
+        Burst.DOFade(0, 1f);
 
         // Wait for initial logo fade to complete.
         yield return new WaitForSeconds(2.25f);

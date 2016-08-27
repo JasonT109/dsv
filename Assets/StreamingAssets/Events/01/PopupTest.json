@@ -1,7 +1,7 @@
 {
 	"metadata":{
-		"utc":"26/08/16 11:35:36.6",
-		"startedTimestamp":"26/08/16 11:35:24.2",
+		"utc":"27/08/16 10:45:38.3",
+		"startedTimestamp":"27/08/16 10:44:59.9",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
@@ -16,6 +16,7 @@
 					"completeTime":5,
 					"Type":0,
 					"Title":"COMMS ERROR",
+					"Message":"Zing Zang Booble!",
 					"Target":"Comms",
 					"Position":[
 						0,
@@ -39,6 +40,7 @@
 					"completeTime":5,
 					"Type":0,
 					"Title":"LIGHTS WARNING",
+					"Message":"Please check the manual!",
 					"Target":"Lights",
 					"Position":[
 						0,

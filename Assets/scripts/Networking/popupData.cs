@@ -66,6 +66,7 @@ public class popupData : NetworkBehaviour
     {
         public Type Type;
         public string Title;
+        public string Message;
         public string Target;
         public Vector3 Position;
         public Vector2 Size;
@@ -77,6 +78,7 @@ public class popupData : NetworkBehaviour
         {
             Type = popup.Type;
             Title = popup.Title;
+            Message = popup.Message;
             Target = popup.Target;
             Position = popup.Position;
             Size = popup.Size;
@@ -92,7 +94,8 @@ public class popupData : NetworkBehaviour
         public bool Equals(Popup other)
         {
             return Type.Equals(other.Type)
-                && string.Equals(Title, other.Title) 
+                && string.Equals(Title, other.Title)
+                && string.Equals(Message, other.Message)
                 && string.Equals(Target, other.Target) 
                 && Position.Equals(other.Position) 
                 && Size.Equals(other.Size)
@@ -107,6 +110,7 @@ public class popupData : NetworkBehaviour
             {
                 var hashCode = (int) Type;
                 hashCode = (hashCode * 397) ^ (Title != null ? Title.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Message != null ? Message.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Target != null ? Target.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Position.GetHashCode();
                 hashCode = (hashCode * 397) ^ Size.GetHashCode();
@@ -151,6 +155,10 @@ public class popupData : NetworkBehaviour
                 }
             }
         }
+
+        /** Whether popup's message can be changed. */
+        public bool CanSetMessage
+            { get { return Type == Type.Info; } }
 
         /** Whether popup's color can be changed. */
         public bool CanSetColor
@@ -285,8 +293,12 @@ public class popupData : NetworkBehaviour
         var newPopups = Popups.Where(key => !_popupWidgets.ContainsKey(key)).ToList();
         foreach (var popup in newPopups)
         {
-            _popupWidgets[popup] = Instantiate(GetPrefabForPopup(popup));
-            _popupWidgets[popup].Show(popup);
+            var go = Instantiate(GetPrefabForPopup(popup));
+            if (!go)
+                continue;
+
+            go.Show(popup);
+            _popupWidgets[popup] = go;
         }
     }
 

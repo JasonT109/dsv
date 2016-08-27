@@ -16,6 +16,7 @@ namespace Meg.EventSystem
 
         public popupData.Type Type = popupData.Type.Info;
         public string Title = "";
+        public string Message = "ERROR 31: Unknown Error";
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;
@@ -31,6 +32,7 @@ namespace Meg.EventSystem
                 {
                     Type = Type,
                     Title = Title,
+                    Message = Message,
                     Target = Target,
                     Position = Position,
                     Size = Size,
@@ -69,6 +71,7 @@ namespace Meg.EventSystem
             var json = base.Save();
             json.AddField("Type", (int) Type);
             json.AddField("Title", Title);
+            json.AddField("Message", Message);
             json.AddField("Target", Target);
             json.AddField("Position", Position);
             json.AddField("Size", Size);
@@ -88,6 +91,7 @@ namespace Meg.EventSystem
             Type = (popupData.Type) type;
 
             json.GetField(ref Title, "Title");
+            json.GetField(ref Message, "Message");
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
             json.GetField(ref Size, "Size");

@@ -137,6 +137,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public Transform PopupProperties;
     public Toggle[] PopupTypeToggles;
     public InputField PopupTitleInput;
+    public InputField PopupMessageInput;
     public InputField PopupTargetInput;
     public InputField PopupXInput;
     public InputField PopupYInput;
@@ -1268,6 +1269,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void ConfigurePopupProperties()
     {
         PopupTitleInput.onEndEdit.AddListener(PopupTitleInputChanged);
+        PopupMessageInput.onEndEdit.AddListener(PopupMessageInputChanged);
         PopupTargetInput.onEndEdit.AddListener(PopupTargetInputChanged);
         PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
         PopupYInput.onEndEdit.AddListener(PopupYInputChanged);
@@ -1303,6 +1305,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         UpdatePopupTypeToggles();
         UpdatePopupTitleInput();
+        UpdatePopupMessageInput();
         UpdatePopupTargetInput();
         UpdatePopupPositionInputs();
         UpdatePopupSizeInputs();
@@ -1328,6 +1331,20 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PopupEvent.Title = value;
+    }
+
+    private void UpdatePopupMessageInput()
+    {
+        PopupMessageInput.text = PopupEvent.Popup.CanSetMessage ? PopupEvent.Message : "";
+        PopupMessageInput.transform.parent.gameObject.SetActive(PopupEvent.Popup.CanSetMessage);
+    }
+
+    public void PopupMessageInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Message = value;
     }
 
     private void UpdatePopupTargetInput()

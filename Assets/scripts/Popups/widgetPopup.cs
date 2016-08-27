@@ -31,6 +31,9 @@ public class widgetPopup : MonoBehaviour
     /** Title text. */
     public Text Title;
 
+    /** Message text. */
+    public Text Message;
+
     /** Popup icon graphics. */
     public Image[] Icons;
 
@@ -92,6 +95,16 @@ public class widgetPopup : MonoBehaviour
                 scrolling.Lines = popup.Title;
             else
                 Title.text = popup.Title;
+        }
+
+        // Configure popup message.
+        if (Message)
+        {
+            var scrolling = Message.GetComponent<graphicsScrollingText>();
+            if (scrolling)
+                scrolling.Lines = popup.Message;
+            else
+                Message.text = popup.Message;
         }
 
         // Configure icons.
