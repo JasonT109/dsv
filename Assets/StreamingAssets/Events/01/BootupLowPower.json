@@ -1,6 +1,6 @@
 {
 	"metadata":{
-		"utc":"27/08/16 03:22:02.5",
+		"utc":"27/08/16 03:21:43.4",
 		"startedTimestamp":"27/08/16 03:21:21.9",
 		"stoppedTimestamp":"27/08/16 03:21:36.7"
 	},
@@ -17,13 +17,13 @@
 			]
 		},
 		{
-			"id":"BOOTUP SEQUENCE",
+			"id":"LOW POWER BOOTUP",
 			"paused":true,
 			"events":[
 				{
 					"type":"Popup",
 					"completeTime":10,
-					"Type":2,
+					"Type":3,
 					"Title":"",
 					"Target":"",
 					"Position":[
@@ -48,6 +48,13 @@
 					"completeTime":0.3,
 					"serverParam":"cameraBrightness",
 					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerTime":7,
+					"completeTime":1,
+					"serverParam":"cameraBrightness",
+					"serverValue":0.5
 				}
 			]
 		}
