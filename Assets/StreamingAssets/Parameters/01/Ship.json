@@ -30,6 +30,14 @@
 				{
 					"type":"Value",
 					"serverParam":"motionbaseroll"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionsafety"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionslerpspeed"
 				}
 			]
 		},
@@ -100,6 +108,51 @@
 				{
 					"type":"Value",
 					"serverParam":"acceleration"
+				}
+			]
+		},
+		{
+			"id":"MOTION BASE",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"pitchAngle"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionBasePitch"
+				},
+				{
+					"type":"Value",
+					"serverParam":"rollAngle"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionBaseRoll"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionSafety"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionSlerpSpeed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionHazard"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionHazardSensitivity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionScaleImpacts"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionHazardEnabled"
 				}
 			]
 		}

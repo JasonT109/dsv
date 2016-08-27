@@ -61,7 +61,17 @@ public class SubControl : NetworkBehaviour
 	[SyncVar]
 	public float MotionDampen;
 	[SyncVar] 
-	public bool MotionSafety;
+	public bool MotionSafety = true;
+	[SyncVar] 
+	public bool MotionHazard = false;
+	[SyncVar] 
+	public float MotionSlerpSpeed = 2f;
+	[SyncVar] 
+	public float MotionHazardSensitivity = 15f;
+	[SyncVar] 
+	public bool MotionHazardEnabled = true;
+	[SyncVar] 
+	public float MotionScaleImpacts = 1.0f;
 
 
     private float currentThrust = 0.0f;
@@ -87,6 +97,12 @@ public class SubControl : NetworkBehaviour
         MinSpeed = -(0.5f * MaxSpeed);
 
         JoystickOverride = false;
+
+		MotionSafety = true;
+		MotionHazard = false;
+		MotionHazardSensitivity = 15f;
+		MotionHazardEnabled = true;
+		MotionSlerpSpeed = 2f;
 	}
 
     // Snap the sub to a given worldspace velocity vector.
@@ -285,9 +301,14 @@ public class SubControl : NetworkBehaviour
     /** Apply an impact impulse vector to the sub's rigidbody. */
     public void Impact(Vector3 impactVector)
     {
+		if(MotionScaleImpacts > 1.0f)
+		{
+			MotionScaleImpacts = 1.0f;
+		}
+
         // TODO: Apply limits to impactVector (or scale it down, or both) when
         // UnityToArduino is actively piping data out to the motion control rig.
-        rb.AddTorque(impactVector, ForceMode.VelocityChange);
+		rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
     }
 
 }

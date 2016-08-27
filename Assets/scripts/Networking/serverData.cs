@@ -777,8 +777,23 @@ public class serverData : NetworkBehaviour
 			//case "motionbaseroll":
 			//	SubControl.MotionBaseRoll = newValue;
 			//	break;
+			case "motionslerpspeed":
+				SubControl.MotionSlerpSpeed = newValue;
+				break;
+			case "motionhazardsensitivity":
+				SubControl.MotionHazardSensitivity = newValue;
+				break;
 			case "motionsafety":
 				SubControl.MotionSafety = newValue > 0;
+				break;
+			case "motionhazard":
+				SubControl.MotionHazard = newValue > 0;
+				break;
+			case "motionhazardenabled":
+				SubControl.MotionHazardEnabled = newValue > 0;
+				break;
+			case "motionscaleimpacts":
+				SubControl.MotionScaleImpacts = newValue;
 				break;
             case "sonarlongfrequency":
                 SonarData.LongFrequency = newValue;
@@ -1049,6 +1064,12 @@ public class serverData : NetworkBehaviour
             case "iscontroloverridestandard":
                 SubControl.isControlOverrideStandard = newValue;
                 break;
+			case "motionhazard":
+				SubControl.MotionHazard = newValue;
+				break;
+			case "motionhazardenabled":
+				SubControl.MotionHazardEnabled = newValue;
+				break;
 			case "motionsafety":
 				SubControl.MotionSafety = newValue;
 				break;

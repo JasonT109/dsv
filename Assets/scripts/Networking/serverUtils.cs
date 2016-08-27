@@ -494,7 +494,12 @@ namespace Meg.Networking
 			"motionbasepitch",
 			"motionbaseyaw",
 			"motionbaseroll",
-			"motionbasesafety",
+			"motionsafety",
+			"motionhazard",
+			"motionhazardenabled",
+			"motionslerpspeed",
+			"motionhazardsensitivity",
+			"motionscaleimpacts",
             "o1",
             "o2",
             "o3",
@@ -818,9 +823,14 @@ namespace Meg.Networking
             { "megturnspeed", new ParameterInfo { description = "Speed that the Meg turns in the short-range sonar display."} },
             { "minspeed", new ParameterInfo { description = "Sub's minimum speed at 100% reverse throttle (m/s)."} },
 			{ "motionbasepitch", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
-			{ "motionbaseyaw", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
+			{ "motionbaseyaw", new ParameterInfo { minValue = 0, maxValue = 360, description = "current orientation sent to the motion base"} },
 			{ "motionbaseroll", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base."} },
 			{ "motionsafety", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool,description = "Safety first"} },
+			{ "motionhazard", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool,description = "Safety first"} },
+			{ "motionhazardenabled", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool,description = "Safety first"} },
+			{ "motionslerpspeed", new ParameterInfo { maxValue = 30, description = "t multiplier for the motion base's slerp"} },
+			{ "motionhazardsensitivity", new ParameterInfo { maxValue = 30, description = "sensitivity of tripping a motion base hazard"} },
+			{ "motionscaleimpacts", new ParameterInfo { maxValue = 1, description = "sensitivity of tripping a motion base hazard"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1279,12 +1289,22 @@ namespace Meg.Networking
                     return SonarData.MegTurnSpeed;
 				case "motionsafety":
 					return SubControl.MotionSafety ? 1 : 0;
+				case "motionhazard":
+					return SubControl.MotionHazard ? 1 : 0;
+				case "motionhazardenabled":
+					return SubControl.MotionHazardEnabled ? 1 : 0;
 				case "motionbasepitch":
 					return SubControl.MotionBasePitch;
 				case "motionbaseyaw":
 					return SubControl.MotionBaseYaw;
 				case "motionbaseroll":
 					return SubControl.MotionBaseRoll;
+				case "motionslerpspeed":
+					return SubControl.MotionSlerpSpeed;
+				case "motionscaleimpacts":
+					return SubControl.MotionScaleImpacts;
+				case "motionhazardsensitivity":
+					return SubControl.MotionHazardSensitivity;
                 case "sonarlongfrequency":
                     return SonarData.LongFrequency;
                 case "sonarlonggain":
@@ -1559,6 +1579,12 @@ namespace Meg.Networking
 					return SubControl.MotionBaseYaw.ToString("n1");
 				case "motionbaseroll":
 					return SubControl.MotionBaseRoll.ToString("n1");
+				case "motionslerpspeed":
+					return SubControl.MotionSlerpSpeed.ToString("n1");
+				case "motionhazardsensitivity":
+					return SubControl.MotionHazardSensitivity.ToString("n1");
+				case "motionscaleimpacts":
+					return SubControl.MotionScaleImpacts.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
@@ -1646,6 +1672,10 @@ namespace Meg.Networking
                     return ScreenData.screenGlitchAutoDecay;
 				case "motionsafety":
 					return SubControl.MotionSafety;
+				case "motionhazard":
+					return SubControl.MotionHazard;
+				case "motionhazardenabled":
+					return SubControl.MotionHazardEnabled;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName);

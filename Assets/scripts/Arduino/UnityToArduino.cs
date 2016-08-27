@@ -14,6 +14,8 @@ public class UnityToArduino : MonoBehaviour
 
 	ArduinoManager Settings;
 
+	private Vector3 LastMove;
+
 	float time = 0.0f;
 
 	// initialization
@@ -35,6 +37,9 @@ public class UnityToArduino : MonoBehaviour
 			}
 		}
 			
+		LastMove.x = Controls.MotionBasePitch;
+		LastMove.y = Controls.MotionBaseYaw;
+		LastMove.z = Controls.MotionBaseRoll;
 
 	}
 
@@ -45,30 +50,38 @@ public class UnityToArduino : MonoBehaviour
 		//	Settings = GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>();
 		//	COMPort = Settings.ComPort;
 		//}
+
+		LastMove.x = Controls.MotionBasePitch;
+		LastMove.y = Controls.MotionBaseYaw;
+		LastMove.z = Controls.MotionBaseRoll;
 	}
 
 	IEnumerator SendData()
 	{
 		while (port.IsOpen)
 		{
-			motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*2f);
-			Controls.MotionBasePitch = motionBase.eulerAngles.x;
-			Controls.MotionBaseYaw = motionBase.eulerAngles.y;
-			Controls.MotionBaseRoll = motionBase.eulerAngles.z;
-
-			if(Controls.MotionBasePitch > 180f)
+			if(Controls.MotionSafety)
 			{
-				Controls.MotionBasePitch = motionBase.eulerAngles.x-360f;
+				motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*Controls.MotionSlerpSpeed);
+				Controls.MotionBasePitch = motionBase.eulerAngles.x;
+				Controls.MotionBaseYaw = motionBase.eulerAngles.y;
+				Controls.MotionBaseRoll = motionBase.eulerAngles.z;
+
+				if(Controls.MotionBasePitch > 180f)
+				{
+					Controls.MotionBasePitch = motionBase.eulerAngles.x-360f;
+				}
+
+				if(Controls.MotionBaseRoll > 180f)
+				{
+					Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
+				}
 			}
-
-			if(Controls.MotionBaseYaw > 180f)
+			else
 			{
-				Controls.MotionBaseYaw = motionBase.eulerAngles.y-360f;
-			}
-
-			if(Controls.MotionBaseRoll > 180f)
-			{
-				Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
+				Controls.MotionBasePitch = Server.pitchAngle;
+				Controls.MotionBaseYaw = Server.yawAngle;
+				Controls.MotionBaseRoll = Server.rollAngle;
 			}
 
 			if(Controls.MotionBaseRoll > 33f)
@@ -90,16 +103,21 @@ public class UnityToArduino : MonoBehaviour
 			{
 				Controls.MotionBasePitch = -37f;
 			}
+				
+			HazardCheck();
 
-			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-				(Controls.MotionBaseYaw.ToString("F3")),
-				(Controls.MotionBasePitch.ToString("F3")),
-				(Controls.MotionBaseRoll.ToString("F3")),
-			
-				(Controls.inputXaxis.ToString("F3")),
-				(Controls.inputYaxis.ToString("F3")),
-				(Controls.inputZaxis.ToString("F3")))
-			); 
+			if(!Controls.MotionHazard)
+			{
+				port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+					(Controls.MotionBaseYaw.ToString("F3")),
+					(Controls.MotionBasePitch.ToString("F3")),
+					(Controls.MotionBaseRoll.ToString("F3")),
+				
+					(Controls.inputXaxis.ToString("F3")),
+					(Controls.inputYaxis.ToString("F3")),
+					(Controls.inputZaxis.ToString("F3")))
+				); 
+			}
 
 			//port.Write(String.Format("${0}\0",
 			//	(Controls.MotionBasePitch.ToString("F3")))
@@ -123,4 +141,26 @@ public class UnityToArduino : MonoBehaviour
             Debug.Log(e);
         }
     }
+
+	void HazardCheck()
+	{
+		if(Mathf.Abs(LastMove.x - Controls.MotionBasePitch) > Controls.MotionHazardSensitivity)
+		{
+			Controls.MotionHazard = true;
+		}
+
+		//if(Mathf.Abs(LastMove.y - Controls.MotionBaseYaw) > Controls.MotionHazardSensitivity)
+		//{
+		//	Controls.MotionHazard = true;
+		//}
+
+		if(Mathf.Abs(LastMove.z - Controls.MotionBaseRoll) > Controls.MotionHazardSensitivity)
+		{
+			Controls.MotionHazard = true;
+		}
+
+		LastMove.x = Controls.MotionBasePitch;
+		LastMove.y = Controls.MotionBaseYaw;
+		LastMove.z = Controls.MotionBaseRoll;
+	}
 }
