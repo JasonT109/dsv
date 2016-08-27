@@ -8,6 +8,8 @@ public class UpdateDynamicText : MonoBehaviour
     public bool scaleTextMinSize = false;
     public int minTextSize = 19;
 
+    public const int maxTextSize = 64;
+
     void OnEnable()
         { StartCoroutine(UpdateTextRoutine()); }
 
@@ -29,7 +31,10 @@ public class UpdateDynamicText : MonoBehaviour
         // Regenerate text meshes.
         yield return 0;
         foreach (var text in texts)
+        {
+            text.maxFontPxSize = maxTextSize;
             text.GenerateMesh();
+        }
 
         // Wait a bit, then regenerate text meshes again.
         // This is just in case the first attempt fails to do the job.

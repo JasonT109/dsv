@@ -145,6 +145,13 @@ public class DomeScreen : MonoBehaviour
         Screens = GetComponentInParent<DomeScreens>();
     }
 
+    /** Enabling. */
+    private void OnEnable()
+    {
+        // Force an overlay update when returning to screen.
+        SetOverlay(_overlay, true);
+    }
+
     /** Updating. */
     private void LateUpdate()
     {
@@ -229,9 +236,9 @@ public class DomeScreen : MonoBehaviour
     }
 
     /** Sets the screen's overlay. */
-    private void SetOverlay(Overlay value)
+    private void SetOverlay(Overlay value, bool forceUpdate = false)
     {
-        if (_overlay.Name == value.Name)
+        if ((_overlay.Name == value.Name) && !forceUpdate)
             return;
 
         // Update the overlay display label.
@@ -251,11 +258,14 @@ public class DomeScreen : MonoBehaviour
     {
         Label.Text = value;
 
+        var dyn = Label.GetComponent<DynamicText>();
+        if (dyn)
+            dyn.GenerateMesh();
+
         var t = Label.transform;
         if (DOTween.IsTweening(t))
             yield break;
 
-        var dyn = Label.GetComponent<DynamicText>();
         if (dyn)
             dyn.pixelSnapTransformPos = false;
 
@@ -263,7 +273,10 @@ public class DomeScreen : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
 
         if (dyn)
+        { 
             dyn.pixelSnapTransformPos = true;
+            dyn.GenerateMesh();
+        }
     }
 
     /** Update the screen's appearance based on current state. */
