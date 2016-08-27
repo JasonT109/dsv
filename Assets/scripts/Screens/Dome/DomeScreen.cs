@@ -86,6 +86,9 @@ public class DomeScreen : MonoBehaviour
     /** Screen's current overlay name. */
     public string OverlayName { get { return _overlay.Name; } }
 
+    /** Whether screen's label is currently being dragged. */
+    public bool Dragging{ get { return _dragging; } set { SetDragging(value); } }
+
 
     // Structures
     // ------------------------------------------------------------
@@ -113,11 +116,20 @@ public class DomeScreen : MonoBehaviour
     /** Whether screen is hovered over. */
     private bool _hovering;
 
+    /** Whether screen's label is currently being dragged. */
+    private bool _dragging;
+
     /** Whether UI state is dirty. */
     private bool _dirty;
 
     /** Screen's current overlay. */
     private Overlay _overlay;
+
+    /** Label transform gesture. */
+    private TransformGesture _labelTransform;
+
+    /** Label home position. */
+    private Vector3 _homePosition;
 
 
     // Unity Methods
@@ -143,6 +155,13 @@ public class DomeScreen : MonoBehaviour
         Label.Color = LabelOffColor;
 
         Screens = GetComponentInParent<DomeScreens>();
+
+        _labelTransform = Label.GetComponent<TransformGesture>();
+        if (_labelTransform)
+        {
+            _labelTransform.TransformStarted += OnTransformStarted;
+            _labelTransform.TransformCompleted += OnTransformComplete;
+        }
     }
 
     /** Enabling. */
@@ -156,6 +175,9 @@ public class DomeScreen : MonoBehaviour
     private void LateUpdate()
     {
         UpdateOverlayFromData();
+
+        if (_labelTransform)
+            _labelTransform.enabled = HasOverlay;
 
         if (!_dirty)
             return;
@@ -235,6 +257,16 @@ public class DomeScreen : MonoBehaviour
         _dirty = true;
     }
 
+    /** Sets the screen's 'dragging' state. */
+    private void SetDragging(bool value)
+    {
+        if (_dragging == value)
+            return;
+
+        _dragging = value;
+        _dirty = true;
+    }
+
     /** Sets the screen's overlay. */
     private void SetOverlay(Overlay value, bool forceUpdate = false)
     {
@@ -256,6 +288,8 @@ public class DomeScreen : MonoBehaviour
     /** Routine to change the current overlay name. */
     private IEnumerator ChangeLabelRoutine(string value)
     {
+        Label.Text = "";
+        yield return new WaitForSeconds(0.1f);
         Label.Text = value;
 
         var dyn = Label.GetComponent<DynamicText>();
@@ -336,6 +370,60 @@ public class DomeScreen : MonoBehaviour
     {
         Pressed = false;
         RequestPan();
+    }
+
+    /** Handle the screen's label being transformed. */
+    private void OnTransformStarted(object sender, EventArgs eventArgs)
+    {
+        Dragging = true;
+    }
+
+    /** Handle the screen's label being transformed. */
+    private void OnTransformComplete(object sender, EventArgs eventArgs)
+    {
+        Dragging = false;
+
+        // Determine what screen label was dropped on (if any).
+        var screen = GetScreenUnderLabel();
+
+        // Reset the label.
+        Label.transform.localPosition = Vector3.zero;
+        if (screen != this)
+            Label.Text = "";
+
+        // Toggle screen if releasing on self (will toggle again in OnReleased).
+        if (screen == this)
+            Toggle();
+
+        // Check if we need to switch screens.
+        if (!HasOverlay || screen == this)
+            return;
+
+        // Clear this overlay.
+        RequestOverlay(domeData.OverlayId.None);
+
+        // Drop overlay onto screen.
+        if (screen)
+        {
+            screen.On = true;
+            screen.RequestOverlay(_overlay.Id);
+        }
+    }
+
+    /** Locate the screen underneath the label. */
+    private DomeScreen GetScreenUnderLabel()
+    {
+        var s = Camera.main.WorldToScreenPoint(Label.transform.position);
+        var ray = Camera.main.ScreenPointToRay(s);
+        var hits = Physics.RaycastAll(ray);
+        foreach (var hit in hits)
+        {
+            var screen = hit.transform.GetComponent<DomeScreen>();
+            if (screen)
+                return screen;
+        }
+
+        return null;
     }
 
 }
