@@ -1,0 +1,74 @@
+{
+	"metadata":{
+		"utc":"27/08/16 04:05:50.7",
+		"startedTimestamp":"27/08/16 04:05:21.8",
+		"stoppedTimestamp":"27/08/16 04:05:31.1"
+	},
+	"groups":[
+		{
+			"id":"FADE TO BLACK",
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":0.25,
+					"serverParam":"camerabrightness",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"LOW POWER BOOTUP",
+			"minimized":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerTime":1,
+					"completeTime":10,
+					"Type":3,
+					"Title":"",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":0,
+					"Color":[
+						1,
+						1,
+						1,
+						1
+					]
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.2,
+					"completeTime":0.3,
+					"serverParam":"cameraBrightness",
+					"serverValue":0.75
+				},
+				{
+					"type":"Value",
+					"serverParam":"screenGlitchMaxDelay",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.20578,
+					"serverParam":"screenGlitchAmount",
+					"serverValue":5
+				},
+				{
+					"type":"Value",
+					"triggerTime":7.372225,
+					"serverParam":"screenGlitchAmount",
+					"serverValue":5
+				}
+			]
+		}
+	]
+}

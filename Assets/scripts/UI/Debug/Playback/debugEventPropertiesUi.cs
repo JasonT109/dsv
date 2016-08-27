@@ -144,6 +144,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField PopupWidthInput;
     public InputField PopupHeightInput;
     public Toggle[] PopupIconToggles;
+    public Toggle[] PopupColorToggles;
 
 
     [Header("Prefabs")]
@@ -1287,6 +1288,13 @@ public class debugEventPropertiesUi : MonoBehaviour
             PopupTypeToggles[i].onValueChanged.AddListener(
                 on => OnPopupTypeToggled(type, on));
         }
+
+        for (var i = 0; i < PopupColorToggles.Length; i++)
+        {
+            var color = PopupColorToggles[i].graphic.color;
+            PopupColorToggles[i].onValueChanged.AddListener(
+                on => OnPopupColorToggled(color, on));
+        }
     }
 
     private void InitPopupProperties()
@@ -1299,6 +1307,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdatePopupPositionInputs();
         UpdatePopupSizeInputs();
         UpdatePopupIconToggles();
+        UpdatePopupColorToggles();
 
         _initializing = false;
     }
@@ -1309,7 +1318,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupTitleInput()
     {
-        PopupTitleInput.text = PopupEvent.Title;
+        PopupTitleInput.text = PopupEvent.Popup.CanSetTitle ? PopupEvent.Title : "";
+        PopupTitleInput.transform.parent.gameObject.SetActive(PopupEvent.Popup.CanSetTitle);
     }
 
     public void PopupTitleInputChanged(string value)
@@ -1338,6 +1348,9 @@ public class debugEventPropertiesUi : MonoBehaviour
         PopupXInput.text = string.Format("{0:N0}", PopupEvent.Position.x);
         PopupYInput.text = string.Format("{0:N0}", PopupEvent.Position.y);
         PopupZInput.text = string.Format("{0:N0}", PopupEvent.Position.z);
+
+        PopupZInput.transform.parent.gameObject.SetActive(
+            PopupEvent.Popup.CanSetPosition);
     }
 
     private void UpdatePopupSizeInputs()
@@ -1419,6 +1432,9 @@ public class debugEventPropertiesUi : MonoBehaviour
             toggle.isOn = (icon == PopupEvent.Icon);
             toggle.gameObject.SetActive(popup.IsIconValid(icon));
         }
+
+        PopupIconToggles[0].transform.parent.gameObject.SetActive(
+            PopupIconToggles.Any(p => p.gameObject.activeSelf));
     }
 
     private void OnPopupIconToggled(popupData.Icon icon, bool value)
@@ -1449,11 +1465,33 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PopupEvent.Type = type;
+        InitPopupProperties();
+    }
+
+    private void UpdatePopupColorToggles()
+    {
+        for (var i = 0; i < PopupColorToggles.Length; i++)
+        {
+            var toggle = PopupColorToggles[i];
+            var color = toggle.graphic.color;
+            toggle.isOn = (color == PopupEvent.Color);
+        }
+
+        PopupColorToggles[0].transform.parent.gameObject.SetActive(
+            PopupEvent.Popup.CanSetColor);
+    }
+
+    private void OnPopupColorToggled(Color color, bool value)
+    {
+        if (_initializing)
+            return;
+
+        PopupEvent.Color = color;
 
         _initializing = true;
-        UpdatePopupTypeToggles();
-        UpdatePopupIconToggles();
+        UpdatePopupColorToggles();
         _initializing = false;
     }
+
 
 }

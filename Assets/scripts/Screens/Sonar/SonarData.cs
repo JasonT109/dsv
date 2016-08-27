@@ -79,6 +79,10 @@ public class SonarData : NetworkBehaviour
     [SyncVar]
     public int MaxWildlife = 0;
 
+    /** Proximity alert indicator (0 = full alert, 1 = no alert). */
+    [SyncVar]
+    public float Proximity = 1f;
+
 
     // Public Methods
     // ------------------------------------------------------------

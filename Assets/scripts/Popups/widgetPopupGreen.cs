@@ -15,6 +15,7 @@ public class widgetPopupGreen : widgetPopup
         // Update greenscreen brightness level.
         var level = serverUtils.GetServerData("greenScreenBrightness", 1.0f);
         Area.GetComponent<Image>().color = new Color(0, level, 0, 1);
+        Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
     }
 
 }

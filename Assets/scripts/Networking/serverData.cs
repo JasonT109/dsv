@@ -723,7 +723,7 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
                 break;
             case "playervessel":
-                VesselData.PlayerVessel = Mathf.RoundToInt(newValue);
+                VesselData.SetPlayerVessel(Mathf.RoundToInt(newValue));
                 break;
             case "latitude":
                 MapData.latitude = newValue;
@@ -767,6 +767,9 @@ public class serverData : NetworkBehaviour
             case "screenglitchautodecaytime":
                 ScreenData.screenGlitchAutoDecayTime = newValue;
                 break;
+            case "screenglitchmaxdelay":
+                ScreenData.screenGlitchMaxDelay = newValue;
+                break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue > 0;
                 break;
@@ -802,6 +805,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "sonarlongsensitivity":
                 SonarData.LongSensitivity = newValue;
+                break;
+            case "sonarproximity":
+                SonarData.Proximity = newValue;
                 break;
             case "sonarshortfrequency":
                 SonarData.ShortFrequency = newValue;
