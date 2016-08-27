@@ -13,6 +13,11 @@ public class EnableGameObjects : MonoBehaviour
         SetEnabled(true);
     }
 
+    void Update()
+    {
+        SetEnabled(true);
+    }
+
     void OnDisable()
     {
         SetEnabled(false);

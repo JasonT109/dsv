@@ -132,7 +132,7 @@ public class HUDLinearGauge : MonoBehaviour
     private float _smoothedVelocity;
 
     /** Collider, used for sizing. */
-    private Collider _collider;
+    private BoxCollider _collider;
 
     /** Max width and height for the gauge (local space). */
     private Vector2 _maxSize;
@@ -183,6 +183,7 @@ public class HUDLinearGauge : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
+        InitializeSizing();
         UpdateValue(0);
         UpdateTicks(false);
     }
@@ -193,6 +194,7 @@ public class HUDLinearGauge : MonoBehaviour
         if (!Dynamic)
             return;
 
+        InitializeSizing();
         UpdateValue(SmoothTime);
         UpdateTicks();
     }
@@ -205,15 +207,12 @@ public class HUDLinearGauge : MonoBehaviour
     private void InitializeSizing()
     {
         if (!_collider)
-            _collider = GetComponent<Collider>();
+            _collider = GetComponent<BoxCollider>();
         if (!_collider)
             return;
 
-        var min = transform.InverseTransformPoint(_collider.bounds.min);
-        var max = transform.InverseTransformPoint(_collider.bounds.max);
-        _maxSize = max - min;
-
         // Compute spacing between ticks.
+        _maxSize = _collider.size;
         _valueToLocalScale = _maxSize.x / VisibleRange;
     }
 

@@ -276,6 +276,19 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the light data object. */
+        private static lightData _lightData;
+        public static lightData LightData
+        {
+            get
+            {
+                if (!_lightData && ServerObject)
+                    _lightData = ServerObject.GetComponent<lightData>();
+                return _lightData;
+            }
+        }
+
+
         /** Return the vessel movements controller. */
         private static vesselMovements _vesselMovements;
         public static vesselMovements VesselMovements
@@ -480,6 +493,16 @@ namespace Meg.Networking
             "joystickoverride",
             "joystickpilot",
             "latitude",
+            "lightarray1",
+            "lightarray2",
+            "lightarray3",
+            "lightarray4",
+            "lightarray5",
+            "lightarray6",
+            "lightarray7",
+            "lightarray8",
+            "lightarray9",
+            "lightarray10",
             "longitude",
             "maxwildlife",
             "maxspeed",
@@ -541,6 +564,7 @@ namespace Meg.Networking
             "screenglitchamount",
             "screenglitchautodecay",
             "screenglitchautodecaytime",
+            "screenglitchmaxdelay",
             "scrubbedco2",
             "scrubbedhumidity",
             "scrubbedoxygen",
@@ -549,6 +573,7 @@ namespace Meg.Networking
             "sonarlonggain",
             "sonarlongrange",
             "sonarlongsensitivity",
+            "sonarproximity",
             "sonarshortfrequency",
             "sonarshortgain",
             "sonarshortrange",
@@ -816,6 +841,16 @@ namespace Meg.Networking
             { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether pilot input is overridden by joysticks attached to the server."} },
             { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether input updates from pilot's joysticks (turn off for manual input editing)."} },
             { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees)." } },
+            { "lightarray1", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray2", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray3", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray4", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray5", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray6", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray7", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray8", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
+            { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees)." } },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
@@ -872,6 +907,7 @@ namespace Meg.Networking
             { "screenglitchamount", new ParameterInfo { description = "Amount of screen glitch across all screens."} },
             { "screenglitchautodecay", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether screen glitch automatically decays over time."} },
             { "screenglitchautodecaytime", new ParameterInfo { maxValue = 1, description = "Time taken for screen glitch to decay to nothing (s)."} },
+            { "screenglitchmaxdelay", new ParameterInfo { maxValue = 1, description = "Maximum delay to introduce when screen glitch is in effect."} },
             { "scrubbedco2", new ParameterInfo { maxValue = 5, description = "CO2% in atmosphere after leaving the scrubber." } },
             { "scrubbedhumidity", new ParameterInfo { description = "Humidity leaving the scrubber (%)." } },
             { "scrubbedoxygen", new ParameterInfo { description = "Oxygen percentage leaving the scrubber." } },
@@ -880,6 +916,7 @@ namespace Meg.Networking
             { "sonarlonggain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for 360 (long-range) sonar. (%)" } },
             { "sonarlongrange", new ParameterInfo { minValue = 1000, maxValue = 6000, type = ParameterType.Int, description = "Range setting for 360 (long-range) sonar (m)." } },
             { "sonarlongsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for 360 (long-range) sonar. (%)" } },
+            { "sonarproximity", new ParameterInfo { maxValue = 1, description = "Proximity alert for long range sonar (0 = full alert)." } },
             { "sonarshortfrequency", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Frequency setting for front-scanning (short-range) sonar (kHz)." } },
             { "sonarshortgain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for front-scanning (short-range) sonar (%)."} },
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
@@ -1313,6 +1350,8 @@ namespace Meg.Networking
                     return SonarData.LongRange;
                 case "sonarlongsensitivity":
                     return SonarData.LongSensitivity;
+                case "sonarproximity":
+                    return SonarData.Proximity;
                 case "sonarshortfrequency":
                     return SonarData.ShortFrequency;
                 case "sonarshortgain":
@@ -1379,6 +1418,8 @@ namespace Meg.Networking
                     return ScreenData.screenGlitchAutoDecay ? 1 : 0;
                 case "screenglitchautodecaytime":
                     return ScreenData.screenGlitchAutoDecayTime;
+                case "screenglitchmaxdelay":
+                    return ScreenData.screenGlitchMaxDelay;
                 case "camerabrightness":
                     return ScreenData.cameraBrightness;
                 case "startimagesequence":
@@ -1387,6 +1428,26 @@ namespace Meg.Networking
                     return ScreenData.greenScreenBrightness;
                 case "acidlayer":
                     return MapData.acidLayer;
+                case "lightarray1":
+                    return LightData.lightArray1;
+                case "lightarray2":
+                    return LightData.lightArray2;
+                case "lightarray3":
+                    return LightData.lightArray3;
+                case "lightarray4":
+                    return LightData.lightArray4;
+                case "lightarray5":
+                    return LightData.lightArray5;
+                case "lightarray6":
+                    return LightData.lightArray6;
+                case "lightarray7":
+                    return LightData.lightArray7;
+                case "lightarray8":
+                    return LightData.lightArray8;
+                case "lightarray9":
+                    return LightData.lightArray9;
+                case "lightarray10":
+                    return LightData.lightArray10;
                 case "maxwildlife":
                     return SonarData.MaxWildlife;
                 default:
@@ -1637,6 +1698,10 @@ namespace Meg.Networking
         /** Return the current value of a shared boolean state value by name. */
         public static bool GetServerBool(string boolName)
         {
+            // Check whether server object is ready.
+            if (ServerObject == null)
+                return false;
+
             // Check if we're looking for a vessel state value.
             if (VesselData.IsVesselKey(boolName))
                 return VesselData.GetServerData(boolName, Unknown) > 0;
@@ -1959,7 +2024,7 @@ namespace Meg.Networking
         public static void SetPlayerVessel(int vessel)
         {
             if (VesselData)
-                VesselData.PlayerVessel = vessel;
+                VesselData.SetPlayerVessel(vessel);
         }
 
         /** Returns which vessel is controlled by the player (1-based index). */

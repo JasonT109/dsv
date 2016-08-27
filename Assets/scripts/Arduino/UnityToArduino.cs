@@ -16,8 +16,6 @@ public class UnityToArduino : MonoBehaviour
 
 	private Vector3 LastMove;
 
-	float time = 0.0f;
-
 	// initialization
 	void Start()
 	{ 
@@ -134,7 +132,8 @@ public class UnityToArduino : MonoBehaviour
 	{
         try
         {
-            port.Close();
+            if (port != null)
+                port.Close();
         }
         catch (NullReferenceException e)
         {

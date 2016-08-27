@@ -17,6 +17,10 @@ public class screenData : NetworkBehaviour
     [SyncVar]
     public bool screenGlitchAutoDecay = true;
 
+    /** Maximum glitch delay (seconds). */
+    [SyncVar]
+    public float screenGlitchMaxDelay = 1.0f;
+
     [SyncVar]
     public float cameraBrightness = 1f;
 

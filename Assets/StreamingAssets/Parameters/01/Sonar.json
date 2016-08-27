@@ -1,0 +1,50 @@
+{
+	"groups":[
+		{
+			"id":"SHORT RANGE SONAR ",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"sonarshortrange"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarshortgain"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarshortsensitivity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarshortfrequency"
+				}
+			]
+		},
+		{
+			"id":"LONG RANGE SONAR",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"sonarlongrange"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarlonggain"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarlongsensitivity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarlongfrequency"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarproximity"
+				}
+			]
+		}
+	]
+}
