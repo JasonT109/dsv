@@ -31,14 +31,8 @@ public class widgetPopupBootup : widgetPopup
     {
         Backdrop.gameObject.SetActive(true);
         Logo.gameObject.SetActive(true);
-        Logo.DOFade(0, 2).From();
-
-        Flash.gameObject.SetActive(true);
-        Flash.DOFade(0, 0.25f);
-
-        Burst.gameObject.SetActive(true);
-        Burst.transform.DOScale(Vector3.zero, 0.5f).From();
-        Burst.DOFade(0, 0.5f);
+        Logo.alpha = 0;
+        Logo.DOFade(1, 2).SetDelay(1);
 
         Black.gameObject.SetActive(false);
         Code.gameObject.SetActive(false);
@@ -50,6 +44,18 @@ public class widgetPopupBootup : widgetPopup
     /** Bootup animation sequence. */
     private IEnumerator BootupRoutine()
     {
+        // Wait a bit on the boot screen
+        yield return new WaitForSeconds(1f);
+
+        // Kick off logo fade.
+        Flash.gameObject.SetActive(true);
+        Flash.alpha = 0;
+        Flash.DOFade(0, 0.25f);
+
+        Burst.gameObject.SetActive(true);
+        Burst.transform.DOScale(Vector3.zero, 0.5f).From();
+        Burst.DOFade(0, 0.5f);
+
         // Wait for initial logo fade to complete.
         yield return new WaitForSeconds(2.25f);
         Flash.gameObject.SetActive(false);
