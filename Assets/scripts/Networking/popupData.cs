@@ -135,7 +135,22 @@ public class popupData : NetworkBehaviour
 
         /** Whether popup's title can be changed. */
         public bool CanSetTitle
-            { get { return Type == Type.Info; } }
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case Type.Info:
+                    case Type.Boot:
+                    case Type.BootLowPower:
+                        return true;
+                    case Type.GreenScreen:
+                        return false;
+                    default:
+                        return true;
+                }
+            }
+        }
 
         /** Whether popup's color can be changed. */
         public bool CanSetColor

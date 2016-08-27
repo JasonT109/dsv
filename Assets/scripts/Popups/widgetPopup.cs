@@ -84,9 +84,15 @@ public class widgetPopup : MonoBehaviour
         foreach (var t in themed)
             t.UpdateColor(popup);
 
-        // Configure popup.
+        // Configure popup title.
         if (Title)
-            Title.text = popup.Title;
+        {
+            var scrolling = Title.GetComponent<graphicsScrollingText>();
+            if (scrolling)
+                scrolling.Lines = popup.Title;
+            else
+                Title.text = popup.Title;
+        }
 
         // Configure icons.
         var iconIndex = (int) popup.Icon;
@@ -96,9 +102,6 @@ public class widgetPopup : MonoBehaviour
             icon.sprite = iconSprite;
             icon.gameObject.SetActive(iconSprite != null);
         }
-
-        // Resize and display the popup area box.
-        Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
 
         // Place popup in the UI heirarchy and give it an initial update.
         transform.SetParent(Camera.main.transform, false);
@@ -110,7 +113,12 @@ public class widgetPopup : MonoBehaviour
 
     /** Hide this popup. */
     public void Hide()
-        { StartCoroutine(CloseRoutine()); }
+    {
+        if (gameObject.activeSelf)
+            StartCoroutine(CloseRoutine());
+        else
+            Destroy(gameObject);
+    }
 
 
     // Protected Methods
@@ -159,16 +167,16 @@ public class widgetPopup : MonoBehaviour
             SetActive(!serverUtils.IsInDebugScreen());
     }
 
-
-    // Private Methods
-    // ------------------------------------------------------------
-
     /** Set whether the popup is active. */
-    private void SetActive(bool value)
+    protected virtual void SetActive(bool value)
     {
         Root.gameObject.SetActive(value);
         Area.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
     }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
 
     /** Position this popup over the target. */
     private void PositionOverTarget(PopupTarget target)

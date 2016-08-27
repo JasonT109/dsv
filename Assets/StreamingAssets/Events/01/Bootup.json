@@ -1,0 +1,49 @@
+{
+	"metadata":{
+		"utc":"27/08/16 02:08:55.6",
+		"startedTimestamp":"27/08/16 02:08:18.5",
+		"stoppedTimestamp":"27/08/16 02:08:34.8"
+	},
+	"groups":[
+		{
+			"id":"FADE TO BLACK",
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":1,
+					"serverParam":"camerabrightness",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"BOOTUP SEQUENCE",
+			"events":[
+				{
+					"type":"Popup",
+					"triggerTime":2,
+					"completeTime":20,
+					"Type":2,
+					"Title":"",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":0,
+					"Color":[
+						1,
+						1,
+						1,
+						1
+					]
+				}
+			]
+		}
+	]
+}

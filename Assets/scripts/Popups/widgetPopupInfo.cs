@@ -10,6 +10,9 @@ public class widgetPopupInfo : widgetPopup
     /** Animate the popup into place. */
     protected override void AnimateIn()
     {
+        // Resize and display the popup area box.
+        Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
+
         // Determine if we should have a looping animation.
         var duration = AnimateInDuration;
         var looping = Popup.Icon != popupData.Icon.None;
