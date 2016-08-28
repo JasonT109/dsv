@@ -1898,6 +1898,20 @@ namespace Meg.Networking
                 LocalPlayer.PostVesselMovementType(id, type);
         }
 
+        /** Post vessel map visibility to the server. */
+        public static void PostVesselOnMap(int id, bool value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselOnMap(id, value);
+        }
+
+        /** Post vessel sonar visibility to the server. */
+        public static void PostVesselOnSonar(int id, bool value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselOnSonar(id, value);
+        }
+
         /** Post vessel movements state to the server (works on both clients and host). */
         public static void PostVesselMovementState(JSONObject json)
         {
