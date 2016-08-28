@@ -16,6 +16,9 @@ public class UnityToArduino : MonoBehaviour
 
 	private Vector3 LastMove;
 
+	private Vector3 flat;
+	private Quaternion flatQ;
+
 	// initialization
 	void Start()
 	{ 
@@ -39,6 +42,9 @@ public class UnityToArduino : MonoBehaviour
 		LastMove.y = Controls.MotionBaseYaw;
 		LastMove.z = Controls.MotionBaseRoll;
 
+		flat = new Vector3(0,0,0);
+		flatQ = Quaternion.Euler(flat);
+
 	}
 
 	void Awake()
@@ -58,9 +64,19 @@ public class UnityToArduino : MonoBehaviour
 	{
 		while (port.IsOpen)
 		{
+			HazardCheck();
+
 			if(Controls.MotionSafety)
 			{
-				motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*Controls.MotionSlerpSpeed);
+				if(!Controls.MotionHazard)
+				{
+					motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*Controls.MotionSlerpSpeed);
+				}
+				else
+				{
+					motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
+				}
+
 				Controls.MotionBasePitch = motionBase.eulerAngles.x;
 				Controls.MotionBaseYaw = motionBase.eulerAngles.y;
 				Controls.MotionBaseRoll = motionBase.eulerAngles.z;
@@ -80,6 +96,11 @@ public class UnityToArduino : MonoBehaviour
 				Controls.MotionBasePitch = Server.pitchAngle;
 				Controls.MotionBaseYaw = Server.yawAngle;
 				Controls.MotionBaseRoll = Server.rollAngle;
+			}
+
+			if(Controls.MotionHazard && !Controls.MotionSafety)
+			{
+				motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
 			}
 
 			if(Controls.MotionBaseRoll > 33f)
@@ -102,20 +123,30 @@ public class UnityToArduino : MonoBehaviour
 				Controls.MotionBasePitch = -37f;
 			}
 				
-			HazardCheck();
 
-			if(!Controls.MotionHazard)
-			{
-				port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-					(Controls.MotionBaseYaw.ToString("F3")),
-					(Controls.MotionBasePitch.ToString("F3")),
-					(Controls.MotionBaseRoll.ToString("F3")),
-				
-					(Controls.inputXaxis.ToString("F3")),
-					(Controls.inputYaxis.ToString("F3")),
-					(Controls.inputZaxis.ToString("F3")))
-				); 
-			}
+			//if(!Controls.MotionHazard)
+			//{
+			//	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+			//		(Controls.MotionBaseYaw.ToString("F3")),
+			//		(Controls.MotionBasePitch.ToString("F3")),
+			//		(Controls.MotionBaseRoll.ToString("F3")),
+			//	
+			//		(Controls.inputXaxis.ToString("F3")),
+			//		(Controls.inputYaxis.ToString("F3")),
+			//		(Controls.inputZaxis.ToString("F3")))
+			//	); 
+			//}
+
+			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+				(Controls.MotionBaseYaw.ToString("F3")),
+				(Controls.MotionBasePitch.ToString("F3")),
+				(Controls.MotionBaseRoll.ToString("F3")),
+
+				(Controls.inputXaxis.ToString("F3")),
+				(Controls.inputYaxis.ToString("F3")),
+				(Controls.inputZaxis.ToString("F3")))
+			);
+
 
 			//port.Write(String.Format("${0}\0",
 			//	(Controls.MotionBasePitch.ToString("F3")))
