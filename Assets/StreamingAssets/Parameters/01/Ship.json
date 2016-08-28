@@ -136,11 +136,15 @@
 				},
 				{
 					"type":"Value",
-					"serverParam":"motionSlerpSpeed"
+					"serverParam":"motionHazardEnabled"
 				},
 				{
 					"type":"Value",
 					"serverParam":"motionHazard"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionSlerpSpeed"
 				},
 				{
 					"type":"Value",
@@ -152,7 +156,7 @@
 				},
 				{
 					"type":"Value",
-					"serverParam":"motionHazardEnabled"
+					"serverParam":"motionMinImpactInterval"
 				}
 			]
 		}

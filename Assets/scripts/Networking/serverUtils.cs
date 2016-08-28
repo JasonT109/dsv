@@ -523,6 +523,7 @@ namespace Meg.Networking
 			"motionslerpspeed",
 			"motionhazardsensitivity",
 			"motionscaleimpacts",
+			"motionminimpactinterval",
             "o1",
             "o2",
             "o3",
@@ -866,6 +867,7 @@ namespace Meg.Networking
 			{ "motionslerpspeed", new ParameterInfo { maxValue = 30, description = "t multiplier for the motion base's slerp."} },
 			{ "motionhazardsensitivity", new ParameterInfo { maxValue = 30, description = "Sensitivity of tripping a motion base hazard (unsafe rate of change threshold)."} },
 			{ "motionscaleimpacts", new ParameterInfo { maxValue = 0.75f, description = "Scaling factor for reducing the intensity of physics impacts."} },
+			{ "motionminimpactinterval", new ParameterInfo { maxValue = 5.0f, description = "min interval for impacts on the sub"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1340,6 +1342,8 @@ namespace Meg.Networking
 					return SubControl.MotionSlerpSpeed;
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts;
+				case "motionminimpactinterval":
+					return SubControl.MotionMinImpactInterval;
 				case "motionhazardsensitivity":
 					return SubControl.MotionHazardSensitivity;
                 case "sonarlongfrequency":
@@ -1646,6 +1650,8 @@ namespace Meg.Networking
 					return SubControl.MotionHazardSensitivity.ToString("n1");
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts.ToString("n1");
+				case "motionminimpactinterval":
+					return SubControl.MotionMinImpactInterval.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":

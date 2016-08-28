@@ -809,6 +809,9 @@ public class serverData : NetworkBehaviour
 			case "motionscaleimpacts":
 				SubControl.MotionScaleImpacts = newValue;
 				break;
+			case "motionminimpactinterval":
+				SubControl.MotionMinImpactInterval = newValue;
+				break;
             case "sonarlongfrequency":
                 SonarData.LongFrequency = newValue;
                 break;

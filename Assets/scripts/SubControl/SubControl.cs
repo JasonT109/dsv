@@ -72,6 +72,8 @@ public class SubControl : NetworkBehaviour
 	public bool MotionHazardEnabled = true;
 	[SyncVar] 
 	public float MotionScaleImpacts = 1.0f;
+	[SyncVar] 
+	public float MotionMinImpactInterval = 0.75f;
 
 
 
@@ -86,6 +88,8 @@ public class SubControl : NetworkBehaviour
     private float roll;
     private float pitch;
 
+	private float impactTimer = 0;
+
 	private float forwardThrust = 50f;
 	//private float AccelRatio = 0.0f;
 
@@ -99,11 +103,16 @@ public class SubControl : NetworkBehaviour
 
         JoystickOverride = false;
 
-		MotionSafety = true;
-		MotionHazard = false;
-		MotionHazardSensitivity = 5f;
-		MotionHazardEnabled = true;
-		MotionSlerpSpeed = 2f;
+		//MotionSafety = true;
+		//MotionHazard = false;
+		//MotionHazardSensitivity = 5f;
+		//MotionHazardEnabled = true;
+		//MotionSlerpSpeed = 2f;
+	}
+
+	void update()
+	{
+		impactTimer += Time.deltaTime;
 	}
 
     // Snap the sub to a given worldspace velocity vector.
@@ -309,7 +318,11 @@ public class SubControl : NetworkBehaviour
 
         // TODO: Apply limits to impactVector (or scale it down, or both) when
         // UnityToArduino is actively piping data out to the motion control rig.
-		rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
+		if(impactTimer > MotionMinImpactInterval)
+		{
+			rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
+			impactTimer = 0;
+		}
     }
 
 }
