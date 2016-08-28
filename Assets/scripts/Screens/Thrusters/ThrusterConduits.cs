@@ -39,10 +39,22 @@ public class ThrusterConduits : MonoBehaviour
 
     private void Start()
     {
+        LocateThrusterControl();
+        UpdateConduits(false);
+    }
+
+    private void OnEnable()
+    {
+        LocateThrusterControl();
+    }
+
+    private void LocateThrusterControl()
+    {
+        // Locate the thruster control script (should be in a parent node).
+        if (!Control)
+            Control = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
         if (!Control)
             Control = ObjectFinder.Find<widgetThrusterControl>();
-
-        UpdateConduits(false);
     }
 
     private void Update()

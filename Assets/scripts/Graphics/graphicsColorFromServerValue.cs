@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 using Meg.Maths;
@@ -38,10 +38,18 @@ public class graphicsColorFromServerValue : MonoBehaviour
             m.SetColor("_MainColor", blendColor);
     }
 
-    void OnEnable()
+    private void LocateThrusterControl()
     {
+        // Locate the thruster control script (should be in a parent node).
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
         if (!thrusterControl)
             thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+    }
+
+    void OnEnable()
+    {
+        LocateThrusterControl();
 
         r = gameObject.GetComponent<Renderer>();
         m = r.material;
@@ -51,8 +59,7 @@ public class graphicsColorFromServerValue : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        if (!thrusterControl)
-            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+        LocateThrusterControl();
 
         r = gameObject.GetComponent<Renderer>();
         m = r.material;

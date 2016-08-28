@@ -21,10 +21,24 @@ public class graphicsRotateObject : MonoBehaviour
 
     void Start ()
     {
-        thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+        LocateThrusterControl();
     }
 
-	void Update ()
+    void OnEnable()
+    {
+        LocateThrusterControl();
+    }
+
+    private void LocateThrusterControl()
+    {
+        // Locate the thruster control script (should be in a parent node).
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+    }
+
+    void Update ()
     {
         if (mainL)
         {

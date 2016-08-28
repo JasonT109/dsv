@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class widgetThrusterPowerOutput : MonoBehaviour
@@ -13,14 +13,22 @@ public class widgetThrusterPowerOutput : MonoBehaviour
 
     void Start ()
     {
-        if (!thrusterControl)
-            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+        LocateThrusterControl();
 
         if (!t)
             t = GetComponent<DynamicText>();
 	}
-	
-	void Update ()
+
+    private void LocateThrusterControl()
+    {
+        // Locate the thruster control script (should be in a parent node).
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+    }
+
+    void Update ()
     {
         string valueText = thrusterControl.GetThrusterPowerOutput(Thruster).ToString("N0");
         

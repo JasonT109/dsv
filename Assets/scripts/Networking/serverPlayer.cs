@@ -131,6 +131,24 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselMovementType(id, type);
     }
 
+    /** Post vessel map visibility to the server. */
+    public void PostVesselOnMap(int id, bool value)
+    {
+        if (isServer)
+            ServerSetVesselOnMap(id, value);
+        else
+            CmdSetVesselOnMap(id, value);
+    }
+
+    /** Post vessel sonar visibility to the server. */
+    public void PostVesselOnSonar(int id, bool value)
+    {
+        if (isServer)
+            ServerSetVesselOnSonar(id, value);
+        else
+            CmdSetVesselOnSonar(id, value);
+    }
+
     /** Post vessel movements state to the server. */
     public void PostVesselMovementState(JSONObject json)
     {
@@ -222,6 +240,16 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdSetVesselMovementType(int id, string type)
         { ServerSetVesselMovementType(id, type); }
+
+    /** Set vessel map visibility to the server. */
+    [Command]
+    public void CmdSetVesselOnMap(int id, bool value)
+        { ServerSetVesselOnMap(id, value); }
+
+    /** Set vessel sonar visibility to the server. */
+    [Command]
+    public void CmdSetVesselOnSonar(int id, bool value)
+        { ServerSetVesselOnSonar(id, value); }
 
     /** Command to set vessel movements state on the server. */
     [Command]
@@ -320,6 +348,16 @@ public class serverPlayer : NetworkBehaviour
     public void ServerSetVesselMovementType(int id, string type)
         { serverUtils.VesselMovements.SetMovementType(id, type); }
 
+    /** Set vessel map visibility to the server. */
+    [Server]
+    public void ServerSetVesselOnMap(int id, bool value)
+        { serverUtils.VesselData.SetOnMap(id, value); }
+
+    /** Set vessel sonar visibility to the server. */
+    [Server]
+    public void ServerSetVesselOnSonar(int id, bool value)
+        { serverUtils.VesselData.SetOnSonar(id, value); }
+    
     /** Set vessel movements state on the server. */
     [Server]
     public void ServerSetVesselMovementState(JSONObject json)
