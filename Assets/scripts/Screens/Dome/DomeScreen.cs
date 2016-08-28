@@ -131,6 +131,9 @@ public class DomeScreen : MonoBehaviour
     /** Label home position. */
     private Vector3 _homePosition;
 
+    /** Screen's colliders. */
+    private Collider[] _colliders;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -162,6 +165,8 @@ public class DomeScreen : MonoBehaviour
             _labelTransform.TransformStarted += OnTransformStarted;
             _labelTransform.TransformCompleted += OnTransformComplete;
         }
+
+        _colliders = GetComponentsInChildren<Collider>();
     }
 
     /** Enabling. */
@@ -175,6 +180,10 @@ public class DomeScreen : MonoBehaviour
     private void LateUpdate()
     {
         UpdateOverlayFromData();
+
+        var panning = Screens.PanDial.Showing;
+        foreach (var c in _colliders)
+            c.enabled = !panning;
 
         if (_labelTransform)
             _labelTransform.enabled = HasOverlay;
