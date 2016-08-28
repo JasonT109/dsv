@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,10 +33,6 @@ public class debugParameterValueUi : debugParameterUi
     public Button ServerParamClearButton;
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
-
-    [Header("Configuration")]
-
-    public string ValueFormat = "{0:N2}";
 
 
     /** The value parameter. */
@@ -148,7 +145,9 @@ public class debugParameterValueUi : debugParameterUi
 
     private void UpdateServerValueInput()
     {
-        ServerValueInput.text = string.Format(ValueFormat, ValueParameter.serverValue);
+        var value = ValueParameter.serverValue;
+        var format = "{0:N" + Precision(value) + "}";
+        ServerValueInput.text = string.Format(format, value);
     }
 
     public void ServerParamInputChanged(string value)
@@ -210,5 +209,26 @@ public class debugParameterValueUi : debugParameterUi
         UpdateServerValueSlider();
     }
 
+    /** Return the number of decimal places to use for a given value. */
+    private static int Precision(double value)
+    {
+        var isInt = Math.Abs(value - Math.Round(value)) < 0.00001;
+        if (isInt)
+            return 0;
+
+        var abs = Math.Abs(value);
+        if (abs >= 100)
+            return 0;
+        if (abs >= 10)
+            return 1;
+        if (abs >= 1)
+            return 2;
+        if (abs >= 0.1)
+            return 3;
+        if (abs >= 0.01)
+            return 4;
+
+        return 5;
+    }
 
 }

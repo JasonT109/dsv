@@ -146,14 +146,15 @@ public class CameraGlitches : MonoBehaviour
         var horizontalShake = HorizontalShakeCurve.Evaluate(normalized);
         var colorDrift = ColorDriftCurve.Evaluate(normalized);
         var digitalIntensity = DigitalIntensityCurve.Evaluate(normalized);
-
-        var isServer = serverUtils.IsServer();
         var analogEnabled = scanlineJitter > GlitchThreshold
             || verticalJump > GlitchThreshold
             || horizontalShake > GlitchThreshold
             || colorDrift > GlitchThreshold;
 
-        if (isServer && !ApplyOnServer)
+        // Disable glitches on server and debug screens.
+        var isServer = serverUtils.IsServer();
+        var isDebug = serverUtils.IsInDebugScreen();
+        if (isServer || isDebug)
             analogEnabled = false;
 
         // Update analog glitch effect.
@@ -164,7 +165,9 @@ public class CameraGlitches : MonoBehaviour
         Analog.colorDrift = colorDrift * (1 + Random.Range(-ColorDriftRandomness, ColorDriftRandomness));
 
         var digitalEnabled = digitalIntensity > GlitchThreshold;
-        if (isServer && !ApplyOnServer)
+
+        // Disable glitches on server and debug screens.
+        if (isServer || isDebug)
             digitalEnabled = false;
 
         // Update digital glitch effect.
