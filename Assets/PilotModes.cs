@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -52,12 +52,12 @@ public class PilotModes : MonoBehaviour
 	{
 		if(serverUtils.GetServerBool("isautopilot"))
 		{
-			serverUtils.SetServerBool("isautopilot", false);
+			serverUtils.PostServerData("isautopilot", 0);
 			AutoPilotVis.SetActive(false);
 		}
 		else
 		{
-			serverUtils.SetServerBool("isautopilot", true);
+			serverUtils.PostServerData("isautopilot", 1);
 			AutoPilotVis.SetActive(true);
 		}
 	}
@@ -66,12 +66,12 @@ public class PilotModes : MonoBehaviour
 	{
 		if(serverUtils.GetServerBool("iscontroldecentmode"))
 		{
-			serverUtils.SetServerBool("iscontroldecentmode", false);
+			serverUtils.PostServerData("iscontroldecentmode", 0);
 			DecentVis.SetActive(false);
 		}
 		else
 		{
-			serverUtils.SetServerBool("iscontroldecentmode", true);
+			serverUtils.PostServerData("iscontroldecentmode", 1);
 			DecentVis.SetActive(true);
 		}
 	}

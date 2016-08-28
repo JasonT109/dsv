@@ -236,6 +236,10 @@ public class NavSubPin : MonoBehaviour
         // Toggle label visibility.
         ShowLabel = !ShowLabel;
 
+        // Show or hide the label object.
+        _icon.label.gameObject.SetActive(ShowLabel);
+
+        /*
         // Fade the label in/out.
         var label = _icon.label;
         var c = label.color;
@@ -253,6 +257,7 @@ public class NavSubPin : MonoBehaviour
 
         backdrop.DOKill();
         backdrop.material.DOFade(ShowLabel ? 0.5f : 0, "_TintColor", 0.25f);
+        */
     }
 
     /** Updating. */
