@@ -74,6 +74,7 @@ public class SubControl : NetworkBehaviour
 	public float MotionScaleImpacts = 1.0f;
 
 
+
     private float currentThrust = 0.0f;
     private Rigidbody rb;
     private Vector3 rotation;
