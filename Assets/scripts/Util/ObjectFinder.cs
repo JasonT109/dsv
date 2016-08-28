@@ -173,4 +173,23 @@ public class ObjectFinder
         return result;
     }
 
+    /** Locate the first instance of a component in an object's parents. */
+    public static T FindInParents<T>(GameObject go) where T : Component
+        { return go ? FindInParents<T>(go.transform) : null; }
+
+    /** Locate the first instance of a component in an object's parents. */
+    public static T FindInParents<T>(Transform t) where T : Component
+    {
+        while (t != null)
+        {
+            var c = t.GetComponent<T>();
+            if (c)
+                return c;
+
+            t = t.parent;
+        }
+
+        return null;
+    }
+
 }
