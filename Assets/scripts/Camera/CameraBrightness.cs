@@ -26,10 +26,13 @@ public class CameraBrightness : MonoBehaviour {
         EnsureMaterialExists();
 
         // Determine current brightness.
-        // On the server, always use a default brightness of 100%.
-        var b = 1.0f;
-        if (!serverUtils.IsServer())
-            b = serverUtils.GetServerData("camerabrightness");
+        var b = serverUtils.GetServerData("camerabrightness");
+
+        // On the server or debug screen, always use a brightness of 100%.
+        var isServer = serverUtils.IsServer();
+        var isDebug = serverUtils.IsInDebugScreen();
+        if (isServer || isDebug)
+            b = 1f;
 
         _effectMaterial.SetFloat("_Brightness", b);
 

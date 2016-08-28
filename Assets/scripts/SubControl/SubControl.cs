@@ -74,6 +74,7 @@ public class SubControl : NetworkBehaviour
 	public float MotionScaleImpacts = 1.0f;
 
 
+
     private float currentThrust = 0.0f;
     private Rigidbody rb;
     private Vector3 rotation;
@@ -100,7 +101,7 @@ public class SubControl : NetworkBehaviour
 
 		MotionSafety = true;
 		MotionHazard = false;
-		MotionHazardSensitivity = 15f;
+		MotionHazardSensitivity = 5f;
 		MotionHazardEnabled = true;
 		MotionSlerpSpeed = 2f;
 	}

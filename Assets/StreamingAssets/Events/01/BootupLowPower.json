@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"27/08/16 04:05:50.7",
-		"startedTimestamp":"27/08/16 04:05:21.8",
-		"stoppedTimestamp":"27/08/16 04:05:31.1"
+		"utc":"28/08/16 12:34:49.1",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
@@ -25,7 +25,8 @@
 					"triggerTime":1,
 					"completeTime":10,
 					"Type":3,
-					"Title":"",
+					"Title":"SYSTEMS ONLINE",
+					"Message":"ERROR 31: Unknown Error",
 					"Target":"",
 					"Position":[
 						0,
