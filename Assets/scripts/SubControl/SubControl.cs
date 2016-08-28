@@ -100,7 +100,7 @@ public class SubControl : NetworkBehaviour
 
 		MotionSafety = true;
 		MotionHazard = false;
-		MotionHazardSensitivity = 15f;
+		MotionHazardSensitivity = 5f;
 		MotionHazardEnabled = true;
 		MotionSlerpSpeed = 2f;
 	}
