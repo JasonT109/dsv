@@ -1904,6 +1904,13 @@ namespace Meg.Networking
                 LocalPlayer.PostVesselMovementType(id, type);
         }
 
+        /** Post vessel's name to the server. */
+        public static void PostVesselName(int id, string name)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselName(id, name);
+        }
+
         /** Post vessel map visibility to the server. */
         public static void PostVesselOnMap(int id, bool value)
         {

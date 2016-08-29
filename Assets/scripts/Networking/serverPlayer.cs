@@ -131,6 +131,15 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselMovementType(id, type);
     }
 
+    /** Post vessel's name to the server. */
+    public void PostVesselName(int id, string name)
+    {
+        if (isServer)
+            ServerSetVesselName(id, name);
+        else
+            CmdSetVesselName(id, name);
+    }
+
     /** Post vessel map visibility to the server. */
     public void PostVesselOnMap(int id, bool value)
     {
@@ -241,6 +250,11 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselMovementType(int id, string type)
         { ServerSetVesselMovementType(id, type); }
 
+    /** Set vessel's name on the server. */
+    [Command]
+    public void CmdSetVesselName(int id, string name)
+        { ServerSetVesselName(id, name); }
+
     /** Set vessel map visibility to the server. */
     [Command]
     public void CmdSetVesselOnMap(int id, bool value)
@@ -347,6 +361,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetVesselMovementType(int id, string type)
         { serverUtils.VesselMovements.SetMovementType(id, type); }
+
+    /** Set vessel's name on the server. */
+    [Server]
+    public void ServerSetVesselName(int id, string name)
+        { serverUtils.VesselData.SetName(id, name); }
 
     /** Set vessel map visibility to the server. */
     [Server]

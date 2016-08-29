@@ -142,7 +142,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetName(Vessel.Id, value);
+        serverUtils.PostVesselName(Vessel.Id, value);
     }
 
     /** Add a vessel movement event to the selected event group. */
