@@ -37,4 +37,12 @@ public class operatingData : NetworkBehaviour
     [SyncVar]
     public float divertPowerToThrusters = 0;
 
+    /** Whether piloting button is enabled. */
+    [SyncVar]
+    public bool pilotButtonEnabled;
+
+    /** Whether docking button is enabled. */
+    [SyncVar]
+    public bool dockingButtonEnabled;
+
 }

@@ -421,6 +421,7 @@ namespace Meg.Networking
             "divertpowertothrusters",
             "divetime",
             "divetimeactive",
+            "dockingbuttonenabled",
             "domecenter",
             "domecornerbottomleft",
             "domecornerbottomright",
@@ -543,6 +544,7 @@ namespace Meg.Networking
             "oxygentank1",
             "oxygentank2",
             "oxygentank3",
+            "pilotbuttonenabled",
             "pitchangle",
             "pitchspeed",
             "playervessel",
@@ -781,6 +783,7 @@ namespace Meg.Networking
             { "divertpowertothrusters", new ParameterInfo { description = "Amount of power diverted from systems to thrusters (0..100%)."} },
             { "divetime", new ParameterInfo { maxValue = 3600, description = "Duration of the dive so far (s)."} },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether dive time is automatically updated."} },
+            { "dockingbuttonenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether the docking button is enabled in Piloting screen."} },
             { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
@@ -896,6 +899,7 @@ namespace Meg.Networking
             { "oxygentank1", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
             { "oxygentank2", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
             { "oxygentank3", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
+            { "pilotbuttonenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether the piloting button is enabled in Piloting screen."} },
             { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current pitch angle (nose up/down, degrees)."} },
             { "pitchspeed", new ParameterInfo { description = "Sub's pitching speed (nose up / down)."} },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int, description = "Which vessel is occupied by the players (crew)."} },
@@ -1354,6 +1358,10 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength;
                 case "divertpowertothrusters":
                     return OperatingData.divertPowerToThrusters;
+                case "dockingbuttonenabled":
+                    return OperatingData.dockingButtonEnabled ? 1 : 0;
+                case "pilotbuttonenabled":
+                    return OperatingData.pilotButtonEnabled ? 1 : 0;
                 case "vesselmovementenabled":
                     return VesselMovements.Enabled ? 1 : 0;
                 case "timetointercept":

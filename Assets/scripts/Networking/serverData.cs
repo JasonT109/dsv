@@ -794,6 +794,12 @@ public class serverData : NetworkBehaviour
             case "divertpowertothrusters":
                 OperatingData.divertPowerToThrusters = newValue;
                 break;
+            case "pilotbuttonenabled":
+                OperatingData.pilotButtonEnabled = newValue > 0;
+                break;
+            case "dockingbuttonenabled":
+                OperatingData.dockingButtonEnabled = newValue > 0;
+                break;
             case "screenglitchamount":
                 ScreenData.screenGlitch = newValue;
                 break;
@@ -1171,6 +1177,12 @@ public class serverData : NetworkBehaviour
 			case "motionsafety":
 				SubControl.MotionSafety = newValue;
 				break;
+            case "pilotbuttonenabled":
+                OperatingData.pilotButtonEnabled = newValue;
+                break;
+            case "dockingbuttonenabled":
+                OperatingData.dockingButtonEnabled = newValue;
+                break;
         }
     }
 
