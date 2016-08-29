@@ -18,7 +18,11 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float depthOverrideAmount;
     [SyncVar]
+    public bool depthDisplayed = true;
+    [SyncVar]
     public float floorDistance;
+    [SyncVar]
+    public bool floorDistanceDisplayed = true;
     [SyncVar]
     public float floorDepth = mapData.DefaultFloorDepth;
     [SyncVar]
@@ -313,8 +317,14 @@ public class serverData : NetworkBehaviour
             case "depthoverrideamount":
                 depthOverrideAmount = newValue;
                 break;
+            case "depthdisplayed":
+                depthDisplayed = newValue > 0;
+                break;
             case "floordepth":
                 floorDepth = newValue;
+                break;
+            case "floordistancedisplayed":
+                floorDistanceDisplayed = newValue > 0;
                 break;
             case "domecenter":
                 DomeData.domeCenter = (domeData.OverlayId) newValue;
@@ -1101,6 +1111,9 @@ public class serverData : NetworkBehaviour
         // Match incoming key against known data values.
         switch (boolName.ToLower())
         {
+            case "depthdisplayed":
+                depthDisplayed = newValue;
+                break;
             case "divetimeactive":
                 diveTimeActive = newValue;
                 break;
@@ -1109,6 +1122,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "disableinput":
                 SubControl.disableInput = newValue;
+                break;
+            case "floordistancedisplayed":
+                floorDistanceDisplayed = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;

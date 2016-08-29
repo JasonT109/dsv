@@ -30,6 +30,14 @@
 				{
 					"type":"Value",
 					"serverParam":"waterTempOverrideAmount"
+				},
+				{
+					"type":"Value",
+					"serverParam":"depthDisplayed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"floorDistanceDisplayed"
 				}
 			]
 		}

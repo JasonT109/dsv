@@ -414,6 +414,7 @@ namespace Meg.Networking
             "dcccommscontent",
             "dccquadcycle",
             "depth",
+            "depthdisplayed",
             "depthoverride",
             "depthoverrideamount",
             "disableinput",
@@ -472,6 +473,7 @@ namespace Meg.Networking
             "error_vidhd",
             "floordepth",
             "floordistance",
+            "floordistancedisplayed",
             "genericerror",
             "greenscreenbrightness",
             "heading",
@@ -772,6 +774,7 @@ namespace Meg.Networking
             { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
+            { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
             { "depthoverride", new ParameterInfo { maxValue = 12000, description = "Displayed depth if depth override is active (m)"} },
             { "depthoverrideamount", new ParameterInfo { maxValue = 1, description = "The amount of depth override to apply [0..1]."} },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input to sub is completely disabled."} },
@@ -829,6 +832,7 @@ namespace Meg.Networking
             { "error_vhf", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_vidhd", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
+            { "floordistancedisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether floor distance is displayed in header area."} },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
             { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
@@ -983,10 +987,14 @@ namespace Meg.Networking
                     return ServerData.take;
                 case "depth":
                     return ServerData.GetDepth();
+                case "depthdisplayed":
+                    return ServerData.depthDisplayed ? 1 : 0;
                 case "depthoverride":
                     return ServerData.depthOverride;
                 case "depthoverrideamount":
                     return ServerData.depthOverrideAmount;
+                case "floordistancedisplayed":
+                    return ServerData.floorDistanceDisplayed ? 1 : 0;
                 case "xpos":
                     return ServerObject.transform.position.x;
                 case "zpos":
@@ -1734,7 +1742,7 @@ namespace Meg.Networking
         {
             // Check whether server object is ready.
             if (ServerObject == null)
-                return false;
+                return defaultValue;
 
             // Check if we're looking for a vessel state value.
             if (VesselData.IsVesselKey(boolName))
