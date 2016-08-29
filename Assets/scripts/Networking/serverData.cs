@@ -550,6 +550,18 @@ public class serverData : NetworkBehaviour
             case "scrubbedoxygen":
                 CabinData.scrubbedOxygen = newValue;
                 break;
+            case "pressureoverride":
+                CabinData.pressureOverride = newValue;
+                break;
+            case "pressureoverrideamount":
+                CabinData.pressureOverrideAmount = newValue;
+                break;
+            case "watertempoverride":
+                CabinData.waterTempOverride = newValue;
+                break;
+            case "watertempoverrideamount":
+                CabinData.waterTempOverrideAmount = newValue;
+                break;
             case "error_bilgeleak":
                 ErrorData.error_bilgeLeak = newValue;
                 break;

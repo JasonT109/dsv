@@ -545,6 +545,8 @@ namespace Meg.Networking
             "pitchspeed",
             "playervessel",
             "pressure",
+            "pressureoverride",
+            "pressureoverrideamount",
             "reserveair",
             "reserveairtank1",
             "reserveairtank2",
@@ -642,6 +644,8 @@ namespace Meg.Networking
             "vessel6vis",
             "vesselmovementenabled",
             "watertemp",
+            "watertempoverride",
+            "watertempoverrideamount",
             "xpos",
             "yawangle",
             "yawspeed",
@@ -892,6 +896,8 @@ namespace Meg.Networking
             { "pitchspeed", new ParameterInfo { description = "Sub's pitching speed (nose up / down)."} },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int, description = "Which vessel is occupied by the players (crew)."} },
             { "pressure", new ParameterInfo { readOnly = true, description = "Current exterior pressure (bar)"} },
+            { "pressureoverride", new ParameterInfo { description = "Override value for exterior pressure (bar)"} },
+            { "pressureoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for exterior pressure (bar)"} },
             { "reserveair", new ParameterInfo { readOnly = true, description = "Overall reserve air tank percentage (%)."} },
             { "reserveairtank1", new ParameterInfo { description = "Reserve air tank 1 capacity (%)."} },
             { "reserveairtank2", new ParameterInfo { description = "Reserve air tank 2 capacity (%)."} },
@@ -939,6 +945,8 @@ namespace Meg.Networking
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
             { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
+            { "watertempoverride", new ParameterInfo { description = "Override value for water temperature (C)"} },
+            { "watertempoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for water temperature (C)"} },
             { "xpos", new ParameterInfo { description = "Sub's X coordinate (m) (Note that this is in the XZ plane, where Y is up/down.)" } },
             { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360, description = "Sub's current yaw angle (heading, degrees)." } },
             { "yawspeed", new ParameterInfo { description = "Sub's yawing speed (heading change)."} },
@@ -1148,6 +1156,14 @@ namespace Meg.Networking
                     return CabinData.scrubbedHumidity;
                 case "scrubbedoxygen":
                     return CabinData.scrubbedOxygen;
+                case "pressureoverride":
+                    return CabinData.pressureOverride;
+                case "pressureoverrideamount":
+                    return CabinData.pressureOverrideAmount;
+                case "watertempoverride":
+                    return CabinData.waterTempOverride;
+                case "watertempoverrideamount":
+                    return CabinData.waterTempOverrideAmount;
                 case "error_bilgeleak":
                     return ErrorData.error_bilgeLeak;
                 case "error_batteryleak":

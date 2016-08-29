@@ -14,6 +14,22 @@
 				{
 					"type":"Value",
 					"serverParam":"depthOverrideAmount"
+				},
+				{
+					"type":"Value",
+					"serverParam":"pressureOverride"
+				},
+				{
+					"type":"Value",
+					"serverParam":"pressureOverrideAmount"
+				},
+				{
+					"type":"Value",
+					"serverParam":"waterTempOverride"
+				},
+				{
+					"type":"Value",
+					"serverParam":"waterTempOverrideAmount"
 				}
 			]
 		}

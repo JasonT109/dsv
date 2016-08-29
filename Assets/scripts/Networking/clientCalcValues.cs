@@ -11,7 +11,7 @@ public class clientCalcValues : Singleton<clientCalcValues>
     public float[] pressureValues;
     public float[] waterTempValues;
 
-    public float calcFromDepth(float d, string valueType)
+    private float calcFromDepth(float d, string valueType)
     {
         float p;
         float t;
@@ -69,23 +69,35 @@ public class clientCalcValues : Singleton<clientCalcValues>
 	// Use this for initialization
 	void Start ()
     {
-	    if (depthValues.Length > 0)
-        {
-            float value = serverUtils.GetServerData("depth");
-            pressureResult = calcFromDepth(value, "pressure");
-            waterTempResult = calcFromDepth(value, "water");
-        }
-	}
+        UpdateCalculatedValues();
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if (depthValues.Length > 0)
-        {
-            float value = serverUtils.GetServerData("depth");
-            pressureResult = calcFromDepth(value, "pressure");
-            waterTempResult = calcFromDepth(value, "water");
-            psiResult = pressureResult * Conversions.BarToPsi;
-        }
+        UpdateCalculatedValues();
+    }
+
+    private void UpdateCalculatedValues()
+    {
+        if (depthValues == null || depthValues.Length <= 0 || !serverUtils.IsReady())
+            return;
+
+        var depth = serverUtils.GetServerData("depth");
+        var pressure = calcFromDepth(depth, "pressure");
+        var waterTemp = calcFromDepth(depth, "water");
+
+        // Interpolate between actual and override pressure.
+        var pressureOverride = serverUtils.GetServerData("pressureOverride", pressure);
+        var pressureOverrideAmount = serverUtils.GetServerData("pressureOverrideAmount", 0);
+        pressureResult = Mathf.Lerp(pressure, pressureOverride, Mathf.Clamp01(pressureOverrideAmount));
+
+        // PSI is always related to displayed pressure.
+        psiResult = pressureResult * Conversions.BarToPsi;
+
+        // Interpolate between actual and override water temperature.
+        var waterTempOverride = serverUtils.GetServerData("waterTempOverride", waterTemp);
+        var waterTempOverrideAmount = serverUtils.GetServerData("waterTempOverrideAmount", 0);
+        waterTempResult = Mathf.Lerp(waterTemp, waterTempOverride, Mathf.Clamp01(waterTempOverrideAmount));
     }
 }
