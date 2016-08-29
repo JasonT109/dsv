@@ -37,8 +37,11 @@ public class debugParameterGroupUi : MonoBehaviour
 
     [Header("Prefabs")]
 
-    /** Prefab to use for parameter properties. */
+    /** Prefab to use for value parameter properties. */
     public debugParameterValueUi ValueParameterPrefab;
+
+    /** Prefab to use for string parameter properties. */
+    public debugParameterStringUi StringParameterPrefab;
 
 
     /** The parameter group. */
@@ -217,6 +220,10 @@ public class debugParameterGroupUi : MonoBehaviour
     /** Return the UI for a given value parameter. */
     public debugParameterValueUi GetParameterValueUi(megParameter parameter)
         { return GetParameterUi(parameter) as debugParameterValueUi; }
+
+    /** Return the UI for a given string parameter. */
+    public debugParameterStringUi GetParameterStringUi(megParameter parameter)
+        { return GetParameterUi(parameter) as debugParameterStringUi; }
 
 
     // Private Methods

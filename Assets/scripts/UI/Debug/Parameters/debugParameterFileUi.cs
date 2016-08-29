@@ -175,6 +175,19 @@ public class debugParameterFileUi : MonoBehaviour
             value.serverParam = InfoList.Selected.Text.text;
     }
 
+    public void AddStringParameter()
+    {
+        if (_file.selectedGroup == null)
+            return;
+
+        // Add a new parameter entry to the current group.
+        var value = _file.selectedGroup.AddParameter(megParameterType.String) as megParameterString;
+
+        // Apply selected server parameter (if there is one).
+        if (value != null && InfoList.Selected)
+            value.serverParam = InfoList.Selected.Text.text;
+    }
+
     public void RemoveParameter()
     {
         if (_file.selectedParameter == null)
@@ -268,10 +281,12 @@ public class debugParameterFileUi : MonoBehaviour
             return;
 
         var valueUi = groupUi.GetParameterValueUi(p);
-        if (!valueUi)
-            return;
+        if (valueUi)
+            valueUi.SetName(valueName);
 
-        valueUi.SetName(valueName);
+        var stringUi = groupUi.GetParameterStringUi(p);
+        if (stringUi)
+            stringUi.SetName(valueName);
     }
 
 
