@@ -525,6 +525,10 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetMaxSpeed(value);
+
+        // Max speed might have been clamped at some point (e.g.g must be >= 1).
+        value = Movement.GetMaxSpeed();
+        
         MovementSpeedSlider.maxValue = value;
         MovementMaxSpeedInput.text = string.Format("{0:N1}", value);
         UpdateMovement();
@@ -539,6 +543,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (!float.TryParse(value, out result))
             return;
 
+        result = Mathf.Max(result, vesselMovement.LowestMaxSpeed);
+        
         Movement.SetMaxSpeed(result);
         MovementSpeedSlider.maxValue = result;
         MovementMaxSpeedSlider.maxValue = Mathf.Max(MovementMaxSpeedSlider.maxValue, result);
