@@ -414,6 +414,8 @@ namespace Meg.Networking
             "dcccommscontent",
             "dccquadcycle",
             "depth",
+            "depthoverride",
+            "depthoverrideamount",
             "disableinput",
             "divertpowertothrusters",
             "divetime",
@@ -766,6 +768,8 @@ namespace Meg.Networking
             { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
+            { "depthoverride", new ParameterInfo { maxValue = 12000, description = "Displayed depth if depth override is active (m)"} },
+            { "depthoverrideamount", new ParameterInfo { maxValue = 1, description = "The amount of depth override to apply [0..1]."} },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input to sub is completely disabled."} },
             { "divertpowertothrusters", new ParameterInfo { description = "Amount of power diverted from systems to thrusters (0..100%)."} },
             { "divetime", new ParameterInfo { maxValue = 3600, description = "Duration of the dive so far (s)."} },
@@ -970,7 +974,11 @@ namespace Meg.Networking
                 case "take":
                     return ServerData.take;
                 case "depth":
-                    return ServerData.depth;
+                    return ServerData.GetDepth();
+                case "depthoverride":
+                    return ServerData.depthOverride;
+                case "depthoverrideamount":
+                    return ServerData.depthOverrideAmount;
                 case "xpos":
                     return ServerObject.transform.position.x;
                 case "zpos":
@@ -1480,7 +1488,7 @@ namespace Meg.Networking
                 case "take":
                     return ServerData.take.ToString();
                 case "depth":
-                    int dInt = (int)ServerData.depth;
+                    var dInt = (int) ServerData.GetDepth();
                     return dInt.ToString();
                 case "heading":
                     return (ServerData.heading.ToString("n1") + "°");

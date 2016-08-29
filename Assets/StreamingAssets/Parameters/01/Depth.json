@@ -1,0 +1,21 @@
+{
+	"groups":[
+		{
+			"id":"DEPTH",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"depth"
+				},
+				{
+					"type":"Value",
+					"serverParam":"depthOverride"
+				},
+				{
+					"type":"Value",
+					"serverParam":"depthOverrideAmount"
+				}
+			]
+		}
+	]
+}

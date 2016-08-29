@@ -14,6 +14,10 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float depth;
     [SyncVar]
+    public float depthOverride;
+    [SyncVar]
+    public float depthOverrideAmount;
+    [SyncVar]
     public float floorDistance;
     [SyncVar]
     public float floorDepth = mapData.DefaultFloorDepth;
@@ -302,6 +306,12 @@ public class serverData : NetworkBehaviour
             case "depth":
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
+                break;
+            case "depthoverride":
+                depthOverride = newValue;
+                break;
+            case "depthoverrideamount":
+                depthOverrideAmount = newValue;
                 break;
             case "floordepth":
                 floorDepth = newValue;
@@ -1157,6 +1167,19 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    /** Return the current displayed depth (defaults to player vessel depth, can be overridden. */
+    public float GetDepth()
+    {
+        // Determine the proportion of overriding to apply.
+        // 0 = No overriding (use player vessel depth only).
+        // 1 = Full overriding (use override depth only).
+        // 0.5 = Interpolate halfway between the two.
+        var t = Mathf.Clamp01(depthOverrideAmount);
+
+        // Interpolate between actual and override depth to reach displayed depth.
+        return Mathf.Lerp(depth, depthOverride, t);
+    }
+
     [ClientRpc]
     public void RpcImpact(Vector3 impactVector)
     {
@@ -1253,7 +1276,7 @@ public class serverData : NetworkBehaviour
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = Mathf.Max(0, floorDepth - depth);
+        floorDistance = Mathf.Max(0, floorDepth - GetDepth());
 
         // Update ETA timer.
         if (dueTimeActive)
