@@ -119,7 +119,7 @@ public class vesselPursue : vesselMovement
     /** Set the movement's maximum speed. */
     public override void SetMaxSpeed(float value)
     {
-        MaxSpeed = value;
+        MaxSpeed = Mathf.Max(value, LowestMaxSpeed);
         Speed = Mathf.Clamp(Speed, 0, MaxSpeed);
     }
 

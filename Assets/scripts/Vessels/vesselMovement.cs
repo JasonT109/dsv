@@ -8,6 +8,13 @@ using UnityEngine.Networking;
 public abstract class vesselMovement : NetworkBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** The lowest allowable max speed setting. */
+    public const float LowestMaxSpeed = 1;
+
+
     // Properties
     // ------------------------------------------------------------
 
