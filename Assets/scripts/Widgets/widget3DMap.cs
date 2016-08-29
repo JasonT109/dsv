@@ -326,6 +326,10 @@ public class widget3DMap : MonoBehaviour {
         if (force3D)
             target3DAmount = 1;
 
+        // Inform event manager whether map is in contour mode.
+        if (cameraEventManager)
+            cameraEventManager.isContourModeActive = buttonContourMapping.active;
+
         // Smooth terrain 3d fade amount over time.
         _terrain3DAmount = Mathf.SmoothDamp(_terrain3DAmount, target3DAmount, ref _terrain3DVelocity, 0.5f);
 

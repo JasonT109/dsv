@@ -10,6 +10,12 @@ namespace Meg.EventSystem
     public class megEventMapCamera : megEvent
     {
 
+        // Constants
+        // ------------------------------------------------------------
+
+        public const float DefaultCompleteTime = 2f;
+
+
         // Properties
         // ------------------------------------------------------------
 
@@ -74,7 +80,7 @@ namespace Meg.EventSystem
                 return;
 
             // Capture current camera state.
-            var state = new megMapCameraEventManager.State();
+            var state = new megMapCameraEventManager.State { completeTime = DefaultCompleteTime };
             Manager.Capture(ref state);
 
             // Apply state to the event.

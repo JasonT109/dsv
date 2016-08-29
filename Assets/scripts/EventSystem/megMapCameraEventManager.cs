@@ -35,6 +35,10 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     public float runTime;
     public bool running;
     public float completePercentage;
+
+    public bool isContourModeActive { get; set; }
+
+
     private megEventMapCamera runningEvent;
     private buttonControl runningEventButton;
     private Vector3 initialPosition;
@@ -115,15 +119,13 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         }
     }
 
-    /** Trigger a custom (possibly unregistered) camera event. */
-    public void triggerEvent(megEventMapCamera e)
-    {
-        StartRunningEvent(e);
-    }
-
     /** Trigger a custom camera state. */
     public void triggerEventFromState(State state)
     {
+        // Ignore state events while in contour mode.
+        if (isContourModeActive)
+            return;
+
         var e = new megEventMapCamera(state);
         StartRunningEvent(e);
     }
