@@ -47,7 +47,7 @@ public class SubControl : NetworkBehaviour
 	public bool isAutoPilot = false;
 	[SyncVar]
 	public bool isControlDecentMode = false;
-	[SyncVar]
+    [SyncVar]
 	public bool isControlModeOverride = false;
 	[SyncVar]
 	public bool isControlOverrideStandard = false;

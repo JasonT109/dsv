@@ -42,6 +42,10 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public bool dueTimeActive = true;
 
+    /** Whether joystick can be used to toggle descent mode. */
+    [SyncVar]
+    public bool isControlDecentModeOnJoystick = false;
+
     #endregion
 
     #region DynamicValues
@@ -920,6 +924,9 @@ public class serverData : NetworkBehaviour
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue > 0;
 				break;
+            case "iscontroldecentmodeonjoystick":
+                isControlDecentModeOnJoystick = newValue > 0;
+                break;
             case "iscontrolmodeoverride":
                 SubControl.isControlModeOverride = newValue > 0;
                 break;
@@ -1107,6 +1114,9 @@ public class serverData : NetworkBehaviour
 				break;
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue;
+                break;
+            case "iscontroldecentmodeonjoystick":
+                isControlDecentModeOnJoystick = newValue;
                 break;
             case "iscontrolmodeoverride":
                 SubControl.isControlModeOverride = newValue;

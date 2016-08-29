@@ -483,7 +483,8 @@ namespace Meg.Networking
             "inputyaxis2",
             "inputzaxis",
 			"iscontroldecentmode",
-			"isautopilot",
+            "iscontroldecentmodeonjoystick",
+            "isautopilot",
 			"iscontrolmodeoverride",
 			"iscontroloverridestandard",
             "isautostabilised",
@@ -834,8 +835,9 @@ namespace Meg.Networking
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y2 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
 			{ "isautopilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control auto pilot toggle. does nothing but change a button light." } },
-			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode boolean." } },
-			{ "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
+			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Controls whether sub is in auto-descent mode." } },
+            { "iscontroldecentmodeonjoystick", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input can be used to toggle descent mode." } },
+            { "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
 			{ "iscontroloverridestandard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode when server is overriding." } },
             { "isautostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub roll is automatically stabilised."} },
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub pitch is also automatically stabilised."} },
@@ -1262,6 +1264,8 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot ? 1 : 0;
                 case "isControlDecentMode":
                     return SubControl.isControlDecentMode ? 1 : 0;
+                case "iscontroldecentmodeonjoystick":
+                    return ServerData.isControlDecentModeOnJoystick ? 1 : 0;
                 case "isControlModeOverride":
                     return SubControl.isControlModeOverride ? 1 : 0;
                 case "isControlOverrideStandard":
@@ -1702,7 +1706,7 @@ namespace Meg.Networking
         }
 
         /** Return the current value of a shared boolean state value by name. */
-        public static bool GetServerBool(string boolName)
+        public static bool GetServerBool(string boolName, bool defaultValue = false)
         {
             // Check whether server object is ready.
             if (ServerObject == null)
@@ -1727,7 +1731,9 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot;
 				case "iscontroldecentmode":
 					return SubControl.isControlDecentMode;
-				case "iscontrolmodeoverride":
+                case "iscontroldecentmodeonjoystick":
+                    return ServerData.isControlDecentModeOnJoystick;
+                case "iscontrolmodeoverride":
 					return SubControl.isControlModeOverride;
 				case "iscontroloverridestandard":
 					return SubControl.isControlOverrideStandard;
@@ -1749,7 +1755,7 @@ namespace Meg.Networking
 					return SubControl.MotionHazardEnabled;
                 default:
                     // As a last resort, interpret numeric values as booleans.
-                    var value = GetServerData(boolName);
+                    var value = GetServerData(boolName, defaultValue ? 1 : 0);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
             }
         }
