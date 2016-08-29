@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"28/08/16 12:34:49.1",
-		"startedTimestamp":"01/01/01 12:00:00.0",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"29/08/16 03:11:39.1",
+		"startedTimestamp":"29/08/16 03:07:43.1",
+		"stoppedTimestamp":"29/08/16 03:07:45.7"
 	},
 	"groups":[
 		{
 			"id":"FADE TO BLACK",
+			"paused":true,
 			"events":[
 				{
 					"type":"Value",
@@ -18,6 +19,7 @@
 		},
 		{
 			"id":"LOW POWER BOOTUP",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{

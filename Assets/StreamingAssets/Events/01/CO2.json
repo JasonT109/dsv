@@ -1,7 +1,13 @@
 {
+	"metadata":{
+		"utc":"29/08/16 03:11:52.6",
+		"startedTimestamp":"29/08/16 03:07:43.1",
+		"stoppedTimestamp":"29/08/16 03:07:45.7"
+	},
 	"groups":[
 		{
 			"id":"Co2 Scrubber Failure",
+			"paused":true,
 			"events":[
 				{
 					"type":"Value",

@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"16/08/16 07:00:12.5",
-		"startedTimestamp":"16/08/16 06:59:49.2",
-		"stoppedTimestamp":"16/08/16 06:59:48.2"
+		"utc":"29/08/16 03:05:33.1",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
 			"id":"MEG IMPACT",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{
