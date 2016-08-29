@@ -132,12 +132,30 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post vessel's name to the server. */
-    public void PostVesselName(int id, string name)
+    public void PostVesselName(int id, string value)
     {
         if (isServer)
-            ServerSetVesselName(id, name);
+            ServerSetVesselName(id, value);
         else
-            CmdSetVesselName(id, name);
+            CmdSetVesselName(id, value);
+    }
+
+    /** Post vessel's depth to the server. */
+    public void PostVesselDepth(int id, float depth)
+    {
+        if (isServer)
+            ServerSetVesselDepth(id, depth);
+        else
+            CmdSetVesselDepth(id, depth);
+    }
+
+    /** Post vessel's icon to the server. */
+    public void PostVesselIcon(int id, vesselData.Icon icon)
+    {
+        if (isServer)
+            ServerSetVesselIcon(id, icon);
+        else
+            CmdSetVesselIcon(id, icon);
     }
 
     /** Post vessel map visibility to the server. */
@@ -265,6 +283,16 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselOnSonar(int id, bool value)
         { ServerSetVesselOnSonar(id, value); }
 
+    /** Set vessel's depth on the server. */
+    [Command]
+    public void CmdSetVesselDepth(int id, float depth)
+        { ServerSetVesselDepth(id, depth); }
+
+    /** Set vessel's icon on the server. */
+    [Command]
+    public void CmdSetVesselIcon(int id, vesselData.Icon icon)
+        { ServerSetVesselIcon(id, icon); }
+
     /** Command to set vessel movements state on the server. */
     [Command]
     public void CmdSetVesselMovementState(string state)
@@ -364,8 +392,18 @@ public class serverPlayer : NetworkBehaviour
 
     /** Set vessel's name on the server. */
     [Server]
-    public void ServerSetVesselName(int id, string name)
-        { serverUtils.VesselData.SetName(id, name); }
+    public void ServerSetVesselName(int id, string value)
+        { serverUtils.VesselData.SetName(id, value); }
+
+    /** Set vessel's depth on the server. */
+    [Server]
+    public void ServerSetVesselDepth(int id, float depth)
+        { serverUtils.VesselData.SetDepth(id, depth); }
+
+    /** Set vessel's icon on the server. */
+    [Server]
+    public void ServerSetVesselIcon(int id, vesselData.Icon icon)
+        { serverUtils.VesselData.SetIcon(id, icon); }
 
     /** Set vessel map visibility to the server. */
     [Server]

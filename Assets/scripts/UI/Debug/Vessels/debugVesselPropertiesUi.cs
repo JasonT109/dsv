@@ -221,7 +221,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         AddMovementEventButton.interactable = CanAddEvents;
         EtaGroup.interactable = !megEventManager.Instance.Playing;
         _updating = false;
-        
+
+        UpdateIconToggles();
     }
 
     private void ClearUi()
@@ -236,7 +237,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetDepth(Vessel.Id, value);
+        serverUtils.PostVesselDepth(Vessel.Id, value);
         DepthInput.text = string.Format("{0:N1}", value);
     }
 
@@ -249,7 +250,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (!float.TryParse(value, out result))
             return;
 
-        VesselData.SetDepth(Vessel.Id, result);
+        serverUtils.PostVesselDepth(Vessel.Id, result);
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, result);
         DepthSlider.value = result;
     }
@@ -271,7 +272,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetIcon(Vessel.Id, icon);
+        serverUtils.PostVesselIcon(Vessel.Id, icon);
         UpdateIconToggles();
     }
 
