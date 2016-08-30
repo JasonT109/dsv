@@ -38,6 +38,12 @@ public class debugEventTriggerUi : MonoBehaviour
     public Color LabelCompletedColor;
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Time since last button press. */
+    private float _lastClickTime;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -57,31 +63,39 @@ public class debugEventTriggerUi : MonoBehaviour
         if (Event == null)
             return;
 
+        var recentlyPressed = Time.time - _lastClickTime < 0.25f;
+
         Button.interactable = Event.file.playing && !Event.group.paused;
         Label.text = Event.triggerLabel;
 
         var c = InactiveColor;
-        if (Event.running)
+        if (Event.running && !Event.completed)
             c = Color.Lerp(ActiveColor, CompletedColor, Event.timeFraction);
         if (Event.group.paused)
             c.a *= 0.5f;
 
+        if (recentlyPressed)
+            c = ActiveColor;
+
         // Make popup triggers appear inactive id needed.
         var popupEvent = Event as megEventPopup;
         var hasPopup = popupEvent != null && popupEvent.HasPopup;
-        if (popupEvent != null && !hasPopup)
-            c = InactiveColor;
+        if (popupEvent != null)
+            c = hasPopup ? ActiveColor : InactiveColor;
 
         Button.targetGraphic.color = c;
 
         var l = LabelInactiveColor;
-        if (Event.running)
+        if (Event.running && !Event.completed)
             l = Color.Lerp(LabelActiveColor, LabelCompletedColor, Event.timeFraction);
         if (Event.group.paused)
             l.a *= 0.5f;
 
-        if (popupEvent != null && !hasPopup)
-            l = LabelInactiveColor;
+        if (recentlyPressed)
+            l = LabelActiveColor;
+
+        if (popupEvent != null)
+            l = hasPopup ? LabelActiveColor : LabelInactiveColor;
 
         Label.color = l;
     }
@@ -93,6 +107,8 @@ public class debugEventTriggerUi : MonoBehaviour
     /** Button click handler. */
     private void OnButtonClicked()
     {
+        _lastClickTime = Time.time;
+
         if (Event != null)
             Event.Trigger();
     }
