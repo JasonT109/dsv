@@ -58,7 +58,14 @@ namespace Meg.EventSystem
         public override void Execute()
         {
             base.Execute();
-            file.PostAddPopup(Popup);
+            file.PostTogglePopup(Popup);
+        }
+
+        /** Execute trigger effect. */
+        public override void TriggerExecute()
+        {
+            // Toggle popups when triggered.
+            file.PostTogglePopup(Popup);
         }
 
 
@@ -125,7 +132,7 @@ namespace Meg.EventSystem
         /** Start this event. */
         protected override void Start()
         {
-            Execute();
+            file.PostAddPopup(Popup);
         }
 
         /** Update this event internally. */
