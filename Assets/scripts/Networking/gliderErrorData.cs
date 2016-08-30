@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 
@@ -32,4 +32,14 @@ public class gliderErrorData : NetworkBehaviour
     public float error_panel_l = 1f;
     [SyncVar]
     public float error_panel_r = 1f;
+
+    [SyncVar]
+    public float error_pressure = 1f;
+    [SyncVar]
+    public float error_structural = 1f;
+    [SyncVar]
+    public float error_grapple = 1f;
+    [SyncVar]
+    public float error_system = 1f;
+
 }

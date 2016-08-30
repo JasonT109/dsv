@@ -1,12 +1,12 @@
 {
 	"metadata":{
-		"utc":"30/08/16 04:33:31.9",
-		"startedTimestamp":"30/08/16 04:32:26.8",
-		"stoppedTimestamp":"30/08/16 04:32:36.1"
+		"utc":"30/08/16 08:02:22.3",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
-			"id":"DCC SCHEMATICS WARNINGS",
+			"id":"DCC SUB WARNINGS",
 			"paused":true,
 			"minimized":true,
 			"events":[
@@ -43,6 +43,42 @@
 					"type":"Value",
 					"triggerTime":5.429055,
 					"serverParam":"error_diagnostics",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"DCC GLIDER WARNINGS",
+			"paused":true,
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerTime":2.26176,
+					"serverParam":"error_grapple",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.311334,
+					"serverParam":"error_thruster_l",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_structural",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":5.19802,
+					"serverParam":"error_system",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.193619,
+					"serverParam":"error_pressure",
 					"serverValue":0
 				}
 			]
