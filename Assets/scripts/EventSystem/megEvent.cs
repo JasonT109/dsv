@@ -113,6 +113,12 @@ namespace Meg.EventSystem
             running = true;
             completed = false;
             time = 0;
+            TriggerExecute();
+        }
+
+        /** Execute trigger effect. */
+        public virtual void TriggerExecute()
+        {
             Start();
         }
 

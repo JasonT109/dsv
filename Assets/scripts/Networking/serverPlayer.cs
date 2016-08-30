@@ -77,6 +77,15 @@ public class serverPlayer : NetworkBehaviour
             CmdAddPopup(popup);
     }
 
+    /** Toggle a popup on or off. */
+    public void PostTogglePopup(popupData.Popup popup)
+    {
+        if (isServer)
+            ServerTogglePopup(popup);
+        else if (isClient)
+            CmdTogglePopup(popup);
+    }
+
     /** Remove a popup (works on both clients and host). */
     public void PostRemovePopup(popupData.Popup popup)
     {
@@ -323,10 +332,15 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearExtraVessels()
         { serverUtils.VesselData.ClearExtraVessels(); }
 
-    /** Add a popup (works on both clients and host). */
+    /** Add a popup on the server. */
     [Command]
     public void CmdAddPopup(popupData.Popup popup)
         { ServerAddPopup(popup); }
+
+    /** Toggle a popup on the server. */
+    [Command]
+    public void CmdTogglePopup(popupData.Popup popup)
+        { ServerTogglePopup(popup); }
 
     /** Remove a popup (works on both clients and host). */
     [Command]
@@ -424,6 +438,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerAddPopup(popupData.Popup popup)
         { serverUtils.PopupData.AddPopup(popup);}
+
+    /** Toggle a popup on or off. */
+    [Server]
+    public void ServerTogglePopup(popupData.Popup popup)
+        { serverUtils.PopupData.TogglePopup(popup); }
 
     /** Remove a popup on the server. */
     [Server]

@@ -446,6 +446,13 @@ namespace Meg.EventSystem
             serverUtils.PostAddPopup(popup);
         }
 
+        /** Toggle a popup on or off. */
+        public void PostTogglePopup(popupData.Popup popup)
+        {
+            _popupEventsTriggered = true;
+            serverUtils.PostTogglePopup(popup);
+        }
+
         /** Remove a popup from the set of active popups. */
         public void PostRemovePopup(popupData.Popup popup)
             { serverUtils.PostRemovePopup(popup); }

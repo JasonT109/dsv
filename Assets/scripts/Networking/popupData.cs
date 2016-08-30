@@ -228,6 +228,16 @@ public class popupData : NetworkBehaviour
         Popups.Add(popup);
     }
 
+    /** Toggle a popup. */
+    [Server]
+    public void TogglePopup(Popup popup)
+    {
+        if (Popups.Contains(popup))
+            RemovePopup(popup);
+        else
+            AddPopup(popup);
+    }
+
     /** Remove a popup. */
     [Server]
     public void RemovePopup(Popup popup)

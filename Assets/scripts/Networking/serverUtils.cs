@@ -1909,6 +1909,13 @@ namespace Meg.Networking
                 LocalPlayer.PostAddPopup(popup);
         }
 
+        /** Toggle a popup on or off. */
+        public static void PostTogglePopup(popupData.Popup popup)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostTogglePopup(popup);
+        }
+
         /** Remove a popup (works on both clients and host). */
         public static void PostRemovePopup(popupData.Popup popup)
         {
