@@ -248,8 +248,9 @@ public class widgetPopup : MonoBehaviour
     {
         var bounds = target.Bounds;
         var center = bounds.center;
-        center.z += _zBias;
-        var p = transform.InverseTransformPoint(center) + Popup.Position;
+        var offset = Popup.Position;
+        center.z += (_zBias + Popup.Position.z);
+        var p = transform.InverseTransformPoint(center) + new Vector3(offset.x, offset.y);
         SetPosition(p);
     }
 

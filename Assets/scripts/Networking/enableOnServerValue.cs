@@ -12,8 +12,11 @@ public class enableOnServerValue : MonoBehaviour
     /** Threshold for enabling/disabling. */
     public float threshold = 50;
 
-    /** Whether objects are disabled when value goes above threshold. */
+    /** Whether objects are enabled when value goes above threshold. */
     public bool thresholdGreaterThan = false;
+
+    /** Whether objects are enabled if value equals threshold. */
+    public bool thresholdEqualTo = false;
 
     /** Objects that should be enabled/disabled. */
     public GameObject[] Targets;
@@ -30,6 +33,9 @@ public class enableOnServerValue : MonoBehaviour
 
         var value = serverUtils.GetServerData(linkDataString);
         var active = thresholdGreaterThan ? value > threshold : value <= threshold;
+        if (thresholdEqualTo)
+            active = Mathf.Approximately(value, threshold);
+
         for (var i = 0; i < Targets.Length; i++)
             Targets[i].SetActive(active);
     }

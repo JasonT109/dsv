@@ -7,6 +7,12 @@ using Meg.Networking;
 
 public class serverListener : NetworkBehaviour
 {
+    public enum InputSource
+    {
+        None = 0,
+        Client = 1,
+        Server = 2
+    }
 
     public GameObject sData;
     public GameObject[] players;
@@ -20,6 +26,7 @@ public class serverListener : NetworkBehaviour
         public float zinput;
         public float xinput2;
         public float yinput2;
+        public InputSource source;
     }
 
     private Pilot thePilot = new Pilot();
@@ -45,7 +52,7 @@ public class serverListener : NetworkBehaviour
             return getPilotForInput(local);
 
         // No pilot found.
-        return new Pilot { pilotName = "None" };
+        return new Pilot { pilotName = "None", source = InputSource.None };
     }
 
     private Pilot getPilotForInput(gameInputs inputs)
@@ -58,7 +65,8 @@ public class serverListener : NetworkBehaviour
             yinput = inputs.outputY,
             zinput = inputs.output,
             xinput2 = inputs.outputX2,
-            yinput2 = inputs.outputX2
+            yinput2 = inputs.outputX2,
+            source = inputs.isLocalPlayer ? InputSource.Server : InputSource.Client
         };
 
         return p;
@@ -123,6 +131,8 @@ public class serverListener : NetworkBehaviour
             UpdateInputFrom(GetLocalPilot());
         else if (serverUtils.GetServerBool("joystickPilot"))
             UpdateInputFrom(thePilot);
+        else
+            sData.GetComponent<serverData>().OnValueChanged("inputSource", 0);
     }
 
     [Server]
@@ -133,6 +143,7 @@ public class serverListener : NetworkBehaviour
         sData.GetComponent<serverData>().OnValueChanged("inputZaxis", p.zinput);
         sData.GetComponent<serverData>().OnValueChanged("inputXaxis2", p.xinput2);
         sData.GetComponent<serverData>().OnValueChanged("inputYaxis2", p.yinput2);
+        sData.GetComponent<serverData>().OnValueChanged("inputSource", (float) p.source);
     }
 
 }
