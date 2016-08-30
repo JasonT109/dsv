@@ -487,6 +487,7 @@ namespace Meg.Networking
             "hydraulicpressure",
             "hydraulictemp",
             "initiatemapevent",
+            "inputsource",
             "inputxaxis",
             "inputxaxis2",
             "inputyaxis",
@@ -854,6 +855,7 @@ namespace Meg.Networking
             { "hydraulicpressure", new ParameterInfo { description = "Hydraulic system pressure (psi)."} },
             { "hydraulictemp", new ParameterInfo { description = "Hydraulic system temperature (°c)."} },
             { "initiatemapevent", new ParameterInfo { description = "Used to signal a map camera angle change.", hideInUi = true } },
+            { "inputsource", new ParameterInfo { minValue = 0, maxValue = 2, readOnly = true, description = "Where input is coming from (0:None, 1:Client, 2:Server)" } },
             { "inputxaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X input axis (yaw)." } },
             { "inputxaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X2 input axis." } },
             { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y input axis (pitch)." } },
@@ -1288,6 +1290,8 @@ namespace Meg.Networking
                     return SubControl.inputXaxis2;
                 case "inputyaxis2":
 					return SubControl.inputYaxis2;
+                case "inputsource":
+                    return ServerData.inputSource;
 				case "isautopilot":
 					return SubControl.isAutoPilot ? 1 : 0;
 				case "iscontroldecentmode":

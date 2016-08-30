@@ -54,6 +54,10 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public bool isControlDecentModeOnJoystick = false;
 
+    /** Where input is coming from (0 = none, 1 = client, 2 = server). */
+    [SyncVar]
+    public float inputSource; 
+
     #endregion
 
     #region DynamicValues
@@ -667,6 +671,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "inputyaxis2":
                 SubControl.inputYaxis2 = newValue;
+                break;
+            case "inputsource":
+                inputSource = newValue;
                 break;
             case "isautostabilised":
                 SubControl.isAutoStabilised = newValue > 0;
