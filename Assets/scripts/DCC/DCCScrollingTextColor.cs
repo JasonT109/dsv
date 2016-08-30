@@ -1,0 +1,82 @@
+﻿using System;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Random = UnityEngine.Random;
+
+public class DCCScrollingTextColor : widgetText
+{
+
+    [TextArea]
+    public string Lines;
+
+    [TextArea]
+    public string Footer;
+
+    public Vector2 DelayBetweenLinesRange = new Vector2(0.0f, 0.5f);
+
+    public int MaxVisibleLines = 0;
+
+    private void OnEnable()
+    {
+        if (string.IsNullOrEmpty(Lines))
+            Lines = Text;
+
+        Text = "";
+        StopAllCoroutines();
+        StartCoroutine(TextRoutine());
+    }
+
+    private IEnumerator TextRoutine()
+    {
+        if (string.IsNullOrEmpty(Lines)) yield break;
+
+        var inputLines = new Queue<string>(Lines.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None));
+        var displayedLines = new List<string>();
+
+        while (inputLines.Count > 0)
+        {
+            var input = inputLines.Dequeue();
+            var current = string.Join("\n", displayedLines.ToArray());
+            if (!string.IsNullOrEmpty(current)) current += "\n";
+
+
+
+            // var characterDelay = new WaitForSeconds();
+
+            for (var i = 0; i < input.Length; i++)
+            {
+                current += input[i];
+
+                var value = "";
+                if (!string.IsNullOrEmpty(Footer)) value += Footer + "\n";
+
+                value += current;
+
+                if (!string.IsNullOrEmpty(current)) value += "\n" + Footer;
+
+                Text = value;
+
+
+            }
+
+            displayedLines.Add(input);
+            if (MaxVisibleLines > 0 && displayedLines.Count > MaxVisibleLines)
+            {
+                inputLines.Enqueue(displayedLines[0]);
+                displayedLines.RemoveAt(0);
+            }
+
+            var lineDelay = new WaitForSeconds(Random.Range(
+                DelayBetweenLinesRange.x,
+                DelayBetweenLinesRange.y));
+
+            yield return lineDelay;
+
+
+        }
+    }
+}
+

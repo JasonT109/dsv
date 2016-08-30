@@ -18,6 +18,8 @@ public class StartUpScrollScript : widgetText
     public float CharactersPerSecond = new float();
     public Vector2 DelayBetweenLinesRange = new Vector2(0.0f, 0.5f);
 
+    public int MaxVisibleLines = 0;
+
     private void OnEnable()
     {
         if (string.IsNullOrEmpty(Lines))
@@ -66,6 +68,11 @@ public class StartUpScrollScript : widgetText
             }
 
             displayedLines.Add(input);
+            if (MaxVisibleLines > 0 && displayedLines.Count > MaxVisibleLines)
+            {
+                inputLines.Enqueue(displayedLines[0]);
+                displayedLines.RemoveAt(0);
+            }
 
             var lineDelay = new WaitForSeconds(Random.Range(
                 DelayBetweenLinesRange.x,
