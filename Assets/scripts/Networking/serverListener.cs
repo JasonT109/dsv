@@ -20,6 +20,7 @@ public class serverListener : NetworkBehaviour
         public float zinput;
         public float xinput2;
         public float yinput2;
+        public bool local;
     }
 
     private Pilot thePilot = new Pilot();
@@ -58,7 +59,8 @@ public class serverListener : NetworkBehaviour
             yinput = inputs.outputY,
             zinput = inputs.output,
             xinput2 = inputs.outputX2,
-            yinput2 = inputs.outputX2
+            yinput2 = inputs.outputX2,
+            local = inputs.isLocalPlayer
         };
 
         return p;

@@ -38,6 +38,14 @@
 				{
 					"type":"Value",
 					"serverParam":"floorDistanceDisplayed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"pressure"
+				},
+				{
+					"type":"Value",
+					"serverParam":"waterTemp"
 				}
 			]
 		}
