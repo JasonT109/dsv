@@ -20,7 +20,7 @@
 		"vessels" : 
 		[
 			{ 
-				"name" : "Marco", 
+				"name" : "Evolution", 
 				"position" : [-1, -0.5, 2000],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -31,7 +31,7 @@
 				"colorthemehighlight": "435459",
 			},
 			{ 
-				"name" : "Polo", 
+				"name" : "Origin", 
 				"position" : [-2, 2, 8900],
 				"onmap" : true, 
 				"onsonar" : true,
