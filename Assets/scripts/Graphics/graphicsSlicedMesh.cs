@@ -94,7 +94,8 @@ public class graphicsSlicedMesh : MonoBehaviour
 
     void Awake()
     {
-        mesh = new Mesh();
+        if (!mesh)
+            mesh = new Mesh();
     }
 
     void Start()
@@ -150,6 +151,9 @@ public class graphicsSlicedMesh : MonoBehaviour
 
     private void CreateSlicedMesh()
     {
+        if (!mesh)
+            mesh = new Mesh();
+
         GetComponent<MeshFilter>().sharedMesh = mesh;
 
         var y = _fillAmount * _h;
