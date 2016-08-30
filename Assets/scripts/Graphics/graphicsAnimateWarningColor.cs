@@ -14,6 +14,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     public bool autoWarningGreaterThan = false;
     public bool useUniversalSync = true;
     public bool usingTintColor = false;
+    public bool isDynamicText = false;
     public float phase = 0f;
     public int[] materialIndex;
 
@@ -25,32 +26,25 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 
     void SetColor()
     {
+        Color c = Color.black;
+
         if (autoWarning)
         {
             if (autoWarningGreaterThan)
             {
                 //check if server value is higher than warning value
                 if (serverUtils.GetServerData(autoWarningServerName) > autoWarningValue)
-                {
                     warning = true;
-                }
                 else
-                {
                     warning = false;
-                }
-
             }
             else
             {
                 //check if server value is lower than warning value
                 if (serverUtils.GetServerData(autoWarningServerName) <= autoWarningValue)
-                {
                     warning = true;
-                }
                 else
-                {
                     warning = false;
-                }
             }
         }
         if (warning)
@@ -59,42 +53,46 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
             {
                 timeIndex += Time.deltaTime * warningFlashSpeed;
                 float sinWave = Mathf.Sin(timeIndex);
-                if (timeIndex > 1.0f)
-                {
-                    timeIndex = warningFlashPause;
-                }
 
-                if (usingTintColor)
-                    m.SetColor("_TintColor", Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave)));
-                else
-                    m.SetColor("_Color", Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave)));
+                if (timeIndex > 1.0f)
+                    timeIndex = warningFlashPause;
+
+                c = Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave));
             }
             else
             {
                 float sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex + phase);
-                if (usingTintColor)
-                    m.SetColor("_TintColor", Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave)));
-                else
-                    m.SetColor("_Color", Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave)));
+                c = Color.Lerp(warningColor, originalColor, Mathf.Sin(sinWave));
             }
 
         }
         else
         {
-            if (usingTintColor)
-                m.SetColor("_TintColor", originalColor);
-            else
-                m.SetColor("_Color", originalColor);
+            c = originalColor;
         }
+
+        if (isDynamicText)
+            GetComponent<DynamicText>().color = c;
+        else if (usingTintColor)
+            m.SetColor("_TintColor", c);
+        else
+            m.SetColor("_Color", c);
     }
 
 
     void OnEnable()
     {
-        if (!r)
-            r = gameObject.GetComponent<Renderer>();
-        if (!m)
-            m = r.material;
+        if (isDynamicText)
+        {
+            originalColor = GetComponent<DynamicText>().color;
+        }
+        else
+        {
+            if (!r)
+                r = gameObject.GetComponent<Renderer>();
+            if (!m)
+                m = r.material;
+        }
 
         if (useUniversalSync)
         {
@@ -107,26 +105,31 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     // Use this for initialization
     void Awake ()
     {
-        r = gameObject.GetComponent<Renderer>();
-        m = r.material;
-
-        timeIndex += phase;
-
-        if (usingTintColor)
-            originalColor = m.GetColor("_TintColor");
+        if (isDynamicText)
+        {
+            originalColor = GetComponent<DynamicText>().color;
+        }
         else
-            originalColor = m.GetColor("_Color");
+        {
+            r = gameObject.GetComponent<Renderer>();
+            m = r.material;
 
+            if (usingTintColor)
+                originalColor = m.GetColor("_TintColor");
+            else
+                originalColor = m.GetColor("_Color");
+        }
+        timeIndex += phase;
         if (useUniversalSync)
         {
             syncNode = GameObject.FindWithTag("WarningSync");
         }
-	}
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if (materialIndex.Length > 0)
+        if (materialIndex.Length > 0 && !isDynamicText)
         {
             for (int i = 0; i < materialIndex.Length; i++)
             {
