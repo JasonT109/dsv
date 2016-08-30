@@ -1,0 +1,33 @@
+{
+	"metadata":{
+		"utc":"29/08/16 10:56:17.2",
+		"startedTimestamp":"29/08/16 10:55:04.7",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"GLITCH CUES",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"SMALL",
+					"serverParam":"screenGlitchAmount",
+					"serverValue":25
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"MEDIUM",
+					"serverParam":"screenGlitchAmount",
+					"serverValue":50
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"BIG",
+					"serverParam":"screenGlitchAmount",
+					"serverValue":100
+				}
+			]
+		}
+	]
+}
