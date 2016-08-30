@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Meg.Networking;
 
 public class serverListener : NetworkBehaviour
@@ -23,58 +25,54 @@ public class serverListener : NetworkBehaviour
     private Pilot thePilot = new Pilot();
     private bool canSendData = true;
 
-    public Pilot GetPilot()
+    private Pilot GetPilot()
     {
-        // Get a list of all the players
-        players = GameObject.FindGameObjectsWithTag("Player");
+        // First, try to find a pilot on a remote (non-server) instance.
+        // We're assuming here that the real pilot is normally on a client instance.
+        var remote = GetPilotInputs().FirstOrDefault(i => !i.isLocalPlayer);
+        if (remote)
+            return getPilotForInput(remote);
 
-        for (int i = 0; i < players.Length; i++)
-        {
-            // if this player is the pilot
-            if (players[i].GetComponent<gameInputs>().pilot)
-            {
-                Pilot p = new Pilot();
-                p.pilotObject = players[i];
-                p.pilotName = players[i].name;
-                p.xinput = players[i].GetComponent<gameInputs>().outputX;
-                p.yinput = players[i].GetComponent<gameInputs>().outputY;
-                p.zinput = players[i].GetComponent<gameInputs>().output;
-                p.xinput2 = players[i].GetComponent<gameInputs>().outputX2;
-                p.yinput2 = players[i].GetComponent<gameInputs>().outputX2;
-                return p;
-            }
-        }
-        Pilot nullPilot = new Pilot();
-        nullPilot.pilotName = "no pilot found";
-        nullPilot.pilotObject = null;
-        return nullPilot;
+        // If that fails, try to use the local server pilot.
+        return GetLocalPilot();
     }
 
-    public Pilot GetLocalPilot()
+    private Pilot GetLocalPilot()
     {
-        players = GameObject.FindGameObjectsWithTag("Player");
-        for (int i = 0; i < players.Length; i++)
-        {
-            var gameInputs = players[i].GetComponent<gameInputs>();
-            if (gameInputs.isLocalPlayer)
-            {
-                Pilot p = new Pilot();
-                p.pilotObject = players[i];
-                p.pilotName = players[i].name;
-                p.xinput = players[i].GetComponent<gameInputs>().outputX;
-                p.yinput = players[i].GetComponent<gameInputs>().outputY;
-                p.zinput = players[i].GetComponent<gameInputs>().output;
-                p.xinput2 = players[i].GetComponent<gameInputs>().outputX2;
-                p.yinput2 = players[i].GetComponent<gameInputs>().outputX2;
-                return p;
-            }
-        }
+        // Try to find a pilot on the local (server) instance.
+        var local = GetPilotInputs().FirstOrDefault(i => i.isLocalPlayer);
+        if (local)
+            return getPilotForInput(local);
 
-        Pilot nullPilot = new Pilot();
-        nullPilot.pilotName = "no pilot found";
-        nullPilot.pilotObject = null;
-        return nullPilot;
+        // No pilot found.
+        return new Pilot { pilotName = "None" };
     }
+
+    private Pilot getPilotForInput(gameInputs inputs)
+    {
+        var p = new Pilot
+        {
+            pilotObject = inputs ? inputs.gameObject : null,
+            pilotName = inputs.name,
+            xinput = inputs.outputX,
+            yinput = inputs.outputY,
+            zinput = inputs.output,
+            xinput2 = inputs.outputX2,
+            yinput2 = inputs.outputX2
+        };
+
+        return p;
+    }
+
+    private static IEnumerable<gameInputs> GetPlayerInputs()
+    {
+        return GameObject.FindGameObjectsWithTag("Player")
+            .Select(go => go.GetComponent<gameInputs>())
+            .Where(c => c);
+    }
+
+    private static IEnumerable<gameInputs> GetPilotInputs()
+        { return GetPlayerInputs().Where(i => i.pilot); }
 
     void ChangePilot()
     {
