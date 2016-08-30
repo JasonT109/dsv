@@ -1,0 +1,179 @@
+{
+	"metadata":{
+		"utc":"30/08/16 12:18:12.2",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"Warning Instruments",
+			"paused":true,
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Instruments",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Comms",
+			"paused":true,
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Comms",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Overview",
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Overview",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Thrusters",
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Thrusters",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Batteries",
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Batteries",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Oxygen",
+			"events":[
+				{
+					"type":"Popup",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Oxygen",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		}
+	]
+}
