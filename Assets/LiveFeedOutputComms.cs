@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class LiveFeedOutputComms : MonoBehaviour 
@@ -14,7 +14,7 @@ public class LiveFeedOutputComms : MonoBehaviour
 	void Start () 
 	{
 		//CameraMesh[0]._liveCamera = Outputs.GetOutput(0);
-		if(Outputs.isLive)
+		if (Outputs && Outputs.isLive)
 		{
 			for(int i = 0; i < 4; ++i)
 			{
