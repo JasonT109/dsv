@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 using Meg.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class widgetPopup : MonoBehaviour
@@ -51,6 +52,8 @@ public class widgetPopup : MonoBehaviour
     /** Popup shared data. */
     protected popupData PopupData { get { return serverUtils.PopupData; } }
 
+    /** Determines if the popup is hosted in the DCC scene. */
+    protected bool IsInDcc { get { return SceneManager.GetActiveScene().name == NetworkManagerCustom.DccScene; } }
 
 
     // Members
@@ -205,8 +208,14 @@ public class widgetPopup : MonoBehaviour
     /** Set the popup's current position. */
     private void SetPosition(Vector3 p)
     {
-        Root.transform.localPosition = new Vector3(p.x, p.y, 0);
-        Area.transform.localPosition = new Vector3(p.x, p.y, 0);
+        // In the DCC scene, we want the popups to sort in with other windows,
+        // so respect the Z position of the popup target.
+        var useZ = IsInDcc;
+        if (!useZ)
+            p = new Vector3(p.x, p.y, 0);
+
+        Root.transform.localPosition = p;
+        Area.transform.localPosition = p;
     }
 
     /** Routine to close the dialog. */
@@ -229,6 +238,5 @@ public class widgetPopup : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
         Destroy(gameObject);
     }
-
 
 }

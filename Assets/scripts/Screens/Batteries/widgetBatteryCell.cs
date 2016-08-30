@@ -12,7 +12,9 @@ public class widgetBatteryCell : MonoBehaviour
     {
         WarningBars = GetComponent<enableOnServerValue>();
         Button = GetComponentInChildren<buttonControl>();
-        StatusText = transform.Find("Status").GetComponent<textValueFromServer>();
+
+        var status = transform.Find("Status");
+        StatusText = status ? status.GetComponent<textValueFromServer>() : null;
 
         var threshold = Random.Range(10, 200);
         SetErrorThreshold(threshold);
@@ -22,8 +24,12 @@ public class widgetBatteryCell : MonoBehaviour
     {
         WarningBars.threshold = value;
         Button.autoWarningValue = value;
-        StatusText.Ranges[0].Range.y = value;
-        StatusText.Ranges[1].Range.x = value;
+
+        if (StatusText)
+        {
+            StatusText.Ranges[0].Range.y = value;
+            StatusText.Ranges[1].Range.x = value;
+        }
     }
 
 }

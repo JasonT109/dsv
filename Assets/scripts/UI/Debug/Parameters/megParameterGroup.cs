@@ -82,6 +82,8 @@ namespace Meg.Parameters
             {
                 case megParameterType.Value:
                     return new megParameterValue(this);
+                case megParameterType.String:
+                    return new megParameterString(this);
                 default:
                     return new megParameterValue(this);
             }
@@ -135,7 +137,7 @@ namespace Meg.Parameters
             for (var i = 0; i < parametersJson.Count; i++)
             {
                 var s = parametersJson[i]["type"].str;
-                var type = (megParameterType)Enum.Parse(typeof(megParameterType), s, true);
+                var type = (megParameterType) Enum.Parse(typeof(megParameterType), s, true);
                 var e = AddParameter(type);
                 e.Load(parametersJson[i]);
             }

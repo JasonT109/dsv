@@ -8,9 +8,13 @@ public class AnimateFadeOut : MonoBehaviour
     public CanvasGroup Group;
     public Graphic Graphic;
 
+    public float MinAlpha = 0;
     public float Delay = 2;
     public float Duration = 1;
+    public int Loops = 0;
+    public LoopType LoopType = LoopType.Yoyo;
     public bool ActiveInEditor = true;
+    public bool PlayOnStart = true;
 
     private void Start()
     {
@@ -24,7 +28,8 @@ public class AnimateFadeOut : MonoBehaviour
             return;
         #endif
 
-        Fade();
+        if (PlayOnStart)
+            Fade();
     }
 
     public void Fade(float duration = -1, float delay = -1)
@@ -37,11 +42,15 @@ public class AnimateFadeOut : MonoBehaviour
         if (Group)
         {
             Group.alpha = 1;
-            Group.DOFade(0, duration).SetDelay(delay);
+            var tween = Group.DOFade(MinAlpha, duration).SetDelay(delay);
+            if (Loops != 0)
+                tween.SetLoops(Loops, LoopType);
         }
         else if (Graphic)
         {
-            Graphic.DOFade(0, duration).SetDelay(delay);
+            var tween = Graphic.DOFade(MinAlpha, duration).SetDelay(delay);
+            if (Loops != 0)
+                tween.SetLoops(Loops, LoopType);
         }
     }
 
@@ -66,6 +75,10 @@ public class AnimateFadeOut : MonoBehaviour
         }
 
         sequence.Play().SetDelay(delay);
+
+        if (sequence != null && Loops != 0)
+            sequence.SetLoops(Loops, LoopType);
+
     }
 
 }

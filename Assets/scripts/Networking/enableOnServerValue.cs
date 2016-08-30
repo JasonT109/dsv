@@ -26,7 +26,7 @@ public class enableOnServerValue : MonoBehaviour
     private void Update()
     {
         var value = serverUtils.GetServerData(linkDataString);
-        var active = thresholdGreaterThan ? value >= threshold : value <= threshold;
+        var active = thresholdGreaterThan ? value > threshold : value <= threshold;
         for (var i = 0; i < Targets.Length; i++)
             Targets[i].SetActive(active);
     }

@@ -73,6 +73,9 @@ namespace Meg.EventSystem
         /** The file that this group belongs to. */
         private readonly megEventFile _file;
 
+        /** Initial paused state. */
+        private bool _initialPaused;
+
 
         // Lifecycle
         // ------------------------------------------------------------
@@ -96,6 +99,8 @@ namespace Meg.EventSystem
             time = t;
             running = true;
             completed = false;
+
+            _initialPaused = paused;
 
             // Initialize event list if needed.
             if (events == null)
@@ -164,6 +169,8 @@ namespace Meg.EventSystem
             running = false;
             foreach (var e in events)
                 e.StopFromGroup();
+
+            paused = _initialPaused;
         }
 
         /** Rewind the group to start time. */

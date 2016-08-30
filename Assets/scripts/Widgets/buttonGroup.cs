@@ -8,6 +8,19 @@ public class buttonGroup : MonoBehaviour {
     public bool changed = false;
     public GameObject lastButton { get; private set; }
 
+    public void Awake()
+    {
+        foreach (var button in buttons)
+        {
+            if (!button)
+                continue;
+
+            var bScript = button.GetComponent<buttonControl>();
+            if (bScript && bScript.active)
+                lastButton = button;
+        }
+    }
+
     public void toggleButtons(GameObject b, bool forceOn = false)
     {
         changed = true;

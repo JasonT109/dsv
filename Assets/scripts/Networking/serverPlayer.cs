@@ -77,6 +77,15 @@ public class serverPlayer : NetworkBehaviour
             CmdAddPopup(popup);
     }
 
+    /** Toggle a popup on or off. */
+    public void PostTogglePopup(popupData.Popup popup)
+    {
+        if (isServer)
+            ServerTogglePopup(popup);
+        else if (isClient)
+            CmdTogglePopup(popup);
+    }
+
     /** Remove a popup (works on both clients and host). */
     public void PostRemovePopup(popupData.Popup popup)
     {
@@ -129,6 +138,51 @@ public class serverPlayer : NetworkBehaviour
             ServerSetVesselMovementType(id, type);
         else
             CmdSetVesselMovementType(id, type);
+    }
+
+    /** Post vessel's name to the server. */
+    public void PostVesselName(int id, string value)
+    {
+        if (isServer)
+            ServerSetVesselName(id, value);
+        else
+            CmdSetVesselName(id, value);
+    }
+
+    /** Post vessel's depth to the server. */
+    public void PostVesselDepth(int id, float depth)
+    {
+        if (isServer)
+            ServerSetVesselDepth(id, depth);
+        else
+            CmdSetVesselDepth(id, depth);
+    }
+
+    /** Post vessel's icon to the server. */
+    public void PostVesselIcon(int id, vesselData.Icon icon)
+    {
+        if (isServer)
+            ServerSetVesselIcon(id, icon);
+        else
+            CmdSetVesselIcon(id, icon);
+    }
+
+    /** Post vessel map visibility to the server. */
+    public void PostVesselOnMap(int id, bool value)
+    {
+        if (isServer)
+            ServerSetVesselOnMap(id, value);
+        else
+            CmdSetVesselOnMap(id, value);
+    }
+
+    /** Post vessel sonar visibility to the server. */
+    public void PostVesselOnSonar(int id, bool value)
+    {
+        if (isServer)
+            ServerSetVesselOnSonar(id, value);
+        else
+            CmdSetVesselOnSonar(id, value);
     }
 
     /** Post vessel movements state to the server. */
@@ -223,6 +277,31 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselMovementType(int id, string type)
         { ServerSetVesselMovementType(id, type); }
 
+    /** Set vessel's name on the server. */
+    [Command]
+    public void CmdSetVesselName(int id, string name)
+        { ServerSetVesselName(id, name); }
+
+    /** Set vessel map visibility to the server. */
+    [Command]
+    public void CmdSetVesselOnMap(int id, bool value)
+        { ServerSetVesselOnMap(id, value); }
+
+    /** Set vessel sonar visibility to the server. */
+    [Command]
+    public void CmdSetVesselOnSonar(int id, bool value)
+        { ServerSetVesselOnSonar(id, value); }
+
+    /** Set vessel's depth on the server. */
+    [Command]
+    public void CmdSetVesselDepth(int id, float depth)
+        { ServerSetVesselDepth(id, depth); }
+
+    /** Set vessel's icon on the server. */
+    [Command]
+    public void CmdSetVesselIcon(int id, vesselData.Icon icon)
+        { ServerSetVesselIcon(id, icon); }
+
     /** Command to set vessel movements state on the server. */
     [Command]
     public void CmdSetVesselMovementState(string state)
@@ -253,10 +332,15 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearExtraVessels()
         { serverUtils.VesselData.ClearExtraVessels(); }
 
-    /** Add a popup (works on both clients and host). */
+    /** Add a popup on the server. */
     [Command]
     public void CmdAddPopup(popupData.Popup popup)
         { ServerAddPopup(popup); }
+
+    /** Toggle a popup on the server. */
+    [Command]
+    public void CmdTogglePopup(popupData.Popup popup)
+        { ServerTogglePopup(popup); }
 
     /** Remove a popup (works on both clients and host). */
     [Command]
@@ -320,6 +404,31 @@ public class serverPlayer : NetworkBehaviour
     public void ServerSetVesselMovementType(int id, string type)
         { serverUtils.VesselMovements.SetMovementType(id, type); }
 
+    /** Set vessel's name on the server. */
+    [Server]
+    public void ServerSetVesselName(int id, string value)
+        { serverUtils.VesselData.SetName(id, value); }
+
+    /** Set vessel's depth on the server. */
+    [Server]
+    public void ServerSetVesselDepth(int id, float depth)
+        { serverUtils.VesselData.SetDepth(id, depth); }
+
+    /** Set vessel's icon on the server. */
+    [Server]
+    public void ServerSetVesselIcon(int id, vesselData.Icon icon)
+        { serverUtils.VesselData.SetIcon(id, icon); }
+
+    /** Set vessel map visibility to the server. */
+    [Server]
+    public void ServerSetVesselOnMap(int id, bool value)
+        { serverUtils.VesselData.SetOnMap(id, value); }
+
+    /** Set vessel sonar visibility to the server. */
+    [Server]
+    public void ServerSetVesselOnSonar(int id, bool value)
+        { serverUtils.VesselData.SetOnSonar(id, value); }
+    
     /** Set vessel movements state on the server. */
     [Server]
     public void ServerSetVesselMovementState(JSONObject json)
@@ -329,6 +438,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerAddPopup(popupData.Popup popup)
         { serverUtils.PopupData.AddPopup(popup);}
+
+    /** Toggle a popup on or off. */
+    [Server]
+    public void ServerTogglePopup(popupData.Popup popup)
+        { serverUtils.PopupData.TogglePopup(popup); }
 
     /** Remove a popup on the server. */
     [Server]

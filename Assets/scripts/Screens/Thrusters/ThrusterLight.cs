@@ -19,14 +19,22 @@ public class ThrusterLight : MonoBehaviour
 
     public void Start()
     {
-        if (!Control)
-            Control = ObjectFinder.Find<widgetThrusterControl>();
+        LocateThrusterControl();
 
         if (!Light)
             Light = GetComponent<Light>();
 
         Light.color = Color.black;
         Light.intensity = 0;
+    }
+
+    private void LocateThrusterControl()
+    {
+        // Locate the thruster control script (should be in a parent node).
+        if (!Control)
+            Control = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
+        if (!Control)
+            Control = ObjectFinder.Find<widgetThrusterControl>();
     }
 
     public void Update()

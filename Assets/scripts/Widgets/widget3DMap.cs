@@ -46,6 +46,11 @@ public class widget3DMap : MonoBehaviour {
     public Color WaterColor2d;
     public Color WaterColor3d;
 
+    [Header("Acid")]
+    public GameObject Acid;
+    public Color AcidColor2d;
+    public Color AcidColor3d;
+
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
@@ -79,6 +84,7 @@ public class widget3DMap : MonoBehaviour {
     private float _lineDetail3D;
 
     private Material _waterMaterial;
+    private Material _acidMaterial;
 
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
@@ -320,6 +326,10 @@ public class widget3DMap : MonoBehaviour {
         if (force3D)
             target3DAmount = 1;
 
+        // Inform event manager whether map is in contour mode.
+        if (cameraEventManager)
+            cameraEventManager.isContourModeActive = buttonContourMapping.active;
+
         // Smooth terrain 3d fade amount over time.
         _terrain3DAmount = Mathf.SmoothDamp(_terrain3DAmount, target3DAmount, ref _terrain3DVelocity, 0.5f);
 
@@ -336,6 +346,8 @@ public class widget3DMap : MonoBehaviour {
         m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
 
         _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
+
+        _acidMaterial.SetColor("_FogColor", Color.Lerp(AcidColor2d, AcidColor3d, t));
     }
 
     private void InitTerrain()
@@ -368,6 +380,8 @@ public class widget3DMap : MonoBehaviour {
         terrain.basemapDistance = 10000;
 
         _waterMaterial = Water.GetComponent<Renderer>().material;
+
+        _acidMaterial = Acid.GetComponent<Renderer>().material;
 
         _terrainInitialized = true;
     }

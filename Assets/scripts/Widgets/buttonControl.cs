@@ -59,6 +59,7 @@ public class buttonControl : MonoBehaviour
     public bool observeServerState;
     public string serverName = "depth";
     public string serverType = "int";
+    public string serverEnableKey = "";
 
     [Header("Animation")]
     public bool AnimateOnPress;
@@ -411,6 +412,9 @@ public class buttonControl : MonoBehaviour
 
     void Update()
     {
+        if (!string.IsNullOrEmpty(serverEnableKey))
+            disabled = !serverUtils.GetServerBool(serverEnableKey, true);
+
         if (optionalLabel)
         {
             if (!active)

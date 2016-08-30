@@ -142,7 +142,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetName(Vessel.Id, value);
+        serverUtils.PostVesselName(Vessel.Id, value);
     }
 
     /** Add a vessel movement event to the selected event group. */
@@ -221,7 +221,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         AddMovementEventButton.interactable = CanAddEvents;
         EtaGroup.interactable = !megEventManager.Instance.Playing;
         _updating = false;
-        
+
+        UpdateIconToggles();
     }
 
     private void ClearUi()
@@ -236,7 +237,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetDepth(Vessel.Id, value);
+        serverUtils.PostVesselDepth(Vessel.Id, value);
         DepthInput.text = string.Format("{0:N1}", value);
     }
 
@@ -249,7 +250,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (!float.TryParse(value, out result))
             return;
 
-        VesselData.SetDepth(Vessel.Id, result);
+        serverUtils.PostVesselDepth(Vessel.Id, result);
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, result);
         DepthSlider.value = result;
     }
@@ -271,7 +272,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (_updating)
             return;
 
-        VesselData.SetIcon(Vessel.Id, icon);
+        serverUtils.PostVesselIcon(Vessel.Id, icon);
         UpdateIconToggles();
     }
 
@@ -525,6 +526,10 @@ public class debugVesselPropertiesUi : MonoBehaviour
             return;
 
         Movement.SetMaxSpeed(value);
+
+        // Max speed might have been clamped at some point (e.g.g must be >= 1).
+        value = Movement.GetMaxSpeed();
+        
         MovementSpeedSlider.maxValue = value;
         MovementMaxSpeedInput.text = string.Format("{0:N1}", value);
         UpdateMovement();
@@ -539,6 +544,8 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (!float.TryParse(value, out result))
             return;
 
+        result = Mathf.Max(result, vesselMovement.LowestMaxSpeed);
+        
         Movement.SetMaxSpeed(result);
         MovementSpeedSlider.maxValue = result;
         MovementMaxSpeedSlider.maxValue = Mathf.Max(MovementMaxSpeedSlider.maxValue, result);

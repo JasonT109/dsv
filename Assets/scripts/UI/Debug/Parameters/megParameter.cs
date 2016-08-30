@@ -9,7 +9,8 @@ namespace Meg.Parameters
     /** Possible types of parameter. */
     public enum megParameterType
     {
-        Value = 0
+        Value = 0,
+        String = 1
     }
 
 

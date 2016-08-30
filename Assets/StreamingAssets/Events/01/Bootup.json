@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"28/08/16 12:35:17.6",
-		"startedTimestamp":"28/08/16 12:34:49.9",
-		"stoppedTimestamp":"28/08/16 12:35:01.9"
+		"utc":"29/08/16 03:08:04.9",
+		"startedTimestamp":"29/08/16 03:07:43.1",
+		"stoppedTimestamp":"29/08/16 03:07:45.7"
 	},
 	"groups":[
 		{
 			"id":"FADE TO BLACK",
+			"paused":true,
 			"events":[
 				{
 					"type":"Value",
@@ -18,6 +19,7 @@
 		},
 		{
 			"id":"NORMAL BOOTUP",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{

@@ -108,6 +108,7 @@ public class DomePanDial : MonoBehaviour
     {
         // Hide dial whenever we leave the screen.
         gameObject.SetActive(false);
+        _showing = false;
     }
 
 

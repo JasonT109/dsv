@@ -1,7 +1,13 @@
 {
+	"metadata":{
+		"utc":"29/08/16 03:05:20.8",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
 	"groups":[
 		{
 			"id":"Main Air Depletion",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{
@@ -35,6 +41,7 @@
 		},
 		{
 			"id":"Main Oxygen Depletion",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{
@@ -76,6 +83,7 @@
 		},
 		{
 			"id":"Reserve Oxygen Depletion",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{
@@ -154,6 +162,7 @@
 		},
 		{
 			"id":"Reserve Air Depletion",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{

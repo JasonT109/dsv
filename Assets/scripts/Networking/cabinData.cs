@@ -43,4 +43,20 @@ public class cabinData : NetworkBehaviour
     [SyncVar]
     public float scrubbedOxygen = 21.8f;
 
+    /** Water temperature override value (degrees C). */
+    [SyncVar]
+    public float waterTempOverride = 5;
+
+    /** Amount of water temperature overriding to apply [0..1]. */
+    [SyncVar]
+    public float waterTempOverrideAmount = 0;
+
+    /** External pressure override value (bar). */
+    [SyncVar]
+    public float pressureOverride = 100;
+
+    /** Amount of water temperature overriding to apply [0..1]. */
+    [SyncVar]
+    public float pressureOverrideAmount = 0;
+
 }

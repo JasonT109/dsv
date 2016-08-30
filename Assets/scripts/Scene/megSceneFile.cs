@@ -76,8 +76,12 @@ namespace Meg.Scene
             // Expand out any config paths in the save file format string.
             format = Configuration.ExpandedPath(format);
 
-            // Gather all information required to determine the save filename.
+            // Get player vessel info.  If name is empty, use the vessel number instead.
             var vessel = serverUtils.GetServerDataAsText("playerVesselName");
+            if (string.IsNullOrEmpty(vessel))
+                vessel = string.Format("Vessel_{0:00}", serverUtils.GetPlayerVessel());
+
+            // Gather all information required to determine the save filename.
             var scene = serverUtils.GetServerData("scene");
             var shot = serverUtils.GetServerData("shot");
             var take = serverUtils.GetServerData("take");

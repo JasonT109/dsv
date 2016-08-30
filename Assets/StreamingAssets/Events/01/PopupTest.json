@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"27/08/16 10:45:38.3",
-		"startedTimestamp":"27/08/16 10:44:59.9",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"29/08/16 03:12:44.7",
+		"startedTimestamp":"29/08/16 03:07:43.1",
+		"stoppedTimestamp":"29/08/16 03:07:45.7"
 	},
 	"groups":[
 		{
 			"id":"POPUP TEST",
+			"paused":true,
 			"looping":true,
 			"canLoop":true,
 			"events":[

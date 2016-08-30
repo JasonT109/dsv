@@ -115,7 +115,8 @@ public class gameInputs : NetworkBehaviour
             UpdateInput();
 
         if (_input.GetButtonDown("DescentMode"))
-            ToggleDescentMode();
+            if (serverUtils.GetServerBool("iscontroldecentmodeonjoystick"))
+                ToggleDescentMode();
     }
 
 
@@ -187,7 +188,7 @@ public class gameInputs : NetworkBehaviour
 
     private void ToggleDescentMode()
     {
-        bool descentMode = serverUtils.GetServerData("iscontroldecentmode") > 0;
+        var descentMode = serverUtils.GetServerData("iscontroldecentmode") > 0;
         CmdToggleDescentMode(descentMode ? 0 : 1);
     }
 

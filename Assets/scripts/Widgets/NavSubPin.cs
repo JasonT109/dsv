@@ -158,7 +158,6 @@ public class NavSubPin : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Configure a pin. */
-
     public void Configure(int id)
     {
         // Update pin's id.
@@ -236,6 +235,7 @@ public class NavSubPin : MonoBehaviour
         // Toggle label visibility.
         ShowLabel = !ShowLabel;
 
+        /*
         // Fade the label in/out.
         var label = _icon.label;
         var c = label.color;
@@ -253,13 +253,14 @@ public class NavSubPin : MonoBehaviour
 
         backdrop.DOKill();
         backdrop.material.DOFade(ShowLabel ? 0.5f : 0, "_TintColor", 0.25f);
+        */
     }
 
     /** Updating. */
     public void UpdatePin()
     {
         // Check if pin is configured correctly.
-        if (!_manager)
+        if (!_manager || !serverUtils.IsReady())
             return;
 
         // Update pin visibility.
@@ -311,7 +312,9 @@ public class NavSubPin : MonoBehaviour
 
         // Update map icon with a direction indicator.
         UpdateMapIcon();
-        
+     
+        // Update label visibility.
+        UpdateLabel();
     }
 
     /** Update indicator lines for this vessel pin. */
@@ -528,6 +531,18 @@ public class NavSubPin : MonoBehaviour
         statsBox.gameObject.SetActive(false);
 
         return statsBox;
+    }
+
+    /** Update label visibility. */
+    private void UpdateLabel()
+    {
+        // Hide label if name is empty.
+        var vesselName = serverUtils.GetVesselName(VesselId);
+        var hasName = !string.IsNullOrEmpty(vesselName);
+
+        // Show or hide the label object based on active state.
+        if (_icon && _icon.label)
+            _icon.label.gameObject.SetActive(ShowLabel && hasName);
     }
 
 }

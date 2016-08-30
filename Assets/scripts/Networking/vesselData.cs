@@ -478,7 +478,13 @@ public class vesselData : NetworkBehaviour
 
     /** Return a vessel's current name. */
     public string GetName(int id)
-        { return GetVessel(id).Name; }
+    {
+        var result = GetVessel(id).Name;
+        if (string.IsNullOrEmpty(result))
+            return "";
+
+        return result;
+    }
 
     /** Return a debug name for the given vessel. */
     public string GetDebugName(int id)

@@ -414,10 +414,14 @@ namespace Meg.Networking
             "dcccommscontent",
             "dccquadcycle",
             "depth",
+            "depthdisplayed",
+            "depthoverride",
+            "depthoverrideamount",
             "disableinput",
             "divertpowertothrusters",
             "divetime",
             "divetimeactive",
+            "dockingbuttonenabled",
             "domecenter",
             "domecornerbottomleft",
             "domecornerbottomright",
@@ -470,6 +474,7 @@ namespace Meg.Networking
             "error_vidhd",
             "floordepth",
             "floordistance",
+            "floordistancedisplayed",
             "genericerror",
             "greenscreenbrightness",
             "heading",
@@ -483,7 +488,8 @@ namespace Meg.Networking
             "inputyaxis2",
             "inputzaxis",
 			"iscontroldecentmode",
-			"isautopilot",
+            "iscontroldecentmodeonjoystick",
+            "isautopilot",
 			"iscontrolmodeoverride",
 			"iscontroloverridestandard",
             "isautostabilised",
@@ -523,6 +529,7 @@ namespace Meg.Networking
 			"motionslerpspeed",
 			"motionhazardsensitivity",
 			"motionscaleimpacts",
+			"motionminimpactinterval",
             "o1",
             "o2",
             "o3",
@@ -537,10 +544,13 @@ namespace Meg.Networking
             "oxygentank1",
             "oxygentank2",
             "oxygentank3",
+            "pilotbuttonenabled",
             "pitchangle",
             "pitchspeed",
             "playervessel",
             "pressure",
+            "pressureoverride",
+            "pressureoverrideamount",
             "reserveair",
             "reserveairtank1",
             "reserveairtank2",
@@ -638,6 +648,8 @@ namespace Meg.Networking
             "vessel6vis",
             "vesselmovementenabled",
             "watertemp",
+            "watertempoverride",
+            "watertempoverrideamount",
             "xpos",
             "yawangle",
             "yawspeed",
@@ -764,10 +776,14 @@ namespace Meg.Networking
             { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
+            { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
+            { "depthoverride", new ParameterInfo { maxValue = 12000, description = "Displayed depth if depth override is active (m)"} },
+            { "depthoverrideamount", new ParameterInfo { maxValue = 1, description = "The amount of depth override to apply [0..1]."} },
             { "disableinput", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input to sub is completely disabled."} },
             { "divertpowertothrusters", new ParameterInfo { description = "Amount of power diverted from systems to thrusters (0..100%)."} },
             { "divetime", new ParameterInfo { maxValue = 3600, description = "Duration of the dive so far (s)."} },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether dive time is automatically updated."} },
+            { "dockingbuttonenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether the docking button is enabled in Piloting screen."} },
             { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
@@ -819,6 +835,7 @@ namespace Meg.Networking
             { "error_vhf", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_vidhd", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
+            { "floordistancedisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether floor distance is displayed in header area."} },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
             { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
@@ -833,8 +850,9 @@ namespace Meg.Networking
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y2 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
 			{ "isautopilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control auto pilot toggle. does nothing but change a button light." } },
-			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode boolean." } },
-			{ "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
+			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Controls whether sub is in auto-descent mode." } },
+            { "iscontroldecentmodeonjoystick", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input can be used to toggle descent mode." } },
+            { "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
 			{ "iscontroloverridestandard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode when server is overriding." } },
             { "isautostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub roll is automatically stabilised."} },
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub pitch is also automatically stabilised."} },
@@ -866,6 +884,7 @@ namespace Meg.Networking
 			{ "motionslerpspeed", new ParameterInfo { maxValue = 30, description = "t multiplier for the motion base's slerp."} },
 			{ "motionhazardsensitivity", new ParameterInfo { maxValue = 30, description = "Sensitivity of tripping a motion base hazard (unsafe rate of change threshold)."} },
 			{ "motionscaleimpacts", new ParameterInfo { maxValue = 0.75f, description = "Scaling factor for reducing the intensity of physics impacts."} },
+			{ "motionminimpactinterval", new ParameterInfo { maxValue = 5.0f, description = "min interval for impacts on the sub"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -880,10 +899,13 @@ namespace Meg.Networking
             { "oxygentank1", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
             { "oxygentank2", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
             { "oxygentank3", new ParameterInfo { description = "Oxygen main tank 1 capacity (%)."} },
+            { "pilotbuttonenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether the piloting button is enabled in Piloting screen."} },
             { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current pitch angle (nose up/down, degrees)."} },
             { "pitchspeed", new ParameterInfo { description = "Sub's pitching speed (nose up / down)."} },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int, description = "Which vessel is occupied by the players (crew)."} },
             { "pressure", new ParameterInfo { readOnly = true, description = "Current exterior pressure (bar)"} },
+            { "pressureoverride", new ParameterInfo { description = "Override value for exterior pressure (bar)"} },
+            { "pressureoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for exterior pressure (bar)"} },
             { "reserveair", new ParameterInfo { readOnly = true, description = "Overall reserve air tank percentage (%)."} },
             { "reserveairtank1", new ParameterInfo { description = "Reserve air tank 1 capacity (%)."} },
             { "reserveairtank2", new ParameterInfo { description = "Reserve air tank 2 capacity (%)."} },
@@ -931,6 +953,8 @@ namespace Meg.Networking
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
             { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
+            { "watertempoverride", new ParameterInfo { description = "Override value for water temperature (C)"} },
+            { "watertempoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for water temperature (C)"} },
             { "xpos", new ParameterInfo { description = "Sub's X coordinate (m) (Note that this is in the XZ plane, where Y is up/down.)" } },
             { "yawangle", new ParameterInfo { minValue = 0, maxValue = 360, description = "Sub's current yaw angle (heading, degrees)." } },
             { "yawspeed", new ParameterInfo { description = "Sub's yawing speed (heading change)."} },
@@ -966,7 +990,15 @@ namespace Meg.Networking
                 case "take":
                     return ServerData.take;
                 case "depth":
-                    return ServerData.depth;
+                    return ServerData.GetDepth();
+                case "depthdisplayed":
+                    return ServerData.depthDisplayed ? 1 : 0;
+                case "depthoverride":
+                    return ServerData.depthOverride;
+                case "depthoverrideamount":
+                    return ServerData.depthOverrideAmount;
+                case "floordistancedisplayed":
+                    return ServerData.floorDistanceDisplayed ? 1 : 0;
                 case "xpos":
                     return ServerObject.transform.position.x;
                 case "zpos":
@@ -1136,6 +1168,14 @@ namespace Meg.Networking
                     return CabinData.scrubbedHumidity;
                 case "scrubbedoxygen":
                     return CabinData.scrubbedOxygen;
+                case "pressureoverride":
+                    return CabinData.pressureOverride;
+                case "pressureoverrideamount":
+                    return CabinData.pressureOverrideAmount;
+                case "watertempoverride":
+                    return CabinData.waterTempOverride;
+                case "watertempoverrideamount":
+                    return CabinData.waterTempOverrideAmount;
                 case "error_bilgeleak":
                     return ErrorData.error_bilgeLeak;
                 case "error_batteryleak":
@@ -1260,6 +1300,8 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot ? 1 : 0;
                 case "isControlDecentMode":
                     return SubControl.isControlDecentMode ? 1 : 0;
+                case "iscontroldecentmodeonjoystick":
+                    return ServerData.isControlDecentModeOnJoystick ? 1 : 0;
                 case "isControlModeOverride":
                     return SubControl.isControlModeOverride ? 1 : 0;
                 case "isControlOverrideStandard":
@@ -1316,6 +1358,10 @@ namespace Meg.Networking
                     return OperatingData.commsSignalStrength;
                 case "divertpowertothrusters":
                     return OperatingData.divertPowerToThrusters;
+                case "dockingbuttonenabled":
+                    return OperatingData.dockingButtonEnabled ? 1 : 0;
+                case "pilotbuttonenabled":
+                    return OperatingData.pilotButtonEnabled ? 1 : 0;
                 case "vesselmovementenabled":
                     return VesselMovements.Enabled ? 1 : 0;
                 case "timetointercept":
@@ -1340,6 +1386,8 @@ namespace Meg.Networking
 					return SubControl.MotionSlerpSpeed;
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts;
+				case "motionminimpactinterval":
+					return SubControl.MotionMinImpactInterval;
 				case "motionhazardsensitivity":
 					return SubControl.MotionHazardSensitivity;
                 case "sonarlongfrequency":
@@ -1472,7 +1520,7 @@ namespace Meg.Networking
                 case "take":
                     return ServerData.take.ToString();
                 case "depth":
-                    int dInt = (int)ServerData.depth;
+                    var dInt = (int) ServerData.GetDepth();
                     return dInt.ToString();
                 case "heading":
                     return (ServerData.heading.ToString("n1") + "°");
@@ -1646,6 +1694,8 @@ namespace Meg.Networking
 					return SubControl.MotionHazardSensitivity.ToString("n1");
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts.ToString("n1");
+				case "motionminimpactinterval":
+					return SubControl.MotionMinImpactInterval.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
@@ -1696,11 +1746,11 @@ namespace Meg.Networking
         }
 
         /** Return the current value of a shared boolean state value by name. */
-        public static bool GetServerBool(string boolName)
+        public static bool GetServerBool(string boolName, bool defaultValue = false)
         {
             // Check whether server object is ready.
             if (ServerObject == null)
-                return false;
+                return defaultValue;
 
             // Check if we're looking for a vessel state value.
             if (VesselData.IsVesselKey(boolName))
@@ -1721,7 +1771,9 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot;
 				case "iscontroldecentmode":
 					return SubControl.isControlDecentMode;
-				case "iscontrolmodeoverride":
+                case "iscontroldecentmodeonjoystick":
+                    return ServerData.isControlDecentModeOnJoystick;
+                case "iscontrolmodeoverride":
 					return SubControl.isControlModeOverride;
 				case "iscontroloverridestandard":
 					return SubControl.isControlOverrideStandard;
@@ -1743,7 +1795,7 @@ namespace Meg.Networking
 					return SubControl.MotionHazardEnabled;
                 default:
                     // As a last resort, interpret numeric values as booleans.
-                    var value = GetServerData(boolName);
+                    var value = GetServerData(boolName, defaultValue ? 1 : 0);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
             }
         }
@@ -1857,6 +1909,13 @@ namespace Meg.Networking
                 LocalPlayer.PostAddPopup(popup);
         }
 
+        /** Toggle a popup on or off. */
+        public static void PostTogglePopup(popupData.Popup popup)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostTogglePopup(popup);
+        }
+
         /** Remove a popup (works on both clients and host). */
         public static void PostRemovePopup(popupData.Popup popup)
         {
@@ -1890,6 +1949,41 @@ namespace Meg.Networking
         {
             if (LocalPlayer)
                 LocalPlayer.PostVesselMovementType(id, type);
+        }
+
+        /** Post vessel's name to the server. */
+        public static void PostVesselName(int id, string name)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselName(id, name);
+        }
+
+        /** Post vessel's depth to the server. */
+        public static void PostVesselDepth(int id, float depth)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselDepth(id, depth);
+        }
+
+        /** Post vessel's icon to the server. */
+        public static void PostVesselIcon(int id, vesselData.Icon icon)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselIcon(id, icon);
+        }
+
+        /** Post vessel map visibility to the server. */
+        public static void PostVesselOnMap(int id, bool value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselOnMap(id, value);
+        }
+
+        /** Post vessel sonar visibility to the server. */
+        public static void PostVesselOnSonar(int id, bool value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselOnSonar(id, value);
         }
 
         /** Post vessel movements state to the server (works on both clients and host). */

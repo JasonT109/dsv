@@ -228,6 +228,16 @@ public class popupData : NetworkBehaviour
         Popups.Add(popup);
     }
 
+    /** Toggle a popup. */
+    [Server]
+    public void TogglePopup(Popup popup)
+    {
+        if (Popups.Contains(popup))
+            RemovePopup(popup);
+        else
+            AddPopup(popup);
+    }
+
     /** Remove a popup. */
     [Server]
     public void RemovePopup(Popup popup)
@@ -240,6 +250,12 @@ public class popupData : NetworkBehaviour
     public void Clear()
     {
         Popups.Clear();
+    }
+
+    /** Determines if a given popup is active. */
+    public bool IsPopupActive(Popup popup)
+    {
+        return Popups.Contains(popup);
     }
 
     /** Look up a popup target by id. */

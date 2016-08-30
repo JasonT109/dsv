@@ -14,7 +14,15 @@ public class serverData : NetworkBehaviour
     [SyncVar]
     public float depth;
     [SyncVar]
+    public float depthOverride;
+    [SyncVar]
+    public float depthOverrideAmount;
+    [SyncVar]
+    public bool depthDisplayed = true;
+    [SyncVar]
     public float floorDistance;
+    [SyncVar]
+    public bool floorDistanceDisplayed = true;
     [SyncVar]
     public float floorDepth = mapData.DefaultFloorDepth;
     [SyncVar]
@@ -41,6 +49,10 @@ public class serverData : NetworkBehaviour
     public float dueTime;
     [SyncVar]
     public bool dueTimeActive = true;
+
+    /** Whether joystick can be used to toggle descent mode. */
+    [SyncVar]
+    public bool isControlDecentModeOnJoystick = false;
 
     #endregion
 
@@ -299,8 +311,20 @@ public class serverData : NetworkBehaviour
                 transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
                 depth = newValue;
                 break;
+            case "depthoverride":
+                depthOverride = newValue;
+                break;
+            case "depthoverrideamount":
+                depthOverrideAmount = newValue;
+                break;
+            case "depthdisplayed":
+                depthDisplayed = newValue > 0;
+                break;
             case "floordepth":
                 floorDepth = newValue;
+                break;
+            case "floordistancedisplayed":
+                floorDistanceDisplayed = newValue > 0;
                 break;
             case "domecenter":
                 DomeData.domeCenter = (domeData.OverlayId) newValue;
@@ -536,6 +560,18 @@ public class serverData : NetworkBehaviour
             case "scrubbedoxygen":
                 CabinData.scrubbedOxygen = newValue;
                 break;
+            case "pressureoverride":
+                CabinData.pressureOverride = newValue;
+                break;
+            case "pressureoverrideamount":
+                CabinData.pressureOverrideAmount = newValue;
+                break;
+            case "watertempoverride":
+                CabinData.waterTempOverride = newValue;
+                break;
+            case "watertempoverrideamount":
+                CabinData.waterTempOverrideAmount = newValue;
+                break;
             case "error_bilgeleak":
                 ErrorData.error_bilgeLeak = newValue;
                 break;
@@ -758,6 +794,12 @@ public class serverData : NetworkBehaviour
             case "divertpowertothrusters":
                 OperatingData.divertPowerToThrusters = newValue;
                 break;
+            case "pilotbuttonenabled":
+                OperatingData.pilotButtonEnabled = newValue > 0;
+                break;
+            case "dockingbuttonenabled":
+                OperatingData.dockingButtonEnabled = newValue > 0;
+                break;
             case "screenglitchamount":
                 ScreenData.screenGlitch = newValue;
                 break;
@@ -808,6 +850,9 @@ public class serverData : NetworkBehaviour
 				break;
 			case "motionscaleimpacts":
 				SubControl.MotionScaleImpacts = newValue;
+				break;
+			case "motionminimpactinterval":
+				SubControl.MotionMinImpactInterval = newValue;
 				break;
             case "sonarlongfrequency":
                 SonarData.LongFrequency = newValue;
@@ -917,6 +962,9 @@ public class serverData : NetworkBehaviour
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue > 0;
 				break;
+            case "iscontroldecentmodeonjoystick":
+                isControlDecentModeOnJoystick = newValue > 0;
+                break;
             case "iscontrolmodeoverride":
                 SubControl.isControlModeOverride = newValue > 0;
                 break;
@@ -1069,6 +1117,9 @@ public class serverData : NetworkBehaviour
         // Match incoming key against known data values.
         switch (boolName.ToLower())
         {
+            case "depthdisplayed":
+                depthDisplayed = newValue;
+                break;
             case "divetimeactive":
                 diveTimeActive = newValue;
                 break;
@@ -1077,6 +1128,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "disableinput":
                 SubControl.disableInput = newValue;
+                break;
+            case "floordistancedisplayed":
+                floorDistanceDisplayed = newValue;
                 break;
             case "vesselmovementenabled":
                 VesselMovements.Enabled = newValue;
@@ -1105,6 +1159,9 @@ public class serverData : NetworkBehaviour
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue;
                 break;
+            case "iscontroldecentmodeonjoystick":
+                isControlDecentModeOnJoystick = newValue;
+                break;
             case "iscontrolmodeoverride":
                 SubControl.isControlModeOverride = newValue;
                 break;
@@ -1120,6 +1177,12 @@ public class serverData : NetworkBehaviour
 			case "motionsafety":
 				SubControl.MotionSafety = newValue;
 				break;
+            case "pilotbuttonenabled":
+                OperatingData.pilotButtonEnabled = newValue;
+                break;
+            case "dockingbuttonenabled":
+                OperatingData.dockingButtonEnabled = newValue;
+                break;
         }
     }
 
@@ -1142,6 +1205,19 @@ public class serverData : NetworkBehaviour
         {
             yawResult = 360 + yawResult;
         }
+    }
+
+    /** Return the current displayed depth (defaults to player vessel depth, can be overridden. */
+    public float GetDepth()
+    {
+        // Determine the proportion of overriding to apply.
+        // 0 = No overriding (use player vessel depth only).
+        // 1 = Full overriding (use override depth only).
+        // 0.5 = Interpolate halfway between the two.
+        var t = Mathf.Clamp01(depthOverrideAmount);
+
+        // Interpolate between actual and override depth to reach displayed depth.
+        return Mathf.Lerp(depth, depthOverride, t);
     }
 
     [ClientRpc]
@@ -1240,7 +1316,7 @@ public class serverData : NetworkBehaviour
         rollAngle = rollResult;
         velocity = rb.velocity.magnitude;
         depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = Mathf.Max(0, floorDepth - depth);
+        floorDistance = Mathf.Max(0, floorDepth - GetDepth());
 
         // Update ETA timer.
         if (dueTimeActive)

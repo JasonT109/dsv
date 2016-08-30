@@ -264,7 +264,7 @@ public class DCCScreenManager : MonoBehaviour
 
         serverUtils.PostServerData(screen, currentContent);
 
-        Debug.Log(GetIntBinaryString(currentContent));
+        //Debug.Log(GetIntBinaryString(currentContent));
     }
 
     /** Debug function to check binary values. */

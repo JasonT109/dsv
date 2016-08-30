@@ -62,14 +62,14 @@ public class debugVesselUi : MonoBehaviour
     public void ToggleOnMap()
     {
         if (!_updating)
-            VesselData.SetOnMap(Vessel.Id, !Vessel.OnMap);
+            serverUtils.PostVesselOnMap(Vessel.Id, !Vessel.OnMap);
     }
 
     /** Toggle the vessel's sonar visibility. */
     public void ToggleOnSonar()
     {
         if (!_updating)
-            VesselData.SetOnSonar(Vessel.Id, !Vessel.OnSonar);
+            serverUtils.PostVesselOnSonar(Vessel.Id, !Vessel.OnSonar);
     }
 
     /** Select this vessel. */

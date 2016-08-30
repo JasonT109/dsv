@@ -165,7 +165,8 @@ public class debugVesselVectorDialUi : MonoBehaviour
             return;
 
         var extent = Dial.rectTransform.sizeDelta.x * 0.5f;
-        var d = (vector.Speed / vector.MaxSpeed) * extent;
+        var max = vector.MaxSpeed;
+        var d = max > 0 ? (vector.Speed / max) * extent : 0;
         var p = Quaternion.Euler(0, 0, -vector.Heading) * new Vector3(0, d, 0);
 
         Thumb.transform.localPosition = p;

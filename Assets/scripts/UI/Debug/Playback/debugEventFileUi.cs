@@ -53,6 +53,12 @@ public class debugEventFileUi : MonoBehaviour
     /** Save button. */
     public Button SaveButton;
 
+    /** Move group up button. */
+    public Button MoveUpButton;
+
+    /** Move group down button. */
+    public Button MoveDownButton;
+
     /** Pause icon. */
     public Graphic PauseIcon;
 
@@ -246,6 +252,55 @@ public class debugEventFileUi : MonoBehaviour
         }
     }
 
+    /** Move selected group upwards. */
+    public void MoveSelectedGroupUp()
+    {
+        if (File.selectedGroup == null)
+            return;
+
+        var group = File.selectedGroup;
+        if (!File.MoveUp(group))
+            return;
+
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
+        if (ui == null)
+            return;
+
+        var index = _groups.IndexOf(ui);
+        if (index <= 0)
+            return;
+
+        _groups[index] = _groups[index - 1];
+        _groups[index - 1] = ui;
+
+        ui.transform.SetSiblingIndex(index - 1);
+    }
+
+    /** Move a group downwards. */
+    public void MoveSelectedGroupDown()
+    {
+        if (File.selectedGroup == null)
+            return;
+
+        var group = File.selectedGroup;
+        if (!File.MoveDown(group))
+            return;
+
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
+        if (ui == null)
+            return;
+
+        var index = _groups.IndexOf(ui);
+        var last = _groups.Count - 1;
+        if (index < 0 || index >= last)
+            return;
+
+        _groups[index] = _groups[index + 1];
+        _groups[index + 1] = ui;
+
+        ui.transform.SetSiblingIndex(index + 1);
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -297,6 +352,12 @@ public class debugEventFileUi : MonoBehaviour
         RemoveGroupButton.interactable = File.canRemove && File.selectedGroup != null;
         ClearButton.interactable = File.canClear;
         SaveButton.interactable = File.canSave;
+
+        var infoListActive = Properties.InfoList.gameObject.activeInHierarchy;
+        MoveUpButton.interactable = File.CanMoveUp(File.selectedGroup);
+        MoveUpButton.gameObject.SetActive(!infoListActive);
+        MoveDownButton.interactable = File.CanMoveDown(File.selectedGroup);
+        MoveDownButton.gameObject.SetActive(!infoListActive);
 
         var t = TimeSpan.FromSeconds(File.time);
         TimeText.color = File.playing ? ActiveTimeTextColor : InactiveTimeTextColor;
