@@ -29,6 +29,9 @@ public class debugEventGroupUi : MonoBehaviour
     /** Container for trigger buttons. */
     public Transform TriggerContainer;
 
+    /** Selection graphic. */
+    public Graphic On;
+
 
     [Header("Configuration")]
 
@@ -192,6 +195,8 @@ public class debugEventGroupUi : MonoBehaviour
         if (_group.file.selectedGroup == _group)
             c = BackdropSelectedColor;
         Backdrop.color = c;
+
+        On.gameObject.SetActive(_group.file.selectedGroup == _group);
 
         PausedToggle.isOn = !_group.paused;
         PausedToggle.graphic.color = File.playing ? ActiveColor : InactiveColor;

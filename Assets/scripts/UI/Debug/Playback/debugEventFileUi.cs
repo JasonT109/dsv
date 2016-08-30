@@ -352,8 +352,12 @@ public class debugEventFileUi : MonoBehaviour
         RemoveGroupButton.interactable = File.canRemove && File.selectedGroup != null;
         ClearButton.interactable = File.canClear;
         SaveButton.interactable = File.canSave;
+
+        var infoListActive = Properties.InfoList.gameObject.activeInHierarchy;
         MoveUpButton.interactable = File.CanMoveUp(File.selectedGroup);
+        MoveUpButton.gameObject.SetActive(!infoListActive);
         MoveDownButton.interactable = File.CanMoveDown(File.selectedGroup);
+        MoveDownButton.gameObject.SetActive(!infoListActive);
 
         var t = TimeSpan.FromSeconds(File.time);
         TimeText.color = File.playing ? ActiveTimeTextColor : InactiveTimeTextColor;

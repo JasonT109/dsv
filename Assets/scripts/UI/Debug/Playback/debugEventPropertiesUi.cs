@@ -57,6 +57,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     public Slider CompleteTimeSlider;
     public InputField CompleteTimeInput;
 
+    public Transform TriggerProperties;
+    public InputField TriggerLabelInput;
 
     [Header("Value Event Components")]
 
@@ -290,6 +292,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void ConfigureUi()
     {
+        TriggerLabelInput.onEndEdit.AddListener(TriggerLabelInputChanged);
         ServerParamInput.onValidateInput += ValidateIdentifierInput;
         MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
         ConfigureVesselsProperties();
@@ -354,6 +357,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void ClearUi()
     {
         Name.text = "";
+        TriggerProperties.gameObject.SetActive(false);
         BaseProperties.gameObject.SetActive(false);
         ValueProperties.gameObject.SetActive(false);
         PhysicsProperties.gameObject.SetActive(false);
@@ -372,6 +376,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateTriggerTimeInput();
         UpdateCompleteTimeSlider();
         UpdateCompleteTimeInput();
+        UpdateTriggerLabelInput();
     }
 
     private void UpdateBaseProperties()
@@ -383,6 +388,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         CanvasGroup.interactable = !_event.file.playing || _event.group.paused;
         BaseProperties.gameObject.SetActive(!minimized);
+        TriggerProperties.gameObject.SetActive(!minimized);
         ValueProperties.gameObject.SetActive(!minimized && ValueEvent != null);
         PhysicsProperties.gameObject.SetActive(!minimized && PhysicsEvent != null);
         MapCameraProperties.gameObject.SetActive(!minimized && MapCameraEvent != null);
@@ -462,6 +468,24 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         _event.completeTime = result;
         UpdateCompleteTimeSlider();
+    }
+
+    /** Update the event's trigger label input. */
+    private void UpdateTriggerLabelInput()
+    {
+        if (string.IsNullOrEmpty(_event.triggerLabel))
+            TriggerLabelInput.text = "";
+        else
+            TriggerLabelInput.text = _event.triggerLabel;
+    }
+
+    /** Update the event's trigger label from input field. */
+    public void TriggerLabelInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        _event.triggerLabel = value;
     }
 
 
