@@ -13,6 +13,9 @@ public class PopupTarget : MonoBehaviour
     /** Id for this popup target. */
     public string Id;
 
+    /** Optional offset (local-space). */
+    public Vector3 Offset;
+
     /** Optional bounding collider. */
     public Collider BoundingCollider;
 
@@ -56,7 +59,8 @@ public class PopupTarget : MonoBehaviour
             return BoundingRenderer.bounds;
 
         // If no bounds are specified, return empty bounds.
-        return new Bounds(transform.position, Vector3.zero);
+        var origin = transform.TransformPoint(Offset);
+        return new Bounds(origin, Vector3.zero);
     }
 
 }

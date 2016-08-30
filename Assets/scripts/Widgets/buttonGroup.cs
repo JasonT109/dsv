@@ -12,6 +12,9 @@ public class buttonGroup : MonoBehaviour {
     {
         foreach (var button in buttons)
         {
+            if (!button)
+                continue;
+
             var bScript = button.GetComponent<buttonControl>();
             if (bScript && bScript.active)
                 lastButton = button;
