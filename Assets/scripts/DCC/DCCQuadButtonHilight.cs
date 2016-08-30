@@ -38,6 +38,7 @@ public class DCCQuadButtonHilight : MonoBehaviour
     private float bottomRightTime = 0f;
 
     private bool waiting = false;
+    private GameObject colorThemeObject;
 
     private void OnEnable()
     {
@@ -143,6 +144,17 @@ public class DCCQuadButtonHilight : MonoBehaviour
     {
         if (parentButton.DCCQuadButton)
         {
+            if (colorThemeObject == null)
+                colorThemeObject = GameObject.FindWithTag("ServerData");
+
+            if (colorThemeObject)
+            {
+                highlighted = colorThemeObject.GetComponent<graphicsColourHolder>().keyColor;
+                var hsb = HSBColor.FromColor(highlighted);
+                hsb.b = Mathf.Max(0, hsb.b * 0.2f);
+                unhilighted = hsb.ToColor();
+            }
+
             if (quadDirection.transform.localPosition.x < 0 && quadDirection.transform.localPosition.y > 0)
             {
                 topLeftTime += Time.deltaTime;
