@@ -626,6 +626,9 @@ public class serverData : NetworkBehaviour
             case "error_bowthruster":
                 ErrorData.error_bowThruster = newValue;
                 break;
+            case "error_hatch":
+                ErrorData.error_hatch = newValue;
+                break;
             case "error_hyrdaulicres":
                 ErrorData.error_hyrdaulicRes = newValue;
                 break;

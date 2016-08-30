@@ -58,4 +58,6 @@ public class errorData : NetworkBehaviour
     public float genericerror = 1f;
     [SyncVar]
     public float error_diagnostics = 1f;
+    [SyncVar]
+    public float error_hatch = 1f;
 }

@@ -452,6 +452,7 @@ namespace Meg.Networking
             "error_electricleak",
             "error_forwardsonar",
             "error_gps",
+            "error_hatch",
             "error_hydraulicpump",
             "error_hyrdaulicres",
             "error_jet_l",
@@ -814,6 +815,7 @@ namespace Meg.Networking
             { "error_electricleak", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_forwardsonar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_gps", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_hatch", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_hydraulicpump", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_hyrdaulicres", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_jet_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
@@ -1214,6 +1216,8 @@ namespace Meg.Networking
                     return ErrorData.error_portLights;
                 case "error_bowthruster":
                     return ErrorData.error_bowThruster;
+                case "error_hatch":
+                    return ErrorData.error_hatch;
                 case "error_hyrdaulicres":
                     return ErrorData.error_hyrdaulicRes;
                 case "error_starboardlights":

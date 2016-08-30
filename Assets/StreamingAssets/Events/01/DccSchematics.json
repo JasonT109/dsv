@@ -1,0 +1,51 @@
+{
+	"metadata":{
+		"utc":"30/08/16 04:33:31.9",
+		"startedTimestamp":"30/08/16 04:32:26.8",
+		"stoppedTimestamp":"30/08/16 04:32:36.1"
+	},
+	"groups":[
+		{
+			"id":"DCC SCHEMATICS WARNINGS",
+			"paused":true,
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"serverParam":"error_ballasttank",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":1.963692,
+					"serverParam":"error_batteryleak",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":3.118811,
+					"serverParam":"error_hatch",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.042899,
+					"serverParam":"error_oxygenext",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":4.582634,
+					"serverParam":"error_oxygenpump",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":5.429055,
+					"serverParam":"error_diagnostics",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

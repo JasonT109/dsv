@@ -17,6 +17,9 @@ public class widgetPopup : MonoBehaviour
     /** Popup out animation duration. */
     protected const float AnimateOutDuration = 0.25f;
 
+    /** Z-Sorting bias to use when in the DCC. */
+    protected const float DccZSortBias = -1.9f;
+
 
     // Properties
     // ------------------------------------------------------------
@@ -55,6 +58,9 @@ public class widgetPopup : MonoBehaviour
     /** Determines if the popup is hosted in the DCC scene. */
     protected bool IsInDcc { get { return SceneManager.GetActiveScene().name == NetworkManagerCustom.DccScene; } }
 
+    /** Whether popup should be on top of other scene elements. */
+    protected bool Topmost { get { return _topmost; } set { SetTopmost(value); } }
+
 
     // Members
     // ------------------------------------------------------------
@@ -64,6 +70,12 @@ public class widgetPopup : MonoBehaviour
 
     /** Whether popup is closed. */
     private bool _closed;
+
+    /** Whether popup appears on top of everything. */
+    private bool _topmost = true;
+
+    /** Z-sorting bias (used in DCC). */
+    private float _zBias = -1.9f;
 
 
     // Unity Methods
@@ -84,6 +96,9 @@ public class widgetPopup : MonoBehaviour
     public virtual void Show(popupData.Popup popup)
     {
         Popup = popup;
+
+        // Configure the popup.
+        Configure();
 
         // Apply color theming.
         var themed = GetComponentsInChildren<PopupColorThemed>();
@@ -140,6 +155,14 @@ public class widgetPopup : MonoBehaviour
     // Protected Methods
     // ------------------------------------------------------------
 
+    /** Configure the popup. */
+    protected virtual void Configure()
+    {
+        // If we're in the DCC screens, need to set default sorting order.
+        if (IsInDcc)
+            ConfigureForDcc();
+    }
+
     /** Animate the popup into place. */
     protected virtual void AnimateIn()
     {
@@ -190,6 +213,32 @@ public class widgetPopup : MonoBehaviour
         Area.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
     }
 
+    /** Configure popup for DCC mode. */
+    protected virtual void ConfigureForDcc()
+    {
+        // Set a z-sorting bias that works with the DCC window setup.
+        _zBias = DccZSortBias;
+
+        // In DCC, sort certain popups in with other elements.
+        switch (Popup.Type)
+        {
+            case popupData.Type.Info:
+            case popupData.Type.GreenScreen:
+                Topmost = false;
+                break;
+        }
+    }
+
+    /** Set up popup for Z-sorting. */
+    protected virtual void SetTopmost(bool value)
+    {
+        _topmost = value;
+
+        var canvas = GetComponent<Canvas>();
+        canvas.sortingOrder = value ? 100 : 0;
+        canvas.sortingLayerName = value ? "Top" : "Default";
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -198,8 +247,11 @@ public class widgetPopup : MonoBehaviour
     private void PositionOverTarget(PopupTarget target)
     {
         // Get the target's worldspace bounds, and locate center in popup's local space.
+        // Apply Z-bias (if specified).
         var bounds = target.Bounds;
-        var p = transform.InverseTransformPoint(bounds.center) + Popup.Position;
+        var center = bounds.center;
+        center.z += _zBias;
+        var p = transform.InverseTransformPoint(center) + Popup.Position;
 
         // Place popup at the center of the target, and add on position offset.
         SetPosition(p);
@@ -208,12 +260,7 @@ public class widgetPopup : MonoBehaviour
     /** Set the popup's current position. */
     private void SetPosition(Vector3 p)
     {
-        // In the DCC scene, we want the popups to sort in with other windows,
-        // so respect the Z position of the popup target.
-        var useZ = IsInDcc;
-        if (!useZ)
-            p = new Vector3(p.x, p.y, 0);
-
+        p = new Vector3(p.x, p.y, Topmost ? 0 : p.z);
         Root.transform.localPosition = p;
         Area.transform.localPosition = p;
     }

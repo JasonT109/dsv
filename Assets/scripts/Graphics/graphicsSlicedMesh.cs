@@ -1,4 +1,7 @@
 using UnityEngine;
+
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter))]
 [ExecuteInEditMode]
 public class graphicsSlicedMesh : MonoBehaviour
 {

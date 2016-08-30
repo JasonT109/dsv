@@ -5,7 +5,7 @@ public class ScreenFader : Singleton<ScreenFader>
 {
     public const float FadeDuration = 0.25f;
 
-    public AnimateFadeOut Fader;
+    public AnimateFade Fader;
 
     public void Fade()
     {
