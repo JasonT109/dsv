@@ -18,7 +18,7 @@ public class widgetPopup : MonoBehaviour
     protected const float AnimateOutDuration = 0.25f;
 
     /** Z-Sorting bias to use when in the DCC. */
-    protected const float DccZSortBias = -1.9f;
+    protected const float DccZSortBias = -18f;
 
 
     // Properties
@@ -246,14 +246,10 @@ public class widgetPopup : MonoBehaviour
     /** Position this popup over the target. */
     private void PositionOverTarget(PopupTarget target)
     {
-        // Get the target's worldspace bounds, and locate center in popup's local space.
-        // Apply Z-bias (if specified).
         var bounds = target.Bounds;
         var center = bounds.center;
         center.z += _zBias;
         var p = transform.InverseTransformPoint(center) + Popup.Position;
-
-        // Place popup at the center of the target, and add on position offset.
         SetPosition(p);
     }
 
