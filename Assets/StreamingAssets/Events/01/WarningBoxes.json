@@ -1,16 +1,17 @@
 {
 	"metadata":{
-		"utc":"30/08/16 12:18:12.2",
+		"utc":"30/08/16 02:47:16.3",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
-			"id":"Warning Instruments",
-			"paused":true,
+			"id":"Warning Triggers 1",
+			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Popup",
+					"triggerLabel":"Instruments",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
@@ -31,15 +32,10 @@
 						0.074302,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"Warning Comms",
-			"paused":true,
-			"events":[
+				},
 				{
 					"type":"Popup",
+					"triggerLabel":"Comms",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
@@ -60,18 +56,14 @@
 						0.074302,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"Warning Overview",
-			"events":[
+				},
 				{
 					"type":"Popup",
+					"triggerLabel":"Lights",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
-					"Target":"Overview",
+					"Target":"Lights",
 					"Position":[
 						0,
 						0,
@@ -88,14 +80,10 @@
 						0.074302,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"Warning Thrusters",
-			"events":[
+				},
 				{
 					"type":"Popup",
+					"triggerLabel":"Thrusters",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
@@ -120,10 +108,36 @@
 			]
 		},
 		{
-			"id":"Warning Batteries",
+			"id":"Warning Triggers 2",
+			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Popup",
+					"triggerLabel":"Overview",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Overview",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"Batteries",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
@@ -144,14 +158,10 @@
 						0.074302,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"Warning Oxygen",
-			"events":[
+				},
 				{
 					"type":"Popup",
+					"triggerLabel":"Oxygen",
 					"Type":0,
 					"Title":"WARNING",
 					"Message":"ERROR 31: Unknown Error",
@@ -170,6 +180,234 @@
 						0.766,
 						0.074302,
 						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"Navigation",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Navigation",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Triggers 3",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"Diagnostics",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Diagnostics",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"DiagnosticsSub",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"DiagnosticsSub",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"Piloting",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Piloting",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"ROV",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"ROV",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"Warning Triggers 4",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"Docking",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Docking",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"HUD",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"HUD",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"SonarFrontScan",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"SonarFrontScan",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"SonarLongRange",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"SonarLongRange",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						1,
+						1,
+						1,
 						1
 					]
 				}
