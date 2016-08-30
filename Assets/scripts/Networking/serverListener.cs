@@ -52,7 +52,7 @@ public class serverListener : NetworkBehaviour
     {
         var p = new Pilot
         {
-            pilotObject = inputs ? inputs.gameObject : null,
+            pilotObject = inputs.gameObject,
             pilotName = inputs.name,
             xinput = inputs.outputX,
             yinput = inputs.outputY,
