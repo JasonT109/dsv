@@ -452,6 +452,7 @@ namespace Meg.Networking
             "error_electricleak",
             "error_forwardsonar",
             "error_gps",
+            "error_grapple",
             "error_hatch",
             "error_hydraulicpump",
             "error_hyrdaulicres",
@@ -462,10 +463,13 @@ namespace Meg.Networking
             "error_panel_l",
             "error_panel_r",
             "error_portlights",
+            "error_pressure",
             "error_radar",
             "error_runninglights",
             "error_starboardlights",
             "error_sternlights",
+            "error_structural",
+            "error_system",
             "error_thruster_l",
             "error_thruster_r",
             "error_tow",
@@ -815,6 +819,7 @@ namespace Meg.Networking
             { "error_electricleak", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_forwardsonar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_gps", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_grapple", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_hatch", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_hydraulicpump", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_hyrdaulicres", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
@@ -825,10 +830,13 @@ namespace Meg.Networking
             { "error_panel_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_panel_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_portlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_pressure", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_radar", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_runninglights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_starboardlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_sternlights", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_structural", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
+            { "error_system", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_thruster_l", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_thruster_r", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
             { "error_tow", new ParameterInfo { maxValue = 1, description = errorData.DefaultErrorDescription } },
@@ -1260,6 +1268,14 @@ namespace Meg.Networking
                     return GliderErrorData.error_panel_l;
                 case "error_panel_r":
                     return GliderErrorData.error_panel_r;
+                case "error_pressure":
+                    return GliderErrorData.error_pressure;
+                case "error_structural":
+                    return GliderErrorData.error_structural;
+                case "error_grapple":
+                    return GliderErrorData.error_grapple;
+                case "error_system":
+                    return GliderErrorData.error_system;
                 case "disableinput":
                     return SubControl.disableInput ? 1 : 0;
                 case "inputxaxis":

@@ -136,6 +136,31 @@
 					"serverParam":"error_vidhd"
 				}
 			]
+		},
+		{
+			"id":"DCC GLIDER SCHEMATIC ERRORS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"error_grapple"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_pressure"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_structural"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_system"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_thruster_l"
+				}
+			]
 		}
 	]
 }

@@ -926,6 +926,18 @@ public class serverData : NetworkBehaviour
             case "error_panel_r":
                 GliderErrorData.error_panel_r = newValue;
                 break;
+            case "error_pressure":
+                GliderErrorData.error_pressure = newValue;
+                break;
+            case "error_structural":
+                GliderErrorData.error_structural = newValue;
+                break;
+            case "error_grapple":
+                GliderErrorData.error_grapple = newValue;
+                break;
+            case "error_system":
+                GliderErrorData.error_system = newValue;
+                break;
             case "dccquadscreen0":
                 DCCScreenData.DCCquadScreen0 = (int)newValue;
                 break;
