@@ -252,6 +252,12 @@ public class popupData : NetworkBehaviour
         Popups.Clear();
     }
 
+    /** Determines if a given popup is active. */
+    public bool IsPopupActive(Popup popup)
+    {
+        return Popups.Contains(popup);
+    }
+
     /** Look up a popup target by id. */
     public bool TryGetTarget(string id, out PopupTarget target)
     {

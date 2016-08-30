@@ -42,6 +42,10 @@ namespace Meg.EventSystem
             }
         }
 
+        /** Determines if a popup is active for this event. */
+        public bool HasPopup
+            { get { return serverUtils.PopupData.IsPopupActive(Popup); } }
+
 
         // Lifecycle
         // ------------------------------------------------------------

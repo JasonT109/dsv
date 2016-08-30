@@ -65,6 +65,13 @@ public class debugEventTriggerUi : MonoBehaviour
             c = Color.Lerp(ActiveColor, CompletedColor, Event.timeFraction);
         if (Event.group.paused)
             c.a *= 0.5f;
+
+        // Make popup triggers appear inactive id needed.
+        var popupEvent = Event as megEventPopup;
+        var hasPopup = popupEvent != null && popupEvent.HasPopup;
+        if (popupEvent != null && !hasPopup)
+            c = InactiveColor;
+
         Button.targetGraphic.color = c;
 
         var l = LabelInactiveColor;
@@ -72,6 +79,10 @@ public class debugEventTriggerUi : MonoBehaviour
             l = Color.Lerp(LabelActiveColor, LabelCompletedColor, Event.timeFraction);
         if (Event.group.paused)
             l.a *= 0.5f;
+
+        if (popupEvent != null && !hasPopup)
+            l = LabelInactiveColor;
+
         Label.color = l;
     }
 

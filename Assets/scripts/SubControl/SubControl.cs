@@ -88,7 +88,7 @@ public class SubControl : NetworkBehaviour
     private float roll;
     private float pitch;
 
-	private float impactTimer = 0;
+	private float _nextImpactTime;
 
 	private float forwardThrust = 50f;
 	//private float AccelRatio = 0.0f;
@@ -108,11 +108,6 @@ public class SubControl : NetworkBehaviour
 		//MotionHazardSensitivity = 5f;
 		//MotionHazardEnabled = true;
 		//MotionSlerpSpeed = 2f;
-	}
-
-	void update()
-	{
-		impactTimer += Time.deltaTime;
 	}
 
     // Snap the sub to a given worldspace velocity vector.
@@ -318,10 +313,10 @@ public class SubControl : NetworkBehaviour
 
         // TODO: Apply limits to impactVector (or scale it down, or both) when
         // UnityToArduino is actively piping data out to the motion control rig.
-		if(impactTimer > MotionMinImpactInterval)
+		if (Time.time > _nextImpactTime)
 		{
 			rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
-			impactTimer = 0;
+		    _nextImpactTime = Time.time + MotionMinImpactInterval;
 		}
     }
 
