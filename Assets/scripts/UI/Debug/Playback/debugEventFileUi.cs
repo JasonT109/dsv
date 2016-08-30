@@ -422,9 +422,6 @@ public class debugEventFileUi : MonoBehaviour
     {
         var g = groupUi.Group;
         var e = eventUi ? eventUi.Event : null;
-        if (g == File.selectedGroup && e == null)
-            g = null;
-
         Properties.Group = g;
 
         if (e == File.selectedEvent)
