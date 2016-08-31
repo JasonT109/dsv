@@ -17,7 +17,9 @@
 		"comms-channel-ship-4" : "CH. 3",
 		"comms-channel-ship-5" : "NO SIGNAL",
 
+		"network-scene" : "screen_dcc",
 		"dcc-window-title-prefix" : "DIVE CONTROL",
+		"dcc-station-id" : 0,
 
 		"vessels" : 
 		[

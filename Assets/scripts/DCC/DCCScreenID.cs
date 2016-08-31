@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 using Meg.DCC;
@@ -18,14 +18,8 @@ public class DCCScreenID : MonoBehaviour
     //our desired slots, content will go to these window positions
     public DCCScreenContentPositions.positionID[] slots;
 
-    //these get set when a new window is made visible or invisible
-    public DCCWindow[] slotContent = new DCCWindow[3];
-
     //our screen id
     public _screenID screenID = new _screenID(); 
-
-    //bit mask int for what windows are visible
-    public int visibleWindows;
 
     //list of our child windows, must be populated by hand
     public DCCWindow[] childWindows;
@@ -33,8 +27,15 @@ public class DCCScreenID : MonoBehaviour
     //the screen manager
     private DCCScreenManager screenManager;
 
+    // The window that's currently visible in this screen.
+    private DCCWindow.contentID visibleContent;
+
+
+    /*
+    //these get set when a new window is made visible or invisible
+    public DCCWindow[] slotContent = new DCCWindow[3];
+
     private DCCWindow.contentID content;
-    private int previousVisibleWindows;
     private int nextSlot = 0;
 
     private void SetWindowVis()
@@ -49,7 +50,7 @@ public class DCCScreenID : MonoBehaviour
         //check each of our windows to see if we should be visible
         for (int i = 0; i < childWindows.Length; i++)
         {
-            //check whether visibleWindows has this windows content marked as visible
+            // Check whether visibleWindows has this windows content marked as visible
             int id = (int)childWindows[i].windowContent;
             int bitmask = 1 << (1 * id);
             bool vis = (visibleWindows & bitmask) > 0;
@@ -97,13 +98,13 @@ public class DCCScreenID : MonoBehaviour
         }
     }
 
-    public void ClearSlot(int slotNumber)
+    private void ClearSlot(int slotNumber)
     {
         if (slotContent[slotNumber])
             slotContent[slotNumber] = null;
     }
 
-    public bool QuerySlots(DCCWindow queryWindow)
+    private bool QuerySlots(DCCWindow queryWindow)
     {
         bool exists = false;
         for (int i = 0; i < slotContent.Length; i++)
@@ -113,6 +114,7 @@ public class DCCScreenID : MonoBehaviour
         }
         return exists;
     }
+    */
 
     void Awake()
     {
@@ -120,27 +122,33 @@ public class DCCScreenID : MonoBehaviour
             screenManager = ObjectFinder.Find<DCCScreenManager>();
     }
 
-    void Update ()
+    void Update()
     {
-        if (screenID == _screenID.screen3)
-        {
-            visibleWindows = (int)serverUtils.GetServerData("dccscreen3content");
-            if (previousVisibleWindows != visibleWindows)
-                SetWindowVis();
-        }
+        var content = serverUtils.GetScreenContent(screenID, DCCScreenData.StationId);
+        if (content != visibleContent)
+            UpdateVisibleWindow(content);
 
-        if (screenID == _screenID.screen4)
-        {
-            visibleWindows = (int)serverUtils.GetServerData("dccscreen4content");
-            if (previousVisibleWindows != visibleWindows)
-                SetWindowVis();
-        }
+        visibleContent = content;
+    }
 
-        if (screenID == _screenID.screen5)
+    private void UpdateVisibleWindow(DCCWindow.contentID content)
+    {
+        foreach (var window in childWindows)
         {
-            visibleWindows = (int)serverUtils.GetServerData("dccscreen5content");
-            if (previousVisibleWindows != visibleWindows)
-                SetWindowVis();
+            var visible = window.windowContent == content;
+            window.gameObject.SetActive(visible);
+
+            if (visible && !window.isLerping)
+            {
+                window.SetWindowPosition(DCCScreenContentPositions.positionID.hidden);
+                window.MoveWindow(DCCScreenContentPositions.positionID.center);
+                window.quadPosition = DCCScreenContentPositions.positionID.center;
+            }
+            else if (!visible)
+            {
+                window.SetWindowPosition(DCCScreenContentPositions.positionID.hidden);
+                window.quadPosition = DCCScreenContentPositions.positionID.hidden;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -163,7 +163,7 @@ public class DCCWindow : MonoBehaviour
             }
 
             if (screenDirection != DCCScreenID._screenID.control)
-                screenManager.SetWindowActive(windowContent, screenDirection, true);
+                screenManager.ActivateWindow(windowContent, screenDirection);
 
             //Debug.Log("Swipe detected in direction of screen: " + screenDirection + " " + transformDirection + " at a speed of " + transformSpeed);
         }

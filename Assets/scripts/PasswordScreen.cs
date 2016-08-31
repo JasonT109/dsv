@@ -32,6 +32,8 @@ public class PasswordScreen : MonoBehaviour
     public Graphic InitialSpinner;
     public Graphic ConnectingSpinner;
 
+    public InputField StationIdInput;
+
 
     [Header("Configuration")]
 
@@ -78,6 +80,10 @@ public class PasswordScreen : MonoBehaviour
         else
             ToggleBigSub();
 
+        // Initialize DCC station id.
+        StationIdInput.text = DCCScreenData.StationId.ToString();
+        StationIdInput.onEndEdit.AddListener(UpdateStationId);
+
         var isAutoStarting = _manager.AutoStart;
         if (isAutoStarting)
             StartButtonObj.SetActive(false);
@@ -119,7 +125,6 @@ public class PasswordScreen : MonoBehaviour
         StartButtonText.text = "CONNECT TO HOST";
     }
 
-
     public void ToggleGlider()
     {
         Debug.Log("PasswordScreen.ToggleGlider() - Configuring UI for Glider mode.");
@@ -147,6 +152,15 @@ public class PasswordScreen : MonoBehaviour
         _manager.SetScene(NetworkManagerCustom.DccScene);
     }
 
+    public void UpdateStationId(string value)
+    {
+        Debug.Log("PasswordScreen.UpdateStationId() - Updating station id to: " + value);
+        DCCScreenData.SetStationId(value);
+
+        // Station id might have been clamped to a valid id.
+        StationIdInput.text = DCCScreenData.StationId.ToString();
+    }
+
     public void HostIPChanged(string value)
     {
         Debug.Log("IP Address changed: " + value);
@@ -168,4 +182,5 @@ public class PasswordScreen : MonoBehaviour
         ConnectingSpinner.DOKill();
         ConnectingSpinner.DOFade(0.0f, 0.25f).From();
     }
+
 }

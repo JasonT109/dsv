@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -37,14 +37,14 @@ public class LiveFeedInputManager : MonoBehaviour
         {
             if(ButtonText)
             {
-                ButtonText.text = "Live Cameras - "+iNumCameras;
+                ButtonText.text = "LIVE CAMS - " + iNumCameras;
             }
         }
         else
         {
             if(ButtonText)
             {
-                ButtonText.text = "Live Cameras - NONE";
+                ButtonText.text = "LIVE CAMS - NONE";
             }
         }
     }
