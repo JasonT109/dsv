@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Meg.DCC;
 using Meg.EventSystem;
 using Meg.Graphics;
 using UnityEngine.Networking;
@@ -407,13 +408,7 @@ namespace Meg.Networking
             "crewheartrate5",
             "crewheartrate6",
             "dcccommsusesliders",
-            "dccquadscreen0",
-            "dccquadscreen1",
-            "dccquadscreen2",
-            "dccquadscreen3",
-            "dccquadscreen4",
             "dcccommscontent",
-            "dccquadcycle",
             "dccvesselnameintitle",
             "depth",
             "depthdisplayed",
@@ -774,14 +769,7 @@ namespace Meg.Networking
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
-            { "dccfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "" } },
-            { "dccquadscreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 0." } },
-            { "dccquadscreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 1." } },
-            { "dccquadscreen2", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 2." } },
-            { "dccquadscreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 3." } },
-            { "dccquadscreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 4." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
-            { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
@@ -1435,22 +1423,8 @@ namespace Meg.Networking
                     return SonarData.ShortRange;
                 case "sonarshortsensitivity":
                     return SonarData.ShortSensitivity;
-                case "dccquadscreen0":
-                    return DCCScreenData.DCCquadScreen0;
-                case "dccquadscreen1":
-                    return DCCScreenData.DCCquadScreen1;
-                case "dccquadscreen2":
-                    return DCCScreenData.DCCquadScreen2;
-                case "dccquadscreen3":
-                    return DCCScreenData.DCCquadScreen3;
-                case "dccquadscreen4":
-                    return DCCScreenData.DCCquadScreen4;
-                case "dccfullscreen":
-                    return DCCScreenData.DCCfullscreen;
                 case "dcccommscontent":
                     return DCCScreenData.DCCcommsContent;
-                case "dccquadcycle":
-                    return DCCScreenData.DCCquadcycle;
                 case "dccvesselnameintitle":
                     return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
                 case "dcccommsusesliders":
@@ -2295,5 +2269,52 @@ namespace Meg.Networking
                 LocalPlayer.PostScreenContent(id, value, stationId);
         }
 
+        /** Post content for the specified quad screen. */
+        public static void PostQuadContent(DCCScreenContentPositions.positionID id, DCCWindow.contentID value, int stationId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostQuadContent(id, value, stationId);
+        }
+
+        /** Return content ID for the specified DCC quad screen. */
+        public static DCCWindow.contentID GetQuadContent(DCCScreenContentPositions.positionID id, int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetQuadContent(id, stationId);
+        }
+
+        /** Post cycle state for the specified quad screen. */
+        public static void PostQuadCycle(int value, int stationId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostQuadCycle(value, stationId);
+        }
+
+        /** Return cycle state for the specified DCC quad screen. */
+        public static int GetQuadCycle(int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetQuadCycle(stationId);
+        }
+
+        /** Post cycle state for the specified quad screen. */
+        public static void PostQuadFullScreen(int value, int stationId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostQuadFullScreen(value, stationId);
+        }
+
+        /** Return cycle state for the specified DCC quad screen. */
+        public static int GetQuadFullScreen(int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetQuadFullScreen(stationId);
+        }
     }
 }
