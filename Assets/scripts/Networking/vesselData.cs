@@ -25,7 +25,7 @@ public class vesselData : NetworkBehaviour
     public const int InterceptId = 6;
 
     /** Default name for an unknown vessel. */
-    public string Unknown = "Unknown";
+    public const string Unknown = "Unknown";
 
     /** Scaling factor for converting sub world space into vessel XY space. */
     public const float WorldToVesselScale = 0.001f;

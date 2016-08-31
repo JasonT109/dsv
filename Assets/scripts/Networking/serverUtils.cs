@@ -403,6 +403,7 @@ namespace Meg.Networking
             "crewheartrate4",
             "crewheartrate5",
             "crewheartrate6",
+            "dcccommsusesliders",
             "dccquadscreen0",
             "dccquadscreen1",
             "dccquadscreen2",
@@ -413,6 +414,7 @@ namespace Meg.Networking
             "dccscreen5content",
             "dcccommscontent",
             "dccquadcycle",
+            "dccvesselnameintitle",
             "depth",
             "depthdisplayed",
             "depthoverride",
@@ -770,6 +772,7 @@ namespace Meg.Networking
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
+            { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dccfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "" } },
             { "dccquadscreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 0." } },
             { "dccquadscreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 1." } },
@@ -781,6 +784,7 @@ namespace Meg.Networking
             { "dccscreen4content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 4." } },
             { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
+            { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
             { "depthoverride", new ParameterInfo { maxValue = 12000, description = "Displayed depth if depth override is active (m)"} },
@@ -1454,6 +1458,10 @@ namespace Meg.Networking
                     return DCCScreenData.DCCcommsContent;
                 case "dccquadcycle":
                     return DCCScreenData.DCCquadcycle;
+                case "dccvesselnameintitle":
+                    return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
+                case "dcccommsusesliders":
+                    return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":
@@ -1817,6 +1825,10 @@ namespace Meg.Networking
 					return SubControl.MotionHazard;
 				case "motionhazardenabled":
 					return SubControl.MotionHazardEnabled;
+                case "dccvesselnameintitle":
+                    return DCCScreenData.DCCvesselNameInTitle;
+                case "dcccommsusesliders":
+                    return DCCScreenData.DCCcommsUseSliders;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName, defaultValue ? 1 : 0);
@@ -2148,6 +2160,10 @@ namespace Meg.Networking
         /** Returns which vessel is controlled by the player (1-based index). */
         public static int GetPlayerVessel()
             { return VesselData ? VesselData.PlayerVessel : 0; }
+
+        /** Returns which vessel is controlled by the player (1-based index). */
+        public static string GetPlayerVesselName()
+            { return VesselData ? VesselData.GetVessel(VesselData.PlayerVessel).Name : vesselData.Unknown; }
 
         /** Sets the player vessel's velocity in world space. */
         public static void SetPlayerWorldVelocity(Vector3 velocity)

@@ -978,7 +978,13 @@ public class serverData : NetworkBehaviour
             case "dccquadcycle":
                 DCCScreenData.DCCquadcycle = (int)newValue;
                 break;
-			case "isautopilot":
+            case "dccvesselnameintitle":
+                DCCScreenData.DCCvesselNameInTitle = newValue > 0;
+                break;
+            case "dcccommsusesliders":
+                DCCScreenData.DCCcommsUseSliders = newValue > 0;
+                break;
+            case "isautopilot":
 				SubControl.isAutoPilot = newValue > 0;
 				break;
             case "iscontroldecentmode":
@@ -1204,6 +1210,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "dockingbuttonenabled":
                 OperatingData.dockingButtonEnabled = newValue;
+                break;
+            case "dccvesselnameintitle":
+                DCCScreenData.DCCvesselNameInTitle = newValue;
+                break;
+            case "dcccommsusesliders":
+                DCCScreenData.DCCcommsUseSliders = newValue;
                 break;
         }
     }

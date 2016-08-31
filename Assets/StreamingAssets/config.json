@@ -12,15 +12,17 @@
 		"comms-channel-port" : "PORT STATION",
 		"comms-channel-starboard" : "SBOARD STATION",
 		"comms-channel-ship-1" : "DCC",
-		"comms-channel-ship-2" : "POLO",
-		"comms-channel-ship-3" : "BYRD",
-		"comms-channel-ship-4" : "ERNIE",
+		"comms-channel-ship-2" : "CH. 1",
+		"comms-channel-ship-3" : "CH. 2",
+		"comms-channel-ship-4" : "CH. 3",
 		"comms-channel-ship-5" : "NO SIGNAL",
+
+		"dcc-window-title-prefix" : "DIVE CONTROL",
 
 		"vessels" : 
 		[
 			{ 
-				"name" : "Evolution", 
+				"name" : "Sub 2", 
 				"position" : [-1, -0.5, 2000],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -31,7 +33,7 @@
 				"colorthemehighlight": "435459",
 			},
 			{ 
-				"name" : "Origin", 
+				"name" : "Sub 1", 
 				"position" : [-2, 2, 8900],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -42,7 +44,7 @@
 				"colorthemehighlight": "F78B00",
 			},
 			{ 
-				"name" : "Byrd", 
+				"name" : "Glider 1", 
 				"position" : [2, -2, 7300],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -53,7 +55,7 @@
 				"colorthemehighlight": "ede098",
 			},
 			{ 
-				"name" : "Ernie", 
+				"name" : "Glider 2", 
 				"position" : [1, 0, 7700],
 				"onmap" : true, 
 				"onsonar" : true,

@@ -1,10 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DCCButtonColor : MonoBehaviour {
 
     private GameObject colourThemeObj;
-    private Color bColor;
     private Color hColor;
     private Color kColor;
     private Renderer r;
@@ -52,7 +51,6 @@ public class DCCButtonColor : MonoBehaviour {
 
         if (colourThemeObj)
         {
-            bColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.backgroundColor;
             hColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.highlightColor;
             kColor = colourThemeObj.GetComponent<graphicsColourHolder>().theme.keyColor;
             updateColor();
