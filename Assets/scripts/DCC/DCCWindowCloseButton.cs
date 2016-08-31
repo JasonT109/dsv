@@ -8,6 +8,12 @@ public class DCCWindowCloseButton : MonoBehaviour
 {
     public bool pressed = false;
     public buttonControl linkedButton;
+    private Vector3 initPos = Vector3.zero;
+
+    private void Awake ()
+    {
+        initPos = transform.parent.transform.localPosition;
+    }
 
     private void OnEnable()
     {
@@ -43,9 +49,14 @@ public class DCCWindowCloseButton : MonoBehaviour
 
     public void closeWindow()
     {
+
+        //set the transform to somewhere sensible
+        gameObject.transform.parent.transform.localPosition = initPos;
+
         if (linkedButton)
             linkedButton.toggleButton(linkedButton.gameObject);
         else
             gameObject.transform.parent.gameObject.SetActive(false);
+
     }
 }
