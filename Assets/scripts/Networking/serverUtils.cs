@@ -15,6 +15,9 @@ namespace Meg.Networking
         // Constants
         // ------------------------------------------------------------
 
+        /** The current application version. */
+        public const string Version = "1.0.4";
+
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
 
@@ -634,6 +637,7 @@ namespace Meg.Networking
             "variableballastpressure",
             "variableballasttemp",
             "velocity",
+            "version",
             "verticalvelocity",
             "vertran_heat_l",
             "vertran_heat_r",
@@ -966,6 +970,7 @@ namespace Meg.Networking
             { "variableballastpressure", new ParameterInfo { description = "Variable ballast pressure (psi)."} },
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
             { "velocity", new ParameterInfo { description = "Sub's current speed (m/s)." } },
+            { "version", new ParameterInfo { readOnly = true, description = "Current application version." } },
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
             { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
@@ -1538,6 +1543,12 @@ namespace Meg.Networking
         /** Return a string representation of a shared state value, indexed by name. */
         public static string GetServerDataAsText(string valueName)
         {
+            if (string.IsNullOrEmpty(valueName))
+                return "";
+
+            if (valueName == "version")
+                return Version;
+
             if (!ServerObject)
                 return "no value";
 
@@ -1758,6 +1769,8 @@ namespace Meg.Networking
                     return DomeData.domeSquareRight.ToString();
                 case "domesquaretop":
                     return DomeData.domeSquareTop.ToString();
+                case "version":
+                    return Version;
                 default:
                     var value = GetServerData(valueName);
                     return (value == Unknown) ? "no value" : value.ToString("n1");

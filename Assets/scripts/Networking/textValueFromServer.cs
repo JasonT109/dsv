@@ -17,6 +17,7 @@ public class textValueFromServer : widgetText
 
     [Header("Formatting")]
     public string format = "";
+    public string prefix = "";
     public bool upperCase;
     public ValueRange[] Ranges;
 
@@ -89,6 +90,9 @@ public class textValueFromServer : widgetText
                 Text = string.Format(range.Id, value);
         }
 
+        // Apply prefix (if any).
+        if (!string.IsNullOrEmpty(prefix))
+            Text = prefix + Text;
     }
 
 }
