@@ -31,6 +31,10 @@ public class graphicsLineGraph : MonoBehaviour
     [Header("Using Server Values")]
     public bool useServerValue = false;
     public string linkDataString;
+    public bool mulitplyByServerVar = false;
+    public string linkDataStringMul;
+    public bool oneMinus = false;
+    public float scaleFactor = 1f;
 
     [Header("Using Animated Graph Widget")]
     public bool useAnimatedGraphWidget = false;
@@ -136,7 +140,9 @@ public class graphicsLineGraph : MonoBehaviour
     float GetServerValue()
     {
         var value = serverUtils.GetServerData(linkDataString);
-        return graphicsMaths.remapValue(value, valueMin, valueMax, 0, graphMax);
+
+        value = graphicsMaths.remapValue(value, valueMin, valueMax, 0, graphMax);
+        return value;
     }
 
     void Update()
@@ -179,6 +185,14 @@ public class graphicsLineGraph : MonoBehaviour
                 wobble = valueWobble * Mathf.Sin(wobbleSpeed * index);
                 wobbleAccumulate += wobble * 0.1f;
                 value += graphicsMaths.remapValue(wobbleAccumulate, valueMin, valueMax, 0, graphMax);
+            }
+
+            if (mulitplyByServerVar && serverUtils.GetServerData(linkDataStringMul) != -1)
+            {
+                if (oneMinus)
+                    value = value * (1 - serverUtils.GetServerData(linkDataStringMul) * scaleFactor);
+                else
+                    value = value * (serverUtils.GetServerData(linkDataStringMul) * scaleFactor);
             }
 
             // Clamp the new value to legal graph range.

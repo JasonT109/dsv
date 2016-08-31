@@ -11,7 +11,8 @@ public class DCCScreenID : MonoBehaviour
         qaud,
         screen3,
         screen4,
-        screen5
+        screen5,
+        surface
     }
 
     //our desired slots, content will go to these window positions
