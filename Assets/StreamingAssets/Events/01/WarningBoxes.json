@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"30/08/16 06:36:20.7",
-		"startedTimestamp":"30/08/16 06:34:33.5",
-		"stoppedTimestamp":"30/08/16 06:36:00.3"
+		"utc":"31/08/16 11:40:57.9",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
@@ -408,6 +408,60 @@
 						0.766,
 						0.074302,
 						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
+			"id":"WARNING TRIGGERS 5",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"Schematics",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Schematics",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"Power",
+					"Type":0,
+					"Title":"WARNING",
+					"Message":"ERROR 31: Unknown Error",
+					"Target":"Power",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Icon":2,
+					"Color":[
+						1,
+						1,
+						1,
 						1
 					]
 				}
