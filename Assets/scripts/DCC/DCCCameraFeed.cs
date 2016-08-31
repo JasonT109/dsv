@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -186,6 +186,9 @@ public class DCCCameraFeed : MonoBehaviour
 
     void SetMaterial(int ID)
     {
+        if (!Outputs)
+            return;
+
 		if(!Outputs.isLive || ID > Outputs.getNumCams()-1)
 		{
         	if (materials[ID])
@@ -230,7 +233,10 @@ public class DCCCameraFeed : MonoBehaviour
 
 	void Awake()
 	{
-		if(materialID < 4 && Outputs.isLive)
+        if (!Outputs)
+            return;
+
+        if (materialID < 4 && Outputs.isLive)
 		{
 			if(materialID == 0)
 			{

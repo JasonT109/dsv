@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 using Meg.DCC;
@@ -245,57 +245,16 @@ public class DCCScreenManager : MonoBehaviour
         nonQuadWindows[nonQuadWindows.Length - 1] = focusedWindow;
     }
 
-    /** Sets any window with specified content enabled/disabled on the specified screen. */
-    public void SetWindowActive(DCCWindow.contentID content, DCCScreenID._screenID id, bool state)
-    {
-        string screen = "dccscreen3content";
-
-        if (id == DCCScreenID._screenID.screen4)
-            screen = "dccscreen4content";
-        if (id == DCCScreenID._screenID.screen5)
-            screen = "dccscreen5content";
-
-        //get current content int and bit or against the content
-        int currentContent = (int)serverUtils.GetServerData(screen);
-        if (state)
-            currentContent = currentContent | (1 << 1 * ((int)content));
-        else
-            currentContent = currentContent ^ (1 << 1 * ((int)content));
-
-        serverUtils.PostServerData(screen, currentContent);
-
-        //Debug.Log(GetIntBinaryString(currentContent));
-    }
-
-    /** Debug function to check binary values. */
-    static string GetIntBinaryString(int n)
-    {
-        char[] b = new char[32];
-        int pos = 31;
-        int i = 0;
-
-        while (i < 32)
-        {
-            if ((n & (1 << i)) != 0)
-            {
-                b[pos] = '1';
-            }
-            else
-            {
-                b[pos] = '0';
-            }
-            pos--;
-            i++;
-        }
-        return new string(b);
-    }
+    /** Activate window with specified content on the specified screen. */
+    public void ActivateWindow(DCCWindow.contentID content, DCCScreenID._screenID id)
+        { serverUtils.PostScreenContent(id, content, DCCScreenData.StationId); }
 
     /** Resets the content of the top screens. */
     public void ResetTopWindows()
     {
-        serverUtils.PostServerData("dccscreen3content", 0);
-        serverUtils.PostServerData("dccscreen4content", 0);
-        serverUtils.PostServerData("dccscreen5content", 0);
+        serverUtils.PostScreenContent(DCCScreenID._screenID.screen3, 0, DCCScreenData.StationId);
+        serverUtils.PostScreenContent(DCCScreenID._screenID.screen4, 0, DCCScreenData.StationId);
+        serverUtils.PostScreenContent(DCCScreenID._screenID.screen5, 0, DCCScreenData.StationId);
     }
 
     public void CycleWindows()

@@ -963,15 +963,6 @@ public class serverData : NetworkBehaviour
             case "dccfullscreen":
                 DCCScreenData.DCCfullscreen = (int)newValue;
                 break;
-            case "dccscreen3content":
-                DCCScreenData.DCCScreen3Content = (int)newValue;
-                break;
-            case "dccscreen4content":
-                DCCScreenData.DCCScreen4Content = (int)newValue;
-                break;
-            case "dccscreen5content":
-                DCCScreenData.DCCScreen5Content = (int)newValue;
-                break;
             case "dcccommscontent":
                 DCCScreenData.DCCcommsContent = (int)newValue;
                 break;

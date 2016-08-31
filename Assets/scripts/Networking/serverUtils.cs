@@ -412,9 +412,6 @@ namespace Meg.Networking
             "dccquadscreen2",
             "dccquadscreen3",
             "dccquadscreen4",
-            "dccscreen3content",
-            "dccscreen4content",
-            "dccscreen5content",
             "dcccommscontent",
             "dccquadcycle",
             "dccvesselnameintitle",
@@ -784,9 +781,6 @@ namespace Meg.Networking
             { "dccquadscreen3", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 3." } },
             { "dccquadscreen4", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 4." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
-            { "dccscreen3content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 3." } },
-            { "dccscreen4content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 4." } },
-            { "dccscreen5content", new ParameterInfo { minValue = 0, maxValue = 64000, type = ParameterType.Int, description = "Contents for DCC overhead display 5." } },
             { "dccquadcycle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Initiates cycling of quad menus. Auto turns off after one frame." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
@@ -1453,12 +1447,6 @@ namespace Meg.Networking
                     return DCCScreenData.DCCquadScreen4;
                 case "dccfullscreen":
                     return DCCScreenData.DCCfullscreen;
-                case "dccscreen3content":
-                    return DCCScreenData.DCCScreen3Content;
-                case "dccscreen4content":
-                    return DCCScreenData.DCCScreen4Content;
-                case "dccscreen5content":
-                    return DCCScreenData.DCCScreen5Content;
                 case "dcccommscontent":
                     return DCCScreenData.DCCcommsContent;
                 case "dccquadcycle":
@@ -2289,6 +2277,22 @@ namespace Meg.Networking
             }
 
             return buttonState;
+        }
+
+        /** Return content ID for the specified DCC screen. */
+        public static DCCWindow.contentID GetScreenContent(DCCScreenID._screenID id, int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetScreenContent(id, stationId);
+        }
+
+        /** Post content for the specified DCC screen. */
+        public static void PostScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenContent(id, value, stationId);
         }
 
     }

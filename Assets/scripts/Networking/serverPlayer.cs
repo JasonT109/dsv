@@ -221,6 +221,15 @@ public class serverPlayer : NetworkBehaviour
             CmdClearExtraVessels();
     }
 
+    /** Post content for the specified DCC screen. */
+    public void PostScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
+    {
+        if (isServer)
+            serverUtils.DCCScreenData.SetScreenContent(id, value, stationId);
+        else if (isClient)
+            CmdSetScreenContent(id, value, stationId);
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -352,6 +361,10 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearPopups()
         { ServerClearPopups(); }
 
+    /** Set content for the specified DCC screen on the server. */
+    [Command]
+    public void CmdSetScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
+        { serverUtils.DCCScreenData.SetScreenContent(id, value, stationId); }
 
 
     // Private Methods

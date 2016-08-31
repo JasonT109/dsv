@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class MenuHotkeys : MonoBehaviour 
@@ -59,12 +59,9 @@ public class MenuHotkeys : MonoBehaviour
 
         ////////////////////////////////////
 
-
-		if(Input.GetKeyDown("return") || Input.GetKeyDown("enter"))
-        {
-            LoginScreen.StartButton();
-        }
-
+		if (Input.GetKeyDown("return") || Input.GetKeyDown("enter"))
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                LoginScreen.StartButton();
         
 	}
         
