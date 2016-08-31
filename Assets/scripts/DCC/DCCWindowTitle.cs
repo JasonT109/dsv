@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -8,25 +8,26 @@ public class DCCWindowTitle : MonoBehaviour
 
     private DynamicText t;
     private string originalText;
-    private string vesselName;
     private float checkTime = 2f;
     private float timer = 2f;
+    private string _defaultPrefix = "DIVE CONTROL";
 
-	void Awake ()
+    void Awake ()
     {
         t = gameObject.GetComponent<DynamicText>();
         originalText = t.GetText();
-	}
+	    _defaultPrefix = Configuration.Get("dcc-window-title-prefix", "DIVE CONTROL");
+    }
 	
     void Update()
     {
         if (prefixVesselName && Time.time > timer)
         {
-            int p = serverUtils.GetPlayerVessel();
-            vesselName = serverUtils.GetVesselName(p);
+            var prefix = _defaultPrefix;
+            if (serverUtils.GetServerBool("dccVesselNameInTitle"))
+                prefix = serverUtils.GetPlayerVesselName();
 
-            t.SetText(vesselName.ToUpper() + " - " + originalText);
-
+            t.SetText(prefix.ToUpper() + " - " + originalText);
             timer += checkTime;
         }
     }

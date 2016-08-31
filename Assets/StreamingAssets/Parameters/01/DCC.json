@@ -1,0 +1,13 @@
+{
+	"groups":[
+		{
+			"id":"DCC",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"dccvesselnameintitle"
+				}
+			]
+		}
+	]
+}
