@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"30/08/16 10:01:54.1",
-		"startedTimestamp":"01/01/01 12:00:00.0",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"31/08/16 12:14:39.6",
+		"startedTimestamp":"31/08/16 12:09:01.1",
+		"stoppedTimestamp":"31/08/16 12:09:37.3"
 	},
 	"groups":[
 		{
@@ -597,6 +597,24 @@
 						1,
 						1
 					]
+				}
+			]
+		},
+		{
+			"id":"GREENSCREEN COLOR",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"GREEN",
+					"serverParam":"greenScreenBrightness",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"BLACK",
+					"serverParam":"greenScreenBrightness",
+					"serverValue":0
 				}
 			]
 		}

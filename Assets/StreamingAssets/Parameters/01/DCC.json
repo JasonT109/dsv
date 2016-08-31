@@ -6,6 +6,10 @@
 				{
 					"type":"Value",
 					"serverParam":"dccvesselnameintitle"
+				},
+				{
+					"type":"Value",
+					"serverParam":"dcccommsusesliders"
 				}
 			]
 		}

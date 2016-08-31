@@ -29,5 +29,7 @@ public class DCCScreenData : NetworkBehaviour
 
     [SyncVar]
     public bool DCCvesselNameInTitle;
+    [SyncVar]
+    public bool DCCcommsUseSliders;
 
 }

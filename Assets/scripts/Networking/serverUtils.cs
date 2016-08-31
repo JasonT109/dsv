@@ -403,6 +403,7 @@ namespace Meg.Networking
             "crewheartrate4",
             "crewheartrate5",
             "crewheartrate6",
+            "dcccommsusesliders",
             "dccquadscreen0",
             "dccquadscreen1",
             "dccquadscreen2",
@@ -771,6 +772,7 @@ namespace Meg.Networking
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
+            { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dccfullscreen", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "" } },
             { "dccquadscreen0", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 0." } },
             { "dccquadscreen1", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Contents for DCC quadscreen 1." } },
@@ -1458,6 +1460,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCquadcycle;
                 case "dccvesselnameintitle":
                     return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
+                case "dcccommsusesliders":
+                    return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":
@@ -1823,6 +1827,8 @@ namespace Meg.Networking
 					return SubControl.MotionHazardEnabled;
                 case "dccvesselnameintitle":
                     return DCCScreenData.DCCvesselNameInTitle;
+                case "dcccommsusesliders":
+                    return DCCScreenData.DCCcommsUseSliders;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName, defaultValue ? 1 : 0);

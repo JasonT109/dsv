@@ -981,6 +981,9 @@ public class serverData : NetworkBehaviour
             case "dccvesselnameintitle":
                 DCCScreenData.DCCvesselNameInTitle = newValue > 0;
                 break;
+            case "dcccommsusesliders":
+                DCCScreenData.DCCcommsUseSliders = newValue > 0;
+                break;
             case "isautopilot":
 				SubControl.isAutoPilot = newValue > 0;
 				break;
@@ -1207,6 +1210,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "dockingbuttonenabled":
                 OperatingData.dockingButtonEnabled = newValue;
+                break;
+            case "dccvesselnameintitle":
+                DCCScreenData.DCCvesselNameInTitle = newValue;
+                break;
+            case "dcccommsusesliders":
+                DCCScreenData.DCCcommsUseSliders = newValue;
                 break;
         }
     }
