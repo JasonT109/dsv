@@ -22,7 +22,7 @@
 		"vessels" : 
 		[
 			{ 
-				"name" : "Evolution", 
+				"name" : "Sub 2", 
 				"position" : [-1, -0.5, 2000],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -33,7 +33,7 @@
 				"colorthemehighlight": "435459",
 			},
 			{ 
-				"name" : "Origin", 
+				"name" : "Sub 1", 
 				"position" : [-2, 2, 8900],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -44,7 +44,7 @@
 				"colorthemehighlight": "F78B00",
 			},
 			{ 
-				"name" : "Byrd", 
+				"name" : "Glider 1", 
 				"position" : [2, -2, 7300],
 				"onmap" : true, 
 				"onsonar" : true,
@@ -55,7 +55,7 @@
 				"colorthemehighlight": "ede098",
 			},
 			{ 
-				"name" : "Ernie", 
+				"name" : "Glider 2", 
 				"position" : [1, 0, 7700],
 				"onmap" : true, 
 				"onsonar" : true,
