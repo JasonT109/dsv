@@ -1,4 +1,5 @@
 using System;
+using Meg.DCC;
 using UnityEngine;
 using UnityEngine.Networking;
 using Meg.EventSystem;
@@ -230,6 +231,33 @@ public class serverPlayer : NetworkBehaviour
             CmdSetScreenContent(id, value, stationId);
     }
 
+    /** Post content for the specified quad screen. */
+    public void PostQuadContent(DCCScreenContentPositions.positionID id, DCCWindow.contentID value, int stationId)
+    {
+        if (isServer)
+            serverUtils.DCCScreenData.SetQuadContent(id, value, stationId);
+        else if (isClient)
+            CmdSetQuadContent(id, value, stationId);
+    }
+
+    /** Post cycle state for the specified quad screen. */
+    public void PostQuadCycle(int value, int stationId)
+    {
+        if (isServer)
+            serverUtils.DCCScreenData.SetQuadCycle(value, stationId);
+        else if (isClient)
+            CmdSetQuadCycle(value, stationId);
+    }
+
+    /** Post cycle state for the specified quad screen. */
+    public void PostQuadFullScreen(int value, int stationId)
+    {
+        if (isServer)
+            serverUtils.DCCScreenData.SetQuadFullScreen(value, stationId);
+        else if (isClient)
+            CmdSetQuadFullScreen(value, stationId);
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -365,6 +393,21 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdSetScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
         { serverUtils.DCCScreenData.SetScreenContent(id, value, stationId); }
+
+    /** Post content for the specified quad screen. */
+    [Command]
+    public void CmdSetQuadContent(DCCScreenContentPositions.positionID id, DCCWindow.contentID value, int stationId)
+        { serverUtils.DCCScreenData.SetQuadContent(id, value, stationId); }
+
+    /** Post cycle state for the specified quad screen. */
+    [Command]
+    public void CmdSetQuadCycle(int value, int stationId)
+        { serverUtils.DCCScreenData.SetQuadCycle(value, stationId); }
+
+    /** Post cycle state for the specified quad screen. */
+    [Command]
+    public void CmdSetQuadFullScreen(int value, int stationId)
+        { serverUtils.DCCScreenData.SetQuadFullScreen(value, stationId); }
 
 
     // Private Methods

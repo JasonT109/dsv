@@ -945,29 +945,8 @@ public class serverData : NetworkBehaviour
             case "error_system":
                 GliderErrorData.error_system = newValue;
                 break;
-            case "dccquadscreen0":
-                DCCScreenData.DCCquadScreen0 = (int)newValue;
-                break;
-            case "dccquadscreen1":
-                DCCScreenData.DCCquadScreen1 = (int)newValue;
-                break;
-            case "dccquadscreen2":
-                DCCScreenData.DCCquadScreen2 = (int)newValue;
-                break;
-            case "dccquadscreen3":
-                DCCScreenData.DCCquadScreen3 = (int)newValue;
-                break;
-            case "dccquadscreen4":
-                DCCScreenData.DCCquadScreen4 = (int)newValue;
-                break;
-            case "dccfullscreen":
-                DCCScreenData.DCCfullscreen = (int)newValue;
-                break;
             case "dcccommscontent":
                 DCCScreenData.DCCcommsContent = (int)newValue;
-                break;
-            case "dccquadcycle":
-                DCCScreenData.DCCquadcycle = (int)newValue;
                 break;
             case "dccvesselnameintitle":
                 DCCScreenData.DCCvesselNameInTitle = newValue > 0;

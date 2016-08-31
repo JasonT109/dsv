@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using TouchScript.Gestures;
@@ -81,27 +81,23 @@ public class DCCQuadButtonHilight : MonoBehaviour
     /** Swaps position of content at destination quad box. */
     void RepositionContentAtDestination(DCCScreenContentPositions.positionID targetPosition, string newPosition)
     {
-        string[] quads = new string[] { "DCCquadScreen0", "DCCquadScreen1", "DCCquadScreen2", "DCCquadScreen3", "DCCquadScreen4" };
-
-        DCCWindow.contentID targetContent = (DCCWindow.contentID)serverUtils.GetServerData(quads[(int)targetPosition]);
-
-        if (newPosition != "hidden")
-        {
-            serverUtils.PostServerData(newPosition, (float)targetContent);
-        }
+        var newPositionId = DCCScreenData.GetPositionForName(newPosition);
+        var targetContent = serverUtils.GetQuadContent(targetPosition, DCCScreenData.StationId);
+        if (newPositionId != DCCScreenContentPositions.positionID.hidden)
+            serverUtils.PostQuadContent(newPositionId, targetContent, DCCScreenData.StationId);
     }
 
     /** Returns the quad that this content inhabits. */
-    string GetContentsPosition(DCCWindow.contentID content)
+    static string GetContentsPosition(DCCWindow.contentID content)
     {
-        string newPosition = "hidden";
-        string[] quads = new string[] { "DCCquadScreen0",  "DCCquadScreen1", "DCCquadScreen2", "DCCquadScreen3", "DCCquadScreen4" };
-        for (int i = 0; i < quads.Length; i++)
+
+        var newPosition = "hidden";
+        string[] quads = { "DCCquadScreen0", "DCCquadScreen1", "DCCquadScreen2", "DCCquadScreen3", "DCCquadScreen4" };
+        foreach (var quad in quads)
         {
-            if (serverUtils.GetServerData(quads[i]) == (float)content)
-            {
-                newPosition = quads[i];
-            }
+            var id = DCCScreenData.GetPositionForName(quad);
+            if (serverUtils.GetQuadContent(id, DCCScreenData.StationId) == content)
+                newPosition = quad;
         }
 
         return newPosition;
@@ -110,33 +106,8 @@ public class DCCQuadButtonHilight : MonoBehaviour
     /** Sets the screen content. A string new position is required for repositioning old content. */
     void SetServerScreenContent(string newPosition)
     {
-        switch (selectedDirection)
-        {
-            case DCCScreenContentPositions.positionID.topLeft:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.topLeft, newPosition);
-                serverUtils.PostServerData("DCCquadScreen0", (float)screenContent);
-                break;
-            case DCCScreenContentPositions.positionID.topRight:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.topRight, newPosition);
-                serverUtils.PostServerData("DCCquadScreen1", (float)screenContent);
-                break;
-            case DCCScreenContentPositions.positionID.bottomLeft:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.bottomLeft, newPosition);
-                serverUtils.PostServerData("DCCquadScreen2", (float)screenContent);
-                break;
-            case DCCScreenContentPositions.positionID.bottomRight:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.bottomRight, newPosition);
-                serverUtils.PostServerData("DCCquadScreen3", (float)screenContent);
-                break;
-            case DCCScreenContentPositions.positionID.middle:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.middle, newPosition);
-                serverUtils.PostServerData("DCCquadScreen4", (float)screenContent);
-                break;
-            case DCCScreenContentPositions.positionID.hidden:
-                RepositionContentAtDestination(DCCScreenContentPositions.positionID.hidden, newPosition);
-                break;
-        }
-
+        RepositionContentAtDestination(selectedDirection, newPosition);
+        serverUtils.PostQuadContent(selectedDirection, screenContent, DCCScreenData.StationId);
         selectedDirection = DCCScreenContentPositions.positionID.hidden;
     }
 
@@ -216,25 +187,26 @@ public class DCCQuadButtonHilight : MonoBehaviour
                 StartCoroutine(pressWait(0.1f));
 
                 //if we are not switching to new content
-                if (screenContent == (DCCWindow.contentID)serverUtils.GetServerData("DCCquadScreen4"))
+                var quadMiddle = serverUtils.GetQuadContent(DCCScreenContentPositions.positionID.middle, DCCScreenData.StationId);
+                if (screenContent == quadMiddle)
                 {
-                    if ((int)serverUtils.GetServerData("DCCfullscreen") == 1)
+                    if (serverUtils.GetQuadFullScreen(DCCScreenData.StationId) == 1)
                     {
                         selectedDirection = DCCScreenContentPositions.positionID.hidden;
-                        serverUtils.PostServerData("DCCfullscreen", 0);
-                        serverUtils.PostServerData("DCCquadScreen4", 0);
+                        serverUtils.PostQuadFullScreen(0, DCCScreenData.StationId);
+                        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.middle, 0, DCCScreenData.StationId);
                     }
                     else
                     {
                         selectedDirection = DCCScreenContentPositions.positionID.middle;
-                        serverUtils.PostServerData("DCCfullscreen", 1);
+                        serverUtils.PostQuadFullScreen(1, DCCScreenData.StationId);
                     }
                 }
                 else
                 {
                     //put our new content into this box and make sure middle screen is shown
                     selectedDirection = DCCScreenContentPositions.positionID.middle;
-                    serverUtils.PostServerData("DCCfullscreen", 1);
+                    serverUtils.PostQuadFullScreen(1, DCCScreenData.StationId);
                 }
             }
         }

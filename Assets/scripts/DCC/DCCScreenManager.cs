@@ -65,11 +65,11 @@ public class DCCScreenManager : MonoBehaviour
         if (currentTestPattern > 4)
             currentTestPattern = 1;
 
-        serverUtils.PostServerData("DCCquadScreen0", (float)newTestPattern[0]);
-        serverUtils.PostServerData("DCCquadScreen1", (float)newTestPattern[1]);
-        serverUtils.PostServerData("DCCquadScreen2", (float)newTestPattern[2]);
-        serverUtils.PostServerData("DCCquadScreen3", (float)newTestPattern[3]);
-        serverUtils.PostServerData("DCCquadScreen4", (float)newTestPattern[4]);
+        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.topLeft, (DCCWindow.contentID) newTestPattern[0], DCCScreenData.StationId);
+        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.topRight, (DCCWindow.contentID) newTestPattern[1], DCCScreenData.StationId);
+        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.bottomLeft, (DCCWindow.contentID) newTestPattern[2], DCCScreenData.StationId);
+        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.bottomRight, (DCCWindow.contentID) newTestPattern[3], DCCScreenData.StationId);
+        serverUtils.PostQuadContent(DCCScreenContentPositions.positionID.middle, (DCCWindow.contentID) newTestPattern[4], DCCScreenData.StationId);
     }
 
     /** Gets the desired content of each box from the server. */
@@ -77,28 +77,10 @@ public class DCCScreenManager : MonoBehaviour
     {
         if (initialised)
         {
-            for (int i = 0; i < quadBoxes.Length; i++)
+            foreach (DCCQuadBox quad in quadBoxes)
             {
-                switch (quadBoxes[i].boxPosition)
-                {
-                    case Meg.DCC.DCCScreenContentPositions.positionID.topLeft :
-                        quadBoxes[i].boxContent = (DCCWindow.contentID)(int)serverUtils.GetServerData("DCCquadScreen0");
-                        break;
-                    case Meg.DCC.DCCScreenContentPositions.positionID.topRight:
-                        quadBoxes[i].boxContent = (DCCWindow.contentID)(int)serverUtils.GetServerData("DCCquadScreen1");
-                        break;
-                    case Meg.DCC.DCCScreenContentPositions.positionID.bottomLeft:
-                        quadBoxes[i].boxContent = (DCCWindow.contentID)(int)serverUtils.GetServerData("DCCquadScreen2");
-                        break;
-                    case Meg.DCC.DCCScreenContentPositions.positionID.bottomRight:
-                        quadBoxes[i].boxContent = (DCCWindow.contentID)(int)serverUtils.GetServerData("DCCquadScreen3");
-                        break;
-                    case Meg.DCC.DCCScreenContentPositions.positionID.middle:
-                        quadBoxes[i].boxContent = (DCCWindow.contentID)(int)serverUtils.GetServerData("DCCquadScreen4");
-                        break;
-                }
-
-                SetBoxContent(quadBoxes[i]);
+                quad.boxContent = serverUtils.GetQuadContent(quad.boxPosition, DCCScreenData.StationId);
+                SetBoxContent(quad);
             }
         }
     }
@@ -106,8 +88,8 @@ public class DCCScreenManager : MonoBehaviour
     /** Sets a window to be hidden and sets its correct position. */
     void SetWindowHiddenPosition(DCCWindow hiddenWindow)
     {
-        hiddenWindow.quadPosition = Meg.DCC.DCCScreenContentPositions.positionID.hidden;
-        hiddenWindow.SetWindowPosition(Meg.DCC.DCCScreenContentPositions.positionID.hidden);
+        hiddenWindow.quadPosition = DCCScreenContentPositions.positionID.hidden;
+        hiddenWindow.SetWindowPosition(DCCScreenContentPositions.positionID.hidden);
         hiddenWindow.gameObject.SetActive(false);
     }
 
@@ -139,7 +121,7 @@ public class DCCScreenManager : MonoBehaviour
     /** Sets the hidden status of middle windows when switching between fullscreen modes. */
     void SetMiddleScreenState(DCCQuadBox box, DCCWindow quadWindow)
     {
-        if ((int)serverUtils.GetServerData("DCCfullscreen") == 1)
+        if (serverUtils.GetQuadFullScreen(DCCScreenData.StationId) == 1)
         {
             //Debug.Log("Showing this window: " + quadWindow + " in quad box " + box);
             if (quadWindow.quadPosition != DCCScreenContentPositions.positionID.middle)
@@ -263,7 +245,7 @@ public class DCCScreenManager : MonoBehaviour
     public void CycleWindows()
     {
         Debug.Log("Cycling quad windows.");
-        serverUtils.PostServerData("dccquadcycle", 1);
+        serverUtils.PostQuadCycle(1, DCCScreenData.StationId);
     }
 
     /** Sorts the windows on the active screen. Each window has 2 units of depth, so each window should be carefull authored within this range. */
@@ -411,10 +393,11 @@ public class DCCScreenManager : MonoBehaviour
 
         updateTimer += updateTick;
 
-        if (serverUtils.GetServerData("dccquadcycle") == 1)
+        // Reset quad cycle if it has been set.
+        if (serverUtils.GetQuadCycle(DCCScreenData.StationId) == 1)
         {
             TestPattern();
-            serverUtils.PostServerData("dccquadcycle", 0);
+            serverUtils.PostQuadCycle(0, DCCScreenData.StationId);
         }
     }
 }
