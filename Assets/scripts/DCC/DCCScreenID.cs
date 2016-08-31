@@ -30,9 +30,6 @@ public class DCCScreenID : MonoBehaviour
     // The window that's currently visible in this screen.
     private DCCWindow.contentID visibleContent;
 
-    // Hidden window position.
-    private const DCCScreenContentPositions.positionID Hidden = DCCScreenContentPositions.positionID.hidden;
-
 
     /*
     //these get set when a new window is made visible or invisible
@@ -139,16 +136,18 @@ public class DCCScreenID : MonoBehaviour
         foreach (var window in childWindows)
         {
             var visible = window.windowContent == content;
+            window.gameObject.SetActive(visible);
+
             if (visible && !window.isLerping)
             {
-                window.SetWindowPosition(Hidden);
-                window.MoveWindow(slots[0]);
-                window.quadPosition = slots[0];
+                window.SetWindowPosition(DCCScreenContentPositions.positionID.hidden);
+                window.MoveWindow(DCCScreenContentPositions.positionID.center);
+                window.quadPosition = DCCScreenContentPositions.positionID.center;
             }
             else if (!visible)
             {
-                window.SetWindowPosition(Hidden);
-                window.quadPosition = Hidden;
+                window.SetWindowPosition(DCCScreenContentPositions.positionID.hidden);
+                window.quadPosition = DCCScreenContentPositions.positionID.hidden;
             }
         }
     }
