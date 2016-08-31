@@ -135,6 +135,9 @@ public class DCCScreenID : MonoBehaviour
     {
         foreach (var window in childWindows)
         {
+            if (!window)
+                continue;
+
             var visible = window.windowContent == content;
             window.gameObject.SetActive(visible);
 
