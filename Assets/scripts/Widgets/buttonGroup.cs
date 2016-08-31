@@ -36,6 +36,15 @@ public class buttonGroup : MonoBehaviour {
         }
     }
 
+    public void toggleAllOff()
+    {
+        foreach (GameObject b in buttons)
+        {
+            if (b.GetComponent<buttonControl>().active && b.GetComponent<buttonControl>().canToggleOff)
+                toggleButtons(b);
+        }
+    }
+
     public void toggleButtonOn(GameObject b)
         { toggleButtons(b, true); }
 

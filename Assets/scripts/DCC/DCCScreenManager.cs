@@ -20,6 +20,9 @@ public class DCCScreenManager : MonoBehaviour
     [Header("Screen 3")]
     public GameObject screen3;
 
+    [Header("Surface Pro Screen")]
+    public GameObject surfaceScreen;
+
     [Header("Registered non quad windows")]
     public DCCWindow[] nonQuadWindows;
 
@@ -327,24 +330,28 @@ public class DCCScreenManager : MonoBehaviour
                 controlScreen.SetActive(true);
                 quadScreen.SetActive(false);
                 screen3.SetActive(false);
+                surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
                 break;
             case 2:
                 controlScreen.SetActive(false);
                 quadScreen.SetActive(true);
                 screen3.SetActive(false);
+                surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
                 break;
             case 3:
                 controlScreen.SetActive(false);
                 quadScreen.SetActive(false);
                 screen3.SetActive(true);
+                surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
                 break;
             case 4:
                 controlScreen.SetActive(false);
                 quadScreen.SetActive(false);
                 screen3.SetActive(true);
+                surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
                 break;
             case 5:
@@ -352,6 +359,14 @@ public class DCCScreenManager : MonoBehaviour
                 quadScreen.SetActive(false);
                 screen3.SetActive(true);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
+                surfaceScreen.SetActive(false);
+                break;
+            case 6:
+                controlScreen.SetActive(false);
+                quadScreen.SetActive(false);
+                screen3.SetActive(false);
+                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                surfaceScreen.SetActive(true);
                 break;
         }
     }
@@ -369,6 +384,7 @@ public class DCCScreenManager : MonoBehaviour
 
     void Start ()
     {
+        //Debug.Log("Device = " + SystemInfo.deviceName);
         SetScreen(1);
     }
 
@@ -424,6 +440,11 @@ public class DCCScreenManager : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
         {
             SetScreen(5);
+        }
+
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha6))
+        {
+            SetScreen(6);
         }
 
         if (Time.time < updateTimer)
