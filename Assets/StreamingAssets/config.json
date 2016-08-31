@@ -12,10 +12,12 @@
 		"comms-channel-port" : "PORT STATION",
 		"comms-channel-starboard" : "SBOARD STATION",
 		"comms-channel-ship-1" : "DCC",
-		"comms-channel-ship-2" : "POLO",
-		"comms-channel-ship-3" : "BYRD",
-		"comms-channel-ship-4" : "ERNIE",
+		"comms-channel-ship-2" : "CH. 1",
+		"comms-channel-ship-3" : "CH. 2",
+		"comms-channel-ship-4" : "CH. 3",
 		"comms-channel-ship-5" : "NO SIGNAL",
+
+		"dcc-window-title-prefix" : "DIVE CONTROL",
 
 		"vessels" : 
 		[

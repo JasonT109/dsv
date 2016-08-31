@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 
@@ -26,5 +26,8 @@ public class DCCScreenData : NetworkBehaviour
     public int DCCcommsContent = 0;
     [SyncVar]
     public int DCCquadcycle = 0;
+
+    [SyncVar]
+    public bool DCCvesselNameInTitle;
 
 }
