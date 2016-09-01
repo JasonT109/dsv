@@ -33,6 +33,7 @@ public class PasswordScreen : MonoBehaviour
     public Graphic ConnectingSpinner;
 
     public InputField StationIdInput;
+    public Text StationName;
 
 
     [Header("Configuration")]
@@ -83,6 +84,7 @@ public class PasswordScreen : MonoBehaviour
         // Initialize DCC station id.
         StationIdInput.text = DCCScreenData.StationId.ToString();
         StationIdInput.onEndEdit.AddListener(UpdateStationId);
+        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
 
         var isAutoStarting = _manager.AutoStart;
         if (isAutoStarting)
@@ -159,6 +161,21 @@ public class PasswordScreen : MonoBehaviour
 
         // Station id might have been clamped to a valid id.
         StationIdInput.text = DCCScreenData.StationId.ToString();
+        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
+    }
+
+    public void PreviousStation()
+    {
+        DCCScreenData.SetStationId(DCCScreenData.StationId - 1);
+        StationIdInput.text = DCCScreenData.StationId.ToString();
+        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
+    }
+
+    public void NextStation()
+    {
+        DCCScreenData.SetStationId(DCCScreenData.StationId + 1);
+        StationIdInput.text = DCCScreenData.StationId.ToString();
+        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
     }
 
     public void HostIPChanged(string value)
