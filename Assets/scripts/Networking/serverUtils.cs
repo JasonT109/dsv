@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.0.6";
+        public const string Version = "1.0.7";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -582,6 +582,7 @@ namespace Meg.Networking
             "scrubbedhumidity",
             "scrubbedoxygen",
             "shot",
+            "sonarheadingup",
             "sonarlongfrequency",
             "sonarlonggain",
             "sonarlongrange",
@@ -936,6 +937,7 @@ namespace Meg.Networking
             { "scrubbedhumidity", new ParameterInfo { description = "Humidity leaving the scrubber (%)." } },
             { "scrubbedoxygen", new ParameterInfo { description = "Oxygen percentage leaving the scrubber." } },
             { "shot", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Shot number within the current scene." } },
+            { "sonarheadingup", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sonar is in Heading Up or North Up mode."} },
             { "sonarlongfrequency", new ParameterInfo { minValue = 0, maxValue = 250, description = "Frequency setting for 360 (long-range) sonar. (kHz)" } },
             { "sonarlonggain", new ParameterInfo { minValue = 50, maxValue = 110, description = "Gain setting for 360 (long-range) sonar. (%)" } },
             { "sonarlongrange", new ParameterInfo { minValue = 1000, maxValue = 6000, type = ParameterType.Int, description = "Range setting for 360 (long-range) sonar (m)." } },
@@ -1405,6 +1407,8 @@ namespace Meg.Networking
 					return SubControl.MotionMinImpactInterval;
 				case "motionhazardsensitivity":
 					return SubControl.MotionHazardSensitivity;
+                case "sonarheadingup":
+                    return SonarData.HeadingUp ? 1 : 0;
                 case "sonarlongfrequency":
                     return SonarData.LongFrequency;
                 case "sonarlonggain":
@@ -1804,6 +1808,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCvesselNameInTitle;
                 case "dcccommsusesliders":
                     return DCCScreenData.DCCcommsUseSliders;
+                case "sonarheadingup":
+                    return SonarData.HeadingUp;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName, defaultValue ? 1 : 0);

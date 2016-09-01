@@ -21,6 +21,9 @@ public class enableOnServerValue : MonoBehaviour
     /** Objects that should be enabled/disabled. */
     public GameObject[] Targets;
 
+    /** Behaviours that should be enabled/disabled. */
+    public Behaviour[] Behaviours;
+
     private void Start()
     {
         Update();
@@ -38,6 +41,9 @@ public class enableOnServerValue : MonoBehaviour
 
         for (var i = 0; i < Targets.Length; i++)
             Targets[i].SetActive(active);
+
+        for (var i = 0; i < Behaviours.Length; i++)
+            Behaviours[i].enabled = active;
     }
 
 }
