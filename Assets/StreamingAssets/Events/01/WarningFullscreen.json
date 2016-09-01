@@ -1,0 +1,64 @@
+{
+	"metadata":{
+		"utc":"01/09/16 06:26:36.8",
+		"startedTimestamp":"01/09/16 06:26:06.0",
+		"stoppedTimestamp":"01/09/16 06:25:30.7"
+	},
+	"groups":[
+		{
+			"id":"FULLSCREEN TRIGGERS",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"IMPACT",
+					"Type":0,
+					"Title":"IMPACT ALERT",
+					"Message":"Impact detected!",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						2560,
+						1080
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerTime":4.471377,
+					"triggerLabel":"PROXIMITY",
+					"Type":0,
+					"Title":"PROXIMITY ALERT",
+					"Message":"Master caution: impact risk!",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						2560,
+						1080
+					],
+					"Icon":2,
+					"Color":[
+						0.9333334,
+						0.3137255,
+						0.1882353,
+						1
+					]
+				}
+			]
+		}
+	]
+}
