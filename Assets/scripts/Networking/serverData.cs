@@ -864,6 +864,9 @@ public class serverData : NetworkBehaviour
 			case "motionminimpactinterval":
 				SubControl.MotionMinImpactInterval = newValue;
 				break;
+            case "sonarheadingup":
+                SonarData.HeadingUp = newValue > 0;
+                break;
             case "sonarlongfrequency":
                 SonarData.LongFrequency = newValue;
                 break;

@@ -20,6 +20,14 @@
 		"network-scene" : "screen_dcc",
 		"dcc-window-title-prefix" : "DIVE CONTROL",
 		"dcc-station-id" : 0,
+		"dcc-station-names" : 
+		[
+			"Server",
+			"STATION B",
+			"STATION C",
+			"STATION D",
+			"STATION E"
+		],
 
 		"vessels" : 
 		[

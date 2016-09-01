@@ -83,6 +83,10 @@ public class SonarData : NetworkBehaviour
     [SyncVar]
     public float Proximity = 1f;
 
+    /** Whether sonar is in heading up mode (or north up). */
+    [SyncVar]
+    public bool HeadingUp = true;
+
 
     // Public Methods
     // ------------------------------------------------------------

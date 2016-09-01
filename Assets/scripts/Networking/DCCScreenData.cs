@@ -18,6 +18,9 @@ public class DCCScreenData : NetworkBehaviour
     /** Maximum station id. */
     public const int MaxStationId = 10;
 
+    /** Unknown station name. */
+    public const string UnknownStationName = "Unknown";
+
 
     // Properties
     // ------------------------------------------------------------
@@ -103,6 +106,16 @@ public class DCCScreenData : NetworkBehaviour
 
     /** The station ID that this instance belongs to. */
     private static int _stationId = Unknown;
+
+    /** Default station names. */
+    private static string[] _defaultStationNames =
+    {
+        "STATION A",
+        "STATION B",
+        "STATION C",
+        "STATION D",
+        "STATION E"
+    };
 
 
     // Unity Methods
@@ -284,6 +297,29 @@ public class DCCScreenData : NetworkBehaviour
                 return "hidden";
             default:
                 return "hidden";
+        }
+    }
+
+    /** Return a station's logical name from an id. */
+    public static string GetStationName(int stationId)
+    {
+        try
+        {
+            if (stationId < 0)
+                return UnknownStationName;
+
+            var names = Configuration.GetJson("dcc-station-names");
+            if (names != null && names.IsArray && stationId < names.Count)
+                return names[stationId].str;
+
+            if (stationId >= _defaultStationNames.Length)
+                return UnknownStationName;
+
+            return _defaultStationNames[stationId];
+        }
+        catch (Exception)
+        {
+            return UnknownStationName;
         }
     }
 

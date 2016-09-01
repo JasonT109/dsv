@@ -43,6 +43,10 @@
 				{
 					"type":"Value",
 					"serverParam":"sonarproximity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"sonarheadingup"
 				}
 			]
 		}
