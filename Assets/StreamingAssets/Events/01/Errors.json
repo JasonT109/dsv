@@ -1,12 +1,61 @@
 {
 	"metadata":{
-		"utc":"01/09/16 05:50:10.5",
-		"startedTimestamp":"01/09/16 05:49:44.9",
-		"stoppedTimestamp":"01/09/16 05:50:00.7"
+		"utc":"02/09/16 05:24:32.5",
+		"startedTimestamp":"02/09/16 05:21:36.6",
+		"stoppedTimestamp":"02/09/16 05:21:44.6"
 	},
 	"groups":[
 		{
+			"id":"FULLSCREEN RED",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"ON",
+					"serverParam":"genericError",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"OFF",
+					"serverParam":"genericError",
+					"serverValue":1
+				}
+			]
+		},
+		{
+			"id":"IMPACT ALERT POPUP",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"IMPACTALERT",
+					"Type":0,
+					"Title":"IMPACT ALERT",
+					"Message":"Structural integrity compromised",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						2560,
+						1080
+					],
+					"Icon":2,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				}
+			]
+		},
+		{
 			"id":"IMPACT ERRORS",
+			"paused":true,
 			"minimized":true,
 			"events":[
 				{
@@ -140,39 +189,6 @@
 					"type":"Value",
 					"triggerTime":2.2,
 					"serverParam":"error_tow",
-					"serverValue":0
-				}
-			]
-		},
-		{
-			"id":"FULLSCREEN ERRORS",
-			"events":[
-				{
-					"type":"Popup",
-					"Type":0,
-					"Title":"IMPACT ALERT",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						2560,
-						1080
-					],
-					"Icon":2,
-					"Color":[
-						0.766,
-						0.074302,
-						0.074302,
-						1
-					]
-				},
-				{
-					"type":"Value",
-					"serverParam":"genericError",
 					"serverValue":0
 				}
 			]
