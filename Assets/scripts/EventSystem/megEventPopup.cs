@@ -11,12 +11,19 @@ namespace Meg.EventSystem
     public class megEventPopup : megEvent
     {
 
+        // Constants
+        // ------------------------------------------------------------
+
+        /** Default error message. */
+        public const string DefaultMessage = "ERROR 31: Unknown Error";
+
+
         // Properties
         // ------------------------------------------------------------
 
         public popupData.Type Type = popupData.Type.Info;
         public string Title = "";
-        public string Message = "ERROR 31: Unknown Error";
+        public string Message = DefaultMessage;
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;

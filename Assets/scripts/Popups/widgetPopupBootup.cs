@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.UI;
 
@@ -22,6 +23,9 @@ public class widgetPopupBootup : widgetPopup
     {
         if (string.IsNullOrEmpty(popup.Title))
             popup.Title = serverUtils.VesselData.PlayerVesselName.ToUpper() + " ONLINE";
+
+        if (Equals(popup.Message, megEventPopup.DefaultMessage))
+            popup.Message = "";
 
         base.Show(popup);
     }
