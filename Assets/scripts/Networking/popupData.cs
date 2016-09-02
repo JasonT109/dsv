@@ -158,7 +158,7 @@ public class popupData : NetworkBehaviour
 
         /** Whether popup's message can be changed. */
         public bool CanSetMessage
-            { get { return Type == Type.Info; } }
+            { get { return CanSetTitle; } }
 
         /** Whether popup's color can be changed. */
         public bool CanSetColor

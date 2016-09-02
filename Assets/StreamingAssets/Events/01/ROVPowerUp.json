@@ -1,16 +1,15 @@
 {
 	"metadata":{
-		"utc":"23/08/16 03:22:53.2",
-		"startedTimestamp":"23/08/16 03:21:54.3",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"02/09/16 05:25:31.1",
+		"startedTimestamp":"02/09/16 05:21:36.6",
+		"stoppedTimestamp":"02/09/16 05:21:44.6"
 	},
 	"groups":[
 		{
-			"id":"Group",
+			"id":"ROV POWER UP",
 			"events":[
 				{
 					"type":"Value",
-					"triggerTime":5,
 					"serverParam":"startimagesequence",
 					"serverValue":1
 				}
