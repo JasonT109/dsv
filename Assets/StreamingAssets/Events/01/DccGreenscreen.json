@@ -294,12 +294,12 @@
 					"Target":"CommsLarge",
 					"Position":[
 						0,
-						0,
+						-15,
 						0
 					],
 					"Size":[
-						1330,
-						748
+						1450,
+						765
 					],
 					"Icon":0,
 					"Color":[
@@ -600,12 +600,12 @@
 					"Target":"CommsLarge",
 					"Position":[
 						0,
-						0,
+						-15,
 						0
 					],
 					"Size":[
-						1330,
-						748
+						1450,
+						765
 					],
 					"Icon":4,
 					"Color":[

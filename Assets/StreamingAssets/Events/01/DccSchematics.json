@@ -1,6 +1,6 @@
 {
 	"metadata":{
-		"utc":"30/08/16 08:02:22.3",
+		"utc":"01/09/16 05:42:17.3",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
@@ -79,6 +79,42 @@
 					"type":"Value",
 					"triggerTime":1.193619,
 					"serverParam":"error_pressure",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"DCC GLIDER WARNING CUES",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"PRESSURE",
+					"serverParam":"error_pressure",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"STRUCTURE",
+					"serverParam":"error_structural",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"SYSTEM",
+					"serverParam":"error_system",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"THRUSTER",
+					"serverParam":"error_thruster_l",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"GRAPPLE",
+					"serverParam":"error_grapple",
 					"serverValue":0
 				}
 			]
