@@ -9,7 +9,12 @@ public class widgetUnhideOnServerValue : MonoBehaviour
     public float serverValue = 0;
     public bool greaterThanValue = false;
     public GameObject[] objectsToUnhide;
-	
+    public bool alphaIn = false;
+    public float alphaLerpInSpeed = 5;
+    private bool isOn;
+    private float lerpAlphaValue = 0;
+    private bool isLerping;
+
     void SetVisibility()
     {
         bool visible = false;
@@ -19,10 +24,14 @@ public class widgetUnhideOnServerValue : MonoBehaviour
             if (serverUtils.GetServerData(serverString) > serverValue)
             {
                 visible = true;
+                if (!isOn)
+                    //isLerping = true;
+                isOn = true;
             }
             else
             {
                 visible = false;
+                isOn = false;
             }
         }
         else
@@ -30,10 +39,14 @@ public class widgetUnhideOnServerValue : MonoBehaviour
             if (serverUtils.GetServerData(serverString) <= serverValue)
             {
                 visible = true;
+                if (!isOn)
+                    isLerping = true;
+                isOn = true;
             }
             else
             {
                 visible = false;
+                isOn = false;
             }
         }
 
@@ -53,10 +66,31 @@ public class widgetUnhideOnServerValue : MonoBehaviour
         SetVisibility();
     }
 
-	// Update is called once per frame
+    void SetAlphaValue()
+    {
+        for (int i = 0; i < objectsToUnhide.Length; i++)
+        {
+            Renderer r;
+            r = objectsToUnhide[i].GetComponent<Renderer>();
+            if (r)
+                r.material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f, lerpAlphaValue));
+        }
+    }
+
 	void Update ()
     {
         SetVisibility();
+        if (isLerping)
+        {
+            lerpAlphaValue += Time.deltaTime * alphaLerpInSpeed;
 
+            SetAlphaValue();
+
+            if (lerpAlphaValue >= 1)
+            {
+                isLerping = false;
+                lerpAlphaValue = 0;
+            }
+        }
     }
 }

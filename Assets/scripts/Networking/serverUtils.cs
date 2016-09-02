@@ -292,6 +292,17 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the docking data object. */
+        private static dockingData _dockingData;
+        public static dockingData DockingData
+        {
+            get
+            {
+                if (!_dockingData && ServerObject)
+                    _dockingData = ServerObject.GetComponent<dockingData>();
+                return _dockingData;
+            }
+        }
 
         /** Return the vessel movements controller. */
         private static vesselMovements _vesselMovements;
@@ -418,6 +429,10 @@ namespace Meg.Networking
             "divertpowertothrusters",
             "divetime",
             "divetimeactive",
+            "docking1",
+            "docking2",
+            "docking3",
+            "docking4",
             "dockingbuttonenabled",
             "domecenter",
             "domecornerbottomleft",
@@ -781,6 +796,10 @@ namespace Meg.Networking
             { "divetime", new ParameterInfo { maxValue = 3600, description = "Duration of the dive so far (s)."} },
             { "divetimeactive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether dive time is automatically updated."} },
             { "dockingbuttonenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether the docking button is enabled in Piloting screen."} },
+            { "docking1", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 1."} },
+            { "docking2", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 2."} },
+            { "docking3", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 3."} },
+            { "docking4", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 4."} },
             { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
@@ -1501,6 +1520,14 @@ namespace Meg.Networking
                     return LightData.lightArray10;
                 case "maxwildlife":
                     return SonarData.MaxWildlife;
+                case "docking1":
+                    return DockingData.docking1;
+                case "docking2":
+                    return DockingData.docking2;
+                case "docking3":
+                    return DockingData.docking3;
+                case "docking4":
+                    return DockingData.docking4;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

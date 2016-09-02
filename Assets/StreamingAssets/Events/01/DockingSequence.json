@@ -1,0 +1,69 @@
+{
+	"metadata":{
+		"utc":"02/09/16 05:44:03.6",
+		"startedTimestamp":"02/09/16 05:42:12.2",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"Docking On",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"docking1",
+					"serverParam":"docking1",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking2",
+					"serverParam":"docking2",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking3",
+					"serverParam":"docking3",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking4",
+					"serverParam":"docking4",
+					"serverValue":1
+				}
+			]
+		},
+		{
+			"id":"Docking off",
+			"hideTimeline":true,
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"docking1off",
+					"serverParam":"docking1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking2off",
+					"serverParam":"docking2",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking3off",
+					"serverParam":"docking3",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"docking4off",
+					"serverParam":"docking4",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

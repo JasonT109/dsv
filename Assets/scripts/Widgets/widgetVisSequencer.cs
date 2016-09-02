@@ -19,7 +19,7 @@ public class widgetVisSequencer : MonoBehaviour
 
         for (int i = 0; i < sequenceObjects.Length; i++)
         {
-            if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show && sequenceObjects[i].visObject.activeSelf)
+            if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show)
                 sequenceObjects[i].visObject.SetActive(false);
             //if (sequenceObjects[i].visibility == visSequenceObject.visStatus.hide)
                 //sequenceObjects[i].visObject.SetActive(true);
@@ -48,7 +48,10 @@ public class widgetVisSequencer : MonoBehaviour
     void OnDisable ()
     {
         if (!startButton)
+        {
+            timer = 0;
             ResetAll();
+        }
     }
 
     void Update ()

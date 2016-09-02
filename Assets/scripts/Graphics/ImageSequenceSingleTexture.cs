@@ -57,6 +57,25 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         texture = (Texture)Resources.Load(baseName + "00000", typeof(Texture));
     }
 
+    void OnDisable ()
+    {
+        if (type == playbackType.once || type == playbackType.hold)
+        {
+            frameCounter = 0;
+            texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            StopAllCoroutines();
+        }
+    }
+
+    void OnEnable ()
+    {
+        if (type == playbackType.once || type == playbackType.hold)
+        {
+            frameCounter = 0;
+            texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+        }
+    }
+
     void Update()
     {
         if (switchOnWarning)

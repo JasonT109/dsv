@@ -260,6 +260,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private dockingData _dockingData;
+    public dockingData DockingData
+    {
+        get
+        {
+            if (!_dockingData)
+                _dockingData = GetComponent<dockingData>();
+            return _dockingData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -1016,6 +1027,18 @@ public class serverData : NetworkBehaviour
                 break;
             case "lightarray10":
                 LightData.lightArray10 = (int)newValue;
+                break;
+            case "docking1":
+                DockingData.docking1 = (int)newValue;
+                break;
+            case "docking2":
+                DockingData.docking2 = (int)newValue;
+                break;
+            case "docking3":
+                DockingData.docking3 = (int)newValue;
+                break;
+            case "docking4":
+                DockingData.docking4 = (int)newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
