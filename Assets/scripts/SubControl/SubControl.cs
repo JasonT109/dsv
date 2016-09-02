@@ -88,7 +88,8 @@ public class SubControl : NetworkBehaviour
     private float roll;
     private float pitch;
 
-	private float _nextImpactTime;
+    private float _lastImpactTime;
+    private float _nextImpactTime;
 
 	private float forwardThrust = 50f;
 	//private float AccelRatio = 0.0f;
@@ -315,8 +316,13 @@ public class SubControl : NetworkBehaviour
         // UnityToArduino is actively piping data out to the motion control rig.
 		if (Time.time > _nextImpactTime)
 		{
+		    var t = Time.time;
+		    var dt = t - _lastImpactTime;
+            _lastImpactTime = t;
+            _nextImpactTime = t + MotionMinImpactInterval;
+
+            Debug.Log(string.Format("IMPACT TRIGGERED: t = {0:N2}, delta = {1:N2}, next = {2:N2}", t, dt, _nextImpactTime));
 			rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
-		    _nextImpactTime = Time.time + MotionMinImpactInterval;
 		}
     }
 
