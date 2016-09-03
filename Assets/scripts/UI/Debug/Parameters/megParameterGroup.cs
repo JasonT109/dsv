@@ -107,6 +107,46 @@ namespace Meg.Parameters
                 file.selectedParameter = null;
         }
 
+        /** Move a parameter upwards. */
+        public bool MoveUp(megParameter parameter)
+        {
+            var index = parameters.IndexOf(parameter);
+            if (index <= 0)
+                return false;
+
+            parameters[index] = parameters[index - 1];
+            parameters[index - 1] = parameter;
+            return true;
+        }
+
+        /** Move a parameter upwards. */
+        public bool MoveDown(megParameter parameter)
+        {
+            var index = parameters.IndexOf(parameter);
+            var last = parameters.Count - 1;
+            if (index < 0 || index >= last)
+                return false;
+
+            parameters[index] = parameters[index + 1];
+            parameters[index + 1] = parameter;
+            return true;
+        }
+
+        /** Returns whether a parameter can be moved up. */
+        public bool CanMoveUp(megParameter parameter)
+        {
+            var index = parameters.IndexOf(parameter);
+            return index > 0;
+        }
+
+        /** Returns whether a parameter can be moved up. */
+        public bool CanMoveDown(megParameter parameter)
+        {
+            var index = parameters.IndexOf(parameter);
+            var last = parameters.Count - 1;
+            return index >= 0 && index < last;
+        }
+
 
         // Load / Save
         // ------------------------------------------------------------

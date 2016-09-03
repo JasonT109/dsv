@@ -49,6 +49,18 @@ public class debugParameterFileUi : MonoBehaviour
     /** Clear button. */
     public Button ClearParametersButton;
 
+    /** Move group up button. */
+    public Button MoveGroupUpButton;
+
+    /** Move group down button. */
+    public Button MoveGroupDownButton;
+
+    /** Move parameter up button. */
+    public Button MoveParameterUpButton;
+
+    /** Move parameter down button. */
+    public Button MoveParameterDownButton;
+
     /** Save button. */
     public Button SaveButton;
 
@@ -320,6 +332,11 @@ public class debugParameterFileUi : MonoBehaviour
         RemoveParameterButton.interactable = _file.canRemove && _file.selectedParameter != null;
         ClearParametersButton.interactable = _file.canClear && _file.selectedGroup != null && !_file.selectedGroup.empty;
         SaveButton.interactable = _file.canSave;
+        MoveGroupUpButton.interactable = File.CanMoveUp(File.selectedGroup);
+        MoveGroupDownButton.interactable = File.CanMoveDown(File.selectedGroup);
+
+        MoveParameterUpButton.interactable = _file.selectedParameter != null && _file.selectedParameter.CanMoveUp;
+        MoveParameterDownButton.interactable = _file.selectedParameter != null && _file.selectedParameter.CanMoveDown;
     }
 
     /** Remove all event groups. */
@@ -376,6 +393,71 @@ public class debugParameterFileUi : MonoBehaviour
             groupUi.ExpandParameter(e);
 
         _file.selectedGroup = g;
+    }
+
+    /** Move selected group upwards. */
+    public void MoveSelectedGroupUp()
+    {
+        if (File.selectedGroup == null)
+            return;
+
+        var group = File.selectedGroup;
+        if (!File.MoveUp(group))
+            return;
+
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
+        if (ui == null)
+            return;
+
+        var index = _groups.IndexOf(ui);
+        if (index <= 0)
+            return;
+
+        _groups[index] = _groups[index - 1];
+        _groups[index - 1] = ui;
+
+        ui.transform.SetSiblingIndex(index - 1);
+    }
+
+    /** Move a group downwards. */
+    public void MoveSelectedGroupDown()
+    {
+        if (File.selectedGroup == null)
+            return;
+
+        var group = File.selectedGroup;
+        if (!File.MoveDown(group))
+            return;
+
+        var ui = _groups.FirstOrDefault(g => g.Group == group);
+        if (ui == null)
+            return;
+
+        var index = _groups.IndexOf(ui);
+        var last = _groups.Count - 1;
+        if (index < 0 || index >= last)
+            return;
+
+        _groups[index] = _groups[index + 1];
+        _groups[index + 1] = ui;
+
+        ui.transform.SetSiblingIndex(index + 1);
+    }
+
+    /** Move selected parameter upwards. */
+    public void MoveSelectedParameterUp()
+    {
+        var ui = _groups.FirstOrDefault(g => g.Group == File.selectedGroup);
+        if (ui)
+            ui.MoveSelectedParameterUp();
+    }
+
+    /** Move selected parameter downwards. */
+    public void MoveSelectedParameterDown()
+    {
+        var ui = _groups.FirstOrDefault(g => g.Group == File.selectedGroup);
+        if (ui)
+            ui.MoveSelectedParameterDown();
     }
 
 }

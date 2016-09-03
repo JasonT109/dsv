@@ -201,6 +201,55 @@ public class debugParameterGroupUi : MonoBehaviour
         _group.Clear();
     }
 
+    /** Move selected parameter upwards. */
+    public void MoveSelectedParameterUp()
+    {
+        if (File.selectedParameter == null)
+            return;
+
+        var parameter = File.selectedParameter;
+        if (!Group.MoveUp(parameter))
+            return;
+
+        var ui = _parameters.FirstOrDefault(g => g.Parameter == parameter);
+        if (ui == null)
+            return;
+
+        var index = _parameters.IndexOf(ui);
+        if (index <= 0)
+            return;
+
+        _parameters[index] = _parameters[index - 1];
+        _parameters[index - 1] = ui;
+
+        ui.transform.SetSiblingIndex(index - 1);
+    }
+
+    /** Move a parameter downwards. */
+    public void MoveSelectedParameterDown()
+    {
+        if (File.selectedParameter == null)
+            return;
+
+        var parameter = File.selectedParameter;
+        if (!Group.MoveDown(parameter))
+            return;
+
+        var ui = _parameters.FirstOrDefault(g => g.Parameter == parameter);
+        if (ui == null)
+            return;
+
+        var index = _parameters.IndexOf(ui);
+        var last = _parameters.Count - 1;
+        if (index < 0 || index >= last)
+            return;
+
+        _parameters[index] = _parameters[index + 1];
+        _parameters[index + 1] = ui;
+
+        ui.transform.SetSiblingIndex(index + 1);
+    }
+
     /** Toggle timeline's minimized state. */
     public void ToggleMinimized()
     {

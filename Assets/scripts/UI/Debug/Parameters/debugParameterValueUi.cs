@@ -34,6 +34,9 @@ public class debugParameterValueUi : debugParameterUi
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
 
+    public Button SetToMinValueButton;
+    public Button SetToMaxValueButton;
+
 
     /** The value parameter. */
     public megParameterValue ValueParameter
@@ -89,6 +92,18 @@ public class debugParameterValueUi : debugParameterUi
         }
     }
 
+    public void SetToMinValue()
+    {
+        ValueParameter.serverValue = ServerValueSlider.minValue;
+        InitParameterUi();
+    }
+
+    public void SetToMaxValue()
+    {
+        ValueParameter.serverValue = ServerValueSlider.maxValue;
+        InitParameterUi();
+    }
+
 
 
     // Protected Methods
@@ -141,6 +156,12 @@ public class debugParameterValueUi : debugParameterUi
         ServerValueSlider.value = ValueParameter.serverValue;
         ServerValueSlider.wholeNumbers = (info.type == serverUtils.ParameterType.Bool) 
             || (info.type == serverUtils.ParameterType.Int);
+
+        if (SetToMinValueButton)
+            SetToMinValueButton.interactable = value > minValue;
+
+        if (SetToMaxValueButton)
+            SetToMaxValueButton.interactable = value < maxValue;
     }
 
     private void UpdateServerValueInput()

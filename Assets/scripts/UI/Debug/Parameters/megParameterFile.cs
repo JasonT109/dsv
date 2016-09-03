@@ -130,6 +130,47 @@ namespace Meg.Parameters
                 Cleared(this);
         }
 
+        /** Move a group upwards. */
+        public bool MoveUp(megParameterGroup group)
+        {
+            var index = groups.IndexOf(group);
+            if (index <= 0)
+                return false;
+
+            groups[index] = groups[index - 1];
+            groups[index - 1] = group;
+            return true;
+        }
+
+        /** Move a group upwards. */
+        public bool MoveDown(megParameterGroup group)
+        {
+            var index = groups.IndexOf(group);
+            var last = groups.Count - 1;
+            if (index < 0 || index >= last)
+                return false;
+
+            groups[index] = groups[index + 1];
+            groups[index + 1] = group;
+            return true;
+        }
+
+        /** Returns whether a group can be moved up. */
+        public bool CanMoveUp(megParameterGroup group)
+        { return canAdd && groups.IndexOf(group) > 0; }
+
+        /** Returns whether a group can be moved up. */
+        public bool CanMoveDown(megParameterGroup group)
+        {
+            if (!canAdd)
+                return false;
+
+            var index = groups.IndexOf(group);
+            var last = groups.Count - 1;
+            return index >= 0 && index < last;
+        }
+
+
         // Load / Save
         // ------------------------------------------------------------
 

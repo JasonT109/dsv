@@ -42,6 +42,12 @@ namespace Meg.Parameters
         public virtual string name
             { get { return ToString(); } }
 
+        /** Whether this parameter can be moved upwards in its group. */
+        public bool CanMoveUp { get { return group != null && group.CanMoveUp(this); } }
+
+        /** Whether this parameter can be moved downwards in its group. */
+        public bool CanMoveDown { get { return group != null && group.CanMoveDown(this); } }
+
 
         // Members
         // ------------------------------------------------------------
