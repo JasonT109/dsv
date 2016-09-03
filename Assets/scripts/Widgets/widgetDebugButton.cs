@@ -97,7 +97,8 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
             Toggle();
 
         // Deactivate when screen has some assigned content.
-        if (serverUtils.LocalPlayer.ScreenState.Content != screenData.Content.Debug)
+        var player = serverUtils.LocalPlayer;
+        if (player && player.ScreenState.Content != screenData.Content.Debug)
             Deactivate();
     }
 

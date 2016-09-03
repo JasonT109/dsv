@@ -49,4 +49,18 @@ public class debugSubScreensUi : MonoBehaviour
         return _screens[i];
     }
 
+    public void Identify()
+    {
+        var popup = new popupData.Popup
+        {
+            Title = "{player-id}",
+            Message = "",
+            Icon = popupData.Icon.None,
+            Type = popupData.Type.Info,
+            Color = Color.grey
+        };
+
+        serverUtils.PostTogglePopup(popup);
+    }
+
 }
