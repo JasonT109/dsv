@@ -67,6 +67,11 @@ public class gameInputs : NetworkBehaviour
     private bool prevLabelState;
 
 
+    /** Return the input soruce for this client. */
+    public Player Input
+        { get { return _input; } }
+
+
     // Members
     // ------------------------------------------------------------
 

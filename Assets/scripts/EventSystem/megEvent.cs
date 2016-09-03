@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.EventSystem
 {
@@ -41,6 +42,9 @@ namespace Meg.EventSystem
         /** Optional trigger button label. */
         public string triggerLabel;
 
+        /** Optional trigger hotkey. */
+        public string triggerHotKey;
+
         /** Time at which to trigger the event. */
         public float triggerTime;
 
@@ -65,6 +69,12 @@ namespace Meg.EventSystem
 
         /** Whether event should be manually triggered by a button. */
         public bool hasTrigger { get { return !string.IsNullOrEmpty(triggerLabel); } }
+
+        /** Whether event has a hotkey. */
+        public bool hasTriggerHotKey { get { return !string.IsNullOrEmpty(triggerHotKey); } }
+
+        /** Game time at which event was last triggered. */
+        public float lastTriggerTime { get; set; }
 
         /** Whether event is selected. */
         public bool selected { get { return group != null && group.file.selectedEvent == this; } }
@@ -113,6 +123,7 @@ namespace Meg.EventSystem
             running = true;
             completed = false;
             time = 0;
+            lastTriggerTime = Time.time;
             TriggerExecute();
         }
 
@@ -132,6 +143,9 @@ namespace Meg.EventSystem
         {
             if (group.running)
             {
+                if (hasTriggerHotKey)
+                    UpdateHotKey();
+
                 if (!running && t >= triggerTime && !hasTrigger)
                 {
                     running = true;
@@ -199,6 +213,8 @@ namespace Meg.EventSystem
                 json.AddField("completeTime", completeTime);
             if (hasTrigger)
                 json.AddField("triggerLabel", triggerLabel);
+            if (hasTriggerHotKey)
+                json.AddField("triggerHotKey", triggerLabel);
 
             return json;
         }
@@ -209,6 +225,7 @@ namespace Meg.EventSystem
             json.GetField(ref triggerTime, "triggerTime");
             json.GetField(ref completeTime, "completeTime");
             json.GetField(ref triggerLabel, "triggerLabel");
+            json.GetField(ref triggerHotKey, "triggerHotKey");
         }
 
 
@@ -243,6 +260,17 @@ namespace Meg.EventSystem
         /** Reset this event. */
         protected abstract void Rewind();
 
+
+        // Private Methods
+        // ------------------------------------------------------------
+
+        /** Trigger this event when its hotkey is pressed. */
+        private void UpdateHotKey()
+        {
+            var input = serverUtils.LocalInput;
+            if (input != null && input.GetButtonDown("HotKey" + triggerHotKey))
+                Trigger();
+        }
 
     }
 

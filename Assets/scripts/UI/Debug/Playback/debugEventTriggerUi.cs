@@ -37,12 +37,8 @@ public class debugEventTriggerUi : MonoBehaviour
     /** Color for event label when it's complete. */
     public Color LabelCompletedColor;
 
-
-    // Members
-    // ------------------------------------------------------------
-
-    /** Time since last button press. */
-    private float _lastClickTime;
+    /** Hotkey label. */
+    public Text HotKey;
 
 
     // Unity Methods
@@ -63,7 +59,7 @@ public class debugEventTriggerUi : MonoBehaviour
         if (Event == null)
             return;
 
-        var recentlyPressed = Time.time - _lastClickTime < 0.25f;
+        var recentlyTriggered = Time.time - Event.lastTriggerTime < 0.25f;
 
         Button.interactable = Event.file.playing && !Event.group.paused;
         Label.text = Event.triggerLabel;
@@ -74,7 +70,7 @@ public class debugEventTriggerUi : MonoBehaviour
         if (Event.group.paused)
             c.a *= 0.5f;
 
-        if (recentlyPressed)
+        if (recentlyTriggered)
             c = ActiveColor;
 
         // Make popup triggers appear inactive id needed.
@@ -91,13 +87,17 @@ public class debugEventTriggerUi : MonoBehaviour
         if (Event.group.paused)
             l.a *= 0.5f;
 
-        if (recentlyPressed)
+        if (recentlyTriggered)
             l = LabelActiveColor;
 
         if (popupEvent != null)
             l = hasPopup ? LabelActiveColor : LabelInactiveColor;
 
         Label.color = l;
+
+        HotKey.transform.parent.gameObject.SetActive(Event.hasTriggerHotKey);
+        if (Event.hasTriggerHotKey)
+            HotKey.text = Event.triggerHotKey;
     }
 
 
@@ -107,8 +107,6 @@ public class debugEventTriggerUi : MonoBehaviour
     /** Button click handler. */
     private void OnButtonClicked()
     {
-        _lastClickTime = Time.time;
-
         if (Event != null)
             Event.Trigger();
     }

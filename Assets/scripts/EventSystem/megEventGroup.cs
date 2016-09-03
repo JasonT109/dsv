@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Meg.Networking;
 
 namespace Meg.EventSystem
 {
@@ -52,10 +53,10 @@ namespace Meg.EventSystem
         public bool minimized { get; set; }
 
         /** Whether group's timeline is hidden. */
-        public bool hideTimeline { get; set; }
+        public bool hideTimeline { get { return events.Exists(e => e.hasTrigger); } }
 
         /** Whether group's trigger buttons are hidden. */
-        public bool hideTriggers { get; set; }
+        public bool hideTriggers { get { return !hideTimeline; } }
 
         /** Whether group can be looped. */
         public bool canLoop { get; set; }
@@ -65,6 +66,12 @@ namespace Meg.EventSystem
 
         /** Local time at which the group ends. */
         public float endTime { get { return empty ? 0 : events.Max(e => e.endTime); } }
+
+        /** Name of the hotkey for this group (optional). */
+        public string hotKey;
+
+        /** Whether group has a hotkey assigned. */
+        public bool hasHotKey { get { return !string.IsNullOrEmpty(hotKey); } }
 
 
         // Members
@@ -112,6 +119,9 @@ namespace Meg.EventSystem
         /** Update this event group as time passes. */
         public void Update(float t, float dt)
         {
+            if (!string.IsNullOrEmpty(hotKey))
+                UpdateHotKey();
+
             if (paused)
                 return;
 
@@ -263,12 +273,11 @@ namespace Meg.EventSystem
                 json.AddField("minimized", minimized);
             if (pauseOnComplete)
                 json.AddField("pauseOnComplete", pauseOnComplete);
-            if (hideTimeline)
-                json.AddField("hideTimeline", hideTimeline);
-            if (hideTriggers)
-                json.AddField("hideTriggers", hideTriggers);
 
             json.AddField("events", eventsJson);
+
+            if (!string.IsNullOrEmpty(hotKey))
+                json.AddField("hotKey", hotKey);
 
             return json;
         }
@@ -293,12 +302,8 @@ namespace Meg.EventSystem
             bool jsonPauseOnComplete;
             if (json.GetField(out jsonPauseOnComplete, "pauseOnComplete", false))
                 pauseOnComplete = jsonPauseOnComplete;
-            bool jsonHideTimeline;
-            if (json.GetField(out jsonHideTimeline, "hideTimeline", false))
-                hideTimeline = jsonHideTimeline;
-            bool jsonHideTriggers;
-            if (json.GetField(out jsonHideTriggers, "hideTriggers", false))
-                hideTriggers = jsonHideTriggers;
+
+            json.GetField(ref hotKey, "hotKey");
 
             var eventsJson = json.GetField("events");
             events.Clear();
@@ -309,6 +314,18 @@ namespace Meg.EventSystem
                 var e = AddEvent(type);
                 e.Load(eventsJson[i]);
             }
+        }
+
+
+        // Private Methods
+        // ------------------------------------------------------------
+
+        /** Activate this group when its hotkey is pressed. */
+        private void UpdateHotKey()
+        {
+            var input = serverUtils.LocalInput;
+            if (input != null && input.GetButtonDown("HotKey" + hotKey))
+                paused = !paused;
         }
 
     }

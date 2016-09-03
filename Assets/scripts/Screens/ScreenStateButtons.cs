@@ -49,7 +49,7 @@ public class ScreenStateButtons : MonoBehaviour
         if (!serverUtils.IsReady())
             return;
 
-        var state = serverUtils.LocalPlayer.ScreenState;
+        var state = serverUtils.LocalScreenState;
         foreach (var b in Buttons)
             if (Equals(b.State, state) && !b.Button.active)
                 ToggleOn(b);

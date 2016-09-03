@@ -59,6 +59,7 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     public Transform TriggerProperties;
     public InputField TriggerLabelInput;
+    public InputField TriggerHotKeyInput;
 
     [Header("Value Event Components")]
 
@@ -293,6 +294,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void ConfigureUi()
     {
         TriggerLabelInput.onEndEdit.AddListener(TriggerLabelInputChanged);
+        TriggerHotKeyInput.onEndEdit.AddListener(TriggerHotKeyInputChanged);
         ServerParamInput.onValidateInput += ValidateIdentifierInput;
         MapCameraEventNameInput.onValidateInput += ValidateIdentifierInput;
         ConfigureVesselsProperties();
@@ -377,6 +379,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateCompleteTimeSlider();
         UpdateCompleteTimeInput();
         UpdateTriggerLabelInput();
+        UpdateTriggerHotKeyInput();
     }
 
     private void UpdateBaseProperties()
@@ -486,6 +489,24 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         _event.triggerLabel = value;
+    }
+
+    /** Update the event's trigger label input. */
+    private void UpdateTriggerHotKeyInput()
+    {
+        if (string.IsNullOrEmpty(_event.triggerHotKey))
+            TriggerHotKeyInput.text = "";
+        else
+            TriggerHotKeyInput.text = _event.triggerHotKey;
+    }
+
+    /** Update the event's trigger label from input field. */
+    public void TriggerHotKeyInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        _event.triggerHotKey = value;
     }
 
 

@@ -23,11 +23,8 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** The event group's loopable button. */
     public Toggle CanLoopToggle;
 
-    /** The event group's timeline toggle button. */
-    public Toggle ShowTimelineToggle;
-
-    /** The event group's triggers toggle button. */
-    public Toggle ShowTriggersToggle;
+    /** Hotkey input field. */
+    public InputField HotKeyInput;
 
     /** Container for event properties. */
     public Transform EventPropertiesContainer;
@@ -78,20 +75,6 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     {
         get { return _group.canLoop; }
         set { SetCanLoop(value); }
-    }
-
-    /** Whether group's timeline is shown. */
-    public bool ShowTimeline
-    {
-        get { return !_group.hideTimeline; }
-        set { SetShowTimeline(value); }
-    }
-
-    /** Whether group's triggers are shown. */
-    public bool ShowTriggers
-    {
-        get { return !_group.hideTriggers; }
-        set { SetShowTriggers(value); }
     }
 
 
@@ -158,6 +141,15 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         CanLoop = !CanLoop;
     }
 
+    /** Update the group's hotkey. */
+    public void HotKeyInputChanged(string value)
+    {
+        if (_updating || _group == null)
+            return;
+
+        _group.hotKey = value;
+    }
+
     /** Set whether group can be looped. */
     public void SetCanLoop(bool value)
     {
@@ -166,44 +158,6 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         _group.canLoop = value;
         CanLoopToggle.isOn = value;
-    }
-
-    /** Toggle timeline visibility. */
-    public void ToggleShowTimeline()
-    {
-        if (_updating)
-            return;
-
-        ShowTimeline = !ShowTimeline;
-    }
-
-    /** Set timeline visibility. */
-    public void SetShowTimeline(bool value)
-    {
-        if (_updating)
-            return;
-
-        _group.hideTimeline = !value;
-        ShowTimelineToggle.isOn = value;
-    }
-
-    /** Toggle triggers visibility. */
-    public void ToggleShowTriggers()
-    {
-        if (_updating)
-            return;
-
-        ShowTriggers = !ShowTriggers;
-    }
-
-    /** Set paused state. */
-    public void SetShowTriggers(bool value)
-    {
-        if (_updating)
-            return;
-
-        _group.hideTriggers = !value;
-        ShowTriggersToggle.isOn = value;
     }
 
     /** Toggle an event's minimized state. */
@@ -337,6 +291,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         if (_group != null)
         {
             NameInput.text = _group.id;
+            HotKeyInput.text = _group.hotKey != null ? _group.hotKey : "";
             UpdateUi();
         }
         else
@@ -345,6 +300,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
     private void ConfigureUi()
     {
+        HotKeyInput.onEndEdit.AddListener(HotKeyInputChanged);
         NameInput.onValidateInput += ValidateGroupNameInput;
     }
 
@@ -359,9 +315,6 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         Header.gameObject.SetActive(true);
         CanLoopToggle.isOn = _group.canLoop;
-        ShowTimelineToggle.isOn = !_group.hideTimeline;
-        ShowTriggersToggle.isOn = !_group.hideTriggers;
-
         Footer.interactable = !File.playing;
         ExecuteEventButton.interactable = File.selectedEvent != null && !File.playing;
         RemoveEventButton.interactable = File.selectedEvent != null && !File.playing;

@@ -56,6 +56,10 @@ namespace Meg.Networking
         public static screenData.State LocalScreenState
             { get { return LocalPlayer ? LocalPlayer.ScreenState : new screenData.State(); } }
 
+        /** Return the local player's input source. */
+        public static Rewired.Player LocalInput
+            { get { return LocalPlayer ? LocalPlayer.Input : null; } }
+
         /** Return a collection of all known players. */
         public static IEnumerable<serverPlayer> GetPlayers()
         {

@@ -32,6 +32,9 @@ public class debugEventGroupUi : MonoBehaviour
     /** Selection graphic. */
     public Graphic On;
 
+    /** Hotkey label. */
+    public Text HotKey;
+
 
     [Header("Configuration")]
 
@@ -205,6 +208,10 @@ public class debugEventGroupUi : MonoBehaviour
         LoopingToggle.gameObject.SetActive(_group.canLoop);
 
         _nameLabel.text = Group.id.ToUpper();
+
+        HotKey.transform.parent.gameObject.SetActive(Group.hasHotKey);
+        if (Group.hasHotKey)
+            HotKey.text = Group.hotKey;
 
         // Set group on timeline.
         Timeline.Group = Group;
