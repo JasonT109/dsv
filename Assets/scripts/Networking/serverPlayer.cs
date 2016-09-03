@@ -9,6 +9,21 @@ using Meg.SonarEvent;
 public class serverPlayer : NetworkBehaviour
 {
 
+    // Synchronization
+    // ------------------------------------------------------------
+
+    [SyncVar]
+    public screenData.State ScreenState;
+
+
+    // Public Properties
+    // ------------------------------------------------------------
+
+    /** Return a unique id for this player. */
+    public string Id
+        { get { return Configuration.Instance.CurrentId + "-" + netId.Value; } }
+    
+
     // Private Properties
     // ------------------------------------------------------------
 
@@ -222,6 +237,30 @@ public class serverPlayer : NetworkBehaviour
             CmdClearExtraVessels();
     }
 
+    /** Post screen state for this player. */
+    public void PostScreenState(screenData.State state)
+    {
+        if (isServer)
+            ServerSetScreenState(state);
+        else
+        {
+            ScreenState = state;
+            CmdSetScreenState(state);
+        }
+    }
+
+    /** Post screen state for this player. */
+    public void PostScreenStateContent(screenData.Content content)
+    {
+        if (isServer)
+            ServerSetScreenStateContent(content);
+        else
+        {
+            ScreenState.Content = content;
+            CmdSetScreenStateContent(content);
+        }
+    }
+
     /** Post content for the specified DCC screen. */
     public void PostScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
     {
@@ -389,6 +428,16 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearPopups()
         { ServerClearPopups(); }
 
+    /** Set screen state for this player. */
+    [Command]
+    public void CmdSetScreenState(screenData.State state)
+        { ServerSetScreenState(state); }
+
+    /** Set screen content for this player. */
+    [Command]
+    public void CmdSetScreenStateContent(screenData.Content content)
+        { ServerSetScreenStateContent(content); }
+
     /** Set content for the specified DCC screen on the server. */
     [Command]
     public void CmdSetScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
@@ -509,6 +558,16 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerClearPopups()
         { serverUtils.PopupData.Clear(); }
+
+    /** Set screen state for this player. */
+    [Server]
+    public void ServerSetScreenState(screenData.State state)
+        { ScreenState = state; }
+
+    /** Set screen content for this player. */
+    [Server]
+    public void ServerSetScreenStateContent(screenData.Content content)
+        { ScreenState = new screenData.State { Type = ScreenState.Type, Content = content }; }
 
 
     // Client Methods

@@ -44,13 +44,28 @@ namespace Meg.Networking
         {
             get
             {
-                var player = ClientScene.localPlayers.First();
+                var player = ClientScene.localPlayers.FirstOrDefault();
                 if (player != null)
                     return player.gameObject.GetComponent<serverPlayer>();
 
                 return null;
             }
         }
+
+        /** Return the local player's screen state. */
+        public static screenData.State LocalScreenState
+            { get { return LocalPlayer ? LocalPlayer.ScreenState : new screenData.State(); } }
+
+        /** Return a collection of all known players. */
+        public static IEnumerable<serverPlayer> GetPlayers()
+        {
+            return GameObject.FindGameObjectsWithTag("Player")
+                .Select(go => go.GetComponent<serverPlayer>());
+        }
+
+        /** Return player with the given id. */
+        public static serverPlayer GetPlayer(NetworkInstanceId id)
+            { return GetPlayers().FirstOrDefault(p => p.netId == id); }
 
         /** Return the server object (contains all data objects.) */
         private static GameObject _serverObject;
@@ -2286,6 +2301,14 @@ namespace Meg.Networking
             return buttonState;
         }
 
+        /** Post screen state for the given player. */
+        public static void PostScreenState(NetworkInstanceId playerId, screenData.State state)
+        {
+            var player = GetPlayer(playerId);
+            if (player)
+                player.PostScreenState(state);
+        }
+
         /** Return content ID for the specified DCC screen. */
         public static DCCWindow.contentID GetScreenContent(DCCScreenID._screenID id, int stationId)
         {
@@ -2348,6 +2371,32 @@ namespace Meg.Networking
                 return 0;
 
             return DCCScreenData.GetQuadFullScreen(stationId);
+        }
+
+
+        /** Expand out substitution values in a string, e.g. '{player-id}'. */
+        public static string Expanded(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            // First, expand out configuration values.
+            value = Configuration.Expanded(value);
+
+            // Expand out local player values.
+            if (LocalPlayer)
+                value = value.Replace("{player-id}", LocalPlayer.Id);
+
+            // Lastly, Look for parameter references (e.g. '{o2}') and expand them.
+            var matches = Regex.Matches(value, @"{([\w-]+)}");
+            foreach (Match match in matches)
+            {
+                var id = match.Groups[1].Value.ToLower();
+                if (Parameters.Contains(id))
+                    value = value.Replace("{" + id + "}", GetServerDataAsText(id));
+            }
+
+            return value;
         }
     }
 }

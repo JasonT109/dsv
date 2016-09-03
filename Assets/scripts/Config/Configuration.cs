@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class Configuration : AutoSingleton<Configuration>
 {
@@ -39,6 +40,28 @@ public class Configuration : AutoSingleton<Configuration>
 
         return path;
     }
+
+    /** Look for and replace configuration values in a string. */
+    public static string Expanded(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        // First, expand out default paths.
+        value = ExpandedPath(value);
+
+        // Look for configuration references (e.g. '{network-scene}') and expand them.
+        var matches = Regex.Matches(value, @"{([\w-]+)}");
+        foreach (Match match in matches)
+        {
+            var id = match.Groups[1].Value.ToLower();
+            if (Has(id))
+                value = value.Replace("{" + id + "}", Get(id, ""));
+        }
+                
+        return value;
+    }
+
 
 
 

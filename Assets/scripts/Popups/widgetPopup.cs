@@ -108,21 +108,23 @@ public class widgetPopup : MonoBehaviour
         // Configure popup title.
         if (Title)
         {
+            var title = serverUtils.Expanded(popup.Title);
             var scrolling = Title.GetComponent<graphicsScrollingText>();
             if (scrolling)
-                scrolling.Lines = popup.Title;
+                scrolling.Lines = title;
             else
-                Title.text = popup.Title;
+                Title.text = title;
         }
 
         // Configure popup message.
         if (Message)
         {
+            var message = serverUtils.Expanded(popup.Message);
             var scrolling = Message.GetComponent<graphicsScrollingText>();
             if (scrolling)
-                scrolling.Lines = popup.Message;
+                scrolling.Lines = message;
             else
-                Message.text = popup.Message;
+                Message.text = message;
         }
 
         // Configure icons.

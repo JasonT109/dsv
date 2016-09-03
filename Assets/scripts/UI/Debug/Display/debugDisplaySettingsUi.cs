@@ -1,63 +1,42 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
-using UnityEngine.UI;
 
 public class debugDisplaySettingsUi : MonoBehaviour
 {
 
-    public InputField StationIdInput;
-    public Text StationName;
+    /** DCC Configuration interface. */
+    public debugDCCScreensUi DccSettings;
 
-    public Transform StationContainer;
-    public debugDCCStationUi StationUiPrefab;
+    /** Sub display settings. */
+    public debugSubScreensUi SubSettings;
 
+    /** Glider display settings. */
+    public debugGliderScreensUi GliderSettings;
+
+
+    /** Initialization. */
     private void Start()
     {
-        PopulateStations();
+        // Activate the appropriate screen management interface.
+        DccSettings.gameObject.SetActive(false);
+        SubSettings.gameObject.SetActive(false);
+        GliderSettings.gameObject.SetActive(false);
+
+        var scene = SceneManager.GetActiveScene();
+        switch (scene.name)
+        {
+            case NetworkManagerCustom.DccScene:
+                DccSettings.gameObject.SetActive(true);
+                break;
+            case NetworkManagerCustom.BigSubScene:
+                SubSettings.gameObject.SetActive(true);
+                break;
+            case NetworkManagerCustom.GliderScene:
+                GliderSettings.gameObject.SetActive(true);
+                break;
+        }
+
     }
-
-    private void OnEnable()
-    {
-        StationIdInput.text = DCCScreenData.StationId.ToString();
-        StationIdInput.onEndEdit.AddListener(UpdateStationId);
-        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
-    }
-
-    public void UpdateStationId(string value)
-    {
-        Debug.Log("debugDisplaySettingsUi.UpdateStationId() - Updating station id to: " + value);
-        DCCScreenData.SetStationId(value);
-
-        // Station id might have been clamped to a valid id.
-        StationIdInput.text = DCCScreenData.StationId.ToString();
-        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
-    }
-
-    public void PreviousStation()
-    {
-        DCCScreenData.SetStationId(DCCScreenData.StationId - 1);
-        StationIdInput.text = DCCScreenData.StationId.ToString();
-        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
-    }
-
-    public void NextStation()
-    {
-        DCCScreenData.SetStationId(DCCScreenData.StationId + 1);
-        StationIdInput.text = DCCScreenData.StationId.ToString();
-        StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
-    }
-
-    private void PopulateStations()
-    {
-        for (var i = 0; i < 5; i++)
-            AddStation(i);
-    }
-
-    private void AddStation(int stationId)
-    {
-        var ui = Instantiate(StationUiPrefab);
-        ui.transform.SetParent(StationContainer, false);
-        ui.StationId = stationId;
-    }
-
+	
 }

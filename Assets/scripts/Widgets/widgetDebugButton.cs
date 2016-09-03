@@ -84,6 +84,10 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
     /** Updating. */
     private void Update()
     {
+        // Check that server is ready.
+        if (!serverUtils.IsReady())
+            return;
+            
         // Reset the press counter after a period of inactivity.
         if (Time.time >= _pressResetTime)
             _presses = 0;
@@ -91,6 +95,10 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
         // Keyboard shortcut for the debug menu.
         if (Input.GetKeyDown(KeyCode.D) && Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
             Toggle();
+
+        // Deactivate when screen has some assigned content.
+        if (serverUtils.LocalPlayer.ScreenState.Content != screenData.Content.Debug)
+            Deactivate();
     }
 
 
@@ -143,11 +151,7 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
         if (_presses < pressesToActivate)
             return;
 
-        if (navButtonGroup)
-            navButtonGroup.toggleButtons(debugButton.gameObject);
-
-        debugVisGroup.SetActive(true);
-        _presses = 0;
+        Activate();
     }
 
     /** Handle a screen navigation button being pressed. */
