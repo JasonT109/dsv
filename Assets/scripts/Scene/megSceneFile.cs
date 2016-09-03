@@ -147,7 +147,7 @@ namespace Meg.Scene
         {
             var json = new JSONObject();
             foreach (var parameter in serverUtils.WriteableParameters)
-                json.AddField(parameter, serverUtils.GetServerData(parameter));
+                json.AddField(parameter, serverUtils.GetServerDataRaw(parameter));
 
             return json;
         }

@@ -17,11 +17,11 @@
 				},
 				{
 					"type":"Value",
-					"serverParam":"pitchAngle"
+					"serverParam":"joystickPilot"
 				},
 				{
 					"type":"Value",
-					"serverParam":"joystickPilot"
+					"serverParam":"joystickOverride"
 				},
 				{
 					"type":"Value",
@@ -34,14 +34,6 @@
 				{
 					"type":"Value",
 					"serverParam":"inputZAxis"
-				},
-				{
-					"type":"Value",
-					"serverParam":"diveTime"
-				},
-				{
-					"type":"Value",
-					"serverParam":"diveTimeActive"
 				}
 			]
 		}

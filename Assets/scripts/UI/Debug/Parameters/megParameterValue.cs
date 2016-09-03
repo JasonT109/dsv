@@ -40,7 +40,7 @@ namespace Meg.Parameters
             if (string.IsNullOrEmpty(serverParam))
                 return base.ToString();
 
-            var value = serverUtils.GetServerData(serverParam);
+            var value = serverUtils.GetServerDataRaw(serverParam);
             return string.Format("{0}: {1:N1} ({2:N1})", serverParam, serverValue, value);
         }
 

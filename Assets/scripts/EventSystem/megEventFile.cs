@@ -392,7 +392,7 @@ namespace Meg.EventSystem
             // This will be used to reset the value when file playback stops.
             if (!_values.ContainsKey(key))
                 _values[key] = new EventRecord<float>
-                    { time = time, value = serverUtils.GetServerData(key) };
+                    { time = time, value = serverUtils.GetServerDataRaw(key) };
 
             // Set the server data value.
             serverUtils.PostServerData(key, value);

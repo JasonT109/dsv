@@ -301,6 +301,24 @@ public class serverPlayer : NetworkBehaviour
             CmdSetQuadFullScreen(value, stationId);
     }
 
+    /** Add noise to a server parameter. */
+    public void PostAddNoise(string parameter, noiseData.Profile profile)
+    {
+        if (isServer)
+            serverUtils.NoiseData.AddNoise(parameter, profile);
+        else if (isClient)
+            CmdAddNoise(parameter, profile);
+    }
+
+    /** Remove noise from a server parameter. */
+    public void PostRemoveNoise(string parameter)
+    {
+        if (isServer)
+            serverUtils.NoiseData.RemoveNoise(parameter);
+        else if (isClient)
+            CmdRemoveNoise(parameter);
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -461,6 +479,17 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdSetQuadFullScreen(int value, int stationId)
         { serverUtils.DCCScreenData.SetQuadFullScreen(value, stationId); }
+
+    /** Add noise to a server parameter. */
+    [Command]
+    public void CmdAddNoise(string parameter, noiseData.Profile profile)
+        { serverUtils.NoiseData.AddNoise(parameter, profile); }
+
+    /** Remove noise from a server parameter. */
+    [Command]
+    public void CmdRemoveNoise(string parameter)
+        { serverUtils.NoiseData.RemoveNoise(parameter); }
+
 
 
     // Private Methods

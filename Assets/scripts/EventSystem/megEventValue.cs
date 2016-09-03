@@ -87,7 +87,7 @@ namespace Meg.EventSystem
         protected override void Start()
         {
             // Get initial value.
-            _initialValue = serverUtils.GetServerData(serverParam);
+            _initialValue = serverUtils.GetServerDataRaw(serverParam);
             _value = _initialValue;
 
             // Apply final value immediately if needed.

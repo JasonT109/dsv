@@ -5,11 +5,11 @@
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"pitchAngle"
+					"serverParam":"yawAngle"
 				},
 				{
 					"type":"Value",
-					"serverParam":"yawAngle"
+					"serverParam":"pitchAngle"
 				},
 				{
 					"type":"Value",
@@ -46,6 +46,14 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"joystickPilot"
+				},
+				{
+					"type":"Value",
+					"serverParam":"joystickOverride"
+				},
+				{
+					"type":"Value",
 					"serverParam":"disableInput"
 				},
 				{
@@ -59,14 +67,6 @@
 				{
 					"type":"Value",
 					"serverParam":"inputZaxis"
-				},
-				{
-					"type":"Value",
-					"serverParam":"joystickOverride"
-				},
-				{
-					"type":"Value",
-					"serverParam":"joystickPilot"
 				},
 				{
 					"type":"Value",
@@ -120,7 +120,7 @@
 			]
 		},
 		{
-			"id":"MOTION BASE",
+			"id":"SHIP MOTION BASE",
 			"parameters":[
 				{
 					"type":"Value",

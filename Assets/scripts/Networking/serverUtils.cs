@@ -323,6 +323,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the parameter noise data object. */
+        private static noiseData _noiseData;
+        public static noiseData NoiseData
+        {
+            get
+            {
+                if (!_noiseData && ServerObject)
+                    _noiseData = ServerObject.GetComponent<noiseData>();
+                return _noiseData;
+            }
+        }
+
         /** Return the vessel movements controller. */
         private static vesselMovements _vesselMovements;
         public static vesselMovements VesselMovements
@@ -712,6 +724,7 @@ namespace Meg.Networking
             public bool readOnly;
             public bool hideInUi;
             public string description = "";
+            public float noise = 0;
 
             public ParameterInfo()
             {
@@ -1014,8 +1027,20 @@ namespace Meg.Networking
             return DefaultParameterInfo;
         }
 
-        /** Return the current value of a shared state value, indexed by name. */
+        /** Return the current (possibly noisy) value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName, float defaultValue = Unknown)
+        {
+            if (!ServerObject || string.IsNullOrEmpty(valueName))
+                return defaultValue;
+
+            var value = GetServerDataRaw(valueName, defaultValue);
+            var noise = NoiseData.Sample(valueName);
+
+            return value + noise;
+        }
+
+        /** Return the current value of a shared state value, indexed by name. */
+        public static float GetServerDataRaw(string valueName, float defaultValue = Unknown)
         {
             if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
@@ -1784,7 +1809,7 @@ namespace Meg.Networking
                 case "version":
                     return Version;
                 default:
-                    var value = GetServerData(valueName);
+                    var value = GetServerDataRaw(valueName);
                     return (value == Unknown) ? "no value" : value.ToString("n1");
             }
         }
@@ -2377,6 +2402,28 @@ namespace Meg.Networking
             return DCCScreenData.GetQuadFullScreen(stationId);
         }
 
+        /** Add noise to a server parameter. */
+        public static void PostAddNoise(string parameter, noiseData.Profile profile)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddNoise(parameter, profile);
+        }
+
+        /** Remove noise from a server parameter. */
+        public static void PostRemoveNoise(string parameter)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveNoise(parameter);
+        }
+
+        /** Return whether a parameter has noise. */
+        public static bool HasNoise(string parameter)
+        {
+            if (NoiseData)
+                return NoiseData.HasNoise(parameter);
+
+            return false;
+        }
 
         /** Expand out substitution values in a string, e.g. '{player-id}'. */
         public static string Expanded(string value)

@@ -12,13 +12,18 @@ public class serverValueNoise : NetworkBehaviour
     public string LinkDataString;
 
     /** Optional range to constrain values to. */
-    public Vector2 OutputRange;
+    // public Vector2 OutputRange;
+
+    /** The current noise value. */
+    [SyncVar]
+    public float Value;
+
     
     /** Current base value for the server data. */
-    private float _baseValue;
+    // private float _baseValue;
 
     /** Whether we're in the process of updating the server data value. */
-    private bool _updating;
+    // private bool _updating;
 
     /** Initialization. */
     private void Start()
@@ -26,32 +31,32 @@ public class serverValueNoise : NetworkBehaviour
         NoiseSource.Start();
     }
 
-    /** Handle startup on the server. */
-    public override void OnStartServer()
-    {
-        if (serverUtils.ServerData)
-            serverUtils.ServerData.ValueChangedEvent += OnValueChanged;
+    ///** Handle startup on the server. */
+    //public override void OnStartServer()
+    //{
+    //    if (serverUtils.ServerData)
+    //        serverUtils.ServerData.ValueChangedEvent += OnValueChanged;
 
-        _baseValue = serverUtils.GetServerData(LinkDataString);
-    }
+    //    _baseValue = serverUtils.GetServerData(LinkDataString);
+    //}
 
-    /** Handle object being disabled. */
-    [ServerCallback]
-    private void OnDisable()
-    {
-        if (serverUtils.ServerData)
-            serverUtils.ServerData.ValueChangedEvent -= OnValueChanged;
-    }
+    ///** Handle object being disabled. */
+    //[ServerCallback]
+    //private void OnDisable()
+    //{
+    //    if (serverUtils.ServerData)
+    //        serverUtils.ServerData.ValueChangedEvent -= OnValueChanged;
+    //}
 
-    /** Handle a change in the server data base value. */
-    [ServerCallback]
-    private void OnValueChanged(string valueName, float newValue)
-    {
-        if (_updating || valueName != LinkDataString)
-            return;
+    ///** Handle a change in the server data base value. */
+    //[ServerCallback]
+    //private void OnValueChanged(string valueName, float newValue)
+    //{
+    //    if (_updating || valueName != LinkDataString)
+    //        return;
 
-        _baseValue = serverUtils.GetServerData(LinkDataString);
-    }
+    //    _baseValue = serverUtils.GetServerData(LinkDataString);
+    //}
 
     /** Updating. */
     [ServerCallback]
@@ -60,6 +65,10 @@ public class serverValueNoise : NetworkBehaviour
         // Update noise.
         NoiseSource.Update();
 
+        // Update synchronized noise value.
+        Value = NoiseSource.Value;
+
+        /*
         // Get the current noisy server data value.
         var value = _baseValue + NoiseSource.Value;
 
@@ -72,7 +81,8 @@ public class serverValueNoise : NetworkBehaviour
         _updating = true;
         serverUtils.SetServerData(LinkDataString, value);
         _updating = false;
+        */
 
-	}
+    }
 
 }

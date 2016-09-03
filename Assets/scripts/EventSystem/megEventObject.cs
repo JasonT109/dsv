@@ -82,7 +82,7 @@ namespace Meg.EventSystem
             else if (valueEvent)
             {
                 // Get initial value.
-                _initialValue = serverUtils.GetServerData(serverParam);
+                _initialValue = serverUtils.GetServerDataRaw(serverParam);
 
                 // Apply final value immediately if needed.
                 if (completeTime <= 0)

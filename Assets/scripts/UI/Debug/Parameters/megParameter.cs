@@ -107,7 +107,7 @@ namespace Meg.Parameters
 
         /** Return a server value. */
         public float GetServerData(string key)
-            { return serverUtils.GetServerData(key); }
+            { return serverUtils.GetServerDataRaw(key); }
 
     }
 
