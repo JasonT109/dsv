@@ -32,6 +32,7 @@ public class PasswordScreen : MonoBehaviour
     public Graphic InitialSpinner;
     public Graphic ConnectingSpinner;
 
+    public CanvasGroup StationRoot;
     public InputField StationIdInput;
     public Text StationName;
 
@@ -133,6 +134,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = SelectedColor;
         BigSubButtonImg.color = UnselectedColor;
         DCCButtonImg.color = UnselectedColor;
+        StationRoot.gameObject.SetActive(false);
         _manager.SetScene(NetworkManagerCustom.GliderScene);
     }
 
@@ -142,6 +144,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = UnselectedColor;
         BigSubButtonImg.color = SelectedColor;
         DCCButtonImg.color = UnselectedColor;
+        StationRoot.gameObject.SetActive(false);
         _manager.SetScene(NetworkManagerCustom.BigSubScene);
     }
 
@@ -151,6 +154,7 @@ public class PasswordScreen : MonoBehaviour
         GliderButtonImg.color = UnselectedColor;
         BigSubButtonImg.color = UnselectedColor;
         DCCButtonImg.color = SelectedColor;
+        StationRoot.gameObject.SetActive(true);
         _manager.SetScene(NetworkManagerCustom.DccScene);
     }
 
