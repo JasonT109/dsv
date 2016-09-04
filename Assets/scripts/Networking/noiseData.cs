@@ -48,6 +48,7 @@ public class noiseData : NetworkBehaviour
     /** Noise profiles for various server parameters. */
     private static readonly Dictionary<string, Profile> Profiles = new Dictionary<string, Profile>
     {
+        /*
         { "b1", new Profile { ValueRange = new Vector2(-1, 1), IntervalRange = new Vector2(0.5f, 3f)} },
         { "b2", new Profile { ValueRange = new Vector2(-1, 1), IntervalRange = new Vector2(0.5f, 3f)} },
         { "b3", new Profile { ValueRange = new Vector2(-1, 1), IntervalRange = new Vector2(0.5f, 3f)} },
@@ -71,6 +72,7 @@ public class noiseData : NetworkBehaviour
         { "scrubbedco2", new Profile { ValueRange = new Vector2(-0.001f, 0.001f), IntervalRange = new Vector2(0.5f, 3f)} },
         { "scrubbedhumidity", new Profile { ValueRange = new Vector2(-0.2f, 0.2f), IntervalRange = new Vector2(0.5f, 3f)} },
         { "scrubbedoxygen", new Profile { ValueRange = new Vector2(-0.2f, 0.2f), IntervalRange = new Vector2(0.5f, 3f)} },
+        */
     };
 
 
