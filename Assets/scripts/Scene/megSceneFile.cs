@@ -63,8 +63,8 @@ namespace Meg.Scene
             { SaveToFile(GetSaveFilename(format, suffix)); }
 
         /** Return a save filename for the current scene state. */
-        public static string GetSceneSaveFilename()
-            { return GetSaveFilename(Configuration.Get("save-format", DefaultSaveFormat)); }
+        public static string GetSceneSaveFilename(string suffix = "")
+            { return GetSaveFilename(Configuration.Get("save-format", DefaultSaveFormat), suffix); }
 
         /** Return a autosave filename for the current scene state. */
         public static string GetAutoSaveFilename(string suffix)
@@ -80,6 +80,10 @@ namespace Meg.Scene
             var vessel = serverUtils.GetServerDataAsText("playerVesselName");
             if (string.IsNullOrEmpty(vessel))
                 vessel = string.Format("Vessel_{0:00}", serverUtils.GetPlayerVessel());
+
+            // Prepend an underscore to the suffix if one is supplied.
+            if (!string.IsNullOrEmpty(suffix))
+                suffix = "_" + suffix;
 
             // Gather all information required to determine the save filename.
             var scene = serverUtils.GetServerData("scene");

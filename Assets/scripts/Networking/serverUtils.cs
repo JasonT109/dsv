@@ -724,7 +724,7 @@ namespace Meg.Networking
             public bool readOnly;
             public bool hideInUi;
             public string description = "";
-            public float noise = 0;
+            public noiseData.Profile noiseProfile;
 
             public ParameterInfo()
             {
@@ -796,7 +796,7 @@ namespace Meg.Networking
             { "b6error", new ParameterInfo { description = "Error levels for cells in battery bank 6."} },
             { "b7", new ParameterInfo { description = "State of charge for battery bank 7."} },
             { "b7error", new ParameterInfo { description = "Error levels for cells in battery bank 7."} },
-            { "ballastpressure", new ParameterInfo { description = "Ballast air pressure (psi)."} },
+            { "ballastpressure", new ParameterInfo { description = "Ballast air pressure (psi)." } },
             { "battery", new ParameterInfo { readOnly = true, description = "Overall battery charge level (computed on server)." } },
             { "batterycurrent", new ParameterInfo { maxValue = 30, description = "Current draw from the battery banks (amps)" } },
             { "batterydrain", new ParameterInfo { maxValue = 1, description = "Rate of battery drain (% per second)."} },

@@ -22,6 +22,9 @@ public class debugSceneSaveUi : MonoBehaviour
     public Text ShotLabel;
     public Text TakeLabel;
 
+    /** Text input for entering an optional file suffix. */
+    public InputField SuffixInput;
+
 
     [Header("Configuration")]
 
@@ -61,7 +64,7 @@ public class debugSceneSaveUi : MonoBehaviour
     public void Save()
     {
         // Ask for a filename to save to.
-        var path = megSceneFile.GetSceneSaveFilename();
+        var path = megSceneFile.GetSceneSaveFilename(SuffixInput.text);
         var filename = Path.GetFileName(path);
 
         // Get curren scene, shot, take.
