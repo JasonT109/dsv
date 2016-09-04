@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.2";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -2333,9 +2333,15 @@ namespace Meg.Networking
         /** Post screen state for the given player. */
         public static void PostScreenState(NetworkInstanceId playerId, screenData.State state)
         {
-            var player = GetPlayer(playerId);
-            if (player)
-                player.PostScreenState(state);
+            if (LocalPlayer)
+                LocalPlayer.PostScreenState(playerId, state);
+        }
+
+        /** Post screen state for this player. */
+        public static void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateContent(playerId, content);
         }
 
         /** Return content ID for the specified DCC screen. */

@@ -18,7 +18,7 @@ public class SetScreenState : MonoBehaviour
 
         var player = serverUtils.LocalPlayer;
         if (player && !Equals(player.ScreenState, State))
-            serverUtils.LocalPlayer.PostScreenState(State);
+            serverUtils.PostScreenState(player.netId, State);
     }
 	
 }

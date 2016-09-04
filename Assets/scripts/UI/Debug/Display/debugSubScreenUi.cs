@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using Meg.Networking;
 
 public class debugSubScreenUi : MonoBehaviour
 {
@@ -55,7 +56,7 @@ public class debugSubScreenUi : MonoBehaviour
             return;
 
         var next = GetNextContent(current);
-        Player.PostScreenStateContent(next);
+        serverUtils.PostScreenStateContent(Player.netId, next);
     }
 
     private void OnPreviousClicked()
@@ -65,7 +66,7 @@ public class debugSubScreenUi : MonoBehaviour
             return;
 
         var next = GetPreviousContent(current);
-        Player.PostScreenStateContent(next);
+        serverUtils.PostScreenStateContent(Player.netId, next);
     }
 
     /** Given a content value, return the next valid value, cycling round to None. */
