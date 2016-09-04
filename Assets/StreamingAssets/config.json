@@ -28,15 +28,15 @@
 			"STATION E"
 		],
 
-		"header-01-title" : "DEPTH",
-		"header-01-chinese" : "深度",
-		"header-01-parameter" : "depth",
-		"header-01-format" : "{0:#,##0}",
+		"header-01-title" : "OXYGEN",
+		"header-01-chinese" : "氧气",
+		"header-01-parameter" : "cabinOxygen",
+		"header-01-format" : "{0:N1}%",
 
-		"header-02-title" : "FLOOR DIST.",
-		"header-02-chinese" : "地面距离",
-		"header-02-parameter" : "floorDistance",
-		"header-02-format" : "{0:#,##0}",
+		"header-02-title" : "CABIN TEMP.",
+		"header-02-chinese" : "座舱温度",
+		"header-02-parameter" : "cabinTemp",
+		"header-02-format" : "{0:N1}°c",
 
 		"header-03-title" : "CO2",
 		"header-03-chinese" : "二氧化碳",
