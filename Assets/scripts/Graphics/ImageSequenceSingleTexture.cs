@@ -63,6 +63,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         {
             frameCounter = 0;
             texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            goMaterial.mainTexture = texture;
             StopAllCoroutines();
         }
     }
@@ -73,6 +74,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         {
             frameCounter = 0;
             texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            goMaterial.mainTexture = texture;
         }
     }
 

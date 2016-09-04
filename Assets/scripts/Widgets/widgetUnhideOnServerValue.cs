@@ -4,13 +4,18 @@ using Meg.Networking;
 
 public class widgetUnhideOnServerValue : MonoBehaviour
 {
-
+    [Header ("Server Paramerters")]
     public string serverString = "genericerror";
     public float serverValue = 0;
     public bool greaterThanValue = false;
+
+    [Header("Objects to hide / show")]
     public GameObject[] objectsToUnhide;
+
+    [Header("Unhide behaviour")]
     public bool alphaIn = false;
     public float alphaLerpInSpeed = 5;
+
     private bool isOn;
     private float lerpAlphaValue = 0;
     private bool isLerping;
@@ -24,8 +29,9 @@ public class widgetUnhideOnServerValue : MonoBehaviour
             if (serverUtils.GetServerData(serverString) > serverValue)
             {
                 visible = true;
-                if (!isOn)
-                    //isLerping = true;
+                if (!isOn && alphaIn)
+                    isLerping = true;
+
                 isOn = true;
             }
             else
@@ -39,7 +45,7 @@ public class widgetUnhideOnServerValue : MonoBehaviour
             if (serverUtils.GetServerData(serverString) <= serverValue)
             {
                 visible = true;
-                if (!isOn)
+                if (!isOn && alphaIn)
                     isLerping = true;
                 isOn = true;
             }
