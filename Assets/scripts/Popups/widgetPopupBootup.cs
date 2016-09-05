@@ -72,23 +72,39 @@ public class widgetPopupBootup : widgetPopup
         Black.gameObject.SetActive(false);
 
         // Start the code display sequence.
+        var codeDuration = Mathf.Max(0, serverUtils.GetServerData("bootCodeDuration", 3f));
         Code.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3f);
+        if (codeDuration > 0)
+            yield return new WaitForSeconds(codeDuration);
         Code.gameObject.SetActive(false);
 
         // Show online graphic.
         Backdrop.gameObject.SetActive(false);
         Online.gameObject.SetActive(true);
-        Online.DOFade(0, 1).SetDelay(1.5f);
+        Online.alpha = 1;
 
-        // Progress animation.
-        var ticks = GetComponentsInChildren<CanvasGroup>();
+        // Set up each tick as hidden, initially.
+        var tickContainer = Online.transform.FindChild("Title/Progress");
+        var ticks = tickContainer ? tickContainer.GetComponentsInChildren<CanvasGroup>() : new CanvasGroup[] {};
+        foreach (var t in ticks)
+            t.alpha = 0;
+
+        // Reveal ticks one by one.
+        var step = (100f / ticks.Length);
+        var next = step;
         foreach (var tick in ticks)
-            tick.alpha = 0;
-        StartCoroutine(ProgressRoutine(ticks, 1f));
+        {
+            while (serverUtils.GetServerData("bootProgress") < next)
+                yield return 0;
 
-        // Wait for progress bar to finish.
-        yield return new WaitForSeconds(2.5f);
+            tick.alpha = 1;
+            next = Mathf.Clamp(next + step, 0, 100f);
+        }
+
+        // Wait for fade to finish.
+        yield return new WaitForSeconds(0.5f);
+        Online.DOFade(0, 1);
+        yield return new WaitForSeconds(1.25f);
 
         // Hide everything.
         Backdrop.gameObject.SetActive(false);
@@ -99,15 +115,4 @@ public class widgetPopupBootup : widgetPopup
         gameObject.SetActive(false);
     }
 
-    private IEnumerator ProgressRoutine(CanvasGroup[] ticks, float duration)
-    {
-        var maxDelay = (duration / ticks.Length) * 3;
-        foreach (var tick in ticks)
-        {
-            tick.alpha = 1;
-            var delay = Random.Range(0, Mathf.Min(maxDelay, duration));
-            duration = Mathf.Max(0, duration - delay);
-            yield return new WaitForSeconds(delay);
-        }
-    }
 }

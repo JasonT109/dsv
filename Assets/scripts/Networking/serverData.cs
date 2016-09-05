@@ -270,6 +270,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private popupData _popupData;
+    public popupData PopupData
+    {
+        get
+        {
+            if (!_popupData)
+                _popupData = GetComponent<popupData>();
+            return _popupData;
+        }
+    }
+
     public vesselMovements VesselMovements
     {
         get { return serverUtils.VesselMovements; }
@@ -1038,6 +1049,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "docking4":
                 DockingData.docking4 = (int)newValue;
+                break;
+            case "bootcodeduration":
+                PopupData.bootCodeDuration = newValue;
+                break;
+            case "bootprogress":
+                PopupData.bootProgress = newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);

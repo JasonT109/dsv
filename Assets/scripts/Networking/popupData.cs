@@ -208,6 +208,14 @@ public class popupData : NetworkBehaviour
     /** Synchronized list for holding popup state. */
     public SyncListPopups Popups = new SyncListPopups();
 
+    /** Duration of the bootup sequence's 'systems online' section. */
+    [SyncVar]
+    public float bootCodeDuration = 3.0f;
+
+    /** Bootup sequence's progress in the 'systems online' section. */
+    [SyncVar]
+    public float bootProgress = 0f;
+
     #endregion
 
 
