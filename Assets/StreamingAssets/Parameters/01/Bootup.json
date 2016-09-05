@@ -1,0 +1,17 @@
+{
+	"groups":[
+		{
+			"id":"BOOTUP",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"bootprogress"
+				},
+				{
+					"type":"Value",
+					"serverParam":"bootcodeduration"
+				}
+			]
+		}
+	]
+}

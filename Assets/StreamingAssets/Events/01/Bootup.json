@@ -1,13 +1,12 @@
 {
 	"metadata":{
-		"utc":"05/09/16 06:51:12.5",
-		"startedTimestamp":"05/09/16 06:50:38.5",
-		"stoppedTimestamp":"05/09/16 06:51:01.6"
+		"utc":"05/09/16 07:00:22.2",
+		"startedTimestamp":"05/09/16 07:00:01.9",
+		"stoppedTimestamp":"05/09/16 07:00:15.1"
 	},
 	"groups":[
 		{
 			"id":"FADE TO BLACK",
-			"paused":true,
 			"events":[
 				{
 					"type":"Value",
@@ -70,7 +69,7 @@
 					"triggerTime":1.2,
 					"completeTime":0.3,
 					"serverParam":"cameraBrightness",
-					"serverValue":0.75
+					"serverValue":1
 				},
 				{
 					"type":"Value",
