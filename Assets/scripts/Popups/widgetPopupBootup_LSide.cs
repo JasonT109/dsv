@@ -5,7 +5,7 @@ using Meg.EventSystem;
 using Meg.Networking;
 using UnityEngine.UI;
 
-public class widgetPopupBootup_Glider : widgetPopup
+public class widgetPopupBootup_LSide : widgetPopup
 {
 
     [Header("Components")]
@@ -15,15 +15,9 @@ public class widgetPopupBootup_Glider : widgetPopup
     public CanvasGroup Flash;
     public CanvasGroup Burst;
     public CanvasGroup Black;
-    public CanvasGroup Code1;
-    public CanvasGroup Code2;
-    public CanvasGroup Code3;
-    public GameObject SystemOnline;
+    public CanvasGroup Code;
     public CanvasGroup Online;
     public CanvasGroup FinalPop;
-
-    private float time;
-
 
     /** Show this popup. */
     public override void Show(popupData.Popup popup)
@@ -48,12 +42,9 @@ public class widgetPopupBootup_Glider : widgetPopup
         Flash.gameObject.SetActive(false);
         Burst.gameObject.SetActive(false);
         Black.gameObject.SetActive(false);
-        Code1.gameObject.SetActive(false);
-        Code2.gameObject.SetActive(false);
-        Code3.gameObject.SetActive(false);
-        SystemOnline.gameObject.SetActive(false);
-        Online.gameObject.SetActive(false);
+        Code.gameObject.SetActive(false);
         FinalPop.gameObject.SetActive(false);
+        Online.gameObject.SetActive(false);
 
         StartCoroutine(BootupRoutine());
     }
@@ -82,36 +73,17 @@ public class widgetPopupBootup_Glider : widgetPopup
         yield return new WaitForSeconds(0.25f);
         Black.gameObject.SetActive(false);
 
-        // Start the codes display sequence.
-        Code1.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.35f);
-        Code2.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.45f);
-        Code3.gameObject.SetActive(true);
-        yield return new WaitForSeconds(2f);
-        Code1.gameObject.SetActive(false);
-        Code2.gameObject.SetActive(false);
-        Code3.gameObject.SetActive(false);
-
-        // Hide everything.
-        Backdrop.gameObject.SetActive(false);
-        Logo.gameObject.SetActive(false);
-        Black.gameObject.SetActive(false);
-        Code1.gameObject.SetActive(false);
-        Code2.gameObject.SetActive(false);
-        Code3.gameObject.SetActive(false);
-        SystemOnline.gameObject.SetActive(true);
-        yield return new WaitForSeconds(5f);
-        SystemOnline.gameObject.SetActive(false);
-        Online.gameObject.SetActive(false);
-
-        //show final pop up
-        FinalPop.gameObject.SetActive(true);
-        Backdrop.gameObject.SetActive(true);
+        // Start the code display sequence.
         yield return new WaitForSeconds(0.5f);
-        Backdrop.gameObject.SetActive(false);
-        FinalPop.gameObject.SetActive(false);
+        Code.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        Code.gameObject.SetActive(false);
 
+        Logo.gameObject.SetActive(true);
+        Backdrop.gameObject.SetActive(true);
+        yield return new WaitForSeconds(10f);
+        Logo.gameObject.SetActive(false);
+        Backdrop.gameObject.SetActive(false);
 
 
         // Show online graphic.
@@ -132,16 +104,10 @@ public class widgetPopupBootup_Glider : widgetPopup
         Backdrop.gameObject.SetActive(false);
         Logo.gameObject.SetActive(false);
         Black.gameObject.SetActive(false);
-        Code1.gameObject.SetActive(false);
-        Code2.gameObject.SetActive(false);
-        Code3.gameObject.SetActive(false);
-        SystemOnline.gameObject.SetActive(false);
+        Code.gameObject.SetActive(false);
         Online.gameObject.SetActive(false);
         FinalPop.gameObject.SetActive(false);
         gameObject.SetActive(false);
-
-
-
     }
 
     private IEnumerator ProgressRoutine(CanvasGroup[] ticks, float duration)
