@@ -46,8 +46,8 @@ namespace Meg.EventSystem
         /** Whether group is complete. */
         public bool completed { get; set; }
 
-        /** Whether group should pause when it completes. */
-        public bool pauseOnComplete { get; set; }
+        /** Whether group should rewind when it completes. */
+        public bool rewindOnComplete { get; set; }
 
         /** Whether group is minimized. */
         public bool minimized { get; set; }
@@ -140,9 +140,9 @@ namespace Meg.EventSystem
                     Rewind();
             }
 
-            if (completed && pauseOnComplete)
+            if (completed && rewindOnComplete)
                 paused = true;
-            if (completed && (looping || pauseOnComplete))
+            if (completed && (looping || rewindOnComplete))
                 Rewind();
         }
 
@@ -271,8 +271,8 @@ namespace Meg.EventSystem
                 json.AddField("canLoop", canLoop);
             if (minimized)
                 json.AddField("minimized", minimized);
-            if (pauseOnComplete)
-                json.AddField("pauseOnComplete", pauseOnComplete);
+            if (rewindOnComplete)
+                json.AddField("rewindOnComplete", rewindOnComplete);
 
             json.AddField("events", eventsJson);
 
@@ -299,9 +299,9 @@ namespace Meg.EventSystem
             bool jsonMinimized;
             if (json.GetField(out jsonMinimized, "minimized", false))
                 minimized = jsonMinimized;
-            bool jsonPauseOnComplete;
-            if (json.GetField(out jsonPauseOnComplete, "pauseOnComplete", false))
-                pauseOnComplete = jsonPauseOnComplete;
+            bool jsonRewindOnComplete;
+            if (json.GetField(out jsonRewindOnComplete, "rewindOnComplete", false))
+                rewindOnComplete = jsonRewindOnComplete;
 
             json.GetField(ref hotKey, "hotKey");
 
