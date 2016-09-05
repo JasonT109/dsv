@@ -2298,7 +2298,7 @@ namespace Meg.Networking
 
         /** Whether player is in a glider sub. */
         public static bool IsGlider()
-            { return ServerData && ServerData.isGlider; }
+            { return NetworkManagerCustom.IsInGlider; }
 
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)

@@ -138,6 +138,26 @@ public class NetworkManagerCustom : MonoBehaviour
     }
 
 
+    // Static Methods
+    // ------------------------------------------------------------
+
+    /** Whether we're in the glider scene. */
+    public static bool IsInGlider
+        { get { return IsInScene(GliderScene); } }
+
+    /** Whether we're in the glider scene. */
+    public static bool IsInBigSub
+        { get { return IsInScene(BigSubScene); } }
+
+    /** Whether we're in the glider scene. */
+    public static bool IsInDcc
+        { get { return IsInScene(DccScene); } }
+
+    /** Whether we're in a given scene. */
+    public static bool IsInScene(string scene)
+        { return SceneManager.GetActiveScene().name == scene; }
+
+
     // Public Methods
     // ------------------------------------------------------------
 

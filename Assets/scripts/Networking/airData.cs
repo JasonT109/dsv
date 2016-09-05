@@ -231,9 +231,6 @@ public class airData : NetworkBehaviour
         get
         {
             var vessel = serverUtils.GetPlayerVessel();
-            if (serverUtils.IsGlider())
-                return GliderAirConfig;
-
             switch (vessel)
             {
                 case 1:

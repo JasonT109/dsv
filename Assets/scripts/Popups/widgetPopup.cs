@@ -56,7 +56,7 @@ public class widgetPopup : MonoBehaviour
     protected popupData PopupData { get { return serverUtils.PopupData; } }
 
     /** Determines if the popup is hosted in the DCC scene. */
-    protected bool IsInDcc { get { return SceneManager.GetActiveScene().name == NetworkManagerCustom.DccScene; } }
+    protected bool IsInDcc { get { return NetworkManagerCustom.IsInDcc; } }
 
     /** Whether popup should be on top of other scene elements. */
     protected bool Topmost { get { return _topmost; } set { SetTopmost(value); } }

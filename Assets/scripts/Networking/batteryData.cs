@@ -289,9 +289,6 @@ public class batteryData : NetworkBehaviour
         get
         {
             var vessel = serverUtils.GetPlayerVessel();
-            if (serverUtils.IsGlider())
-                return GliderBatteryConfig;
-
             switch (vessel)
             {
                 case 1:
