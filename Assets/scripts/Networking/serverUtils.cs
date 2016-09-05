@@ -1030,6 +1030,12 @@ namespace Meg.Networking
         /** Return the current (possibly noisy) value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
+            return GetServerDataRaw(valueName, defaultValue);
+
+            /*
+            // Bypass 'noisy data' logic for now, as we're concerned it might
+            // be causing some stability issues.
+             
             if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
 
@@ -1037,6 +1043,7 @@ namespace Meg.Networking
             var noise = NoiseData.Sample(valueName);
 
             return value + noise;
+            */
         }
 
         /** Return the current value of a shared state value, indexed by name. */
