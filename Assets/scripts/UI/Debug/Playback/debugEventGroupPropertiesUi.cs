@@ -23,6 +23,9 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     /** The event group's loopable button. */
     public Toggle CanLoopToggle;
 
+    /** The event group's rewind-on-complete toggle. */
+    public Toggle RewindOnCompleteToggle;
+
     /** Hotkey input field. */
     public InputField HotKeyInput;
 
@@ -75,6 +78,13 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     {
         get { return _group.canLoop; }
         set { SetCanLoop(value); }
+    }
+
+    /** Whether group rewinds on completion. */
+    public bool RewindOnComplete
+    {
+        get { return _group.rewindOnComplete; }
+        set { SetRewindOnComplete(value); }
     }
 
 
@@ -132,15 +142,6 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
         _group.id = value;
     }
 
-    /** Toggle whether group can be looped. */
-    public void ToggleCanLoop()
-    {
-        if (_updating)
-            return;
-
-        CanLoop = !CanLoop;
-    }
-
     /** Update the group's hotkey. */
     public void HotKeyInputChanged(string value)
     {
@@ -148,6 +149,15 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
             return;
 
         _group.hotKey = value;
+    }
+
+    /** Toggle whether group can be looped. */
+    public void ToggleCanLoop()
+    {
+        if (_updating)
+            return;
+
+        CanLoop = !CanLoop;
     }
 
     /** Set whether group can be looped. */
@@ -158,6 +168,25 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         _group.canLoop = value;
         CanLoopToggle.isOn = value;
+    }
+
+    /** Toggle whether group rewinds on completion. */
+    public void ToggleRewindOnComplete()
+    {
+        if (_updating)
+            return;
+
+        RewindOnComplete = !RewindOnComplete;
+    }
+
+    /** Set whether group will rewind on completion. */
+    public void SetRewindOnComplete(bool value)
+    {
+        if (_updating)
+            return;
+
+        _group.rewindOnComplete = value;
+        RewindOnCompleteToggle.isOn = value;
     }
 
     /** Toggle an event's minimized state. */
@@ -315,6 +344,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
 
         Header.gameObject.SetActive(true);
         CanLoopToggle.isOn = _group.canLoop;
+        RewindOnCompleteToggle.isOn = _group.rewindOnComplete;
         Footer.interactable = !File.playing;
         ExecuteEventButton.interactable = File.selectedEvent != null && !File.playing;
         RemoveEventButton.interactable = File.selectedEvent != null && !File.playing;

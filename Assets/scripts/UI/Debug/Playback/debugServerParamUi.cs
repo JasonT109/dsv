@@ -8,17 +8,20 @@ using Meg.Networking;
 public class debugServerParamUi : MonoBehaviour
 {
     private const float SmoothTime = 0.25f;
+    private const float ColorUpdateInterval = 0.25f;
 
     public Text Text;
     public Color ValidColor;
     public Color InvalidColor;
 
+    private InputField _inputField;
     private string _prefix;
-
     private List<string> _tabOptions = new List<string>();
     private int _tabIndex = -1;
 
-    private InputField _inputField;
+    private Color _targetColor;
+    private bool _colorInitialized;
+    private float _nextColorUpdateTime;
 
     private void Start()
     {
@@ -31,22 +34,36 @@ public class debugServerParamUi : MonoBehaviour
 
 	private void Update()
 	{
-	    if (Input.GetKeyDown(KeyCode.Tab))
-	        AttemptTabCompletion();
-        else if (Input.anyKeyDown && !Input.GetKey(KeyCode.LeftShift))
-            _prefix = "";
+	    var focussed = _inputField && _inputField.isFocused;
+        if (focussed)
+	    {
+	        if (Input.GetKeyDown(KeyCode.Tab))
+	            AttemptTabCompletion();
+	        else if (Input.anyKeyDown && !Input.GetKey(KeyCode.LeftShift))
+	            _prefix = "";
+	    }
 
-	    var parameter = Text.text.ToLower();
-	    var valid = serverUtils.InterfaceParameters.Contains(parameter);
-        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(parameter));
-        var target = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
+	    var needsAnUpdate = focussed || !_colorInitialized;
+        if (Time.time > _nextColorUpdateTime && needsAnUpdate)
+	    {
+	        UpdateTargetColor();
+            _nextColorUpdateTime = Time.time + ColorUpdateInterval;
+	        _colorInitialized = true;
+	    }
 
-        // Indicate readonly parameters as grey.
-	    if (!valid && serverUtils.GetServerDataInfo(parameter).readOnly)
-	        target = Color.grey;
-
-        Text.color = Color.Lerp(Text.color, target, Time.deltaTime / SmoothTime);
+        Text.color = Color.Lerp(Text.color, _targetColor, Time.deltaTime / SmoothTime);
 	}
+
+    private void UpdateTargetColor()
+    {
+        var parameter = Text.text.ToLower();
+        var valid = serverUtils.WriteableParameters.Contains(parameter);
+        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(parameter));
+
+        _targetColor = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
+        if (!valid && serverUtils.GetServerDataInfo(parameter).readOnly)
+            _targetColor = Color.grey;
+    }
 
     private void AttemptTabCompletion()
     {
@@ -59,7 +76,7 @@ public class debugServerParamUi : MonoBehaviour
         {
             _prefix = Text.text.ToLower();
             _tabIndex = -1;
-            _tabOptions = serverUtils.InterfaceParameters
+            _tabOptions = serverUtils.WriteableParameters
                 .Where(p => p.StartsWith(_prefix)).ToList();
         }
 
