@@ -57,8 +57,8 @@ public class debugServerParamUi : MonoBehaviour
     private void UpdateTargetColor()
     {
         var parameter = Text.text.ToLower();
-        var valid = serverUtils.InterfaceParameters.Contains(parameter);
-        var prefix = valid || serverUtils.InterfaceParameters.Any(p => p.StartsWith(parameter));
+        var valid = serverUtils.WriteableParameters.Contains(parameter);
+        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(parameter));
 
         _targetColor = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
         if (!valid && serverUtils.GetServerDataInfo(parameter).readOnly)
@@ -76,7 +76,7 @@ public class debugServerParamUi : MonoBehaviour
         {
             _prefix = Text.text.ToLower();
             _tabIndex = -1;
-            _tabOptions = serverUtils.InterfaceParameters
+            _tabOptions = serverUtils.WriteableParameters
                 .Where(p => p.StartsWith(_prefix)).ToList();
         }
 

@@ -377,27 +377,6 @@ namespace Meg.Networking
             }
         }
 
-        /** The set of all server data parameters that are visible in the editing interface. */
-        public static IEnumerable<string> InterfaceParameters
-        {
-            get
-            {
-                return WriteableParameters
-                    .Where(p => !GetServerDataInfo(p).hideInUi)
-                    .OrderBy(key => key);
-            }
-        }
-
-        /** The set of all server numeric data parameters that are visible in the editing interface. */
-        public static IEnumerable<string> NumericParameters
-        {
-            get
-            {
-                return InterfaceParameters
-                    .Where(p => GetServerDataInfo(p).type != ParameterType.String);
-            }
-        }
-
         /** The set of all server data parameters. */
         private static HashSet<string> _parameters;
         public static HashSet<string> Parameters

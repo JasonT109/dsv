@@ -71,7 +71,11 @@ public class debugParameterListUi : MonoBehaviour
     private void UpdateServerParamList()
     {
         var index = 0;
-        foreach (var param in serverUtils.InterfaceParameters)
+        var ordered = serverUtils.WriteableParameters
+            .Where(p => !serverUtils.GetServerDataInfo(p).hideInUi)
+            .OrderBy(key => key);
+
+        foreach (var param in ordered)
         {
             var entry = GetServerParamEntry(index);
             entry.Text.text = param;
