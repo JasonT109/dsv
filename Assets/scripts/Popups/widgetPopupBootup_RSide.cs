@@ -81,7 +81,7 @@ public class widgetPopupBootup_RSide : widgetPopup
 
         Logo.gameObject.SetActive(true);
         Backdrop.gameObject.SetActive(true);
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(7f);
         Logo.gameObject.SetActive(false);
         Backdrop.gameObject.SetActive(false);
 
