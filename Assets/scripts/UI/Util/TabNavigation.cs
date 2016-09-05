@@ -27,13 +27,17 @@ namespace UnityEngine.UI.Extensions
 
         public void Update()
         {
+            var current = _system.currentSelectedGameObject;
             Selectable next = null;
 
             if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
             {
-                if (_system.currentSelectedGameObject != null)
+                if (current != null)
                 {
-                    next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();
+                    if (IsTabIgnored(current))
+                        return;
+
+                    next = current.GetComponent<Selectable>().FindSelectableOnUp();
                 }
                 else if (_system.firstSelectedGameObject != null)
                 {
@@ -42,9 +46,12 @@ namespace UnityEngine.UI.Extensions
             }
             else if (Input.GetKeyDown(KeyCode.Tab))
             {
-                if (_system.currentSelectedGameObject != null)
+                if (current != null)
                 {
-                    next = _system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+                    if (IsTabIgnored(current))
+                        return;
+
+                    next = current.GetComponent<Selectable>().FindSelectableOnDown();
                 }
                 else if (_system.firstSelectedGameObject != null)
                 {
@@ -55,7 +62,7 @@ namespace UnityEngine.UI.Extensions
             {
                 for (var i = 0; i < NavigationPath.Length; i++)
                 {
-                    if (_system.currentSelectedGameObject != NavigationPath[i].gameObject) continue;
+                    if (current != NavigationPath[i].gameObject) continue;
 
 
                     next = i == (NavigationPath.Length - 1) ? NavigationPath[0] : NavigationPath[i + 1];
@@ -63,12 +70,18 @@ namespace UnityEngine.UI.Extensions
                     break;
                 }
             }
-            else if (_system.currentSelectedGameObject == null && _system.firstSelectedGameObject != null)
+            else if (current == null && _system.firstSelectedGameObject != null)
             {
                 next = _system.firstSelectedGameObject.GetComponent<Selectable>();
             }
 
             selectGameObject(next);
+        }
+
+        private bool IsTabIgnored(GameObject go)
+        {
+            var behaviour = _system.currentSelectedGameObject.GetComponent<TabNavigationOptions>();
+            return (behaviour && behaviour.Behaviour == TabNavigationOptions.TabBehaviour.IgnoreTab);
         }
 
         private void selectGameObject(Selectable selectable)
