@@ -20,11 +20,16 @@ public class debugServerParamUi : MonoBehaviour
 
 	private void Update()
 	{
-	    var text = Text.text.ToLower();
-	    var valid = serverUtils.WriteableParameters.Contains(text);
-        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(text));
+	    var parameter = Text.text.ToLower();
+	    var valid = serverUtils.InterfaceParameters.Contains(parameter);
+
+        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(parameter));
         var target = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
 
-	    Text.color = Color.Lerp(Text.color, target, Time.deltaTime / SmoothTime);
+        // Indicate readonly parameters as grey.
+	    if (!valid && serverUtils.GetServerDataInfo(parameter).readOnly)
+	        target = Color.grey;
+
+        Text.color = Color.Lerp(Text.color, target, Time.deltaTime / SmoothTime);
 	}
 }
