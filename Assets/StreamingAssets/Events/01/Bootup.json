@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"02/09/16 05:29:13.9",
-		"startedTimestamp":"02/09/16 05:21:36.6",
-		"stoppedTimestamp":"02/09/16 05:21:44.6"
+		"utc":"05/09/16 06:51:12.5",
+		"startedTimestamp":"05/09/16 06:50:38.5",
+		"stoppedTimestamp":"05/09/16 06:51:01.6"
 	},
 	"groups":[
 		{
@@ -21,11 +21,12 @@
 			"id":"NORMAL BOOTUP",
 			"paused":true,
 			"minimized":true,
+			"rewindOnComplete":true,
 			"events":[
 				{
 					"type":"Popup",
 					"triggerTime":1,
-					"completeTime":10,
+					"completeTime":11.76016,
 					"Type":2,
 					"Title":"SYSTEMS ONLINE",
 					"Message":"系统在线",
@@ -46,6 +47,23 @@
 						1,
 						1
 					]
+				},
+				{
+					"type":"Value",
+					"serverParam":"bootcodeduration",
+					"serverValue":3
+				},
+				{
+					"type":"Value",
+					"serverParam":"bootprogress",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":7.376923,
+					"completeTime":2.5,
+					"serverParam":"bootprogress",
+					"serverValue":100
 				},
 				{
 					"type":"Value",
@@ -71,7 +89,8 @@
 					"serverParam":"screenGlitchAmount",
 					"serverValue":5
 				}
-			]
+			],
+			"hotKey":"0"
 		}
 	]
 }

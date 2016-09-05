@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"02/09/16 04:54:51.3",
-		"startedTimestamp":"02/09/16 04:54:27.5",
-		"stoppedTimestamp":"02/09/16 04:54:44.6"
+		"utc":"05/09/16 06:41:07.0",
+		"startedTimestamp":"05/09/16 06:40:02.9",
+		"stoppedTimestamp":"05/09/16 06:40:37.8"
 	},
 	"groups":[
 		{
@@ -21,11 +21,12 @@
 			"id":"LOW POWER BOOTUP",
 			"paused":true,
 			"minimized":true,
+			"rewindOnComplete":true,
 			"events":[
 				{
 					"type":"Popup",
 					"triggerTime":1,
-					"completeTime":10,
+					"completeTime":12,
 					"Type":3,
 					"Title":"SYSTEMS ONLINE",
 					"Message":"",
@@ -46,6 +47,23 @@
 						1,
 						1
 					]
+				},
+				{
+					"type":"Value",
+					"serverParam":"bootcodeduration",
+					"serverValue":3
+				},
+				{
+					"type":"Value",
+					"serverParam":"bootprogress",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":7.4,
+					"completeTime":4,
+					"serverParam":"bootprogress",
+					"serverValue":100
 				},
 				{
 					"type":"Value",
@@ -71,7 +89,8 @@
 					"serverParam":"screenGlitchAmount",
 					"serverValue":5
 				}
-			]
+			],
+			"hotKey":"0"
 		}
 	]
 }

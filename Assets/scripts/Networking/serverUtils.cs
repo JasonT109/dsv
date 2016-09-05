@@ -417,6 +417,8 @@ namespace Meg.Networking
             "batterytemp",
             "batterytimeenabled",
             "batterytimeremaining",
+            "bootcodeduration",
+            "bootprogress",
             "cabinhumidity",
             "cabinoxygen",
             "cabinpressure",
@@ -798,6 +800,8 @@ namespace Meg.Networking
             { "batterytemp", new ParameterInfo { description = "Battery temperature (degrees c)." } },
             { "batterytimeenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether battery time counts down."} },
             { "batterytimeremaining", new ParameterInfo { maxValue = 3600 * 12, type = ParameterType.Int, description = "Battery time remaining (seconds)." } },
+            { "bootcodeduration", new ParameterInfo { minValue = 1, maxValue = 5, description = "Duration of the bootup sequence's code section."} },
+            { "bootprogress", new ParameterInfo { description = "Progress for the bootup systems online sequence."} },
             { "cabinhumidity", new ParameterInfo { description = "Cabin humidity (%)."} },
             { "cabinoxygen", new ParameterInfo { description = "Cabin oxygen percentage (tops out to nominal 20.9% at 5% reserves)."} },
             { "cabinpressure", new ParameterInfo { maxValue = 1.25f, description = "Cabin pressure (in bar)." } },
@@ -1571,6 +1575,10 @@ namespace Meg.Networking
                     return DockingData.docking3;
                 case "docking4":
                     return DockingData.docking4;
+                case "bootcodeduration":
+                    return PopupData.bootCodeDuration;
+                case "bootprogress":
+                    return PopupData.bootProgress;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }
