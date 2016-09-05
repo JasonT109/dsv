@@ -119,7 +119,7 @@ public class gameInputs : NetworkBehaviour
         if (_input != null)
             UpdateInput();
 
-        if (_input.GetButtonDown("DescentMode"))
+        if (_input != null && _input.GetButtonDown("DescentMode"))
             if (serverUtils.GetServerBool("iscontroldecentmodeonjoystick"))
                 ToggleDescentMode();
     }

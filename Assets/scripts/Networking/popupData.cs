@@ -34,6 +34,15 @@ public class popupData : NetworkBehaviour
     /** Prefab to use for low power bootup popup. */
     public widgetPopup PopupBootLowPower;
 
+    /** Prefab to use for glider bootup popup (left screen). */
+    public widgetPopup PopupBootGliderLeft;
+
+    /** Prefab to use for glider bootup popup (middle screen). */
+    public widgetPopup PopupBootGliderMid;
+
+    /** Prefab to use for glider bootup popup (right screen). */
+    public widgetPopup PopupBootGliderRight;
+
 
     // Enumerations
     // ------------------------------------------------------------
@@ -309,7 +318,11 @@ public class popupData : NetworkBehaviour
         var newPopups = Popups.Where(key => !_popupWidgets.ContainsKey(key)).ToList();
         foreach (var popup in newPopups)
         {
-            var go = Instantiate(GetPrefabForPopup(popup));
+            var prefab = GetPrefabForPopup(popup);
+            if (!prefab)
+                continue;
+
+            var go = Instantiate(prefab);
             if (!go)
                 continue;
 
@@ -328,7 +341,7 @@ public class popupData : NetworkBehaviour
             case Type.GreenScreen:
                 return PopupGreenPrefab;
             case Type.Boot:
-                return PopupBoot;
+                return GetPrefabForBoot(popup);
             case Type.BootLowPower:
                 return PopupBootLowPower;
             default:
@@ -336,5 +349,34 @@ public class popupData : NetworkBehaviour
         }
     }
 
+    /** Determine the correct boot popup to use given current screen state. */
+    private widgetPopup GetPrefabForBoot(Popup popup)
+    {
+        if (serverUtils.IsGlider())
+            return GetPrefabForGliderBoot(popup);
+
+        return PopupBoot;
+    }
+
+    private widgetPopup GetPrefabForGliderBoot(Popup popup)
+    { 
+        // Check that glider screen manager exists.
+        if (!glScreenManager.Instance)
+            return PopupBootGliderMid;
+
+        // Boot sequence is different for each glider screen.
+        var screen = glScreenManager.Instance.screenID; 
+        switch (screen)
+        {
+            case 0:
+                return PopupBootGliderRight;
+            case 1:
+                return PopupBootGliderMid;
+            case 2:
+                return PopupBootGliderLeft;
+            default:
+                return PopupBootGliderMid;
+        }
+    }
 
 }

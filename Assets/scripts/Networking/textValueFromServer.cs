@@ -6,6 +6,7 @@ public class textValueFromServer : widgetText
 {
     [Header("Server Data")]
     public string linkDataString = "depth";
+    public string configDataKey = "";
 
     [Header("Output Value")]
     public bool useOutputCurve;
@@ -17,6 +18,7 @@ public class textValueFromServer : widgetText
 
     [Header("Formatting")]
     public string format = "";
+    public string configFormatKey = "";
     public string prefix = "";
     public bool upperCase;
     public ValueRange[] Ranges;
@@ -35,6 +37,12 @@ public class textValueFromServer : widgetText
 
     private void Start()
     {
+        if (!string.IsNullOrEmpty(configDataKey))
+            linkDataString = Configuration.Get(configDataKey, linkDataString);
+
+        if (!string.IsNullOrEmpty(configFormatKey))
+            format = Configuration.Get(configFormatKey, format);
+
         if (addNoise)
             noise.Start();
 

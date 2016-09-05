@@ -242,26 +242,32 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post screen state for this player. */
-    public void PostScreenState(screenData.State state)
+    public void PostScreenState(NetworkInstanceId playerId, screenData.State state)
     {
         if (isServer)
-            ServerSetScreenState(state);
+            ServerSetScreenState(playerId, state);
         else
         {
-            ScreenState = state;
-            CmdSetScreenState(state);
+            var player = serverUtils.GetPlayer(playerId);
+            if (player)
+                player.ScreenState = state;
+
+            CmdSetScreenState(playerId, state);
         }
     }
 
     /** Post screen state for this player. */
-    public void PostScreenStateContent(screenData.Content content)
+    public void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
     {
         if (isServer)
-            ServerSetScreenStateContent(content);
+            ServerSetScreenStateContent(playerId, content);
         else
         {
-            ScreenState.Content = content;
-            CmdSetScreenStateContent(content);
+            var player = serverUtils.GetPlayer(playerId);
+            if (player)
+                player.ScreenState.Content = content;
+
+            CmdSetScreenStateContent(playerId, content);
         }
     }
 
@@ -452,13 +458,13 @@ public class serverPlayer : NetworkBehaviour
 
     /** Set screen state for this player. */
     [Command]
-    public void CmdSetScreenState(screenData.State state)
-        { ServerSetScreenState(state); }
+    public void CmdSetScreenState(NetworkInstanceId id, screenData.State state)
+        { ServerSetScreenState(id, state); }
 
     /** Set screen content for this player. */
     [Command]
-    public void CmdSetScreenStateContent(screenData.Content content)
-        { ServerSetScreenStateContent(content); }
+    public void CmdSetScreenStateContent(NetworkInstanceId id, screenData.Content content)
+        { ServerSetScreenStateContent(id, content); }
 
     /** Set content for the specified DCC screen on the server. */
     [Command]
@@ -594,13 +600,19 @@ public class serverPlayer : NetworkBehaviour
 
     /** Set screen state for this player. */
     [Server]
-    public void ServerSetScreenState(screenData.State state)
-        { ScreenState = state; }
+    public void ServerSetScreenState(NetworkInstanceId playerId, screenData.State state)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ScreenState = state;
+    }
 
     /** Set screen content for this player. */
     [Server]
-    public void ServerSetScreenStateContent(screenData.Content content)
-        { ScreenState = new screenData.State { Type = ScreenState.Type, Content = content }; }
+    public void ServerSetScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
+    {
+        ServerSetScreenState(playerId, new screenData.State { Type = ScreenState.Type, Content = content }); 
+    }
 
 
     // Client Methods

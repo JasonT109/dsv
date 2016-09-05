@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -30,10 +30,11 @@ public class graphicsWildlifeSpawner : MonoBehaviour {
     {
         spawnedCreatures = GameObject.FindGameObjectsWithTag(creatureTag);
         numSpawnedCreatures = spawnedCreatures.Length;
+	    var maxCreatures = serverUtils.GetServerData("maxwildlife");
 
-        if (numSpawnedCreatures < serverUtils.GetServerData("maxwildlife"))
-        {
+        if (numSpawnedCreatures < maxCreatures)
             SpawnCreature();
-        }
-	}
+        else if (numSpawnedCreatures > maxCreatures && numSpawnedCreatures > 0)
+            Destroy(spawnedCreatures[0]);
+    }
 }

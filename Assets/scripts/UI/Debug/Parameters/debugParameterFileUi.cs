@@ -384,9 +384,6 @@ public class debugParameterFileUi : MonoBehaviour
     {
         var g = groupUi.Group;
         var e = eventUi ? eventUi.Parameter : null;
-        if (g == _file.selectedGroup && e == null)
-            g = null;
-
         if (e == _file.selectedParameter)
             groupUi.ToggleParameter(e);
         else

@@ -207,9 +207,6 @@ public class oxygenData : NetworkBehaviour
         get
         {
             var vessel = serverUtils.GetPlayerVessel();
-            if (serverUtils.IsGlider())
-                return GliderOxygenTankConfig;
-
             switch (vessel)
             {
                 case 1:

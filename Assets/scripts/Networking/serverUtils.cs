@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.2";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -1030,6 +1030,12 @@ namespace Meg.Networking
         /** Return the current (possibly noisy) value of a shared state value, indexed by name. */
         public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
+            return GetServerDataRaw(valueName, defaultValue);
+
+            /*
+            // Bypass 'noisy data' logic for now, as we're concerned it might
+            // be causing some stability issues.
+             
             if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
 
@@ -1037,6 +1043,7 @@ namespace Meg.Networking
             var noise = NoiseData.Sample(valueName);
 
             return value + noise;
+            */
         }
 
         /** Return the current value of a shared state value, indexed by name. */
@@ -2291,7 +2298,7 @@ namespace Meg.Networking
 
         /** Whether player is in a glider sub. */
         public static bool IsGlider()
-            { return ServerData && ServerData.isGlider; }
+            { return NetworkManagerCustom.IsInGlider; }
 
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
@@ -2333,9 +2340,15 @@ namespace Meg.Networking
         /** Post screen state for the given player. */
         public static void PostScreenState(NetworkInstanceId playerId, screenData.State state)
         {
-            var player = GetPlayer(playerId);
-            if (player)
-                player.PostScreenState(state);
+            if (LocalPlayer)
+                LocalPlayer.PostScreenState(playerId, state);
+        }
+
+        /** Post screen state for this player. */
+        public static void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateContent(playerId, content);
         }
 
         /** Return content ID for the specified DCC screen. */

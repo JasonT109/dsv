@@ -71,7 +71,6 @@ public class serverData : NetworkBehaviour
     #endregion
 
     #region PublicVars
-    public bool isGlider = false;
     public GameObject[] players;
     #endregion
 
