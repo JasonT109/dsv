@@ -18,6 +18,10 @@
 				{
 					"type":"Value",
 					"serverParam":"sonarshortfrequency"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maxwildlife"
 				}
 			]
 		},
