@@ -38,7 +38,7 @@ public class debugServerParamUi : MonoBehaviour
 
 	    var parameter = Text.text.ToLower();
 	    var valid = serverUtils.InterfaceParameters.Contains(parameter);
-        var prefix = valid || serverUtils.WriteableParameters.Any(p => p.StartsWith(parameter));
+        var prefix = valid || serverUtils.InterfaceParameters.Any(p => p.StartsWith(parameter));
         var target = valid ? ValidColor : Color.Lerp(InvalidColor, ValidColor, prefix ? 0.75f : 0);
 
         // Indicate readonly parameters as grey.

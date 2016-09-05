@@ -40,8 +40,11 @@ public class debugParameterFileUi : MonoBehaviour
     /** Clear button. */
     public Button ClearButton;
 
-    /** Add group button. */
-    public Button AddParameterButton;
+    /** Add value parameter button. */
+    public Button AddValueParameterButton;
+
+    /** Add string parameter button. */
+    public Button AddStringParameterButton;
 
     /** Remove group button. */
     public Button RemoveParameterButton;
@@ -328,7 +331,8 @@ public class debugParameterFileUi : MonoBehaviour
         AddButton.interactable = _file.canAdd;
         RemoveButton.interactable = _file.canRemove && _file.selectedGroup != null;
         ClearButton.interactable = _file.canClear;
-        AddParameterButton.interactable = _file.canAdd && _file.selectedGroup != null;
+        AddValueParameterButton.interactable = _file.canAdd && _file.selectedGroup != null;
+        AddStringParameterButton.interactable = _file.canAdd && _file.selectedGroup != null;
         RemoveParameterButton.interactable = _file.canRemove && _file.selectedParameter != null;
         ClearParametersButton.interactable = _file.canClear && _file.selectedGroup != null && !_file.selectedGroup.empty;
         SaveButton.interactable = _file.canSave;

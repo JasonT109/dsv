@@ -324,24 +324,48 @@ public class debugParameterGroupUi : MonoBehaviour
     {
         var index = 0;
         if (_group != null)
-            foreach (var e in _group.parameters)
-                GetParameter(index++).SetParameter(e, false);
+            foreach (var p in _group.parameters)
+                GetParameter(index++, p).SetParameter(p, false);
 
         for (var i = 0; i < _parameters.Count; i++)
             _parameters[i].gameObject.SetActive(i < index);
     }
 
-    private debugParameterUi GetParameter(int i)
+    private debugParameterUi GetParameter(int i, megParameter parameter)
     {
         if (i >= _parameters.Count)
         {
-            var parameterUi = Instantiate(ValueParameterPrefab);
+            var parameterUi = CreateParameterUi(parameter);
             parameterUi.transform.SetParent(ParameterContainer, false);
             parameterUi.OnSelected += HandleParameterSelected;
             _parameters.Add(parameterUi);
         }
 
-        return _parameters[i];
+        var ui = _parameters[i];
+        if (ui.Parameter != null && parameter.type != ui.Parameter.type)
+        {
+            Destroy(ui.gameObject);
+            ui = CreateParameterUi(parameter);
+            ui.transform.SetParent(ParameterContainer, false);
+            ui.transform.SetSiblingIndex(i);
+            ui.OnSelected += HandleParameterSelected;
+            _parameters[i] = ui;
+        }
+
+        return ui;
+    }
+
+    private debugParameterUi CreateParameterUi(megParameter parameter)
+    {
+        switch (parameter.type)
+        {
+            case megParameterType.Value:
+                return Instantiate(ValueParameterPrefab);
+            case megParameterType.String:
+                return Instantiate(StringParameterPrefab);
+            default:
+                return Instantiate(ValueParameterPrefab);
+        }
     }
 
     private void HandleParameterSelected(debugParameterUi ui)

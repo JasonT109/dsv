@@ -388,6 +388,16 @@ namespace Meg.Networking
             }
         }
 
+        /** The set of all server numeric data parameters that are visible in the editing interface. */
+        public static IEnumerable<string> NumericParameters
+        {
+            get
+            {
+                return InterfaceParameters
+                    .Where(p => GetServerDataInfo(p).type != ParameterType.String);
+            }
+        }
+
         /** The set of all server data parameters. */
         private static HashSet<string> _parameters;
         public static HashSet<string> Parameters
@@ -597,6 +607,7 @@ namespace Meg.Networking
             "pitchangle",
             "pitchspeed",
             "playervessel",
+            "playervesselname",
             "pressure",
             "pressureoverride",
             "pressureoverrideamount",
@@ -712,7 +723,8 @@ namespace Meg.Networking
         {
             Float,
             Int,
-            Bool
+            Bool,
+            String
         }
 
         /** Configuration data for a parameter. */
@@ -957,6 +969,7 @@ namespace Meg.Networking
             { "pitchangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current pitch angle (nose up/down, degrees)."} },
             { "pitchspeed", new ParameterInfo { description = "Sub's pitching speed (nose up / down)."} },
             { "playervessel", new ParameterInfo { minValue = 1, maxValue = 4, type = ParameterType.Int, description = "Which vessel is occupied by the players (crew)."} },
+            { "playervesselname", new ParameterInfo { type = ParameterType.String, description = "Name of the player vessel."} },
             { "pressure", new ParameterInfo { readOnly = true, description = "Current exterior pressure (bar)"} },
             { "pressureoverride", new ParameterInfo { description = "Override value for exterior pressure (bar)"} },
             { "pressureoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for exterior pressure (bar)"} },
