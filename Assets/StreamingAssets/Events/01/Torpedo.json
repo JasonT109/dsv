@@ -1,0 +1,47 @@
+{
+	"metadata":{
+		"utc":"06/09/16 06:12:47.9",
+		"startedTimestamp":"06/09/16 06:09:59.9",
+		"stoppedTimestamp":"06/09/16 06:12:42.5"
+	},
+	"groups":[
+		{
+			"id":"Torpedo",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"FIRE",
+					"triggerHotKey":"3",
+					"serverParam":"towfiringstatus",
+					"serverValue":3
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"RESET",
+					"triggerHotKey":"0",
+					"serverParam":"towfiringstatus",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"TARGET",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"ON",
+					"triggerHotKey":"7",
+					"serverParam":"towtargetvisible",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"OFF",
+					"triggerHotKey":"8",
+					"serverParam":"towtargetvisible",
+					"serverValue":0
+				}
+			]
+		}
+	]
+}

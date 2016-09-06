@@ -1,13 +1,12 @@
 {
 	"metadata":{
-		"utc":"02/09/16 05:44:03.6",
-		"startedTimestamp":"02/09/16 05:42:12.2",
-		"stoppedTimestamp":"01/01/01 12:00:00.0"
+		"utc":"06/09/16 09:28:52.9",
+		"startedTimestamp":"06/09/16 09:26:26.4",
+		"stoppedTimestamp":"06/09/16 09:28:15.1"
 	},
 	"groups":[
 		{
 			"id":"Docking On",
-			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Value",
@@ -37,7 +36,6 @@
 		},
 		{
 			"id":"Docking off",
-			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Value",
@@ -61,6 +59,29 @@
 					"type":"Value",
 					"triggerLabel":"docking4off",
 					"serverParam":"docking4",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"DOCKING GAUGE",
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":4,
+					"serverParam":"dockinggaugevalue",
+					"serverValue":240
+				}
+			]
+		},
+		{
+			"id":"Docking Gauge RESET",
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"Value",
+					"serverParam":"dockinggaugevalue",
 					"serverValue":0
 				}
 			]

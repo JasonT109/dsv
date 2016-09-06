@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using Meg.Maths;
+using Meg.Graphics;
 
 public class widgetTowReticule : MonoBehaviour
 {
@@ -29,24 +31,25 @@ public class widgetTowReticule : MonoBehaviour
     [Header("Text Configuration")]
     public Color textUnlockedColor;
     public Color textLockedColor;
+    public Color textAcquiringColor;
+    public Color textFiredColor;
+
+    [Header("Text Objects")]
+    public widgetText lineLengthText;
+
 
     private Vector2 moveDir = Vector2.zero;
-    // private Vector2 newMoveDir = Vector2.zero;
     private float distanceLerp;
     private float distance;
     private Vector3 initialPos;
-    // private Vector3 startPos;
     private bool locked;
     private float lockedTime;
+    private bool fired = false;
+    private float torpedoTimer = 0;
+    private float lineLengthValue;
+    private float updateTimer = 0;
+    private float torpedoTravelTime = 0;
 
-
-	// Use this for initialization
-	void Start ()
-    {
-        initialPos = transform.position;
-        // startPos = transform.position;
-    }
-	
     Vector3 getLocalPosition(Vector3 position, Transform localSpace)
     {
         Vector3 localPosition = localSpace.InverseTransformPoint(position);
@@ -61,56 +64,77 @@ public class widgetTowReticule : MonoBehaviour
         return worldPosition;
     }
 
-    // Update is called once per frame
-    void Update ()
+    /** Sets the target status text. */
+    void SetTargetText()
     {
-        distance = Vector3.Distance(initialPos, target.position);
-        distanceLerp = (Mathf.Abs(distance - lockDistance)) / (trackDistance - lockDistance);
 
-        if (distance < lockDistance)
+        int status = (int)serverUtils.GetServerData("towFiringStatus");
+
+        switch (status)
         {
-            transform.position = target.position;
-            locked = true;
-            target.GetComponent<Renderer>().material.SetColor("_TintColor", lockColor);
-            lockRing1.GetComponent<Renderer>().material.SetColor("_TintColor", lockColor);
-            lockRing1.transform.localScale = lockRing1EndScale;
-            targetLockText.SetActive(true);
-            targetText.Text = "LOCKED";
-            targetText.Color = textLockedColor;
+            case 0:
+                targetText.Text = "NO TARGET";
+                break;
+            case 1:
+                targetText.Text = "AQUIRING...";
+                break;
+            case 2:
+                targetText.Text = "LOCKED";
+                break;
+            case 3:
+                targetText.Text = "LAUNCHED";
+                break;
+            default:
+                targetText.Text = "NO TARGET";
+                break;
         }
-        else if (distance > lockDistance && distance < trackDistance)
-        {
-            transform.position = Vector3.Lerp(initialPos, target.position, 1 - distanceLerp);
-            target.GetComponent<Renderer>().material.SetColor("_TintColor", Color.Lerp(targetColor, lockColor, 1 - distanceLerp));
-            lockRing1.GetComponent<Renderer>().material.SetColor("_TintColor", lockColor);
-            lockRing1.transform.localScale = Vector3.Lerp(lockRing1StartScale, lockRing1EndScale, 1 - distanceLerp);
-            locked = false;
-            lockedTime = 0;
-            targetLockText.SetActive(false);
-            targetText.Text = "AQUIRING...";
-            targetText.Color = textUnlockedColor;
-        }
+    }
+
+    /** Set the reticules position, status and colors. */
+    void SetTarget(Vector3 position, bool status, Vector3 ringScale, Color targetColor, Color ringColor, Color textColor)
+    {
+        //position
+        transform.position = position;
+
+        //status
+        locked = status;
+        targetLockText.SetActive(status);
+
+        //scale
+        lockRing1.transform.localScale = ringScale;
+
+        //colors
+        target.GetComponent<Renderer>().material.SetColor("_TintColor", targetColor);
+        lockRing1.GetComponent<Renderer>().material.SetColor("_TintColor", ringColor);
+
+        if (serverUtils.GetServerData("towFiringStatus") != 3)
+            targetText.Color = textColor;
         else
+            targetText.Color = textFiredColor;
+    }
+
+    /** Set the targets color. */
+    void SetTargetColor()
+    {
+        if (serverUtils.GetServerData("towtargetvisible") == 0)
         {
-            transform.position = initialPos;
-            target.GetComponent<Renderer>().material.SetColor("_TintColor", targetColor);
-            lockRing1.GetComponent<Renderer>().material.SetColor("_TintColor", targetColor);
-            lockRing1.transform.localScale = lockRing1StartScale;
-            locked = false;
-            lockedTime = 0;
-            targetLockText.SetActive(false);
-            targetText.Text = "NO TARGET";
-            targetText.Color = textUnlockedColor;
+            if (target.GetComponent<Renderer>().material.GetColor("_TintColor").a > 0)
+                targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, targetColor.a - Time.deltaTime);
         }
 
-        if (locked)
+        if (serverUtils.GetServerData("towtargetvisible") > 0)
         {
-            lockedTime += Time.deltaTime;
+            if (target.GetComponent<Renderer>().material.GetColor("_TintColor").a < 1)
+                targetColor = new Color(targetColor.r, targetColor.g, targetColor.b, targetColor.a + Time.deltaTime);
         }
+    }
 
+    /** Set the visibility of locked on gfx. */
+    void SetLockedVis()
+    {
         for (int i = 0; i < lockedOnGFX.Length; i++)
         {
-            if (locked && lockedTime > (0.2f * (i+1)))
+            if (locked && lockedTime > (0.2f * (i + 1)))
             {
                 lockedOnGFX[i].SetActive(true);
             }
@@ -119,19 +143,127 @@ public class widgetTowReticule : MonoBehaviour
                 lockedOnGFX[i].SetActive(false);
             }
         }
+    }
+
+    /** Handles the torpedo / grapple launch graphics. */
+    void FireTorpedo()
+    {
+        fired = true;
+
+        torpedoTravelTime += Time.deltaTime;
+
+        float lineRemaining = serverUtils.GetServerData("towlineremaining");
+        float decay = 1;
+
+        if (torpedoTravelTime > 5)
+            decay = graphicsEasing.EaseIn(graphicsMaths.remapValue(torpedoTravelTime, 5, 45, 1, 0), EasingType.Quadratic);
+
+        float towLineSpeed = (serverUtils.GetServerData("towfiringpressure") * decay) * 0.1f;
+        float lineLength = serverUtils.GetServerData("towlinelength");
+        float lineDistance = Mathf.Clamp(serverUtils.GetServerData("towlineremaining") - (Time.deltaTime * towLineSpeed), 0, 1000);
+        lineLengthValue = (lineLength - lineDistance);
+
+        torpedoTimer += Time.deltaTime;
+
+        if (torpedoTimer < 0.1f)
+            return;
+
+        torpedoTimer = 0f;
+
+        if (lineRemaining > 0)
+        {
+            serverUtils.PostServerData("towlinespeed", towLineSpeed * 0.1f);
+            serverUtils.PostServerData("towlineremaining", lineDistance);
+        }
+        else
+        {
+            serverUtils.PostServerData("towlinespeed", 0);
+        }
+    }
+
+    void ResetTorpedo()
+    {
+        lineLengthValue = 0;
+        serverUtils.PostServerData("towlineremaining", serverUtils.GetServerData("towlinelength"));
+        serverUtils.PostServerData("towlinespeed", 0);
+        torpedoTravelTime = 0;
+        fired = false;
+    }
+
+    void UpdateText()
+    {
+        updateTimer += Time.deltaTime;
+
+        if (updateTimer < 0.2f)
+            return;
+
+        updateTimer = 0;
+
+        lineLengthText.Text = lineLengthValue.ToString("n0") + "m";
+    }
+
+    void Start()
+    {
+        initialPos = transform.position;
+    }
+
+    void Update ()
+    {
+
+        UpdateText();
+
+        distance = Vector3.Distance(initialPos, target.position);
+        distanceLerp = (Mathf.Abs(distance - lockDistance)) / (trackDistance - lockDistance);
+
+        if (distance < lockDistance && serverUtils.GetServerData("towtargetvisible") == 1)
+        {
+            SetTarget(target.position, true, lockRing1EndScale, lockColor, lockColor, textLockedColor);
+
+            if (serverUtils.GetServerData("towFiringStatus") != 3)
+                serverUtils.PostServerData("towfiringstatus", 2);
+        }
+        else if (distance > lockDistance && distance < trackDistance && serverUtils.GetServerData("towtargetvisible") == 1)
+        {
+            SetTarget(Vector3.Lerp(initialPos, target.position, 1 - distanceLerp), false, Vector3.Lerp(lockRing1StartScale, lockRing1EndScale, 1 - distanceLerp), Color.Lerp(targetColor, lockColor, 1 - distanceLerp), lockColor, textAcquiringColor);
+            lockedTime = 0;
+
+            if (serverUtils.GetServerData("towFiringStatus") != 3)
+                serverUtils.PostServerData("towfiringstatus", 1);
+        }
+        else
+        {
+            SetTarget(initialPos, false, lockRing1StartScale, targetColor, targetColor, textUnlockedColor);
+            lockedTime = 0;
+
+            if (serverUtils.GetServerData("towFiringStatus") != 3)
+                serverUtils.PostServerData("towfiringstatus", 0);
+        }
+
+        SetTargetText();
+
+        SetTargetColor();
+
+        if (locked)
+        {
+            lockedTime += Time.deltaTime;
+        }
+
+        SetLockedVis();
+
+        if (serverUtils.GetServerData("towFiringStatus") == 3)
+            FireTorpedo();
+
+        if (serverUtils.GetServerData("towFiringStatus") != 3 && fired)
+            ResetTorpedo();
 
         moveDir.y = -serverUtils.GetServerData("inputYaxis");
         moveDir.x = serverUtils.GetServerData("inputXaxis");
-
         moveDir *= moveSpeed;
-
         initialPos = new Vector3(initialPos.x + moveDir.x, initialPos.y + moveDir.y, initialPos.z);
 
-        //set position of indicator
         initPosIndicator.position = initialPos;
         initPosIndicator.localPosition = new Vector3(Mathf.Clamp(initPosIndicator.localPosition.x, -maxX, maxX), Mathf.Clamp(initPosIndicator.localPosition.y, -maxY, maxY), initPosIndicator.localPosition.z);
         initialPos = initPosIndicator.position;
-
 
         gameObject.transform.Translate(moveDir);
     }

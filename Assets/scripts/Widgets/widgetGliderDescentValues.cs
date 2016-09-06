@@ -24,6 +24,9 @@ public class widgetGliderDescentValues : MonoBehaviour
 
     void updateValues()
     {
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+
         float powerValue = thrusterControl.GetThrusterLevel(widgetThrusterControl.ThrusterId.MainShared);
         powerText.Text = Mathf.Abs(powerValue).ToString("N0");
 

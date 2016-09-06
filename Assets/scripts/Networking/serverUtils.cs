@@ -323,6 +323,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the docking data object. */
+        private static glTowingData __glTowingData;
+        public static glTowingData GLTowingData
+        {
+            get
+            {
+                if (!__glTowingData && ServerObject)
+                    __glTowingData = ServerObject.GetComponent<glTowingData>();
+                return __glTowingData;
+            }
+        }
+
         /** Return the parameter noise data object. */
         private static noiseData _noiseData;
         public static noiseData NoiseData
@@ -438,6 +450,8 @@ namespace Meg.Networking
             "crewbodytemp6",
             "crewetco2min1",
             "crewetco2max1",
+            "crewetco2pattern1",
+            "crewheartpattern1",
             "crewheartrate1",
             "crewheartrate2",
             "crewheartrate3",
@@ -451,6 +465,7 @@ namespace Meg.Networking
             "crewrespirationrate1",
             "crewspo2min1",
             "crewspo2max1",
+            "crewspo2pattern1",
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
@@ -466,6 +481,8 @@ namespace Meg.Networking
             "docking2",
             "docking3",
             "docking4",
+            "dockinggaugeon",
+            "dockinggaugevalue",
             "dockingbuttonenabled",
             "domecenter",
             "domecornerbottomleft",
@@ -646,6 +663,17 @@ namespace Meg.Networking
             "thruster_heat_l",
             "thruster_heat_r",
             "timetointercept",
+            "towtargetx",
+            "towtargety",
+            "towtargetspeed",
+            "towtargetvisible",
+            "towfiringpressure",
+            "towfiringpower",
+            "towfiringstatus",
+            "towlinespeed",
+            "towlinelength",
+            "towlineremaining",
+            "towtargetdistance",
             "towwinchload",
             "v1depth",
             "v1posx",
@@ -822,6 +850,22 @@ namespace Meg.Networking
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
+            { "crewabpmin1", new ParameterInfo { description = "Minimum ambulatory blood pressure."} },
+            { "crewabpmax1", new ParameterInfo { description = "Maximum ambulatory blood pressure."} },
+            { "crewbodytemp1", new ParameterInfo { description = "Current body temperaturefor crew member 1."} },
+            { "crewetco2min1", new ParameterInfo { description = "Minimum end-tidal CO2 level."} },
+            { "crewetco2max1", new ParameterInfo { description = "Maximum end-tidal CO2 level."} },
+            { "crewetco2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for end-tidal CO2 graph."} },
+            { "crewheartpattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for heartrate graph."} },
+            { "crewheartrate1", new ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1."} },
+            { "crewheartstrengthmin1", new ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)."} },
+            { "crewheartstrengthmax1", new ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)."} },
+            { "crewpapmin1", new ParameterInfo { description = "Minimum pulmonary arterial pressure."} },
+            { "crewpapmax1", new ParameterInfo { description = "Maximum pulmonary arterial pressure."} },
+            { "crewrespirationrate1", new ParameterInfo { description = "Current resipiration rate for crew member 1"} },
+            { "crewspo2min1", new ParameterInfo { description = "Minimum Oxygen saturation level."} },
+            { "crewspo2max1", new ParameterInfo { description = "Maximum Oxygen saturation level."} },
+            { "crewspo2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
@@ -838,6 +882,8 @@ namespace Meg.Networking
             { "docking2", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 2."} },
             { "docking3", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 3."} },
             { "docking4", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 4."} },
+            { "dockinggaugeon", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Docking gauge on / off."} },
+            { "dockinggaugevalue", new ParameterInfo { minValue = 0, maxValue = 240, description = "Docking gauge value."} },
             { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
@@ -1008,6 +1054,17 @@ namespace Meg.Networking
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
             { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
+            { "towtargetx", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen x position from bottom left."} },
+            { "towtargety", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen y position from bottom left."} },
+            { "towtargetspeed", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target movement speed."} },
+            { "towtargetvisible", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Tow target visibilty."} },
+            { "towfiringpressure", new ParameterInfo { minValue = 0, maxValue = 12000, description = "Tow firing pressure."} },
+            { "towfiringpower", new ParameterInfo { minValue = 0, maxValue = 100, description = "Tow firing power as percentage."} },
+            { "towfiringstatus", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Tow firing status: 0 = ready, 1 = acquiring, 2 = locked, 3 = fired."} },
+            { "towlinespeed", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Line speed in m/s."} },
+            { "towlinelength", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Total tow line length in metres."} },
+            { "towlineremaining", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Line remaining in metres."} },
+            { "towtargetdistance", new ParameterInfo { minValue = 0, maxValue = 100, description = "Tow target distance in metres."} },
             { "towwinchload", new ParameterInfo { description = "Tow winch load (kg)."} },
             { "variableballastpressure", new ParameterInfo { description = "Variable ballast pressure (psi)."} },
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
@@ -1404,6 +1461,8 @@ namespace Meg.Networking
                     return ServerData.verticalVelocity;
                 case "horizontalvelocity":
                     return ServerData.horizontalVelocity;
+                case "crewheartpattern1":
+                    return CrewData.crewHeartPattern1;
                 case "crewheartrate1":
                     return CrewData.crewHeartRate1;
                 case "crewheartrate2":
@@ -1438,10 +1497,14 @@ namespace Meg.Networking
                     return CrewData.crewETCO2Min1;
                 case "crewetco2max1":
                     return CrewData.crewETCO2Max1;
+                case "crewetco2pattern1":
+                    return CrewData.crewETCO2Pattern1;
                 case "crewspo2min1":
                     return CrewData.crewSPO2Min1;
                 case "crewspo2max1":
                     return CrewData.crewSPO2Max1;
+                case "crewspo2pattern1":
+                    return CrewData.crewSPO2Pattern1;
                 case "crewabpmin1":
                     return CrewData.crewABPMin1;
                 case "crewabpmax1":
@@ -1608,10 +1671,36 @@ namespace Meg.Networking
                     return DockingData.docking3;
                 case "docking4":
                     return DockingData.docking4;
+                case "dockinggaugeon":
+                    return DockingData.dockinggaugeon ? 1 : 0;
+                case "dockinggaugevalue":
+                    return DockingData.dockinggaugevalue;
                 case "bootcodeduration":
                     return PopupData.bootCodeDuration;
                 case "bootprogress":
                     return PopupData.bootProgress;
+                case "towtargetx":
+                    return GLTowingData.towTargetX;
+                case "towtargety":
+                    return GLTowingData.towTargetY;
+                case "towtargetspeed":
+                    return GLTowingData.towTargetSpeed;
+                case "towtargetvisible":
+                    return GLTowingData.towTargetVisible ? 1 : 0;
+                case "towfiringpressure":
+                    return GLTowingData.towFiringPressure;
+                case "towfiringpower":
+                    return GLTowingData.towFiringPower;
+                case "towfiringstatus":
+                    return GLTowingData.towFiringStatus;
+                case "towlinespeed":
+                    return GLTowingData.towLineSpeed;
+                case "towlinelength":
+                    return GLTowingData.towLineLength;
+                case "towlineremaining":
+                    return GLTowingData.towLineRemaining;
+                case "towtargetdistance":
+                    return GLTowingData.towTargetDistance;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

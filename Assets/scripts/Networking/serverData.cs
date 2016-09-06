@@ -270,6 +270,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private glTowingData _glTowingData;
+    public glTowingData GLTowingData
+    {
+        get
+        {
+            if (!_glTowingData)
+                _glTowingData = GetComponent<glTowingData>();
+            return _glTowingData;
+        }
+    }
+
     private popupData _popupData;
     public popupData PopupData
     {
@@ -780,6 +791,9 @@ public class serverData : NetworkBehaviour
             case "crewbodytemp6":
                 CrewData.crewBodyTemp6 = newValue;
                 break;
+            case "crewheartpattern1":
+                CrewData.crewHeartPattern1 = newValue;
+                break;
             case "crewheartstrengthmin1":
                 CrewData.crewHeartStrengthMin1 = newValue;
                 break;
@@ -795,11 +809,17 @@ public class serverData : NetworkBehaviour
             case "crewetco2max1":
                 CrewData.crewETCO2Max1 = newValue;
                 break;
+            case "crewetco2pattern1":
+                CrewData.crewETCO2Pattern1 = newValue;
+                break;
             case "crewspo2min1":
                 CrewData.crewSPO2Min1 = newValue;
                 break;
             case "crewspo2max1":
                 CrewData.crewSPO2Max1 = newValue;
+                break;
+            case "crewspo2pattern1":
+                CrewData.crewSPO2Pattern1 = newValue;
                 break;
             case "crewabpmin1":
                 CrewData.crewABPMin1 = newValue;
@@ -1083,11 +1103,50 @@ public class serverData : NetworkBehaviour
             case "docking4":
                 DockingData.docking4 = (int)newValue;
                 break;
+            case "dockinggaugeon":
+                DockingData.dockinggaugeon = newValue > 0;
+                break;
+            case "dockinggaugevalue":
+                DockingData.dockinggaugevalue = newValue;
+                break;
             case "bootcodeduration":
                 PopupData.bootCodeDuration = newValue;
                 break;
             case "bootprogress":
                 PopupData.bootProgress = newValue;
+                break;
+            case "towtargetx":
+                GLTowingData.towTargetX = newValue;
+                break;
+            case "towtargety":
+                GLTowingData.towTargetY = newValue;
+                break;
+            case "towtargetspeed":
+                GLTowingData.towTargetSpeed = newValue;
+                break;
+            case "towtargetvisible":
+                GLTowingData.towTargetVisible = newValue > 0;
+                break;
+            case "towfiringpressure":
+                GLTowingData.towFiringPressure = newValue;
+                break;
+            case "towfiringpower":
+                GLTowingData.towFiringPower = newValue;
+                break;
+            case "towfiringstatus":
+                GLTowingData.towFiringStatus = newValue;
+                break;
+            case "towlinespeed":
+                GLTowingData.towLineSpeed = newValue;
+                break;
+            case "towlinelength":
+                GLTowingData.towLineLength = newValue;
+                break;
+            case "towlineremaining":
+                GLTowingData.towLineRemaining = newValue;
+                break;
+            case "towtargetdistance":
+                GLTowingData.towTargetDistance = newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);

@@ -16,4 +16,10 @@ public class dockingData : NetworkBehaviour
 
     [SyncVar]
     public int docking4 = 0;
+
+    [SyncVar]
+    public bool dockinggaugeon;
+
+    [SyncVar]
+    public float dockinggaugevalue = 0;
 }
