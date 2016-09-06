@@ -41,6 +41,9 @@ public class MMBMonitorGraph : MonoBehaviour
     /** Server parameter controlling the curve's maximum amplitude (optional). */
     public string MaxParameter = "";
 
+    /** Server parameter controlling the which curve pattern to draw from. */
+    public string PatternParameter = "";
+
 
     [Header("Dimensions")]
 
@@ -60,6 +63,9 @@ public class MMBMonitorGraph : MonoBehaviour
 
     /** Curve defining the shape of a single cycle. */
     public AnimationCurve Shape;
+
+    /** Optional extra curves to blend between based on pattern index. */
+    public AnimationCurve[] Patterns;
 
     /** Curve defining the line's color as it ages. */
     public Gradient ColorForAge;
@@ -127,19 +133,45 @@ public class MMBMonitorGraph : MonoBehaviour
         var rate = serverUtils.GetServerData(RateParameter, DefaultRate);
         var min = serverUtils.GetServerData(MinParameter, DefaultMin);
         var max = serverUtils.GetServerData(MaxParameter, DefaultMax);
+        var pattern = serverUtils.GetServerData(PatternParameter, 0);
         if (rate <= 0)
             return min;
 
         // Convert from cycles/minute to cycles/second.
         var speed = rate / 60;
-
         _t = Mathf.Repeat(_t + (speed * dt), 1);
-        var s = Shape.Evaluate(_t);
+
+        // Get a blended sample from our set of patterns.
+        var s = SamplePattern(_t, pattern);
 
         // Add in some noise.
         s += Noise.Update();
 
         return graphicsMaths.remapValue(s, 0, 1, min, max);
+    }
+
+    /** Sample the signal curve according to pattern index. */
+    private float SamplePattern(float t, float pattern)
+    {
+        // Determine indices of the two curves to blend between.
+        var ai = Mathf.Clamp(Mathf.FloorToInt(pattern), 0, Patterns.Length - 1);
+        var bi = Mathf.Clamp(Mathf.CeilToInt(pattern), 0, Patterns.Length - 1);
+
+        // Get the two sample values to blend between.
+        var a = CurveForIndex(ai).Evaluate(t);
+        var b = CurveForIndex(bi).Evaluate(t);
+        var s = Mathf.Clamp01(pattern - Mathf.FloorToInt(pattern));
+
+        return Mathf.Lerp(a, b, s);
+    }
+
+    /** Return a curve to use based on index. */
+    private AnimationCurve CurveForIndex(int i)
+    {
+        if (i >= 0 && i < Patterns.Length)
+            return Patterns[i];
+
+        return Shape;
     }
 
     /** Initialize the line component. */

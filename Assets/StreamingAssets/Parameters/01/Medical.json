@@ -1,40 +1,8 @@
 {
 	"groups":[
 		{
-			"id":"MEDICAL BAY MONITOR FEED",
+			"id":"MMB PRESSURES",
 			"parameters":[
-				{
-					"type":"Value",
-					"serverParam":"crewheartrate1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewHeartStrengthMin1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewHeartStrengthMax1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewrespirationrate1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewetco2min1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewetco2max1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewspo2min1"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewspo2max1"
-				},
 				{
 					"type":"Value",
 					"serverParam":"crewabpmin1"
@@ -50,6 +18,60 @@
 				{
 					"type":"Value",
 					"serverParam":"crewpapmax1"
+				}
+			]
+		},
+		{
+			"id":"MMB HEART RATE",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"crewheartrate1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartpattern1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax1"
+				}
+			]
+		},
+		{
+			"id":"MMB RESPIRATION",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern1"
 				}
 			]
 		}
