@@ -36,6 +36,9 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
     /** Timeout for resetting recent press count back to zero (seconds). */
     public float pressesTimeout = 5;
 
+    /** Whether button closes debug screen when it's open. */
+    public bool canToggleOff;
+
     /** Number of presses needed to activate the debug screen on the local machine. */
     private int pressesToActivate
     {
@@ -98,7 +101,7 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
 
         // Deactivate when screen has some assigned content.
         var player = serverUtils.LocalPlayer;
-        if (player && player.ScreenState.Content != screenData.Content.Debug)
+        if (_presses == 0 && player && player.ScreenState.Content != screenData.Content.Debug)
             Deactivate();
     }
 
@@ -144,15 +147,16 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
     /** Handle the debug button being pressed. */
     private void OnDebugButtonPressed()
     {
-        if (debugVisGroup.activeSelf)
-            return;
-
         _presses++;
         _pressResetTime = Time.time + _pressResetTime;
-        if (_presses < pressesToActivate)
-            return;
 
-        Activate();
+        if (debugVisGroup.activeSelf)
+        {
+            if (canToggleOff && _presses > pressesToActivate)
+                Toggle();
+        }
+        else if (_presses > pressesToActivate)
+            Activate();
     }
 
     /** Handle a screen navigation button being pressed. */

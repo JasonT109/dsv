@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"06/09/16 04:57:28.2",
-		"startedTimestamp":"06/09/16 04:56:50.9",
-		"stoppedTimestamp":"06/09/16 04:57:24.4"
+		"utc":"06/09/16 05:02:09.2",
+		"startedTimestamp":"06/09/16 04:59:52.5",
+		"stoppedTimestamp":"06/09/16 05:00:34.2"
 	},
 	"groups":[
 		{
@@ -130,6 +130,20 @@
 					"type":"Value",
 					"triggerTime":2.5,
 					"serverParam":"genericerror",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2,
+					"completeTime":10,
+					"serverParam":"crewspo2max1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.5,
+					"completeTime":12,
+					"serverParam":"crewetco2max1",
 					"serverValue":0
 				}
 			],

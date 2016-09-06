@@ -450,6 +450,8 @@ namespace Meg.Networking
             "crewbodytemp6",
             "crewetco2min1",
             "crewetco2max1",
+            "crewetco2pattern1",
+            "crewheartpattern1",
             "crewheartrate1",
             "crewheartrate2",
             "crewheartrate3",
@@ -463,6 +465,7 @@ namespace Meg.Networking
             "crewrespirationrate1",
             "crewspo2min1",
             "crewspo2max1",
+            "crewspo2pattern1",
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
@@ -845,6 +848,22 @@ namespace Meg.Networking
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
+            { "crewabpmin1", new ParameterInfo { description = "Minimum ambulatory blood pressure."} },
+            { "crewabpmax1", new ParameterInfo { description = "Maximum ambulatory blood pressure."} },
+            { "crewbodytemp1", new ParameterInfo { description = "Current body temperaturefor crew member 1."} },
+            { "crewetco2min1", new ParameterInfo { description = "Minimum end-tidal CO2 level."} },
+            { "crewetco2max1", new ParameterInfo { description = "Maximum end-tidal CO2 level."} },
+            { "crewetco2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for end-tidal CO2 graph."} },
+            { "crewheartpattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for heartrate graph."} },
+            { "crewheartrate1", new ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1."} },
+            { "crewheartstrengthmin1", new ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)."} },
+            { "crewheartstrengthmax1", new ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)."} },
+            { "crewpapmin1", new ParameterInfo { description = "Minimum pulmonary arterial pressure."} },
+            { "crewpapmax1", new ParameterInfo { description = "Maximum pulmonary arterial pressure."} },
+            { "crewrespirationrate1", new ParameterInfo { description = "Current resipiration rate for crew member 1"} },
+            { "crewspo2min1", new ParameterInfo { description = "Minimum Oxygen saturation level."} },
+            { "crewspo2max1", new ParameterInfo { description = "Maximum Oxygen saturation level."} },
+            { "crewspo2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
@@ -1438,6 +1457,8 @@ namespace Meg.Networking
                     return ServerData.verticalVelocity;
                 case "horizontalvelocity":
                     return ServerData.horizontalVelocity;
+                case "crewheartpattern1":
+                    return CrewData.crewHeartPattern1;
                 case "crewheartrate1":
                     return CrewData.crewHeartRate1;
                 case "crewheartrate2":
@@ -1472,10 +1493,14 @@ namespace Meg.Networking
                     return CrewData.crewETCO2Min1;
                 case "crewetco2max1":
                     return CrewData.crewETCO2Max1;
+                case "crewetco2pattern1":
+                    return CrewData.crewETCO2Pattern1;
                 case "crewspo2min1":
                     return CrewData.crewSPO2Min1;
                 case "crewspo2max1":
                     return CrewData.crewSPO2Max1;
+                case "crewspo2pattern1":
+                    return CrewData.crewSPO2Pattern1;
                 case "crewabpmin1":
                     return CrewData.crewABPMin1;
                 case "crewabpmax1":

@@ -37,15 +37,21 @@ public class crewData : NetworkBehaviour
     [SyncVar]
     public float crewHeartStrengthMax1 = 100f;
     [SyncVar]
+    public float crewHeartPattern1 = 0f;
+    [SyncVar]
     public float crewRespirationRate1 = 20f;
     [SyncVar]
     public float crewETCO2Min1 = 0f;
     [SyncVar]
     public float crewETCO2Max1 = 38f;
     [SyncVar]
+    public float crewETCO2Pattern1 = 0f;
+    [SyncVar]
     public float crewSPO2Min1 = 0f;
     [SyncVar]
     public float crewSPO2Max1 = 38f;
+    [SyncVar]
+    public float crewSPO2Pattern1 = 0f;
     [SyncVar]
     public float crewABPMin1 = 82f;
     [SyncVar]

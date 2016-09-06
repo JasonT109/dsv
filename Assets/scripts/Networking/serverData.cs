@@ -791,6 +791,9 @@ public class serverData : NetworkBehaviour
             case "crewbodytemp6":
                 CrewData.crewBodyTemp6 = newValue;
                 break;
+            case "crewheartpattern1":
+                CrewData.crewHeartPattern1 = newValue;
+                break;
             case "crewheartstrengthmin1":
                 CrewData.crewHeartStrengthMin1 = newValue;
                 break;
@@ -806,11 +809,17 @@ public class serverData : NetworkBehaviour
             case "crewetco2max1":
                 CrewData.crewETCO2Max1 = newValue;
                 break;
+            case "crewetco2pattern1":
+                CrewData.crewETCO2Pattern1 = newValue;
+                break;
             case "crewspo2min1":
                 CrewData.crewSPO2Min1 = newValue;
                 break;
             case "crewspo2max1":
                 CrewData.crewSPO2Max1 = newValue;
+                break;
+            case "crewspo2pattern1":
+                CrewData.crewSPO2Pattern1 = newValue;
                 break;
             case "crewabpmin1":
                 CrewData.crewABPMin1 = newValue;
