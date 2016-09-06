@@ -30,6 +30,10 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Name of the scene containing DCC screens. */
     public const string DccScene = "screen_dcc";
 
+    /** Name of the scene containing MMB (Medical Bay) screens. */
+    public const string MmbScene = "screen_mmb";
+
+
 
     // Properties
     // ------------------------------------------------------------
@@ -152,6 +156,10 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Whether we're in the glider scene. */
     public static bool IsInDcc
         { get { return IsInScene(DccScene); } }
+
+    /** Whether we're in the Medical Bay scene. */
+    public static bool IsInMmb
+        { get { return IsInScene(MmbScene); } }
 
     /** Whether we're in a given scene. */
     public static bool IsInScene(string scene)

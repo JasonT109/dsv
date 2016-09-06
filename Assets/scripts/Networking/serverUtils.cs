@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.3";
+        public const string Version = "1.1.4";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -428,18 +428,29 @@ namespace Meg.Networking
             "co2",
             "co2ppm",
             "commssignalstrength",
+            "crewabpmin1",
+            "crewabpmax1",
             "crewbodytemp1",
             "crewbodytemp2",
             "crewbodytemp3",
             "crewbodytemp4",
             "crewbodytemp5",
             "crewbodytemp6",
+            "crewetco2min1",
+            "crewetco2max1",
             "crewheartrate1",
             "crewheartrate2",
             "crewheartrate3",
             "crewheartrate4",
             "crewheartrate5",
             "crewheartrate6",
+            "crewheartstrengthmin1",
+            "crewheartstrengthmax1",
+            "crewpapmin1",
+            "crewpapmax1",
+            "crewrespirationrate1",
+            "crewspo2min1",
+            "crewspo2max1",
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
@@ -1417,6 +1428,28 @@ namespace Meg.Networking
                     return CrewData.crewBodyTemp5;
                 case "crewbodytemp6":
                     return CrewData.crewBodyTemp6;
+                case "crewheartstrengthmin1":
+                    return CrewData.crewHeartStrengthMin1;
+                case "crewheartstrengthmax1":
+                    return CrewData.crewHeartStrengthMax1;
+                case "crewrespirationrate1":
+                    return CrewData.crewRespirationRate1;
+                case "crewetco2min1":
+                    return CrewData.crewETCO2Min1;
+                case "crewetco2max1":
+                    return CrewData.crewETCO2Max1;
+                case "crewspo2min1":
+                    return CrewData.crewSPO2Min1;
+                case "crewspo2max1":
+                    return CrewData.crewSPO2Max1;
+                case "crewabpmin1":
+                    return CrewData.crewABPMin1;
+                case "crewabpmax1":
+                    return CrewData.crewABPMax1;
+                case "crewpapmin1":
+                    return CrewData.crewPAPMin1;
+                case "crewpapmax1":
+                    return CrewData.crewPAPMax1;
                 case "playervessel":
                     return VesselData.PlayerVessel;
                 case "initiatemapevent":
