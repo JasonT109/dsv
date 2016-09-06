@@ -1,0 +1,33 @@
+{
+	"groups":[
+		{
+			"id":"DOCKING",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"dockinggaugeon"
+				},
+				{
+					"type":"Value",
+					"serverParam":"dockinggaugevalue"
+				},
+				{
+					"type":"Value",
+					"serverParam":"docking1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"docking2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"docking3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"docking4"
+				}
+			]
+		}
+	]
+}

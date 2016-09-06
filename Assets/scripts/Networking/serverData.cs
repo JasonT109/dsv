@@ -1094,6 +1094,12 @@ public class serverData : NetworkBehaviour
             case "docking4":
                 DockingData.docking4 = (int)newValue;
                 break;
+            case "dockinggaugeon":
+                DockingData.dockinggaugeon = newValue > 0;
+                break;
+            case "dockinggaugevalue":
+                DockingData.dockinggaugevalue = newValue;
+                break;
             case "bootcodeduration":
                 PopupData.bootCodeDuration = newValue;
                 break;

@@ -478,6 +478,8 @@ namespace Meg.Networking
             "docking2",
             "docking3",
             "docking4",
+            "dockinggaugeon",
+            "dockinggaugevalue",
             "dockingbuttonenabled",
             "domecenter",
             "domecornerbottomleft",
@@ -861,6 +863,8 @@ namespace Meg.Networking
             { "docking2", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 2."} },
             { "docking3", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 3."} },
             { "docking4", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Docking sequence 4."} },
+            { "dockinggaugeon", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Docking gauge on / off."} },
+            { "dockinggaugevalue", new ParameterInfo { minValue = 0, maxValue = 240, description = "Docking gauge value."} },
             { "domecenter", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomleft", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
             { "domecornerbottomright", new ParameterInfo { minValue = 0, maxValue = 12, type = ParameterType.Int, description = domeData.HudDescription } },
@@ -1642,6 +1646,10 @@ namespace Meg.Networking
                     return DockingData.docking3;
                 case "docking4":
                     return DockingData.docking4;
+                case "dockinggaugeon":
+                    return DockingData.dockinggaugeon ? 1 : 0;
+                case "dockinggaugevalue":
+                    return DockingData.dockinggaugevalue;
                 case "bootcodeduration":
                     return PopupData.bootCodeDuration;
                 case "bootprogress":
