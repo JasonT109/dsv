@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,7 @@ public class PasswordScreen : MonoBehaviour
     public Image GliderButtonImg;
     public Image BigSubButtonImg;
     public Image DCCButtonImg;
+    public Image MMBButtonImg;
 
     public GameObject StartButtonObj;
     public Text StartButtonText;
@@ -51,6 +53,7 @@ public class PasswordScreen : MonoBehaviour
 
     private bool _client = true;
     private NetworkManagerCustom _manager;
+    private readonly List<Image> _sceneButtonImages = new List<Image>();
 
 
     // Unity Methods
@@ -60,6 +63,11 @@ public class PasswordScreen : MonoBehaviour
     {
         Debug.Log("PasswordScreen.Start()");
         _manager = ObjectFinder.Find<NetworkManagerCustom>();
+
+        _sceneButtonImages.Add(GliderButtonImg);
+        _sceneButtonImages.Add(BigSubButtonImg);
+        _sceneButtonImages.Add(DCCButtonImg);
+        _sceneButtonImages.Add(MMBButtonImg);
 
         var scene = _manager.Scene;
         var host = _manager.Host;
@@ -79,6 +87,8 @@ public class PasswordScreen : MonoBehaviour
             ToggleGlider();
         else if (scene == NetworkManagerCustom.DccScene)
             ToggleDCC();
+        else if (scene == NetworkManagerCustom.MmbScene)
+            ToggleMMB();
         else
             ToggleBigSub();
 
@@ -131,31 +141,41 @@ public class PasswordScreen : MonoBehaviour
     public void ToggleGlider()
     {
         Debug.Log("PasswordScreen.ToggleGlider() - Configuring UI for Glider mode.");
+        ResetSceneSelection();
         GliderButtonImg.color = SelectedColor;
-        BigSubButtonImg.color = UnselectedColor;
-        DCCButtonImg.color = UnselectedColor;
-        StationRoot.gameObject.SetActive(false);
         _manager.SetScene(NetworkManagerCustom.GliderScene);
     }
 
     public void ToggleBigSub()
     {
         Debug.Log("PasswordScreen.ToggleBigSub() - Configuring UI for main sub mode.");
-        GliderButtonImg.color = UnselectedColor;
+        ResetSceneSelection();
         BigSubButtonImg.color = SelectedColor;
-        DCCButtonImg.color = UnselectedColor;
-        StationRoot.gameObject.SetActive(false);
         _manager.SetScene(NetworkManagerCustom.BigSubScene);
     }
 
     public void ToggleDCC()
     {
         Debug.Log("PasswordScreen.ToggleDCC() - Configuring UI for DCC mode.");
-        GliderButtonImg.color = UnselectedColor;
-        BigSubButtonImg.color = UnselectedColor;
+        ResetSceneSelection();
         DCCButtonImg.color = SelectedColor;
         StationRoot.gameObject.SetActive(true);
         _manager.SetScene(NetworkManagerCustom.DccScene);
+    }
+
+    public void ToggleMMB()
+    {
+        Debug.Log("PasswordScreen.ToggleBigSub() - Configuring UI for Medical Bay (MMB) mode.");
+        ResetSceneSelection();
+        MMBButtonImg.color = SelectedColor;
+        _manager.SetScene(NetworkManagerCustom.MmbScene);
+    }
+
+    private void ResetSceneSelection()
+    {
+        StationRoot.gameObject.SetActive(false);
+        foreach (var image in _sceneButtonImages)
+            image.color = UnselectedColor;
     }
 
     public void UpdateStationId(string value)
