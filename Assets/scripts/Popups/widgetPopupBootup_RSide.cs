@@ -67,6 +67,7 @@ public class widgetPopupBootup_RSide : widgetPopup
         Flash.gameObject.SetActive(false);
         Burst.gameObject.SetActive(false);
 
+
         // Jump to a black screen briefly.
         Logo.gameObject.SetActive(false);
         Black.gameObject.SetActive(true);
