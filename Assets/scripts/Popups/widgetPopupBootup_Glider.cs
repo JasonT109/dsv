@@ -15,7 +15,7 @@ public class widgetPopupBootup_Glider : widgetPopup
     public CanvasGroup Flash;
     public CanvasGroup Burst;
     public CanvasGroup Black;
-    public CanvasGroup LogoPause;
+
 
 
     public CanvasGroup Code1;
@@ -24,11 +24,11 @@ public class widgetPopupBootup_Glider : widgetPopup
 
 
     public GameObject SystemOnline;
-    public CanvasGroup SystemOnlinePause;
+
 
     public CanvasGroup Online;
     public CanvasGroup FinalPop;
-    public CanvasGroup FinalPopPause;
+
 
     [Header("Server Data")]
     public string serverString = "genericerror";
@@ -69,9 +69,7 @@ public class widgetPopupBootup_Glider : widgetPopup
         FinalPop.gameObject.SetActive(false);
 
         //Pause Screens.
-        LogoPause.gameObject.SetActive(false);
-        SystemOnlinePause.gameObject.SetActive(false);
-        FinalPopPause.gameObject.SetActive(false);
+  
 
         StartCoroutine(BootupRoutine());
     }
@@ -80,14 +78,6 @@ public class widgetPopupBootup_Glider : widgetPopup
     private IEnumerator BootupRoutine()
     {
         
-
-       if (serverUtils.GetServerData("bootProgress") < 0.1)
-        {
-            Black.gameObject.SetActive(true);
-        }
-
-       else
-        {
             // Wait a bit on the boot screen
             yield return new WaitForSeconds(1f);
 
@@ -109,17 +99,8 @@ public class widgetPopupBootup_Glider : widgetPopup
             yield return new WaitForSeconds(0.25f);
             Black.gameObject.SetActive(false);
 
-        }
 
-
-        if (serverUtils.GetServerData("bootProgress") < 0.2)
-        {
-            LogoPause.gameObject.SetActive(true);
-        }
-        else
-        {
             // Start the codes display sequence.
-            LogoPause.gameObject.SetActive(false);
             Code1.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.35f);
             Code2.gameObject.SetActive(true);
@@ -129,19 +110,12 @@ public class widgetPopupBootup_Glider : widgetPopup
             Code1.gameObject.SetActive(false);
             Code2.gameObject.SetActive(false);
             Code3.gameObject.SetActive(false);
-        }
+ 
 
 
         // Hide everything.
 
-        if (serverUtils.GetServerData("bootProgress") < 0.3)
-        {
-            Black.gameObject.SetActive(false);
-            Online.gameObject.SetActive(false);
-        }
-        
-        else
-        {
+
             Backdrop.gameObject.SetActive(false);
             Logo.gameObject.SetActive(false);
             Black.gameObject.SetActive(false);
@@ -152,32 +126,13 @@ public class widgetPopupBootup_Glider : widgetPopup
             yield return new WaitForSeconds(5f);
             SystemOnline.gameObject.SetActive(false);
             Online.gameObject.SetActive(false);
-        }
 
-
-        //show final pop up
-        if (serverUtils.GetServerData("bootProgress") < 0.4)
-        {
-            SystemOnlinePause.gameObject.SetActive(true);
-        }
-
-        else
-        {
             FinalPop.gameObject.SetActive(true);
             Backdrop.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.5f);
             Backdrop.gameObject.SetActive(false);
             FinalPop.gameObject.SetActive(false);
-        }
 
-
-        if (serverUtils.GetServerData("bootProgress") < 0.5)
-        {
-            FinalPopPause.gameObject.SetActive(true);
-        }
-
-        else
-        {
             // Show online graphic.
             Backdrop.gameObject.SetActive(false);
             Online.gameObject.SetActive(false);
@@ -202,11 +157,9 @@ public class widgetPopupBootup_Glider : widgetPopup
             SystemOnline.gameObject.SetActive(false);
             Online.gameObject.SetActive(false);
             FinalPop.gameObject.SetActive(false);
-            LogoPause.gameObject.SetActive(false);
-            SystemOnlinePause.gameObject.SetActive(false);
-            FinalPopPause.gameObject.SetActive(false);
+
             gameObject.SetActive(false);
-        }
+
 
 
 
