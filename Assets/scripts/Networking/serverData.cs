@@ -791,6 +791,39 @@ public class serverData : NetworkBehaviour
             case "crewbodytemp6":
                 CrewData.crewBodyTemp6 = newValue;
                 break;
+            case "crewheartstrengthmin1":
+                CrewData.crewHeartStrengthMin1 = newValue;
+                break;
+            case "crewheartstrengthmax1":
+                CrewData.crewHeartStrengthMax1 = newValue;
+                break;
+            case "crewrespirationrate1":
+                CrewData.crewRespirationRate1 = newValue;
+                break;
+            case "crewetco2min1":
+                CrewData.crewETCO2Min1 = newValue;
+                break;
+            case "crewetco2max1":
+                CrewData.crewETCO2Max1 = newValue;
+                break;
+            case "crewspo2min1":
+                CrewData.crewSPO2Min1 = newValue;
+                break;
+            case "crewspo2max1":
+                CrewData.crewSPO2Max1 = newValue;
+                break;
+            case "crewabpmin1":
+                CrewData.crewABPMin1 = newValue;
+                break;
+            case "crewabpmax1":
+                CrewData.crewABPMax1 = newValue;
+                break;
+            case "crewpapmin1":
+                CrewData.crewPAPMin1 = newValue;
+                break;
+            case "crewpapmax1":
+                CrewData.crewPAPMax1 = newValue;
+                break;
             case "posx":
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
                 break;

@@ -1,0 +1,49 @@
+{
+	"metadata":{
+		"utc":"06/09/16 04:42:19.6",
+		"startedTimestamp":"06/09/16 04:40:56.4",
+		"stoppedTimestamp":"06/09/16 04:41:29.0"
+	},
+	"groups":[
+		{
+			"id":"Group",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"Stage0",
+					"triggerHotKey":"Stage0",
+					"serverParam":"bootProgress",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Stage1",
+					"triggerHotKey":"Stage1",
+					"serverParam":"BootProgress",
+					"serverValue":2
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Stage2",
+					"triggerHotKey":"Stage2",
+					"serverParam":"bootprogress",
+					"serverValue":3
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Stage3",
+					"triggerHotKey":"Stage3",
+					"serverParam":"bootprogress",
+					"serverValue":4
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Stage4",
+					"triggerHotKey":"Stage4",
+					"serverParam":"bootprogress",
+					"serverValue":5
+				}
+			]
+		}
+	]
+}

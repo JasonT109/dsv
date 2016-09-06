@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using Meg.Networking;
@@ -17,6 +17,7 @@ public class crewData : NetworkBehaviour
     public float crewHeartRate5 = 86f;
     [SyncVar]
     public float crewHeartRate6 = 86f;
+
     [SyncVar]
     public float crewBodyTemp1 = 36.5f;
     [SyncVar]
@@ -29,4 +30,29 @@ public class crewData : NetworkBehaviour
     public float crewBodyTemp5 = 36.5f;
     [SyncVar]
     public float crewBodyTemp6 = 36.5f;
+
+    /** Extra information for Medical bay (MMB). */
+    [SyncVar]
+    public float crewHeartStrengthMin1 = 0f;
+    [SyncVar]
+    public float crewHeartStrengthMax1 = 100f;
+    [SyncVar]
+    public float crewRespirationRate1 = 20f;
+    [SyncVar]
+    public float crewETCO2Min1 = 0f;
+    [SyncVar]
+    public float crewETCO2Max1 = 38f;
+    [SyncVar]
+    public float crewSPO2Min1 = 0f;
+    [SyncVar]
+    public float crewSPO2Max1 = 38f;
+    [SyncVar]
+    public float crewABPMin1 = 82f;
+    [SyncVar]
+    public float crewABPMax1 = 125f;
+    [SyncVar]
+    public float crewPAPMin1 = 10f;
+    [SyncVar]
+    public float crewPAPMax1 = 26f;
+
 }

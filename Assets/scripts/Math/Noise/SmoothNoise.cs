@@ -50,7 +50,13 @@ public class SmoothNoise
     /** Updating. */
     public virtual float Update()
     {
-        if (Time.time >= _nextSampleTime)
+        return Update(Time.time);
+    }
+
+    /** Updating. */
+    public virtual float Update(float t)
+    {
+        if (t >= _nextSampleTime)
             Sample();
 
         Value = Mathf.SmoothDamp(Value, _target, ref _valueVelocity, SmoothTime);

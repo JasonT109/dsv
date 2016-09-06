@@ -67,6 +67,7 @@ public class widgetPopupBootup_RSide : widgetPopup
         Flash.gameObject.SetActive(false);
         Burst.gameObject.SetActive(false);
 
+
         // Jump to a black screen briefly.
         Logo.gameObject.SetActive(false);
         Black.gameObject.SetActive(true);
@@ -81,7 +82,7 @@ public class widgetPopupBootup_RSide : widgetPopup
 
         Logo.gameObject.SetActive(true);
         Backdrop.gameObject.SetActive(true);
-        yield return new WaitForSeconds(7f);
+        yield return new WaitForSeconds(6.25f);
         Logo.gameObject.SetActive(false);
         Backdrop.gameObject.SetActive(false);
 
