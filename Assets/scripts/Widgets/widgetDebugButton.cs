@@ -92,7 +92,7 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
             return;
             
         // Reset the press counter after a period of inactivity.
-        if (Time.time >= _pressResetTime)
+        if (_presses > 0 && Time.time >= _pressResetTime)
             _presses = 0;
 
         // Keyboard shortcut for the debug menu.
@@ -148,7 +148,7 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
     private void OnDebugButtonPressed()
     {
         _presses++;
-        _pressResetTime = Time.time + _pressResetTime;
+        _pressResetTime = Time.time + pressesTimeout;
 
         if (debugVisGroup.activeSelf)
         {
