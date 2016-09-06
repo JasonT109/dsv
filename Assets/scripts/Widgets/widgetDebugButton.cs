@@ -152,10 +152,10 @@ public class widgetDebugButton : Singleton<widgetDebugButton>
 
         if (debugVisGroup.activeSelf)
         {
-            if (canToggleOff && _presses > pressesToActivate)
+            if (canToggleOff && _presses >= pressesToActivate)
                 Toggle();
         }
-        else if (_presses > pressesToActivate)
+        else if (_presses >= pressesToActivate)
             Activate();
     }
 

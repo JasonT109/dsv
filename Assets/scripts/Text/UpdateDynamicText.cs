@@ -8,6 +8,9 @@ public class UpdateDynamicText : MonoBehaviour
     public bool scaleTextMinSize = false;
     public int minTextSize = 19;
 
+    public bool updateContinuously;
+    public float updateInterval = 0;
+
     public const int maxTextSize = 64;
 
     void OnEnable()
@@ -42,6 +45,15 @@ public class UpdateDynamicText : MonoBehaviour
         yield return new WaitForSeconds(RegenerateExtraInterval);
         foreach (var text in texts)
             text.GenerateMesh();
+
+        // Update continuously over time if desired.
+        var wait = new WaitForSeconds(updateInterval);
+        while (updateContinuously)
+        {
+            yield return wait;
+            foreach (var text in texts)
+                text.GenerateMesh();
+        }
     }
 
     void UpdateTextSize()
