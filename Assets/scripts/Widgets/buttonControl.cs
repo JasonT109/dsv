@@ -25,6 +25,7 @@ public class buttonControl : MonoBehaviour
 
     [Header("Appearance")]
     public Color[] colorTheme;
+    public bool useSharedTheme = true;
     public float Brightness = 1;
     public DynamicText optionalLabel;
     public string labelInactiveText;
@@ -391,8 +392,11 @@ public class buttonControl : MonoBehaviour
 
     public void updateColor()
     {
-        colorScheme = serverUtils.GetColorTheme();
-        colorTheme[1] = colorScheme.keyColor;
+        if (useSharedTheme)
+        {
+            colorScheme = serverUtils.GetColorTheme();
+            colorTheme[1] = colorScheme.keyColor;
+        }
 
         if (active && !warning && !pressed)
             Color = GetThemeColor(1);
