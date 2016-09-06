@@ -214,7 +214,7 @@ namespace Meg.EventSystem
             if (hasTrigger)
                 json.AddField("triggerLabel", triggerLabel);
             if (hasTriggerHotKey)
-                json.AddField("triggerHotKey", triggerLabel);
+                json.AddField("triggerHotKey", triggerHotKey);
 
             return json;
         }
