@@ -323,6 +323,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the docking data object. */
+        private static glTowingData __glTowingData;
+        public static glTowingData GLTowingData
+        {
+            get
+            {
+                if (!__glTowingData && ServerObject)
+                    __glTowingData = ServerObject.GetComponent<glTowingData>();
+                return __glTowingData;
+            }
+        }
+
         /** Return the parameter noise data object. */
         private static noiseData _noiseData;
         public static noiseData NoiseData
@@ -635,6 +647,17 @@ namespace Meg.Networking
             "thruster_heat_l",
             "thruster_heat_r",
             "timetointercept",
+            "towtargetx",
+            "towtargety",
+            "towtargetspeed",
+            "towtargetvisible",
+            "towfiringpressure",
+            "towfiringpower",
+            "towfiringstatus",
+            "towlinespeed",
+            "towlinelength",
+            "towlineremaining",
+            "towtargetdistance",
             "towwinchload",
             "v1depth",
             "v1posx",
@@ -997,6 +1020,17 @@ namespace Meg.Networking
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
             { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
+            { "towtargetx", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen x position from bottom left."} },
+            { "towtargety", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen y position from bottom left."} },
+            { "towtargetspeed", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target movement speed."} },
+            { "towtargetvisible", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Tow target visibilty."} },
+            { "towfiringpressure", new ParameterInfo { minValue = 0, maxValue = 12000, description = "Tow firing pressure."} },
+            { "towfiringpower", new ParameterInfo { minValue = 0, maxValue = 100, description = "Tow firing power as percentage."} },
+            { "towfiringstatus", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Tow firing status: 0 = ready, 1 = acquiring, 2 = locked, 3 = fired."} },
+            { "towlinespeed", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Line speed in m/s."} },
+            { "towlinelength", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Total tow line length in metres."} },
+            { "towlineremaining", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Line remaining in metres."} },
+            { "towtargetdistance", new ParameterInfo { minValue = 0, maxValue = 100, description = "Tow target distance in metres."} },
             { "towwinchload", new ParameterInfo { description = "Tow winch load (kg)."} },
             { "variableballastpressure", new ParameterInfo { description = "Variable ballast pressure (psi)."} },
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
@@ -1579,6 +1613,28 @@ namespace Meg.Networking
                     return PopupData.bootCodeDuration;
                 case "bootprogress":
                     return PopupData.bootProgress;
+                case "towtargetx":
+                    return GLTowingData.towTargetX;
+                case "towtargety":
+                    return GLTowingData.towTargetY;
+                case "towtargetspeed":
+                    return GLTowingData.towTargetSpeed;
+                case "towtargetvisible":
+                    return GLTowingData.towTargetVisible ? 1 : 0;
+                case "towfiringpressure":
+                    return GLTowingData.towFiringPressure;
+                case "towfiringpower":
+                    return GLTowingData.towFiringPower;
+                case "towfiringstatus":
+                    return GLTowingData.towFiringStatus;
+                case "towlinespeed":
+                    return GLTowingData.towLineSpeed;
+                case "towlinelength":
+                    return GLTowingData.towLineLength;
+                case "towlineremaining":
+                    return GLTowingData.towLineRemaining;
+                case "towtargetdistance":
+                    return GLTowingData.towTargetDistance;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

@@ -1,86 +1,103 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Networking;
+using Meg.Maths;
 
-public class widgetTowTarget : MonoBehaviour {
+public class widgetTowTarget : MonoBehaviour
+{
 
-    //amount we can move on x
-    public float amountX = 0.0f;
-    //max deviation from start point
-    public float maxX = 10f;
-    //amount we can move on y
-    public float amountY = 0.0f;
-    //max deviation from start point
-    public float maxY = 10f;
-    //amount we can move on z
-    public float amountZ = 0.0f;
-    //max deviation from start point
-    public float maxZ = 10f;
-    //time inbetween picking new positions
-    public float timeTick = 0.1f;
-    //speed we move
-    public float moveSpeed = 1.0f;
-    //additional speed added during turn to make it more skittish and fish like
-    public float drift = 0.01f;
-    //distance under which we stop turning
-    public float closeDistance = 1f;
-    //turn speed
-    public float turnSpeed = 2.0f;
+    [Header ("Target graphic")]
+    public GameObject towingTarget;
 
-    public float newPosDriftSpeed = 1f;
+    [Header ("Max movement distance on x")]
+    public float AmountX = 0.0f;
+    public float MaxX = 10f;
 
-    public float updateTimeMin = 0.2f;
-    public float updateTimeMax = 1f;
+    [Header("Max movement distance on y")]
+    public float AmountY = 0.0f;
+    public float MaxY = 10f;
 
-    private Vector3 angle;
-    private float timeCheck;
-    private Vector3 newPos;
-    private Vector3 originalPos;
-    private Vector3 directionVector;
+    [Header("Baseline time between updates")]
+    public float BaselineUpdateTick = 0.1f;
+
+    [Header("Range added to baseline")]
+    public float UpdateTickMin = 0.2f;
+    public float UpdateTickMax = 1f;
+
+    [Header("Drifting behaviour")]
+    public float CloseDistance = 1f;
+    public float TurnSpeed = 2.0f;
+    public float PositionalDriftSpeed = 1f;
+
+    private float _moveSpeed = 1.0f;
+    private float _drift = 0.01f;
+    private Vector3 _angle;
+    private float _timeCheck;
+    private Vector3 _newPos;
+    private Vector3 _originalPos;
+    private Vector3 _directionVector;
+
+    void GetServerTowData()
+    {
+        _originalPos = new Vector3(serverUtils.GetServerData("towtargetx"), serverUtils.GetServerData("towtargety"), transform.position.z);
+
+        //remap x to -40 to 40
+        _originalPos.x = graphicsMaths.remapValue(_originalPos.x, 0, 1, -40, 40);
+
+        //remap y to -20 to 20
+        _originalPos.y = graphicsMaths.remapValue(_originalPos.y, 0, 1, -20, 20);
+
+        _moveSpeed = serverUtils.GetServerData("towtargetspeed");
+        _drift = _moveSpeed * 0.6f;
+    }
 
     void Start ()
     {
-        originalPos = transform.position;
+        GetServerTowData();
     }
 
     // Update is called once per frame
     void Update ()
     {
-        Vector3 oldPos = newPos;
-        if (Time.time > timeCheck)
+        if (serverUtils.GetServerData("towtargetvisible") == 1)
         {
-            //create a new position relative to where we are
-            newPos = new Vector3(originalPos.x + Random.Range(-amountX, amountX), originalPos.y + Random.Range(-amountY, amountY), originalPos.z);
-            newPos = new Vector3(Mathf.Clamp(newPos.x, originalPos.x - maxX, originalPos.x + maxX), Mathf.Clamp(newPos.y, originalPos.y - maxY, originalPos.y + maxY), originalPos.z);
+            Vector3 _oldPos = _newPos;
+            if (Time.time > _timeCheck)
+            {
+                GetServerTowData();
 
-            //determine where the next point is in relation to object
-            directionVector = (newPos - transform.position).normalized;
-            angle = new Vector3(0, 0, Vector3.Angle(transform.forward, directionVector));
-            angle.z = angle.z / 180;
+                //create a new position relative to where we are
+                _newPos = new Vector3(_originalPos.x + Random.Range(-AmountX, AmountX), _originalPos.y + Random.Range(-AmountY, AmountY), _originalPos.z);
+                _newPos = new Vector3(Mathf.Clamp(_newPos.x, _originalPos.x - MaxX, _originalPos.x + MaxX), Mathf.Clamp(_newPos.y, _originalPos.y - MaxY, _originalPos.y + MaxY), _originalPos.z);
 
-            //add time
-            timeCheck = Time.time + (timeTick + Random.Range(updateTimeMin, updateTimeMax));
-        }
+                //determine where the next point is in relation to object
+                _directionVector = (_newPos - transform.position).normalized;
+                _angle = new Vector3(0, 0, Vector3.Angle(transform.forward, _directionVector));
+                _angle.z = _angle.z / 180;
 
-        //reduce angle to 0
-        angle.z = Mathf.Lerp(angle.z, 0, Time.deltaTime);
+                //add time
+                _timeCheck = Time.time + (BaselineUpdateTick + Random.Range(UpdateTickMin, UpdateTickMax));
+            }
 
-        newPos = Vector3.Lerp(newPos, oldPos, Time.deltaTime * newPosDriftSpeed);
+            //reduce angle to 0
+            _angle.z = Mathf.Lerp(_angle.z, 0, Time.deltaTime);
 
-        //lerp to new position
-        transform.position = Vector3.Lerp(transform.position + (transform.forward * angle.z * drift), newPos, Time.deltaTime * moveSpeed);
-        //xy plane only movement
-        transform.position = new Vector3(transform.position.x, transform.position.y, originalPos.z);
+            //lerp position by positional drift
+            _newPos = Vector3.Lerp(_newPos, _oldPos, Time.deltaTime * PositionalDriftSpeed);
 
+            //lerp to new position
+            transform.position = Vector3.Lerp(transform.position + (transform.forward * _angle.z * _drift), _newPos, Time.deltaTime * _moveSpeed);
 
-        //check we are far enough away to still turn to our point, this will prevent swivelling on the spot
-        if (Vector3.Distance(newPos, transform.position) > closeDistance)
-        {
-            //rotate to angle
-            Vector3 p = Vector3.RotateTowards(transform.forward, (newPos - transform.position).normalized, Time.deltaTime * turnSpeed, 1.0f);
-            transform.rotation = Quaternion.LookRotation(p);
+            //xy plane only movement
+            transform.position = new Vector3(transform.position.x, transform.position.y, _originalPos.z);
 
-            //rotate on z only
-            //transform.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z);
+            //check we are far enough away to still turn to our point, this will prevent swivelling on the spot
+            if (Vector3.Distance(_newPos, transform.position) > CloseDistance)
+            {
+                //rotate to angle
+                Vector3 p = Vector3.RotateTowards(transform.forward, (_newPos - transform.position).normalized, Time.deltaTime * TurnSpeed, 1.0f);
+                transform.rotation = Quaternion.LookRotation(p);
+            }
         }
     }
 }

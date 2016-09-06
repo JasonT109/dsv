@@ -270,6 +270,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private glTowingData _glTowingData;
+    public glTowingData GLTowingData
+    {
+        get
+        {
+            if (!_glTowingData)
+                _glTowingData = GetComponent<glTowingData>();
+            return _glTowingData;
+        }
+    }
+
     private popupData _popupData;
     public popupData PopupData
     {
@@ -1055,6 +1066,39 @@ public class serverData : NetworkBehaviour
                 break;
             case "bootprogress":
                 PopupData.bootProgress = newValue;
+                break;
+            case "towtargetx":
+                GLTowingData.towTargetX = newValue;
+                break;
+            case "towtargety":
+                GLTowingData.towTargetY = newValue;
+                break;
+            case "towtargetspeed":
+                GLTowingData.towTargetSpeed = newValue;
+                break;
+            case "towtargetvisible":
+                GLTowingData.towTargetVisible = newValue > 0;
+                break;
+            case "towfiringpressure":
+                GLTowingData.towFiringPressure = newValue;
+                break;
+            case "towfiringpower":
+                GLTowingData.towFiringPower = newValue;
+                break;
+            case "towfiringstatus":
+                GLTowingData.towFiringStatus = newValue;
+                break;
+            case "towlinespeed":
+                GLTowingData.towLineSpeed = newValue;
+                break;
+            case "towlinelength":
+                GLTowingData.towLineLength = newValue;
+                break;
+            case "towlineremaining":
+                GLTowingData.towLineRemaining = newValue;
+                break;
+            case "towtargetdistance":
+                GLTowingData.towTargetDistance = newValue;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
