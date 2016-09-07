@@ -1148,6 +1148,9 @@ public class serverData : NetworkBehaviour
             case "towtargetdistance":
                 GLTowingData.towTargetDistance = newValue;
                 break;
+            case "glpowerupprogress":
+                GLTowingData.glpowerupprogress = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;

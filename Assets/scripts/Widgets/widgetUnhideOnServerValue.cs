@@ -8,6 +8,7 @@ public class widgetUnhideOnServerValue : MonoBehaviour
     public string serverString = "genericerror";
     public float serverValue = 0;
     public bool greaterThanValue = false;
+    public bool isEqualToValue = false;
 
     [Header("Objects to hide / show")]
     public GameObject[] objectsToUnhide;
@@ -27,6 +28,22 @@ public class widgetUnhideOnServerValue : MonoBehaviour
         if (greaterThanValue)
         {
             if (serverUtils.GetServerData(serverString) > serverValue)
+            {
+                visible = true;
+                if (!isOn && alphaIn)
+                    isLerping = true;
+
+                isOn = true;
+            }
+            else
+            {
+                visible = false;
+                isOn = false;
+            }
+        }
+        else if (isEqualToValue)
+        {
+            if (serverUtils.GetServerData(serverString) == serverValue)
             {
                 visible = true;
                 if (!isOn && alphaIn)
