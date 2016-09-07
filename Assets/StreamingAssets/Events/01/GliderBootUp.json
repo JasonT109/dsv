@@ -1,0 +1,53 @@
+{
+	"metadata":{
+		"utc":"07/09/16 01:51:38.5",
+		"startedTimestamp":"07/09/16 01:49:06.5",
+		"stoppedTimestamp":"07/09/16 01:51:18.6"
+	},
+	"groups":[
+		{
+			"id":"POWER UP",
+			"paused":true,
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"Value",
+					"serverParam":"glpowerupprogress",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"triggerTime":5,
+					"serverParam":"glpowerupprogress",
+					"serverValue":2
+				},
+				{
+					"type":"Value",
+					"triggerTime":8,
+					"serverParam":"glpowerupprogress",
+					"serverValue":3
+				},
+				{
+					"type":"Value",
+					"triggerTime":15.1,
+					"serverParam":"glpowerupprogress",
+					"serverValue":0
+				}
+			],
+			"hotKey":"1"
+		},
+		{
+			"id":"RESET",
+			"paused":true,
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"Value",
+					"serverParam":"glpowerupprogress",
+					"serverValue":0
+				}
+			],
+			"hotKey":"0"
+		}
+	]
+}

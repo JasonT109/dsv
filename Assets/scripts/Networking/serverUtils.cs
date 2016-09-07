@@ -543,6 +543,7 @@ namespace Meg.Networking
             "floordistance",
             "floordistancedisplayed",
             "genericerror",
+            "glpowerupprogress",
             "greenscreenbrightness",
             "heading",
             "horizontalvelocity",
@@ -943,6 +944,7 @@ namespace Meg.Networking
             { "floordistancedisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether floor distance is displayed in header area."} },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
             { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
+            { "glpowerupprogress", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Glider power up progress."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
             { "heading", new ParameterInfo { description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
             { "horizontalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the horizontal direction (m/s)." } },
@@ -1701,6 +1703,8 @@ namespace Meg.Networking
                     return GLTowingData.towLineRemaining;
                 case "towtargetdistance":
                     return GLTowingData.towTargetDistance;
+                case "glpowerupprogress":
+                    return GLTowingData.glpowerupprogress;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }
