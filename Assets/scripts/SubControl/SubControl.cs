@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Networking;
 using Meg.Networking;
@@ -9,19 +8,13 @@ public class SubControl : NetworkBehaviour
     // Constants
     // ------------------------------------------------------------
 
-    /** Scaling factor for converting joystick input into forward thrust. */
-    private const float ForwardThrust = 50f * 15.0f;
+    /** Scaling factor for adjusting acceleration scale. */
+    private const float AccelerationScale = 0.25f;
 
     /** Angle thresholds used to determine when auto-stabilization is appropriate. */
     private const float MinRoll = 0.09f;
     private const float MaxRoll = 364.91f;
     private const float MinPitch = 0.09f;
-
-    /** Scaling factor for converting joystick input into thrust forces. */
-    private const float InputToThrust = 0.0337f;
-
-    /** Minimum input level required to apply dynamic drag. */
-    private const float ThrustInputThreshold = 0.01f;
 
 
     // Properties
@@ -110,9 +103,6 @@ public class SubControl : NetworkBehaviour
     /** Timestamp for next possible physics impact event. */
     private float _nextImpactTime;
 
-    /** Current forward thrust state. */
-    private float _thrust;
-
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -132,7 +122,7 @@ public class SubControl : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** Apply per-frame control forces to the sub's rigidbody. */
-    public void ApplyControlForces()
+    public void ApplyForces()
     {
         // Don't apply forces if vessel is being simulated.
         var movement = serverUtils.GetPlayerVesselMovement();
@@ -140,10 +130,10 @@ public class SubControl : NetworkBehaviour
             return;
 
         // Apply the appropriate control logic.
-        if (isControlDecentMode)
-            ApplyDescentControlForces();
+        if (serverUtils.IsGlider())
+            ApplyGliderForces();
         else
-            ApplyStandardControlForces();
+            ApplySubForces();
     }
 
     /** Apply an impact impulse vector to the sub's rigidbody. */
@@ -175,40 +165,60 @@ public class SubControl : NetworkBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
+    /** Apply control forces to pilot a glider sub. */
+    private void ApplyGliderForces()
+    {
+        // TODO: Implement.
+        // For now, just pass through to the existing sub control logic.
+        ApplySubForces();
+    }
+
+    /** Apply control forces to pilot a big sub. */
+    private void ApplySubForces()
+    {
+        // Switch between descent mode and regular piloting.
+        if (isControlDecentMode)
+            ApplyDescentForces();
+        else
+            ApplyStandardForces();
+
+        // Auto-stabilize the sub if desired.
+        ApplyStabilizationForce();
+
+        // Apply thrust to move the sub forward or backwards.
+        ApplyThrustForce();
+    }
+
     /** Apply standard control forces for the big sub. */
-    private void ApplyStandardControlForces()
+    private void ApplyStandardForces()
 	{
-        if (!disableInput)
-		{
-            // Apply the orientation forces.
-            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
-            _rigidbody.AddRelativeTorque(Vector3.forward * (rollSpeed * inputXaxis));
-            _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
 
-            // Adjust mix for pitch when doing a banking turn.
-            _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
-		}
+        // Apply the orientation forces.
+        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+        _rigidbody.AddRelativeTorque(Vector3.forward * (rollSpeed * -inputXaxis));
+        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
 
-        ApplyStabilization();
-        ApplyThrustControl();
+        // Adjust mix for pitch when doing a banking turn.
+        _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
 	}
 
     /** Apply control forces while in descent mode for the big sub. */
-    private void ApplyDescentControlForces()
+    private void ApplyDescentForces()
 	{
-        if (!disableInput)
-		{
-            // Apply the orientation forces.
-            _rigidbody.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
-            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
-		}
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
 
-        ApplyStabilization();
-		ApplyThrustControl();
+        // Apply the orientation forces.
+        _rigidbody.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
+        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
 	}
 
     /** Update auto-stabilization logic. */
-    private void ApplyStabilization()
+    private void ApplyStabilizationForce()
     {
         if (!isAutoStabilised)
             return;
@@ -227,6 +237,7 @@ public class SubControl : NetworkBehaviour
     /** Apply autostabilization to the sub's rigidbody. */
     private void AutoStabilize()
     {
+        // TODO: Factor these numbers into constants.
         const float stability = 0.3f * 10f;
         const float speed = 2.0f * 10f;
         var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
@@ -240,34 +251,33 @@ public class SubControl : NetworkBehaviour
     }
 
     /** Apply thrust forces to the sub's rigidbody. */
-    public void ApplyThrustControl()
+    public void ApplyThrustForce()
 	{
-		var currentThrust = _thrust;
-        var scale = (Acceleration / 100f);
-        var thrust = inputZaxis * InputToThrust * MaxSpeed;
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
 
-        if (Mathf.Abs(inputZaxis) > ThrustInputThreshold)
-            _rigidbody.drag = scale / 2;
-		else
-			_rigidbody.drag = 0.5f;
+        // Check that sub has a non-zero max speed.
+        if (Mathf.Approximately(MaxSpeed, 0))
+            return;
 
-		if (isControlDecentMode)
-		{
-			_thrust = thrust / 2f;
-			currentThrust *= ForwardThrust;
-            _rigidbody.AddRelativeForce(0f, -currentThrust * Time.deltaTime * scale, 0f);
-		}
-		else
-		{
-			if (inputZaxis > 0)
-				_thrust = thrust;
-			else
-				_thrust = thrust / 2f;
+        // Compute drag based on max. acceleration and desired terminal velocity.
+        // See http://forum.unity3d.com/threads/terminal-velocity.34667/ for more info.
+        var maxAcceleration = Acceleration * AccelerationScale;
+        var maxSpeed = Mathf.Abs(MaxSpeed);
+        var maxThrust = maxAcceleration * _rigidbody.mass;
+        var idealDrag = maxAcceleration / maxSpeed;
+        _rigidbody.drag = idealDrag / (idealDrag * Time.fixedDeltaTime + 1);
 
-			currentThrust *= ForwardThrust;
-            _rigidbody.AddRelativeForce(0f, 0f, currentThrust * Time.deltaTime * scale);
-		}
-	}
+        // Determine the amount of thrust force to apply based on input.
+        var thrust = inputZaxis * maxThrust;
+        var reverseThrustRatio = Mathf.Abs(MinSpeed) / maxSpeed;
+        if (inputZaxis < 0)
+            thrust *= reverseThrustRatio;
+
+        // Accelerate the sub according to thrust force.
+        _rigidbody.AddRelativeForce(0f, 0f, thrust);
+    }
 
     /** Apply an impact impulse vector to the sub's rigidbody. */
     private void ApplyImpact(Vector3 impactVector)
