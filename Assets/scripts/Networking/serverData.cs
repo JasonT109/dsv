@@ -1472,7 +1472,8 @@ public class serverData : NetworkBehaviour
     void FixedUpdate()
     {
         // Update the sub control logic.
-        GetComponent<SubControl>().SubController();
+        if (SubControl)
+            SubControl.ApplyControlForces();
 
         // Update roll, pitch and yaw.
         if (isServer)
