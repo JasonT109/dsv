@@ -8,6 +8,7 @@ public class UnityToArduino : MonoBehaviour
 	private SerialPort port;
 	public serverData Server;
 	public SubControl Controls;
+    public MotionBaseData MotionData;
 	public string COMPort = "";
 
 	private Quaternion motionBase;
@@ -38,9 +39,9 @@ public class UnityToArduino : MonoBehaviour
 			}
 		}
 			
-		LastMove.x = Controls.MotionBasePitch;
-		LastMove.y = Controls.MotionBaseYaw;
-		LastMove.z = Controls.MotionBaseRoll;
+		LastMove.x = MotionData.MotionBasePitch;
+		LastMove.y = MotionData.MotionBaseYaw;
+		LastMove.z = MotionData.MotionBaseRoll;
 
 		flat = new Vector3(0,0,0);
 		flatQ = Quaternion.Euler(flat);
@@ -55,9 +56,9 @@ public class UnityToArduino : MonoBehaviour
 		//	COMPort = Settings.ComPort;
 		//}
 
-		LastMove.x = Controls.MotionBasePitch;
-		LastMove.y = Controls.MotionBaseYaw;
-		LastMove.z = Controls.MotionBaseRoll;
+		LastMove.x = MotionData.MotionBasePitch;
+		LastMove.y = MotionData.MotionBaseYaw;
+		LastMove.z = MotionData.MotionBaseRoll;
 	}
 
 	IEnumerator SendData()
@@ -66,61 +67,61 @@ public class UnityToArduino : MonoBehaviour
 		{
 			HazardCheck();
 
-			if(Controls.MotionSafety)
+			if(MotionData.MotionSafety)
 			{
-				if(!Controls.MotionHazard)
+				if(!MotionData.MotionHazard)
 				{
-					motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime*Controls.MotionSlerpSpeed);
+					motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime* MotionData.MotionSlerpSpeed);
 				}
 				else
 				{
 					motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
 				}
 
-				Controls.MotionBasePitch = motionBase.eulerAngles.x;
-				Controls.MotionBaseYaw = motionBase.eulerAngles.y;
-				Controls.MotionBaseRoll = motionBase.eulerAngles.z;
+                MotionData.MotionBasePitch = motionBase.eulerAngles.x;
+                MotionData.MotionBaseYaw = motionBase.eulerAngles.y;
+                MotionData.MotionBaseRoll = motionBase.eulerAngles.z;
 
-				if(Controls.MotionBasePitch > 180f)
+				if(MotionData.MotionBasePitch > 180f)
 				{
-					Controls.MotionBasePitch = motionBase.eulerAngles.x-360f;
+                    MotionData.MotionBasePitch = motionBase.eulerAngles.x-360f;
 				}
 
-				if(Controls.MotionBaseRoll > 180f)
+				if(MotionData.MotionBaseRoll > 180f)
 				{
-					Controls.MotionBaseRoll = motionBase.eulerAngles.z-360f;
+                    MotionData.MotionBaseRoll = motionBase.eulerAngles.z-360f;
 				}
 			}
 			else
 			{
-				Controls.MotionBasePitch = Server.pitchAngle;
-				Controls.MotionBaseYaw = Server.yawAngle;
-				Controls.MotionBaseRoll = Server.rollAngle;
+                MotionData.MotionBasePitch = Server.pitchAngle;
+                MotionData.MotionBaseYaw = Server.yawAngle;
+                MotionData.MotionBaseRoll = Server.rollAngle;
 			}
 
-			if(Controls.MotionHazard && !Controls.MotionSafety)
+			if(MotionData.MotionHazard && !MotionData.MotionSafety)
 			{
 				motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
 			}
 
-			if(Controls.MotionBaseRoll > 33f)
+			if(MotionData.MotionBaseRoll > 33f)
 			{
-				Controls.MotionBaseRoll = 33f;
+                MotionData.MotionBaseRoll = 33f;
 			}
 
-			if(Controls.MotionBaseRoll < -33f)
+			if(MotionData.MotionBaseRoll < -33f)
 			{
-				Controls.MotionBaseRoll = -33f;
+                MotionData.MotionBaseRoll = -33f;
 			}
 
-			if(Controls.MotionBasePitch > 37f)
+			if(MotionData.MotionBasePitch > 37f)
 			{
-				Controls.MotionBasePitch = 37f;
+                MotionData.MotionBasePitch = 37f;
 			}
 
-			if(Controls.MotionBasePitch < -37f)
+			if(MotionData.MotionBasePitch < -37f)
 			{
-				Controls.MotionBasePitch = -37f;
+                MotionData.MotionBasePitch = -37f;
 			}
 				
 
@@ -138,9 +139,9 @@ public class UnityToArduino : MonoBehaviour
 			//}
 
 			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-				(Controls.MotionBaseYaw.ToString("F3")),
-				(Controls.MotionBasePitch.ToString("F3")),
-				(Controls.MotionBaseRoll.ToString("F3")),
+				(MotionData.MotionBaseYaw.ToString("F3")),
+				(MotionData.MotionBasePitch.ToString("F3")),
+				(MotionData.MotionBaseRoll.ToString("F3")),
 
 				(Controls.inputXaxis.ToString("F3")),
 				(Controls.inputYaxis.ToString("F3")),
@@ -174,9 +175,9 @@ public class UnityToArduino : MonoBehaviour
 
 	void HazardCheck()
 	{
-		if(Mathf.Abs(LastMove.x - Controls.MotionBasePitch) > Controls.MotionHazardSensitivity)
+		if(Mathf.Abs(LastMove.x - MotionData.MotionBasePitch) > MotionData.MotionHazardSensitivity)
 		{
-			Controls.MotionHazard = true;
+            MotionData.MotionHazard = true;
 		}
 
 		//if(Mathf.Abs(LastMove.y - Controls.MotionBaseYaw) > Controls.MotionHazardSensitivity)
@@ -184,13 +185,13 @@ public class UnityToArduino : MonoBehaviour
 		//	Controls.MotionHazard = true;
 		//}
 
-		if(Mathf.Abs(LastMove.z - Controls.MotionBaseRoll) > Controls.MotionHazardSensitivity)
+		if(Mathf.Abs(LastMove.z - MotionData.MotionBaseRoll) > MotionData.MotionHazardSensitivity)
 		{
-			Controls.MotionHazard = true;
+            MotionData.MotionHazard = true;
 		}
 
-		LastMove.x = Controls.MotionBasePitch;
-		LastMove.y = Controls.MotionBaseYaw;
-		LastMove.z = Controls.MotionBaseRoll;
+		LastMove.x = MotionData.MotionBasePitch;
+		LastMove.y = MotionData.MotionBaseYaw;
+		LastMove.z = MotionData.MotionBaseRoll;
 	}
 }

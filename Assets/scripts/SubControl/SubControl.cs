@@ -67,24 +67,24 @@ public class SubControl : NetworkBehaviour
 	[SyncVar]
 	public bool isControlOverrideStandard = false;
 
-	[SyncVar]
-	public float MotionBasePitch;
-	[SyncVar]
-	public float MotionBaseYaw;
-	[SyncVar]
-	public float MotionBaseRoll;
-	[SyncVar]
-	public float MotionDampen;
-	[SyncVar] 
-	public bool MotionSafety = true;
-	[SyncVar] 
-	public bool MotionHazard = false;
-	[SyncVar] 
-	public float MotionSlerpSpeed = 2f;
-	[SyncVar] 
-	public float MotionHazardSensitivity = 15f;
-	[SyncVar] 
-	public bool MotionHazardEnabled = true;
+	//[SyncVar]
+	//public float MotionBasePitch;
+	//[SyncVar]
+	//public float MotionBaseYaw;
+	//[SyncVar]
+	//public float MotionBaseRoll;
+	//[SyncVar]
+	//public float MotionDampen;
+	//[SyncVar] 
+	//public bool MotionSafety = true;
+	//[SyncVar] 
+	//public bool MotionHazard = false;
+	//[SyncVar] 
+	//public float MotionSlerpSpeed = 2f;
+	//[SyncVar] 
+	//public float MotionHazardSensitivity = 15f;
+	//[SyncVar] 
+	//public bool MotionHazardEnabled = true;
 	[SyncVar] 
 	public float MotionScaleImpacts = 1.0f;
 	[SyncVar] 
