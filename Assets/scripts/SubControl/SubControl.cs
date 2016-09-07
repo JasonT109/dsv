@@ -115,7 +115,10 @@ public class SubControl : NetworkBehaviour
 
         MinSpeed = -(0.5f * MaxSpeed);
         JoystickOverride = false;
-	}
+
+        if (serverUtils.IsGlider())
+            ApplyGliderDefaults();
+    }
 
 
     // Public Methods
@@ -164,6 +167,12 @@ public class SubControl : NetworkBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+        //
+    private void ApplyGliderDefaults()
+    {
+
+    }
 
     /** Apply control forces to pilot a glider sub. */
     private void ApplyGliderForces()
