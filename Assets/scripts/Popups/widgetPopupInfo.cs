@@ -7,6 +7,23 @@ public class widgetPopupInfo : widgetPopup
     // Protected Methods
     // ------------------------------------------------------------
 
+    /** Show this popup. */
+    public override void Show(popupData.Popup popup)
+    {
+        // Superclass implementation.
+        base.Show(popup);
+
+        // Decide whether to display the info box.
+        Root.gameObject.SetActive(popup.HasTitle);
+    }
+
+    /** Set whether the popup is active. */
+    protected override void SetActive(bool value)
+    {
+        Root.gameObject.SetActive(value && Popup.HasTitle);
+        Area.gameObject.SetActive(value && Popup.Size.sqrMagnitude > 0);
+    }
+
     /** Animate the popup into place. */
     protected override void AnimateIn()
     {

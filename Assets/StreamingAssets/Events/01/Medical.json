@@ -1,12 +1,13 @@
 {
 	"metadata":{
-		"utc":"06/09/16 05:02:09.2",
-		"startedTimestamp":"06/09/16 04:59:52.5",
-		"stoppedTimestamp":"06/09/16 05:00:34.2"
+		"utc":"07/09/16 01:14:50.8",
+		"startedTimestamp":"07/09/16 01:14:18.4",
+		"stoppedTimestamp":"07/09/16 01:14:36.6"
 	},
 	"groups":[
 		{
-			"id":"HEART",
+			"id":"HEARTRATE PRESETS",
+			"paused":true,
 			"events":[
 				{
 					"type":"Value",
@@ -42,6 +43,145 @@
 					"triggerLabel":"180",
 					"serverParam":"crewheartrate1",
 					"serverValue":180
+				}
+			]
+		},
+		{
+			"id":"INJURED",
+			"paused":true,
+			"minimized":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewheartrate1",
+					"serverValue":110
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewspo2max1",
+					"serverValue":93,
+					"initialValue":90
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewetco2max1",
+					"serverValue":38
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewheartstrengthmax1",
+					"serverValue":90
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewheartstrengthmax1",
+					"serverValue":95
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewabpmax1",
+					"serverValue":120
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewabpmin1",
+					"serverValue":81
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewpapmax1",
+					"serverValue":43
+				},
+				{
+					"type":"Value",
+					"completeTime":5,
+					"serverParam":"crewpapmin1",
+					"serverValue":18
+				}
+			]
+		},
+		{
+			"id":"WARNINGS",
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"HeartRate",
+					"Type":0,
+					"Title":"",
+					"Message":"",
+					"Target":"",
+					"Position":[
+						0,
+						242,
+						0
+					],
+					"Size":[
+						1570,
+						222
+					],
+					"Icon":0,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"ETCO2",
+					"Type":0,
+					"Title":"",
+					"Message":"",
+					"Target":"",
+					"Position":[
+						0,
+						23,
+						0
+					],
+					"Size":[
+						1570,
+						222
+					],
+					"Icon":0,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
+				},
+				{
+					"type":"Popup",
+					"triggerLabel":"SPO2",
+					"Type":0,
+					"Title":"",
+					"Message":"",
+					"Target":"",
+					"Position":[
+						0,
+						-198,
+						0
+					],
+					"Size":[
+						1570,
+						222
+					],
+					"Icon":0,
+					"Color":[
+						0.766,
+						0.074302,
+						0.074302,
+						1
+					]
 				}
 			]
 		},
@@ -106,8 +246,8 @@
 					"triggerTime":4,
 					"completeTime":30,
 					"Type":0,
-					"Title":"VITAL SIGNS CRITICAL!",
-					"Message":"NO HEARTRATE DETECTED!",
+					"Title":"",
+					"Message":"",
 					"Target":"",
 					"Position":[
 						0,
@@ -146,8 +286,7 @@
 					"serverParam":"crewetco2max1",
 					"serverValue":0
 				}
-			],
-			"hotKey":"9"
+			]
 		}
 	]
 }

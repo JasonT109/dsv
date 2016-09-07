@@ -71,6 +71,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     public Button ServerParamUpdateButton;
     public Slider ServerValueSlider;
     public InputField ServerValueInput;
+    public Toggle ApplyInitialValueToggle;
+    public InputField InitialValueInput;
 
 
     [Header("Physics Event Components")]
@@ -476,10 +478,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Update the event's trigger label input. */
     private void UpdateTriggerLabelInput()
     {
-        if (string.IsNullOrEmpty(_event.triggerLabel))
-            TriggerLabelInput.text = "";
-        else
-            TriggerLabelInput.text = _event.triggerLabel;
+        TriggerLabelInput.text = _event.hasTrigger ? _event.triggerLabel : "";
+        TriggerHotKeyInput.interactable = _event.hasTrigger;
     }
 
     /** Update the event's trigger label from input field. */
@@ -489,11 +489,13 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         _event.triggerLabel = value;
+        TriggerHotKeyInput.interactable = _event.hasTrigger;
     }
 
     /** Update the event's trigger label input. */
     private void UpdateTriggerHotKeyInput()
     {
+        TriggerHotKeyInput.interactable = _event.hasTrigger;
         if (string.IsNullOrEmpty(_event.triggerHotKey))
             TriggerHotKeyInput.text = "";
         else
@@ -518,6 +520,8 @@ public class debugEventPropertiesUi : MonoBehaviour
         UpdateServerParamInput();
         UpdateServerValueSlider();
         UpdateServerValueInput();
+        UpdateInitialValueInput();
+        UpdateApplyInitialValueToggle();
     }
 
     private void UpdateValueProperties()
@@ -567,7 +571,20 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerValueInput()
     {
-        ServerValueInput.text = string.Format("{0:N2}", ValueEvent.serverValue);
+        var format = "{0:N" + Precision(ValueEvent.serverValue) + "}";
+        ServerValueInput.text = string.Format(format, ValueEvent.serverValue);
+    }
+
+    private void UpdateInitialValueInput()
+    {
+        var format = "{0:N" + Precision(ValueEvent.initialValue) + "}";
+        InitialValueInput.text = string.Format(format, ValueEvent.initialValue);
+        InitialValueInput.gameObject.SetActive(ValueEvent.applyInitialValue);
+    }
+
+    private void UpdateApplyInitialValueToggle()
+    {
+        ApplyInitialValueToggle.isOn = ValueEvent.applyInitialValue;
     }
 
     public void ToggleParameterList()
@@ -645,6 +662,27 @@ public class debugEventPropertiesUi : MonoBehaviour
 
         ValueEvent.serverValue = result;
         UpdateServerValueSlider();
+    }
+
+    public void InitialValueInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        ValueEvent.initialValue = result;
+    }
+
+    public void ApplyInitialValueToggleChanged(bool value)
+    {
+        if (_initializing)
+            return;
+
+        ValueEvent.applyInitialValue = value;
+        UpdateInitialValueInput();
     }
 
     private void UpdateServerParamList(string value = null, bool recenter = true)
@@ -1558,5 +1596,26 @@ public class debugEventPropertiesUi : MonoBehaviour
         _initializing = false;
     }
 
+    /** Return the number of decimal places to use for a given value. */
+    private static int Precision(double value)
+    {
+        var isInt = Math.Abs(value - Math.Round(value)) < 0.00001;
+        if (isInt)
+            return 0;
+
+        var abs = Math.Abs(value);
+        if (abs >= 100)
+            return 0;
+        if (abs >= 10)
+            return 1;
+        if (abs >= 1)
+            return 2;
+        if (abs >= 0.1)
+            return 3;
+        if (abs >= 0.01)
+            return 4;
+
+        return 5;
+    }
 
 }

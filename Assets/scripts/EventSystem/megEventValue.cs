@@ -18,6 +18,12 @@ namespace Meg.EventSystem
         /** Value to apply to server data. */
         public float serverValue;
 
+        /** Optional initial value. */
+        public float initialValue;
+
+        /** Whether to apply initial value when event starts. */
+        public bool applyInitialValue;
+
 
         // Members
         // ------------------------------------------------------------
@@ -48,6 +54,9 @@ namespace Meg.EventSystem
                 return base.ToString();
 
             var value = serverUtils.GetServerData(serverParam);
+            if (applyInitialValue)
+                return string.Format("{0}: {1:N1}->{2:N1} ({3:N1})", serverParam, initialValue, serverValue, value);
+            
             return string.Format("{0}: {1:N1} ({2:N1})", serverParam, serverValue, value);
         }
 
@@ -68,6 +77,10 @@ namespace Meg.EventSystem
             var json = base.Save();
             json.AddField("serverParam", serverParam);
             json.AddField("serverValue", serverValue);
+
+            if (!Mathf.Approximately(initialValue, 0))
+                json.AddField("initialValue", initialValue);
+
             return json;
         }
 
@@ -77,6 +90,7 @@ namespace Meg.EventSystem
             base.Load(json);
             json.GetField(ref serverParam, "serverParam");
             json.GetField(ref serverValue, "serverValue");
+            json.GetField(ref initialValue, "initialValue");
         }
 
 
@@ -87,8 +101,16 @@ namespace Meg.EventSystem
         protected override void Start()
         {
             // Get initial value.
-            _initialValue = serverUtils.GetServerDataRaw(serverParam);
-            _value = _initialValue;
+            _initialValue = applyInitialValue 
+                ? initialValue 
+                : serverUtils.GetServerDataRaw(serverParam);
+
+            // Optionally apply a specified initial value.
+            if (applyInitialValue)
+            {
+                _value = initialValue;
+                PostServerData(serverParam, _value);
+            }
 
             // Apply final value immediately if needed.
             if (completeTime <= 0)
