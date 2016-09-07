@@ -1,10 +1,25 @@
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Collections;
 using Meg.Networking;
 
 public class SubControl : NetworkBehaviour 
 {
+
+    // Constants
+    // ------------------------------------------------------------
+
+    /** Scaling factor for adjusting acceleration scale. */
+    private const float AccelerationScale = 0.25f;
+
+    /** Angle thresholds used to determine when auto-stabilization is appropriate. */
+    private const float MinRoll = 0.09f;
+    private const float MaxRoll = 364.91f;
+    private const float MinPitch = 0.09f;
+
+
+    // Properties
+    // ------------------------------------------------------------
+
     /** Whether input to sub is completely disabled. */
     [SyncVar]
     public bool disableInput = false;
@@ -76,254 +91,210 @@ public class SubControl : NetworkBehaviour
 	public float MotionMinImpactInterval = 0.75f;
 
 
+    // Members
+    // ------------------------------------------------------------
 
-    private float currentThrust = 0.0f;
-    private Rigidbody rb;
-    private Vector3 rotation;
-	private float thrust = 0f;//25.258f;
-    private float rollResult;
-    private float pitchResult;
-    private float yawResult;
-    private float bank;
-    private float roll;
-    private float pitch;
+    /** The rigidbody that's being controlled. */
+    private Rigidbody _rigidbody;
 
+    /** Timestamp of last physics impact event. */
     private float _lastImpactTime;
+
+    /** Timestamp for next possible physics impact event. */
     private float _nextImpactTime;
 
-	private float forwardThrust = 50f;
-	//private float AccelRatio = 0.0f;
 
-	// Use this for initialization
-	void Awake() 
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Preinitialization. */
+    private void Awake() 
     {
-        rb = gameObject.GetComponent<Rigidbody>();
-        rb.centerOfMass = new Vector3(0,0,0);
+        _rigidbody = gameObject.GetComponent<Rigidbody>();
+        _rigidbody.centerOfMass = Vector3.zero;
 
         MinSpeed = -(0.5f * MaxSpeed);
-
         JoystickOverride = false;
-
-		//MotionSafety = true;
-		//MotionHazard = false;
-		//MotionHazardSensitivity = 5f;
-		//MotionHazardEnabled = true;
-		//MotionSlerpSpeed = 2f;
 	}
 
-    // Snap the sub to a given worldspace velocity vector.
-    public void SetWorldVelocity(Vector3 velocity)
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Apply per-frame control forces to the sub's rigidbody. */
+    public void ApplyForces()
     {
-        // Apply velocity immediately to the sub.
-        rb.velocity = velocity;
-
-        // Force sub to look in the direction of travel.
-        // TODO: Should this be smoothed out somehow?
-        transform.LookAt(rb.position + velocity);
-    }
-
-    /** Return the sub's current world velocity. */
-    public Vector3 GetWorldVelocity()
-    {
-        return rb.velocity;
-    }
-
-    // Update is called once per frame
-    public void SubController()
-    {
-        UpdateData();
-
-        // Don't apply sub control if vessel is being moved by the vessel simulation.
+        // Don't apply forces if vessel is being simulated.
         var movement = serverUtils.GetPlayerVesselMovement();
         if (movement && movement.Active)
             return;
 
-		if(!isControlDecentMode)
-		{
-			ApplyStandardControlForces();
-		}
-		else
-		{
-			ApplyDecentControlForces();
-		}
-
+        // Apply the appropriate control logic.
+        if (serverUtils.IsGlider())
+            ApplyGliderForces();
+        else
+            ApplySubForces();
     }
-
-    public void UpdateData()
-    {
-        serverData Data;
-        Data = this.GetComponent<serverData>();
-
-        roll = Data.transform.eulerAngles.z;
-        pitch = Data.transform.eulerAngles.x;
-    }
-
-    public void ApplyDataChanges()
-    {
-        
-    }
-
-    void AutoStabilise()
-    {
-        float stability = 0.3f * 10f;
-        float speed = 2.0f * 10f;
-
-        Vector3 predictedUP = Quaternion.AngleAxis(rb.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
-            rb.angularVelocity) * transform.up;
-
-        Vector3 torqueVector = Vector3.Cross(predictedUP, Vector3.up);
-
-        if(!IsPitchAlsoStabilised)
-        {
-			if(!isControlDecentMode)
-			{
-				torqueVector = Vector3.Project(torqueVector, transform.forward);
-			}
-        }
-
-        rb.AddTorque(torqueVector * speed * speed);
-    }
-
-	void ApplyStandardControlForces()
-	{
-		Vector3 RollExtract = new Vector3(0,0,1);
-		Vector3 PitchExtract = new Vector3(-1,0,0);
-		Vector3 YawExtract = new Vector3(0,1,0);
-
-		//if (!disableInput)
-		//{
-		//	// Apply the orientation forces
-		//	rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-		//	rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
-		//	rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
-		//
-		//	// Adjust mix for pitch when doing a banking turn.
-		//	rb.AddRelativeTorque(-PitchExtract * (pitchSpeed * Mathf.Abs(inputXaxis)));
-		//
-		//	// Apply the thrust forces.
-		//	if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
-		//		currentThrust = inputZaxis * (Acceleration * thrust);
-		//
-		//	if (currentThrust > MaxSpeed)
-		//		currentThrust = MaxSpeed - 0.01f;
-		//
-		//	if (currentThrust < MinSpeed)
-		//		currentThrust = MinSpeed + 0.01f;
-		//
-		//	rb.AddRelativeForce(0, 0, currentThrust * thrust * Time.deltaTime);
-		//}
-
-		if (!disableInput)
-		{
-			// Apply the orientation forces
-			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-			rb.AddRelativeTorque(RollExtract * (rollSpeed * inputXaxis));
-			rb.AddRelativeTorque(YawExtract * (yawSpeed * inputXaxis));
-			//this.gameObject.transform.rotation = Quaternion.Euler(this.gameObject.transform.rotation.eulerAngles + new Vector3(0f,inputXaxis*Time.deltaTime*yawSpeed,0f));
-			//this.gameObject.transform.Rotate(0f,inputXaxis*yawSpeed*Time.deltaTime,0f);
-
-			// Adjust mix for pitch when doing a banking turn.
-			rb.AddRelativeTorque(-PitchExtract * (yawSpeed*0.5f * Mathf.Abs(inputXaxis)));
-
-			// Apply the thrust forces.
-			//if (currentThrust < MaxSpeed && currentThrust > MinSpeed)
-			//	currentThrust = inputZaxis * ((Acceleration) * thrust);
-			//
-			//if (currentThrust > MaxSpeed)
-			//	currentThrust = MaxSpeed - 0.01f;
-			//
-			//if (currentThrust < MinSpeed)
-			//	currentThrust = MinSpeed + 0.01f;
-			//
-			//rb.AddRelativeForce(0, 0, currentThrust, ForceMode.Acceleration);
-		}
-
-		// If roll is almost right, stop adjusting (PID dampening todo here?)
-		if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
-			AutoStabilise();
-		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
-			AutoStabilise();
-
-		ThrustControl();
-	}
-
-	void ApplyDecentControlForces()
-	{
-		Vector3 PitchExtract = new Vector3(-1,0,0);
-		Vector3 YawExtract = new Vector3(0,1,0);
-
-		if (!disableInput)
-		{
-			// Apply the orientation forces
-			rb.AddTorque(YawExtract * (yawSpeed * inputXaxis));
-			rb.AddRelativeTorque(PitchExtract * (pitchSpeed * inputYaxis));
-		}
-
-		// If roll is almost right, stop adjusting (PID dampening todo here?)
-		if (roll > 0.09f && roll < 364.91f && isAutoStabilised)
-			AutoStabilise();
-		else if (pitch > 0.09f && roll < 364.91f && isAutoStabilised)
-			AutoStabilise();
-
-		ThrustControl();
-	}
-
-	public void ThrustControl()
-	{
-		currentThrust = thrust;
-
-		if(inputZaxis > 0.01f || inputZaxis < -0.01f)
-		{
-			rb.drag = ((Acceleration/100f))/2;
-		}
-		else
-		{
-			rb.drag = 0.5f;
-		}
-
-		if(isControlDecentMode)
-		{
-			thrust = inputZaxis * 0.0337f * (MaxSpeed/2f);
-			currentThrust*= forwardThrust * 15.0f;
-			rb.AddRelativeForce(0f, -currentThrust * Time.deltaTime * ((Acceleration/100f)),0f);
-		}
-		else
-		{
-			if(inputZaxis > 0)
-			{
-				thrust = inputZaxis * 0.0337f * MaxSpeed;
-			}
-			else
-			{
-				thrust = inputZaxis * 0.0337f * MaxSpeed/2f;
-			}
-
-			currentThrust*= forwardThrust * 15.0f;
-			rb.AddRelativeForce(0f,0f,currentThrust * Time.deltaTime * ((Acceleration/100f)));
-		}
-			
-	}
 
     /** Apply an impact impulse vector to the sub's rigidbody. */
     public void Impact(Vector3 impactVector)
     {
-		if(MotionScaleImpacts > 1.0f)
-		{
-			MotionScaleImpacts = 1.0f;
-		}
+        // Ensure impact scaling factor remains sensible (between 0 and 1).
+        MotionScaleImpacts = Mathf.Clamp01(MotionScaleImpacts);
 
-        // TODO: Apply limits to impactVector (or scale it down, or both) when
-        // UnityToArduino is actively piping data out to the motion control rig.
-		if (Time.time > _nextImpactTime)
-		{
-		    var t = Time.time;
-		    var dt = t - _lastImpactTime;
-            _lastImpactTime = t;
-            _nextImpactTime = t + MotionMinImpactInterval;
+        // Apply impact vector to the sub's rigidbody.
+        ApplyImpact(impactVector);
+    }
 
-            Debug.Log(string.Format("IMPACT TRIGGERED: t = {0:N2}, delta = {1:N2}, next = {2:N2}", t, dt, _nextImpactTime));
-			rb.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
-		}
+    /** Snap the sub to a given worldspace velocity vector. */
+    public void SetWorldVelocity(Vector3 velocity)
+    {
+        // Apply velocity immediately to the sub.
+        _rigidbody.velocity = velocity;
+
+        // Force sub to look in the direction of travel.
+        // TODO: Should this be smoothed out somehow?
+        transform.LookAt(_rigidbody.position + velocity);
+    }
+
+    /** Return the sub's current world velocity. */
+    public Vector3 GetWorldVelocity()
+        { return _rigidbody.velocity; }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Apply control forces to pilot a glider sub. */
+    private void ApplyGliderForces()
+    {
+        // TODO: Implement.
+        // For now, just pass through to the existing sub control logic.
+        ApplySubForces();
+    }
+
+    /** Apply control forces to pilot a big sub. */
+    private void ApplySubForces()
+    {
+        // Switch between descent mode and regular piloting.
+        if (isControlDecentMode)
+            ApplyDescentForces();
+        else
+            ApplyStandardForces();
+
+        // Auto-stabilize the sub if desired.
+        ApplyStabilizationForce();
+
+        // Apply thrust to move the sub forward or backwards.
+        ApplyThrustForce();
+    }
+
+    /** Apply standard control forces for the big sub. */
+    private void ApplyStandardForces()
+	{
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
+
+        // Apply the orientation forces.
+        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+        _rigidbody.AddRelativeTorque(Vector3.forward * (rollSpeed * -inputXaxis));
+        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
+
+        // Adjust mix for pitch when doing a banking turn.
+        _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
+	}
+
+    /** Apply control forces while in descent mode for the big sub. */
+    private void ApplyDescentForces()
+	{
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
+
+        // Apply the orientation forces.
+        _rigidbody.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
+        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+	}
+
+    /** Update auto-stabilization logic. */
+    private void ApplyStabilizationForce()
+    {
+        if (!isAutoStabilised)
+            return;
+
+        // Determine sub's current orientation.
+        var roll = transform.eulerAngles.z;
+        var pitch = transform.eulerAngles.x;
+
+        // If roll is almost right, stop adjusting (PID dampening todo here?)
+        if (roll > MinRoll && roll < MaxRoll)
+            AutoStabilize();
+        else if (pitch > MinPitch && roll < MaxRoll)
+            AutoStabilize();
+    }
+
+    /** Apply autostabilization to the sub's rigidbody. */
+    private void AutoStabilize()
+    {
+        // TODO: Factor these numbers into constants.
+        const float stability = 0.3f * 10f;
+        const float speed = 2.0f * 10f;
+        var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
+            _rigidbody.angularVelocity) * transform.up;
+
+        var torqueVector = Vector3.Cross(predictedUp, Vector3.up);
+        if (!IsPitchAlsoStabilised && !isControlDecentMode)
+            torqueVector = Vector3.Project(torqueVector, transform.forward);
+
+        _rigidbody.AddTorque(torqueVector * speed * speed);
+    }
+
+    /** Apply thrust forces to the sub's rigidbody. */
+    public void ApplyThrustForce()
+	{
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
+
+        // Check that sub has a non-zero max speed.
+        if (Mathf.Approximately(MaxSpeed, 0))
+            return;
+
+        // Compute drag based on max. acceleration and desired terminal velocity.
+        // See http://forum.unity3d.com/threads/terminal-velocity.34667/ for more info.
+        var maxAcceleration = Acceleration * AccelerationScale;
+        var maxSpeed = Mathf.Abs(MaxSpeed);
+        var maxThrust = maxAcceleration * _rigidbody.mass;
+        var idealDrag = maxAcceleration / maxSpeed;
+        _rigidbody.drag = idealDrag / (idealDrag * Time.fixedDeltaTime + 1);
+
+        // Determine the amount of thrust force to apply based on input.
+        var thrust = inputZaxis * maxThrust;
+        var reverseThrustRatio = Mathf.Abs(MinSpeed) / maxSpeed;
+        if (inputZaxis < 0)
+            thrust *= reverseThrustRatio;
+
+        // Accelerate the sub according to thrust force.
+        _rigidbody.AddRelativeForce(0f, 0f, thrust);
+    }
+
+    /** Apply an impact impulse vector to the sub's rigidbody. */
+    private void ApplyImpact(Vector3 impactVector)
+    {
+        // Check if we're allowed to apply another impact yet.
+        if (Time.time < _nextImpactTime)
+            return;
+
+        // Schedule the next possible impact.
+        var t = Time.time;
+        var dt = t - _lastImpactTime;
+        _lastImpactTime = t;
+        _nextImpactTime = t + MotionMinImpactInterval;
+
+        // Apply an impact torque to the sub.
+        Debug.Log(string.Format("IMPACT TRIGGERED: t = {0:N2}, delta = {1:N2}, next = {2:N2}", t, dt, _nextImpactTime));
+        _rigidbody.AddTorque(impactVector * MotionScaleImpacts, ForceMode.VelocityChange);
     }
 
 }

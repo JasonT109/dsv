@@ -32,7 +32,7 @@ public class artificialHorizon : MonoBehaviour {
 
             if (isHorizonBall)
             {
-                Quaternion h = Quaternion.Euler(new Vector3(serverUtils.GetServerData("rollAngle"), 90, (serverUtils.GetServerData("pitchAngle") * 2f)));
+                Quaternion h = Quaternion.Euler(new Vector3(-serverUtils.GetServerData("rollAngle"), 90, (serverUtils.GetServerData("pitchAngle") * 2f)));
                 optionalHorizon.transform.rotation = h;
             }
             else

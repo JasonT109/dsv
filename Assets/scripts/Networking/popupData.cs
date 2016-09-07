@@ -192,6 +192,10 @@ public class popupData : NetworkBehaviour
             }
         }
 
+        /** Whether popup has a title. */
+        public bool HasTitle
+            { get { return !string.IsNullOrEmpty(Title); } }
+
     };
 
     /** Class definition for a synchronized list of popups. */

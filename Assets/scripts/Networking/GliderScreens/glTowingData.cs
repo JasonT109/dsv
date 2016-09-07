@@ -37,4 +37,7 @@ public class glTowingData : NetworkBehaviour
 
     [SyncVar]
     public float towTargetDistance = 20;
+
+    [SyncVar]
+    public int glpowerupprogress;
 }

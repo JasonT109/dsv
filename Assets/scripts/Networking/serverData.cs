@@ -1148,6 +1148,9 @@ public class serverData : NetworkBehaviour
             case "towtargetdistance":
                 GLTowingData.towTargetDistance = newValue;
                 break;
+            case "glpowerupprogress":
+                GLTowingData.glpowerupprogress = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
@@ -1324,13 +1327,14 @@ public class serverData : NetworkBehaviour
         }
     }
 
-    public void GetRollPitchYaw(Quaternion q)
-    {
+    public void UpdateRollPitchYaw(Quaternion q)
+    { 
         float x = q.x;
         float y = q.y;
         float z = q.z;
         float w = q.w;
-        rollResult = Mathf.Asin(2 * x * y + 2 * z * w);
+
+        rollResult = -Mathf.Asin(2 * x * y + 2 * z * w);
         pitchResult = Mathf.Atan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z);
         yawResult = Mathf.Atan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z);
 
@@ -1340,9 +1344,7 @@ public class serverData : NetworkBehaviour
         yawResult *= 180 / Mathf.PI;
 
         if (yawResult < 0)
-        {
             yawResult = 360 + yawResult;
-        }
     }
 
     /** Return the current displayed depth (defaults to player vessel depth, can be overridden. */
@@ -1472,11 +1474,12 @@ public class serverData : NetworkBehaviour
     void FixedUpdate()
     {
         // Update the sub control logic.
-        GetComponent<SubControl>().SubController();
+        if (SubControl)
+            SubControl.ApplyForces();
 
         // Update roll, pitch and yaw.
         if (isServer)
-            GetRollPitchYaw(transform.rotation);
+            UpdateRollPitchYaw(transform.rotation);
     }
 
     /** Handle changes to dynamic server values. */
