@@ -74,6 +74,15 @@
 					"serverParam":"crewspo2pattern1"
 				}
 			]
+		},
+		{
+			"id":"MMB BODY TEMP",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp1"
+				}
+			]
 		}
 	]
 }
