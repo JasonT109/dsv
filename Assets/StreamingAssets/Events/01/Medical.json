@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"07/09/16 01:14:50.8",
-		"startedTimestamp":"07/09/16 01:14:18.4",
-		"stoppedTimestamp":"07/09/16 01:14:36.6"
+		"utc":"07/09/16 06:57:23.9",
+		"startedTimestamp":"07/09/16 06:56:09.0",
+		"stoppedTimestamp":"07/09/16 06:55:58.5"
 	},
 	"groups":[
 		{
@@ -47,64 +47,139 @@
 			]
 		},
 		{
-			"id":"INJURED",
+			"id":"LORI SCENE 96",
 			"paused":true,
 			"minimized":true,
+			"rewindOnComplete":true,
 			"events":[
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewheartrate1",
-					"serverValue":110
+					"serverValue":120
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewspo2max1",
-					"serverValue":93,
+					"serverValue":98,
 					"initialValue":90
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewetco2max1",
-					"serverValue":38
+					"serverValue":35
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
-					"serverParam":"crewheartstrengthmax1",
-					"serverValue":90
-				},
-				{
-					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewheartstrengthmax1",
 					"serverValue":95
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
+					"serverParam":"crewabpmax1",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewabpmin1",
+					"serverValue":40
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewpapmax1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewpapmin1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewbodytemp1",
+					"serverValue":35.4
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewrespirationrate1",
+					"serverValue":12
+				}
+			]
+		},
+		{
+			"id":"LORI SCENE 176",
+			"paused":true,
+			"minimized":true,
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewheartrate1",
+					"serverValue":75
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewspo2max1",
+					"serverValue":98
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewetco2max1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewheartstrengthmax1",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
 					"serverParam":"crewabpmax1",
 					"serverValue":120
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewabpmin1",
-					"serverValue":81
+					"serverValue":70
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewpapmax1",
-					"serverValue":43
+					"serverValue":0
 				},
 				{
 					"type":"Value",
-					"completeTime":5,
+					"completeTime":2,
 					"serverParam":"crewpapmin1",
-					"serverValue":18
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewbodytemp1",
+					"serverValue":37
+				},
+				{
+					"type":"Value",
+					"completeTime":2,
+					"serverParam":"crewrespirationrate1",
+					"serverValue":15
 				}
 			]
 		},

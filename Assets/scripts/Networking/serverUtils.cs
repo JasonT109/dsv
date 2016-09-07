@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.5";
+        public const string Version = "1.1.6";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -852,7 +852,7 @@ namespace Meg.Networking
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
             { "crewabpmin1", new ParameterInfo { description = "Minimum ambulatory blood pressure."} },
-            { "crewabpmax1", new ParameterInfo { description = "Maximum ambulatory blood pressure."} },
+            { "crewabpmax1", new ParameterInfo { maxValue = 200, description = "Maximum ambulatory blood pressure."} },
             { "crewbodytemp1", new ParameterInfo { description = "Current body temperaturefor crew member 1."} },
             { "crewetco2min1", new ParameterInfo { description = "Minimum end-tidal CO2 level."} },
             { "crewetco2max1", new ParameterInfo { description = "Maximum end-tidal CO2 level."} },
@@ -1479,6 +1479,8 @@ namespace Meg.Networking
                     return CrewData.crewHeartRate6;
                 case "crewbodytemp1":
                     return CrewData.crewBodyTemp1;
+                case "crewbodytempdecimals1":
+                    return CrewData.crewBodyTemp1 - Mathf.FloorToInt(CrewData.crewBodyTemp1);
                 case "crewbodytemp2":
                     return CrewData.crewBodyTemp2;
                 case "crewbodytemp3":
