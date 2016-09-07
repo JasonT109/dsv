@@ -239,6 +239,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the motion base data object. */
+        private static MotionBaseData _motionBaseData;
+        public static MotionBaseData MotionBaseData
+        {
+            get
+            {
+                if (!_motionBaseData && ServerObject)
+                    _motionBaseData = ServerObject.GetComponent<MotionBaseData>();
+                return _motionBaseData;
+            }
+        }
+
         /** Return the DCC screens data object. */
         private static DCCScreenData _DCCScreenControl;
         public static DCCScreenData DCCScreenData
@@ -1554,25 +1566,25 @@ namespace Meg.Networking
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed;
 				case "motionsafety":
-					return SubControl.MotionSafety ? 1 : 0;
+					return MotionBaseData.MotionSafety ? 1 : 0;
 				case "motionhazard":
-					return SubControl.MotionHazard ? 1 : 0;
+					return MotionBaseData.MotionHazard ? 1 : 0;
 				case "motionhazardenabled":
-					return SubControl.MotionHazardEnabled ? 1 : 0;
+					return MotionBaseData.MotionHazardEnabled ? 1 : 0;
 				case "motionbasepitch":
-					return SubControl.MotionBasePitch;
+					return MotionBaseData.MotionBasePitch;
 				case "motionbaseyaw":
-					return SubControl.MotionBaseYaw;
+					return MotionBaseData.MotionBaseYaw;
 				case "motionbaseroll":
-					return SubControl.MotionBaseRoll;
+					return MotionBaseData.MotionBaseRoll;
 				case "motionslerpspeed":
-					return SubControl.MotionSlerpSpeed;
+					return MotionBaseData.MotionSlerpSpeed;
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts;
 				case "motionminimpactinterval":
 					return SubControl.MotionMinImpactInterval;
 				case "motionhazardsensitivity":
-					return SubControl.MotionHazardSensitivity;
+					return MotionBaseData.MotionHazardSensitivity;
                 case "sonarheadingup":
                     return SonarData.HeadingUp ? 1 : 0;
                 case "sonarlongfrequency":
@@ -1898,15 +1910,15 @@ namespace Meg.Networking
                 case "megturnspeed":
                     return SonarData.MegTurnSpeed.ToString("n1");
 				case "motionbasepitch":
-					return SubControl.MotionBasePitch.ToString("n1");
+					return MotionBaseData.MotionBasePitch.ToString("n1");
 				case "motionbaseyaw":
-					return SubControl.MotionBaseYaw.ToString("n1");
+					return MotionBaseData.MotionBaseYaw.ToString("n1");
 				case "motionbaseroll":
-					return SubControl.MotionBaseRoll.ToString("n1");
+					return MotionBaseData.MotionBaseRoll.ToString("n1");
 				case "motionslerpspeed":
-					return SubControl.MotionSlerpSpeed.ToString("n1");
+					return MotionBaseData.MotionSlerpSpeed.ToString("n1");
 				case "motionhazardsensitivity":
-					return SubControl.MotionHazardSensitivity.ToString("n1");
+					return MotionBaseData.MotionHazardSensitivity.ToString("n1");
 				case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts.ToString("n1");
 				case "motionminimpactinterval":
@@ -2005,11 +2017,11 @@ namespace Meg.Networking
                 case "screenglitchautodecay":
                     return ScreenData.screenGlitchAutoDecay;
 				case "motionsafety":
-					return SubControl.MotionSafety;
+					return MotionBaseData.MotionSafety;
 				case "motionhazard":
-					return SubControl.MotionHazard;
+					return MotionBaseData.MotionHazard;
 				case "motionhazardenabled":
-					return SubControl.MotionHazardEnabled;
+					return MotionBaseData.MotionHazardEnabled;
                 case "dccvesselnameintitle":
                     return DCCScreenData.DCCvesselNameInTitle;
                 case "dcccommsusesliders":

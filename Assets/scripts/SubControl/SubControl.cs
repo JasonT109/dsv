@@ -67,28 +67,31 @@ public class SubControl : NetworkBehaviour
 	[SyncVar]
 	public bool isControlOverrideStandard = false;
 
-	[SyncVar]
-	public float MotionBasePitch;
-	[SyncVar]
-	public float MotionBaseYaw;
-	[SyncVar]
-	public float MotionBaseRoll;
-	[SyncVar]
-	public float MotionDampen;
-	[SyncVar] 
-	public bool MotionSafety = true;
-	[SyncVar] 
-	public bool MotionHazard = false;
-	[SyncVar] 
-	public float MotionSlerpSpeed = 2f;
-	[SyncVar] 
-	public float MotionHazardSensitivity = 15f;
-	[SyncVar] 
-	public bool MotionHazardEnabled = true;
+	//[SyncVar]
+	//public float MotionBasePitch;
+	//[SyncVar]
+	//public float MotionBaseYaw;
+	//[SyncVar]
+	//public float MotionBaseRoll;
+	//[SyncVar]
+	//public float MotionDampen;
+	//[SyncVar] 
+	//public bool MotionSafety = true;
+	//[SyncVar] 
+	//public bool MotionHazard = false;
+	//[SyncVar] 
+	//public float MotionSlerpSpeed = 2f;
+	//[SyncVar] 
+	//public float MotionHazardSensitivity = 15f;
+	//[SyncVar] 
+	//public bool MotionHazardEnabled = true;
 	[SyncVar] 
 	public float MotionScaleImpacts = 1.0f;
 	[SyncVar] 
 	public float MotionMinImpactInterval = 0.75f;
+
+    public float StabiliserSpeed = 20f;
+    public float StabiliserStability = 30f;
 
 
     // Members
@@ -168,18 +171,39 @@ public class SubControl : NetworkBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-        //
+    /* Apply defaults that relate to the glider here */
     private void ApplyGliderDefaults()
     {
+        //_rigidbody.mass = 100f;
+        //_rigidbody.drag = 0.5f;
+        _rigidbody.angularDrag = 5.0f;
+        
+        pitchSpeed = 4000f;
+        rollSpeed = 4000f;
+        
+        StabiliserSpeed = 50f;
+        //StabiliserStability = 0.1f;
 
     }
 
     /** Apply control forces to pilot a glider sub. */
     private void ApplyGliderForces()
     {
-        // TODO: Implement.
-        // For now, just pass through to the existing sub control logic.
-        ApplySubForces();
+        // Check if input has been disabled.
+        if (disableInput)
+            return;
+
+        // Apply the orientation forces
+        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+        _rigidbody.AddRelativeTorque(Vector3.forward * (rollSpeed * -inputXaxis));
+
+        // Auto-stabilize the sub if desired.
+        ApplyStabilizationForce();
+
+        // Apply thrust to move the sub forward or backwards.
+        ApplyThrustForce();
+
+
     }
 
     /** Apply control forces to pilot a big sub. */
@@ -247,16 +271,16 @@ public class SubControl : NetworkBehaviour
     private void AutoStabilize()
     {
         // TODO: Factor these numbers into constants.
-        const float stability = 0.3f * 10f;
-        const float speed = 2.0f * 10f;
-        var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * stability / speed,
+        //const float stability = 0.3f * 10f;
+        //const float speed = 2.0f * 10f;
+        var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * StabiliserStability / StabiliserSpeed,
             _rigidbody.angularVelocity) * transform.up;
 
         var torqueVector = Vector3.Cross(predictedUp, Vector3.up);
         if (!IsPitchAlsoStabilised && !isControlDecentMode)
             torqueVector = Vector3.Project(torqueVector, transform.forward);
 
-        _rigidbody.AddTorque(torqueVector * speed * speed);
+        _rigidbody.AddTorque(torqueVector * StabiliserSpeed * StabiliserSpeed);
     }
 
     /** Apply thrust forces to the sub's rigidbody. */
