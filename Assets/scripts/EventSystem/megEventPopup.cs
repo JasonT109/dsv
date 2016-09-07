@@ -15,7 +15,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         /** Default error message. */
-        public const string DefaultMessage = "ERROR 31: Unknown Error";
+        public const string DefaultMessage = "";
 
 
         // Properties
