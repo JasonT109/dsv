@@ -211,6 +211,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private MotionBaseData _motionBaseData;
+    public MotionBaseData MotionBaseData
+    {
+        get
+        {
+            if (!_motionBaseData)
+                _motionBaseData = GetComponent<MotionBaseData>();
+            return _motionBaseData;
+        }
+    }
+
     private DCCScreenData _DCCScreenControl;
     public DCCScreenData DCCScreenData
     {
@@ -914,19 +925,19 @@ public class serverData : NetworkBehaviour
 			//	SubControl.MotionBaseRoll = newValue;
 			//	break;
 			case "motionslerpspeed":
-				SubControl.MotionSlerpSpeed = newValue;
+				MotionBaseData.MotionSlerpSpeed = newValue;
 				break;
 			case "motionhazardsensitivity":
-				SubControl.MotionHazardSensitivity = newValue;
+                MotionBaseData.MotionHazardSensitivity = newValue;
 				break;
 			case "motionsafety":
-				SubControl.MotionSafety = newValue > 0;
+                MotionBaseData.MotionSafety = newValue > 0;
 				break;
 			case "motionhazard":
-				SubControl.MotionHazard = newValue > 0;
+                MotionBaseData.MotionHazard = newValue > 0;
 				break;
 			case "motionhazardenabled":
-				SubControl.MotionHazardEnabled = newValue > 0;
+				MotionBaseData.MotionHazardEnabled = newValue > 0;
 				break;
 			case "motionscaleimpacts":
 				SubControl.MotionScaleImpacts = newValue;
@@ -1300,13 +1311,13 @@ public class serverData : NetworkBehaviour
                 SubControl.isControlOverrideStandard = newValue;
                 break;
 			case "motionhazard":
-				SubControl.MotionHazard = newValue;
+				MotionBaseData.MotionHazard = newValue;
 				break;
 			case "motionhazardenabled":
-				SubControl.MotionHazardEnabled = newValue;
+				MotionBaseData.MotionHazardEnabled = newValue;
 				break;
 			case "motionsafety":
-				SubControl.MotionSafety = newValue;
+				MotionBaseData.MotionSafety = newValue;
 				break;
             case "pilotbuttonenabled":
                 OperatingData.pilotButtonEnabled = newValue;
