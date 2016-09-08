@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.IO.Ports;
 using System;
+using Meg.Networking;
 
 public class UnityToArduino : MonoBehaviour 
 {
@@ -19,6 +20,8 @@ public class UnityToArduino : MonoBehaviour
 
 	private Vector3 flat;
 	private Quaternion flatQ;
+
+    public Vector3 preMapped;
 
 	// initialization
 	void Start()
@@ -71,12 +74,20 @@ public class UnityToArduino : MonoBehaviour
 			{
 				if(!MotionData.MotionHazard)
 				{
-					motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime* MotionData.MotionSlerpSpeed);
+                    if (serverUtils.IsGlider())
+                    {
+                        SlerpWithRemap();
+
+                    }
+                    else
+                    {
+                        motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime * MotionData.MotionSlerpSpeed);
+                    }
 				}
 				else
 				{
-					motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
-				}
+                    motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime * 0.5f);
+                }
 
                 MotionData.MotionBasePitch = motionBase.eulerAngles.x;
                 MotionData.MotionBaseYaw = motionBase.eulerAngles.y;
@@ -104,24 +115,24 @@ public class UnityToArduino : MonoBehaviour
 				motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
 			}
 
-			if(MotionData.MotionBaseRoll > 33f)
+			if(MotionData.MotionBaseRoll > MotionData.MotionRollMax)
 			{
-                MotionData.MotionBaseRoll = 33f;
+                MotionData.MotionBaseRoll = MotionData.MotionRollMax;
 			}
 
-			if(MotionData.MotionBaseRoll < -33f)
+			if(MotionData.MotionBaseRoll < -MotionData.MotionRollMax)
 			{
-                MotionData.MotionBaseRoll = -33f;
+                MotionData.MotionBaseRoll = -MotionData.MotionRollMax;
 			}
 
-			if(MotionData.MotionBasePitch > 37f)
+			if(MotionData.MotionBasePitch > MotionData.MotionPitchMax)
 			{
-                MotionData.MotionBasePitch = 37f;
+                MotionData.MotionBasePitch = MotionData.MotionPitchMax;
 			}
 
-			if(MotionData.MotionBasePitch < -37f)
+			if(MotionData.MotionBasePitch < -MotionData.MotionPitchMax)
 			{
-                MotionData.MotionBasePitch = -37f;
+                MotionData.MotionBasePitch = -MotionData.MotionPitchMax;
 			}
 				
 
@@ -194,4 +205,30 @@ public class UnityToArduino : MonoBehaviour
 		LastMove.y = MotionData.MotionBaseYaw;
 		LastMove.z = MotionData.MotionBaseRoll;
 	}
+
+    private void SlerpWithRemap()
+    {
+        preMapped = Server.transform.rotation.eulerAngles;
+
+        if (preMapped.x > 180f)
+        {
+            preMapped.x -= 360f;
+        }
+
+        if (preMapped.z > 180f)
+        {
+            preMapped.z -= 360f;
+        }
+
+        preMapped.x /= 90f;
+        preMapped.z /= 180f;
+
+        preMapped.x *= (MotionData.MotionPitchMax * 1.3f);
+        preMapped.z *= (MotionData.MotionRollMax * 1.3f);
+        
+        Quaternion reMapped;
+        reMapped = Quaternion.Euler(preMapped.x, 0f, preMapped.z);
+        
+        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * MotionData.MotionSlerpSpeed);
+    }
 }

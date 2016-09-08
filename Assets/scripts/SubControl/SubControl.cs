@@ -80,6 +80,7 @@ public class SubControl : NetworkBehaviour
 
     public bool TripPitch = false;
     public bool TripRoll = false;
+    public float BowtieDeadzone; //syncvar this
     //public float ScaleRoll;
 
 
@@ -217,16 +218,25 @@ public class SubControl : NetworkBehaviour
 
         //DEBUG STUFF
         if (transform.localRotation.eulerAngles.z > 175f && transform.localRotation.eulerAngles.z < 185f)
+        {
             TripRoll = true;
-        if (transform.localRotation.eulerAngles.x > 90f && transform.localRotation.eulerAngles.x < 270f)
+            serverUtils.MotionBaseData.MotionHazard = true;
+            Debug.Log("MotionHazard too much roll detected");
+        }
+           
+        if (transform.localRotation.eulerAngles.x > 85f && transform.localRotation.eulerAngles.x < 265f)
+        {
             TripPitch = true;
+            serverUtils.MotionBaseData.MotionHazard = true;
+            Debug.Log("MotionHazard too much pitch detected");
+        }
     }
 
     /* Roll with constraints */
     private void GliderRollLogic()
     {
         //test for bowtie deadzone
-        if (inputXaxis < 0.2f * inputYaxis && inputXaxis > -0.2f * inputYaxis)
+        if (inputXaxis < BowtieDeadzone * inputYaxis && inputXaxis > -0.2f * inputYaxis)
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
@@ -260,7 +270,7 @@ public class SubControl : NetworkBehaviour
     private void GliderPitchLogic()
     {
         //test for bowtie deadzone
-        if(inputYaxis < 0.2f * inputXaxis && inputYaxis > -0.2f * inputXaxis)
+        if(inputYaxis < BowtieDeadzone * inputXaxis && inputYaxis > -0.2f * inputXaxis)
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
