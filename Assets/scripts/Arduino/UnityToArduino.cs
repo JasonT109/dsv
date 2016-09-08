@@ -23,6 +23,8 @@ public class UnityToArduino : MonoBehaviour
 
     public Vector3 preMapped;
 
+    public float slerpNerf;
+
 	// initialization
 	void Start()
 	{ 
@@ -228,7 +230,14 @@ public class UnityToArduino : MonoBehaviour
         
         Quaternion reMapped;
         reMapped = Quaternion.Euler(preMapped.x, 0f, preMapped.z);
-        
-        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * MotionData.MotionSlerpSpeed);
+
+        //lerp the slerp
+        //float lerpSlerp1;
+
+        float angle = Quaternion.Angle(reMapped, motionBase);
+
+        slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
+
+        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed * slerpNerf));
     }
 }
