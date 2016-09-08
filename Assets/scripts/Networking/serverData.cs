@@ -76,10 +76,6 @@ public class serverData : NetworkBehaviour
 
     #region PrivateVars
     private Rigidbody rb;
-    private float rollResult;
-    private float pitchResult;
-    private float yawResult;
-    private float bank;
     #endregion
     
     #region PrivateProperties
@@ -212,6 +208,17 @@ public class serverData : NetworkBehaviour
             if (!_subControl)
                 _subControl = GetComponent<SubControl>();
             return _subControl;
+        }
+    }
+
+    private MotionBaseData _motionBaseData;
+    public MotionBaseData MotionBaseData
+    {
+        get
+        {
+            if (!_motionBaseData)
+                _motionBaseData = GetComponent<MotionBaseData>();
+            return _motionBaseData;
         }
     }
 
@@ -918,19 +925,19 @@ public class serverData : NetworkBehaviour
 			//	SubControl.MotionBaseRoll = newValue;
 			//	break;
 			case "motionslerpspeed":
-				SubControl.MotionSlerpSpeed = newValue;
+				MotionBaseData.MotionSlerpSpeed = newValue;
 				break;
 			case "motionhazardsensitivity":
-				SubControl.MotionHazardSensitivity = newValue;
+                MotionBaseData.MotionHazardSensitivity = newValue;
 				break;
 			case "motionsafety":
-				SubControl.MotionSafety = newValue > 0;
+                MotionBaseData.MotionSafety = newValue > 0;
 				break;
 			case "motionhazard":
-				SubControl.MotionHazard = newValue > 0;
+                MotionBaseData.MotionHazard = newValue > 0;
 				break;
 			case "motionhazardenabled":
-				SubControl.MotionHazardEnabled = newValue > 0;
+				MotionBaseData.MotionHazardEnabled = newValue > 0;
 				break;
 			case "motionscaleimpacts":
 				SubControl.MotionScaleImpacts = newValue;
@@ -1304,13 +1311,13 @@ public class serverData : NetworkBehaviour
                 SubControl.isControlOverrideStandard = newValue;
                 break;
 			case "motionhazard":
-				SubControl.MotionHazard = newValue;
+				MotionBaseData.MotionHazard = newValue;
 				break;
 			case "motionhazardenabled":
-				SubControl.MotionHazardEnabled = newValue;
+				MotionBaseData.MotionHazardEnabled = newValue;
 				break;
 			case "motionsafety":
-				SubControl.MotionSafety = newValue;
+				MotionBaseData.MotionSafety = newValue;
 				break;
             case "pilotbuttonenabled":
                 OperatingData.pilotButtonEnabled = newValue;
@@ -1325,26 +1332,6 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCcommsUseSliders = newValue;
                 break;
         }
-    }
-
-    public void UpdateRollPitchYaw(Quaternion q)
-    { 
-        float x = q.x;
-        float y = q.y;
-        float z = q.z;
-        float w = q.w;
-
-        rollResult = -Mathf.Asin(2 * x * y + 2 * z * w);
-        pitchResult = Mathf.Atan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z);
-        yawResult = Mathf.Atan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z);
-
-        rollResult *= 180 / Mathf.PI;
-        pitchResult *= 180 / Mathf.PI;
-        pitchResult = -pitchResult;
-        yawResult *= 180 / Mathf.PI;
-
-        if (yawResult < 0)
-            yawResult = 360 + yawResult;
     }
 
     /** Return the current displayed depth (defaults to player vessel depth, can be overridden. */
@@ -1450,14 +1437,6 @@ public class serverData : NetworkBehaviour
     [Server]
     private void UpdateOnServer()
     {
-        heading = yawResult;
-        pitchAngle = -pitchResult;
-        yawAngle = yawResult;
-        rollAngle = rollResult;
-        velocity = rb.velocity.magnitude;
-        depth = Mathf.Max(0, -transform.position.y);
-        floorDistance = Mathf.Max(0, floorDepth - GetDepth());
-
         // Update ETA timer.
         if (dueTimeActive)
             dueTime = Mathf.Max(0, dueTime - Time.deltaTime);
@@ -1465,9 +1444,6 @@ public class serverData : NetworkBehaviour
         // Update dive timer.
         if (diveTimeActive)
             diveTime += Time.deltaTime;
-
-        verticalVelocity = rb.velocity.y;
-        horizontalVelocity = rb.velocity.x;
     }
 
     /** Physics update. */
@@ -1477,9 +1453,57 @@ public class serverData : NetworkBehaviour
         if (SubControl)
             SubControl.ApplyForces();
 
-        // Update roll, pitch and yaw.
+        // Update state values derived from the rigidbody.
         if (isServer)
-            UpdateRollPitchYaw(transform.rotation);
+            UpdateSubState();
+    }
+
+    private void UpdateSubState()
+    {
+        UpdateYawPitchRoll();
+
+        velocity = rb.velocity.magnitude;
+        depth = Mathf.Max(0, -transform.position.y);
+        floorDistance = Mathf.Max(0, floorDepth - GetDepth());
+        verticalVelocity = rb.velocity.y;
+        horizontalVelocity = rb.velocity.x;
+    }
+
+    private void UpdateYawPitchRoll()
+    {
+        heading = GetYaw(transform);
+        pitchAngle = GetPitch(transform);
+        yawAngle = heading;
+        rollAngle = GetRoll(transform);
+    }
+
+    private static float GetPitch(Transform t)
+    {
+        var dir = t.rotation * Vector3.forward;
+        var angle = -Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude);
+        return angle * Mathf.Rad2Deg;
+    }
+
+    private static float GetYaw(Transform t)
+    {
+        // Measure yaw directly in worldspace.
+        var dir = t.rotation * Vector3.forward;
+        var angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+        return Mathf.Repeat(angle, 360);
+    }
+
+    private static float GetRoll(Transform t)
+    {
+        // Get the world up vector in the sub's local space,
+        // then measure the angle between local up and world up.
+        var up = t.InverseTransformDirection(Vector3.up);
+        var angle = Mathf.Atan2(up.y, up.x) * Mathf.Rad2Deg - 90;
+        if (angle > 180)
+            angle -= 360;
+        else if (angle < -180)
+            angle += 360;
+
+        return angle;
     }
 
     /** Handle changes to dynamic server values. */
