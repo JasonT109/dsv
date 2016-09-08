@@ -23,6 +23,11 @@ public class MotionBaseData : NetworkBehaviour
     [SyncVar]
     public bool MotionHazardEnabled = true;
 
+    //todo syncvar these
+    public float MotionPitchMax;
+
+    public float MotionRollMax;
+
     // Use this for initialization
     void Start ()
     {

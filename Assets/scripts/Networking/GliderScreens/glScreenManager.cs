@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-public class glScreenManager : Singleton<glScreenManager> {
+public class glScreenManager : Singleton<glScreenManager>
+{
+
+    public const int LeftScreenId = 2;
+    public const int MidScreenId = 1;
+    public const int RightScreenId = 0;
 
     /**
     left screen         middle screen           right screen
@@ -143,6 +148,91 @@ public class glScreenManager : Singleton<glScreenManager> {
                 sonarScreen.SetActive(false);       
                 radarScreen.SetActive(true);        //<---
                 break;
+        }
+
+        // Update the shared screen state to match.
+        var player = serverUtils.LocalPlayer;
+        var inputs = player ? player.GameInputs : null;
+        if (inputs && inputs.activeScreen != screenToShow)
+        {
+            inputs.activeScreen = screenToShow;
+            player.PostGliderScreenContentId(player.netId, screenToShow);
+        }
+    }
+
+    /** Return a readable name for the given glider screen id. */
+    public static string GetScreenName(int screenId)
+    {
+        switch (screenId)
+        {
+            case 0:
+                return "Controls";
+            case 1:
+                return "NavMap";
+            case 2:
+            case 10:
+                return "TCAS";
+            case 3:
+            case 14:
+                return "Sonar";
+            case 4:
+            case 15:
+                return "Radar";
+            case 5:
+            case 11:
+                return "Towing";
+            case 6:
+                return "Comms";
+            case 7:
+                return "Systems";
+            case 8:
+                return "Thrusters";
+            case 9:
+                return "Map";
+            case 12:
+                return "Power";
+            case 13:
+                return "Diagnostics";
+            default:
+                return "";
+        }
+    }
+
+    /** Return an equivalent screen content value for the given glider id. */
+    public static screenData.Content GetScreenContent(int screenId)
+    {
+        switch (screenId)
+        {
+            case 0:
+                return screenData.Content.Controls;
+            case 1:
+                return screenData.Content.Nav;
+            case 2:
+            case 10:
+                return screenData.Content.TCAS;
+            case 3:
+            case 14:
+                return screenData.Content.SonarLong;
+            case 4:
+            case 15:
+                return screenData.Content.Radar;
+            case 5:
+            case 11:
+                return screenData.Content.Towing;
+            case 6:
+                return screenData.Content.Comms;
+            case 7:
+                return screenData.Content.Systems;
+            case 8:
+                return screenData.Content.Thrusters;
+            case 9:
+                return screenData.Content.Map;
+            case 12:
+                return screenData.Content.Power;
+            case 13:
+                return screenData.Content.Diagnostics;
+            default:
+                return screenData.Content.None;
         }
     }
 

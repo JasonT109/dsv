@@ -245,6 +245,24 @@ public class serverPlayer : NetworkBehaviour
             CmdClearExtraVessels();
     }
 
+    /** Post glider screen id for the given player. */
+    public void PostGliderScreenId(NetworkInstanceId playerId, int screenId)
+    {
+        if (isServer)
+            ServerSetGliderScreenId(playerId, screenId);
+        else
+            CmdSetGliderScreenId(playerId, screenId);
+    }
+
+    /** Post glider screen content id for the given player. */
+    public void PostGliderScreenContentId(NetworkInstanceId playerId, int contentId)
+    {
+        if (isServer)
+            ServerSetGliderScreenContentId(playerId, contentId);
+        else
+            CmdSetGliderScreenContentId(playerId, contentId);
+    }
+
     /** Post screen state for this player. */
     public void PostScreenState(NetworkInstanceId playerId, screenData.State state)
     {
@@ -460,6 +478,16 @@ public class serverPlayer : NetworkBehaviour
     public void CmdClearPopups()
         { ServerClearPopups(); }
 
+    /** Set glider screen id for the given player. */
+    [Command]
+    public void CmdSetGliderScreenId(NetworkInstanceId playerId, int screenId)
+        { ServerSetGliderScreenId(playerId, screenId); }
+
+    /** Set glider screen content id for the given player. */
+    [Command]
+    public void CmdSetGliderScreenContentId(NetworkInstanceId playerId, int contentId)
+        { ServerSetGliderScreenContentId(playerId, contentId); }
+
     /** Set screen state for this player. */
     [Command]
     public void CmdSetScreenState(NetworkInstanceId id, screenData.State state)
@@ -602,6 +630,30 @@ public class serverPlayer : NetworkBehaviour
     public void ServerClearPopups()
         { serverUtils.PopupData.Clear(); }
 
+    /** Set glider screen id for the given player. */
+    [Server]
+    public void ServerSetGliderScreenId(NetworkInstanceId playerId, int screenId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.RpcSetGliderScreenId(screenId);
+    }
+
+    /** Set glider screen content id for the given player. */
+    [Server]
+    public void ServerSetGliderScreenContentId(NetworkInstanceId playerId, int contentId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (!player)
+            return;
+
+        var inputs = player.GameInputs;
+        inputs.activeScreen = contentId;
+
+        if (inputs.IsRightGliderScreen)
+            player.RpcSetGliderRightScreen(contentId);
+    }
+
     /** Set screen state for this player. */
     [Server]
     public void ServerSetScreenState(NetworkInstanceId playerId, screenData.State state)
@@ -636,6 +688,29 @@ public class serverPlayer : NetworkBehaviour
     {
         if (MapCamera)
             MapCamera.triggerEventFromState(state);
+    }
+
+    /** Set glider screen id for the given player. */
+    [ClientRpc]
+    public void RpcSetGliderScreenId(int screenId)
+    {
+        if (!hasAuthority)
+            return;
+
+        glScreenManager.Instance.screenID = screenId;
+        glScreenManager.Instance.hasChanged = true;
+    }
+
+    /** Set glider screen id for the given player. */
+    [ClientRpc]
+    public void RpcSetGliderRightScreen(int contentId)
+    {
+        /*
+        if (!hasAuthority)
+            return;
+
+        if (GameInputs.IsRightGliderScreen)
+        */  
     }
 
 

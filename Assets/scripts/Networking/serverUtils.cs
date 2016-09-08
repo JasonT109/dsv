@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.7";
+        public const string Version = "1.1.8";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -45,7 +45,7 @@ namespace Meg.Networking
             get
             {
                 var player = ClientScene.localPlayers.FirstOrDefault();
-                if (player != null)
+                if (player != null && player.gameObject)
                     return player.gameObject.GetComponent<serverPlayer>();
 
                 return null;
@@ -2483,6 +2483,20 @@ namespace Meg.Networking
             }
 
             return buttonState;
+        }
+
+        /** Post glider screen id for the given player. */
+        public static void PostGliderScreenId(NetworkInstanceId playerId, int screenId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostGliderScreenId(playerId, screenId);
+        }
+
+        /** Post glider screen content id for the given player. */
+        public static void PostGliderScreenContentId(NetworkInstanceId playerId, int contentId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostGliderScreenContentId(playerId, contentId);
         }
 
         /** Post screen state for the given player. */
