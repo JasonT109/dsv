@@ -46,7 +46,7 @@ public class widgetGliderDescentValues : MonoBehaviour
         if (powerValue != 0)
         {
             flowRate = maxFlowRate * powerValue;
-            flowRate += Mathf.Sin(5 * Time.time);
+            //flowRate += Mathf.Sin(0.01f * Time.time);
             p1Emission.rate = new ParticleSystem.MinMaxCurve(100);
             p2Emission.rate = new ParticleSystem.MinMaxCurve(100);
             p1.startSpeed = flowRate * particleBaseSpeed;
@@ -59,7 +59,7 @@ public class widgetGliderDescentValues : MonoBehaviour
             p1Emission.rate = new ParticleSystem.MinMaxCurve(0);
             p2Emission.rate = new ParticleSystem.MinMaxCurve(0);
         }
-        flowText.Text = flowRate.ToString("N0");
+        flowText.Text = flowRate.ToString("N2");
     }
 
     void OnEnable()
