@@ -23,9 +23,13 @@ public class serverPlayer : NetworkBehaviour
     public string Id
         { get { return Configuration.Instance.CurrentId + "-" + netId.Value; } }
 
+    /** Return the game input for this player. */
+    public gameInputs GameInputs
+        { get { return GetComponent<gameInputs>(); } }
+
     /** Return the input source for this player (if local). */
     public Rewired.Player Input
-        { get { return GetComponent<gameInputs>().Input; } }
+        { get { return GameInputs.Input; } }
     
 
     // Private Properties
