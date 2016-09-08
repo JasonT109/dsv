@@ -71,7 +71,7 @@ public class glScreenData : NetworkBehaviour
         var right = serverUtils.GetPlayers()
             .Where(p => p.GameInputs.IsRightGliderScreen)
             .OrderBy(p => p.isLocalPlayer)
-            .ThenBy(p => p.netId)
+            .ThenBy(p => p.netId.Value)
             .FirstOrDefault();
 
         if (!right)

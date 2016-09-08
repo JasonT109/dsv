@@ -45,6 +45,8 @@ public class debugGliderScreenUi : MonoBehaviour
         PreviousButton.onClick.AddListener(OnPreviousClicked);
         NextContentButton.onClick.AddListener(OnNextContentClicked);
         PreviousContentButton.onClick.AddListener(OnPreviousContentClicked);
+
+        Update();
     }
 
     private void Update()
@@ -115,20 +117,47 @@ public class debugGliderScreenUi : MonoBehaviour
 
     private void OnNextContentClicked()
     {
-        var next = Player.GameInputs.activeScreen + 1;
-        if (next > 7)
-            next = 0;
+        var current = Player.ScreenState.Content;
+        if (current == screenData.Content.Debug)
+            return;
 
-        serverUtils.PostGliderScreenContentId(Player.netId, next);
+        var next = GetNextContent(current);
+        serverUtils.PostScreenState(Player.netId, GetRightScreenState(next));
     }
 
     private void OnPreviousContentClicked()
     {
-        var prev = Player.GameInputs.activeScreen - 1;
-        if (prev < 0)
-            prev = 7;
+        var current = Player.ScreenState.Content;
+        if (current == screenData.Content.Debug)
+            return;
 
-        serverUtils.PostGliderScreenContentId(Player.netId, prev);
+        var next = GetPreviousContent(current);
+        serverUtils.PostScreenState(Player.netId, GetRightScreenState(next));
+    }
+
+    /** Given a content value, return the next valid value, cycling round to None. */
+    private static screenData.State GetRightScreenState(screenData.Content content)
+        { return new screenData.State { Type = screenData.Type.GliderRight, Content = content }; }
+
+    /** Given a content value, return the next valid value, cycling round to None. */
+    private static screenData.Content GetNextContent(screenData.Content current)
+    {
+        var id = glScreenManager.GetMatrixIdForContent(current) + 1;
+        if (id > 7)
+            id = 0;
+
+        return glScreenManager.GetContentForId(id);
+    }
+
+    /** Given a content value, return the previous valid value, cycling round to None. */
+    private static screenData.Content GetPreviousContent(screenData.Content current)
+    {
+        var id = glScreenManager.GetMatrixIdForContent(current) - 1;
+        if (id < 0)
+            id = 7;
+
+        return glScreenManager.GetContentForId(id);
+
     }
 
 }
