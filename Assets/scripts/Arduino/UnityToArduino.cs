@@ -228,6 +228,7 @@ public class UnityToArduino : MonoBehaviour
 		if(Mathf.Abs(LastMove.z - MotionData.MotionBaseRoll) > MotionData.MotionHazardSensitivity)
 		{
             MotionData.MotionHazard = true;
+            Debug.Log("Hazard: Too much movement");
 		}
 
 		LastMove.x = MotionData.MotionBasePitch;
@@ -267,10 +268,10 @@ public class UnityToArduino : MonoBehaviour
 
         float angle = Quaternion.Angle(reMapped, motionBase);
 
-        //slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
-        slerpNerf = Mathf.Clamp(angle / 30f, 0.1f, 2f);
-        slerpNerf = 2f - slerpNerf +2f;
+        slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
+        //slerpNerf = Mathf.Clamp(angle / 30f, 0.5f, 20f);
+        //slerpNerf = 20f - slerpNerf +20f;
 
-        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed * slerpNerf));
+        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed / (slerpNerf +0.1f)));
     }
 }
