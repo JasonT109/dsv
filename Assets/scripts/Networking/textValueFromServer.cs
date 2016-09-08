@@ -17,6 +17,7 @@ public class textValueFromServer : widgetText
     public float scale = 1;
 
     [Header("Formatting")]
+    public bool unsigned = false;
     public string format = "";
     public string configFormatKey = "";
     public string prefix = "";
@@ -63,6 +64,9 @@ public class textValueFromServer : widgetText
 
         // Determine current value.
         var value = serverUtils.GetServerData(linkDataString);
+
+        if (unsigned)
+            value = Mathf.Abs(value);
 
         // Apply remapping curve, if specified.
         if (useOutputCurve)

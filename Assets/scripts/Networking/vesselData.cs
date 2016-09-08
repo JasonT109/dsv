@@ -860,7 +860,7 @@ public class vesselData : NetworkBehaviour
             name = player.Name,
             backgroundColor = player.ColorThemeBackground,
             keyColor = player.ColorThemeKey,
-            highlightColor = player.ColorThemeKey
+            highlightColor = player.ColorThemeHighlight
         };
 
         serverUtils.SetColorTheme(theme);
