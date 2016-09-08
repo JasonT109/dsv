@@ -78,7 +78,13 @@ public class screenData : NetworkBehaviour
         Piloting,
         Docking,
         Rov,
-        Power
+        Power,
+        Controls,
+        TCAS,
+        Radar,
+        Towing,
+        Systems,
+        Map
     }
 
     // Structures

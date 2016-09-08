@@ -651,7 +651,7 @@ public class serverPlayer : NetworkBehaviour
         inputs.activeScreen = contentId;
 
         if (inputs.IsRightGliderScreen)
-            player.RpcSetGliderRightScreenContentId(contentId);
+            player.RpcSetGliderRightScreen(contentId);
     }
 
     /** Set screen state for this player. */
@@ -703,15 +703,15 @@ public class serverPlayer : NetworkBehaviour
 
     /** Set glider screen id for the given player. */
     [ClientRpc]
-    public void RpcSetGliderRightScreenContentId(int contentId)
+    public void RpcSetGliderRightScreen(int contentId)
     {
+        /*
         if (!hasAuthority)
             return;
 
-        // if (GameInputs.IsRightGliderScreen)
-        //    glScreenManager.Instance.SetRightScreenID(contentId);
+        if (GameInputs.IsRightGliderScreen)
+        */  
     }
-
 
 
     // Networking Methods
