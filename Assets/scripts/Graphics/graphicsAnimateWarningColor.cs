@@ -22,7 +22,8 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     private float timeIndex;
     private Renderer r;
     private Material m;
-    private Color originalColor;
+    public Color originalColor;
+    private DynamicText dt;
 
     void SetColor()
     {
@@ -72,7 +73,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
         }
 
         if (isDynamicText)
-            GetComponent<DynamicText>().color = c;
+            dt.color = c;
         else if (usingTintColor)
             m.SetColor("_TintColor", c);
         else
@@ -82,32 +83,19 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 
     void OnEnable()
     {
-        if (isDynamicText)
-        {
-            originalColor = GetComponent<DynamicText>().color;
-        }
-        else
-        {
-            if (!r)
-                r = gameObject.GetComponent<Renderer>();
-            if (!m)
-                m = r.material;
-        }
-
         if (useUniversalSync)
         {
             syncNode = GameObject.FindWithTag("WarningSync");
         }
-
-        //SetColor();
     }
 
-    // Use this for initialization
-    void Awake ()
+
+    void Start ()
     {
         if (isDynamicText)
         {
-            originalColor = GetComponent<DynamicText>().color;
+            dt = GetComponent<DynamicText>();
+            originalColor = dt.color;
         }
         else
         {
@@ -125,8 +113,8 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
             syncNode = GameObject.FindWithTag("WarningSync");
         }
     }
-	
-	// Update is called once per frame
+
+
 	void Update ()
     {
         if (materialIndex.Length > 0 && !isDynamicText)
