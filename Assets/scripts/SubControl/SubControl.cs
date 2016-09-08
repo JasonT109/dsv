@@ -71,16 +71,21 @@ public class SubControl : NetworkBehaviour
 	[SyncVar] 
 	public float MotionMinImpactInterval = 0.75f;
 
-    //TODO Make these sync vars
+    [SyncVar]
     public float StabiliserSpeed = 20f;
+    [SyncVar]
     public float StabiliserStability = 30f;
+    [SyncVar]
+    public float BowtieDeadzone; //syncvar this
+
+
+    //TODO Make these sync vars
 
     public AnimationCurve RollLimitCurve;
     public AnimationCurve PitchLimitCurve;
 
     public bool TripPitch = false;
     public bool TripRoll = false;
-    public float BowtieDeadzone; //syncvar this
     //public float ScaleRoll;
 
 
@@ -157,11 +162,17 @@ public class SubControl : NetworkBehaviour
     public Vector3 GetWorldVelocity()
         { return _rigidbody.velocity; }
 
+    /** set the y velocity to the motion base.  */
+    public void CalculateYawVelocity()
+    {
+        serverUtils.MotionBaseData.MotionBaseYaw = _rigidbody.angularVelocity.y;
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
 
-    /* Apply defaults that relate to the glider here */
+    /** Apply defaults that relate to the glider here */
     private void ApplyGliderDefaults()
     {
         _rigidbody.angularDrag = 1.3f;
@@ -173,6 +184,8 @@ public class SubControl : NetworkBehaviour
         
         StabiliserSpeed = 7f;
         StabiliserStability = 1f;
+
+        serverUtils.MotionBaseData.MotionSlerpSpeed = 5.0f;
     }
 
     /** Apply control forces to pilot a big sub. */

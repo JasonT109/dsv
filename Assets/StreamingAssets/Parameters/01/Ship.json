@@ -165,6 +165,10 @@
 				{
 					"type":"Value",
 					"serverParam":"motionMinImpactInterval"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionBaseYaw"
 				}
 			]
 		}

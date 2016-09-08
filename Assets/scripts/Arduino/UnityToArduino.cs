@@ -10,6 +10,7 @@ public class UnityToArduino : MonoBehaviour
 	public serverData Server;
 	public SubControl Controls;
     public MotionBaseData MotionData;
+    public GameObject MotionBaseTester;
 	public string COMPort = "";
 
 	private Quaternion motionBase;
@@ -95,7 +96,7 @@ public class UnityToArduino : MonoBehaviour
                 MotionData.MotionBaseYaw = motionBase.eulerAngles.y;
                 MotionData.MotionBaseRoll = motionBase.eulerAngles.z;
 
-				if(MotionData.MotionBasePitch > 180f)
+                if (MotionData.MotionBasePitch > 180f)
 				{
                     MotionData.MotionBasePitch = motionBase.eulerAngles.x-360f;
 				}
@@ -136,22 +137,47 @@ public class UnityToArduino : MonoBehaviour
 			{
                 MotionData.MotionBasePitch = -MotionData.MotionPitchMax;
 			}
-				
 
-			//if(!Controls.MotionHazard)
-			//{
-			//	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-			//		(Controls.MotionBaseYaw.ToString("F3")),
-			//		(Controls.MotionBasePitch.ToString("F3")),
-			//		(Controls.MotionBaseRoll.ToString("F3")),
-			//	
-			//		(Controls.inputXaxis.ToString("F3")),
-			//		(Controls.inputYaxis.ToString("F3")),
-			//		(Controls.inputZaxis.ToString("F3")))
-			//	); 
-			//}
+            if(MotionData.MotionBaseYaw > 180)
+            {
+                MotionData.MotionBaseYaw -= 360f;
+            }
 
-			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+            if (MotionData.MotionBaseYaw > MotionData.MotionYawMax)
+            {
+                MotionData.MotionBaseYaw = MotionData.MotionYawMax;
+            }
+            
+            if (MotionData.MotionBaseYaw < -MotionData.MotionYawMax)
+            {
+                MotionData.MotionBaseYaw = -MotionData.MotionYawMax;
+            }
+
+
+            //if(!Controls.MotionHazard)
+            //{
+            //	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+            //		(Controls.MotionBaseYaw.ToString("F3")),
+            //		(Controls.MotionBasePitch.ToString("F3")),
+            //		(Controls.MotionBaseRoll.ToString("F3")),
+            //	
+            //		(Controls.inputXaxis.ToString("F3")),
+            //		(Controls.inputYaxis.ToString("F3")),
+            //		(Controls.inputZaxis.ToString("F3")))
+            //	); 
+            //}
+
+            if (MotionBaseTester)
+            {
+                Quaternion MotionBaseTestQ;
+                MotionBaseTestQ = Quaternion.Euler(new Vector3(MotionData.MotionBasePitch, MotionData.MotionBaseYaw, MotionData.MotionBaseRoll));
+                MotionBaseTester.transform.rotation = MotionBaseTestQ;
+            }
+
+
+
+
+            port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
 				(MotionData.MotionBaseYaw.ToString("F3")),
 				(MotionData.MotionBasePitch.ToString("F3")),
 				(MotionData.MotionBaseRoll.ToString("F3")),
@@ -162,14 +188,15 @@ public class UnityToArduino : MonoBehaviour
 			);
 
 
-			//port.Write(String.Format("${0}\0",
-			//	(Controls.MotionBasePitch.ToString("F3")))
-			//);
-				
-				
 
-			//yield return new WaitForSeconds(0.016f);
-			yield return new WaitForSeconds(0.0083f);
+            //port.Write(String.Format("${0}\0",
+            //	(Controls.MotionBasePitch.ToString("F3")))
+            //);
+
+
+
+            //yield return new WaitForSeconds(0.016f);
+            yield return new WaitForSeconds(0.0083f);
 		}
 	} 
 
@@ -210,6 +237,10 @@ public class UnityToArduino : MonoBehaviour
 
     private void SlerpWithRemap()
     {
+        Controls.CalculateYawVelocity();
+
+        MotionData.MotionBaseYaw *= MotionData.MotionYawMax;
+
         preMapped = Server.transform.rotation.eulerAngles;
 
         if (preMapped.x > 180f)
@@ -229,7 +260,7 @@ public class UnityToArduino : MonoBehaviour
         preMapped.z *= (MotionData.MotionRollMax * 1.3f);
         
         Quaternion reMapped;
-        reMapped = Quaternion.Euler(preMapped.x, 0f, preMapped.z);
+        reMapped = Quaternion.Euler(preMapped.x, MotionData.MotionBaseYaw, preMapped.z);
 
         //lerp the slerp
         //float lerpSlerp1;
@@ -237,7 +268,8 @@ public class UnityToArduino : MonoBehaviour
         float angle = Quaternion.Angle(reMapped, motionBase);
 
         //slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
-        Mathf.Clamp(angle / 30f, 0.1f, 2f);
+        slerpNerf = Mathf.Clamp(angle / 30f, 0.1f, 2f);
+        slerpNerf = 2f - slerpNerf +2f;
 
         motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed * slerpNerf));
     }
