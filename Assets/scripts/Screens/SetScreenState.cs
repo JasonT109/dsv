@@ -5,9 +5,6 @@ public class SetScreenState : MonoBehaviour
 {
     public screenData.State State;
 
-    private const float UpdateInterval = 1.0f;
-    private float _nextUpdateTime;
-
     private void OnEnable()
         { UpdateScreenState(); }
 

@@ -199,9 +199,9 @@ public class glScreenManager : Singleton<glScreenManager>
     }
 
     /** Return an equivalent screen content value for the given glider id. */
-    public static screenData.Content GetScreenContent(int screenId)
+    public static screenData.Content GetContentForId(int contentId)
     {
-        switch (screenId)
+        switch (contentId)
         {
             case 0:
                 return screenData.Content.Controls;
@@ -232,8 +232,60 @@ public class glScreenManager : Singleton<glScreenManager>
             case 13:
                 return screenData.Content.Diagnostics;
             default:
-                return screenData.Content.None;
+                return screenData.Content.Controls;
         }
+    }
+
+    /** Return a glider screen matrix id for the given screen content. */
+    public static int GetMatrixIdForContent(screenData.Content content)
+    {
+        switch (content)
+        {
+            case screenData.Content.Controls:
+                return 0;
+            case screenData.Content.Nav:
+                return 1;
+            case screenData.Content.TCAS:
+                return 2;
+            case screenData.Content.SonarLong:
+                return 3;
+            case screenData.Content.Radar:
+                return 4;
+            case screenData.Content.Towing:
+                return 5;
+            case screenData.Content.Comms:
+                return 6;
+            case screenData.Content.Systems:
+                return 7;
+            default:
+                return 0;
+        }
+    }
+
+    /** Given a glider screen id, return the equivalent screen type. */
+    public static screenData.Type GetTypeForScreen(int screenId)
+    {
+        switch (screenId)
+        {
+            case LeftScreenId:
+                return screenData.Type.GliderLeft;
+            case MidScreenId:
+                return screenData.Type.GliderMid;
+            case RightScreenId:
+                return screenData.Type.GliderRight;
+            default:
+                return screenData.Type.GliderRight;
+        }
+    }
+
+    /** Given a glider screen content matrix id, return the equivalent screen state. */
+    public screenData.State GetStateForMatrixId(int contentId)
+    {
+        return new screenData.State
+        {
+            Type = GetTypeForScreen(screenID),
+            Content = GetContentForId(contentId)
+        };
     }
 
     /** Start */
