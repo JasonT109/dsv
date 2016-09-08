@@ -10,13 +10,22 @@ public class debugGliderScreenUi : MonoBehaviour
     public Text Title;
 
     /** Screen content button. */
-    public Button ContentButton;
+    public Button ScreenButton;
+
+    /** Screen content label. */
+    public Text Content;
 
     /** Next screen type button. */
     public Button NextButton;
 
     /** Previous screen type button. */
     public Button PreviousButton;
+
+    /** Next content button. */
+    public Button NextContentButton;
+
+    /** Previous content button. */
+    public Button PreviousContentButton;
 
     /** Local player indicator graphic. */
     public Graphic LocalIndicator;
@@ -25,15 +34,17 @@ public class debugGliderScreenUi : MonoBehaviour
     public serverPlayer Player { get; set; }
 
     /** The screen content text. */
-    private Text _contentLabel;
+    private Text _screenLabel;
 
 
     private void Start()
     {
-        _contentLabel = ContentButton.GetComponentInChildren<Text>();
-        ContentButton.onClick.AddListener(OnNextClicked);
+        _screenLabel = ScreenButton.GetComponentInChildren<Text>();
+        ScreenButton.onClick.AddListener(OnNextClicked);
         NextButton.onClick.AddListener(OnNextClicked);
         PreviousButton.onClick.AddListener(OnPreviousClicked);
+        NextContentButton.onClick.AddListener(OnNextContentClicked);
+        PreviousContentButton.onClick.AddListener(OnPreviousContentClicked);
     }
 
     private void Update()
@@ -42,12 +53,18 @@ public class debugGliderScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
-        _contentLabel.text = GetScreenName(Player);
+        _screenLabel.text = GetScreenName(Player);
+        Content.text = GetScreenContentName(Player);
 
-        ContentButton.interactable = !Player.isLocalPlayer;
+        ScreenButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
+
+        var screenId = Player.GameInputs.glScreenID;
+        var canSetContent = (screenId == glScreenManager.RightScreenId) && !Player.isLocalPlayer;
+        NextContentButton.gameObject.SetActive(canSetContent);
+        PreviousContentButton.gameObject.SetActive(canSetContent);
     }
 
     private static string GetScreenName(serverPlayer player)
@@ -59,14 +76,23 @@ public class debugGliderScreenUi : MonoBehaviour
         switch (id)
         {
             case 2:
-                return "Right";
+                return "Left";
             case 1:
                 return "Mid";
             case 0:
-                return "Left";
+                return "Right";
             default:
-                return "Mid";
+                return "";
         }
+    }
+
+    private static string GetScreenContentName(serverPlayer player)
+    {
+        if (player.isLocalPlayer)
+            return "";
+
+        var screenId = player.GameInputs.activeScreen;
+        return glScreenManager.GetScreenName(screenId);
     }
 
     private void OnNextClicked()
@@ -75,7 +101,7 @@ public class debugGliderScreenUi : MonoBehaviour
         if (next < 0)
             next = 2;
 
-        // serverUtils.PostGliderScreenId(Player.netId, next);
+        serverUtils.PostGliderScreenId(Player.netId, next);
     }
 
     private void OnPreviousClicked()
@@ -84,7 +110,25 @@ public class debugGliderScreenUi : MonoBehaviour
         if (prev > 2)
             prev = 0;
 
-        // serverUtils.PostGliderScreenId(Player.netId, prev);
+        serverUtils.PostGliderScreenId(Player.netId, prev);
+    }
+
+    private void OnNextContentClicked()
+    {
+        var next = Player.GameInputs.activeScreen + 1;
+        if (next > 7)
+            next = 0;
+
+        serverUtils.PostGliderScreenContentId(Player.netId, next);
+    }
+
+    private void OnPreviousContentClicked()
+    {
+        var prev = Player.GameInputs.activeScreen - 1;
+        if (prev < 0)
+            prev = 7;
+
+        serverUtils.PostGliderScreenContentId(Player.netId, prev);
     }
 
 }
