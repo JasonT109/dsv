@@ -9,7 +9,7 @@ public class debugSubScreensUi : MonoBehaviour
     public Transform ScreenContainer;
     public debugSubScreenUi ScreenUiPrefab;
 
-    private List<debugSubScreenUi> _screens = new List<debugSubScreenUi>();
+    private readonly List<debugSubScreenUi> _screens = new List<debugSubScreenUi>();
     private const float UpdateInterval = 0.5f;
     private float _nextUpdateTime;
 
