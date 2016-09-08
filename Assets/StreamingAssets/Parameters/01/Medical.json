@@ -83,6 +83,19 @@
 					"serverParam":"crewbodytemp1"
 				}
 			]
+		},
+		{
+			"id":"MMB UI",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"crewmonitorleds1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewmonitorgraphs1"
+				}
+			]
 		}
 	]
 }

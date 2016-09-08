@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-public class glScreenManager : Singleton<glScreenManager> {
+public class glScreenManager : Singleton<glScreenManager>
+{
+
+    public const int LeftScreenId = 2;
+    public const int MidScreenId = 1;
+    public const int RightScreenId = 0;
 
     /**
     left screen         middle screen           right screen
@@ -145,6 +150,45 @@ public class glScreenManager : Singleton<glScreenManager> {
                 break;
         }
     }
+
+    /** Return a readable name for the given glider screen id. */
+    public static string GetScreenName(int screenId)
+    {
+        switch (screenId)
+        {
+            case 0:
+                return "Controls";
+            case 1:
+                return "Nav";
+            case 2:
+            case 10:
+                return "TCAS";
+            case 3:
+            case 14:
+                return "Sonar";
+            case 4:
+            case 15:
+                return "Radar";
+            case 5:
+            case 11:
+                return "Towing";
+            case 6:
+                return "Comms";
+            case 7:
+                return "Systems";
+            case 8:
+                return "Thrusters";
+            case 9:
+                return "Map";
+            case 12:
+                return "Power";
+            case 13:
+                return "Diagnostics";
+            default:
+                return "";
+        }
+    }
+
 
     /** Start */
     void Start ()

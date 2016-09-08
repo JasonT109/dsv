@@ -46,9 +46,9 @@ public class screenData : NetworkBehaviour
     public enum Type
     {
         Default,
-        Glider1,
-        Glider2,
-        Glider3,
+        GliderLeft,
+        GliderMid,
+        GliderRight,
         DccControl,
         DccQuad,
         DccScreen3,
@@ -111,6 +111,25 @@ public class screenData : NetworkBehaviour
 
         public bool HasContent
             { get { return Content != Content.None; } }
+
+        public int GliderScreenId
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case Type.GliderLeft:
+                        return 2;
+                    case Type.GliderMid:
+                        return 1;
+                    case Type.GliderRight:
+                        return 0;
+                    default:
+                        return 1;
+                }
+            }
+        }
+
     }
 
 

@@ -840,6 +840,12 @@ public class serverData : NetworkBehaviour
             case "crewpapmax1":
                 CrewData.crewPAPMax1 = newValue;
                 break;
+            case "crewmonitorleds1":
+                CrewData.crewMonitorLeds1 = newValue > 0;
+                break;
+            case "crewmonitorgraphs1":
+                CrewData.crewMonitorGraphs1 = newValue > 0;
+                break;
             case "posx":
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
                 break;
@@ -1330,6 +1336,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "dcccommsusesliders":
                 DCCScreenData.DCCcommsUseSliders = newValue;
+                break;
+            case "crewmonitorleds1":
+                CrewData.crewMonitorLeds1 = newValue;
+                break;
+            case "crewmonitorgraphs1":
+                CrewData.crewMonitorGraphs1 = newValue;
                 break;
         }
     }

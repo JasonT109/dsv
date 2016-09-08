@@ -61,4 +61,12 @@ public class crewData : NetworkBehaviour
     [SyncVar]
     public float crewPAPMax1 = 26f;
 
+    /** Whether signal monitoring LEDs are on (in medical bay screen). */
+    [SyncVar]
+    public bool crewMonitorLeds1 = true;
+
+    /** Whether crew monitoring readouts (in medical bay screen). */
+    [SyncVar]
+    public bool crewMonitorGraphs1 = true;
+
 }
