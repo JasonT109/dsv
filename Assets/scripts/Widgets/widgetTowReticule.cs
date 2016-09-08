@@ -38,6 +38,11 @@ public class widgetTowReticule : MonoBehaviour
     public widgetText lineLengthText;
 
 
+    [Header("Text Flashing Configuration")]
+    public float flashSpeed = 1;
+    public float flashPause = -1;
+
+    private float flashTimer = 0;
     private Vector2 moveDir = Vector2.zero;
     private float distanceLerp;
     private float distance;
@@ -109,8 +114,8 @@ public class widgetTowReticule : MonoBehaviour
 
         if (serverUtils.GetServerData("towFiringStatus") != 3)
             targetText.Color = textColor;
-        else
-            targetText.Color = textFiredColor;
+        //else
+            //targetText.Color = textFiredColor;
     }
 
     /** Set the targets color. */
@@ -251,7 +256,17 @@ public class widgetTowReticule : MonoBehaviour
         SetLockedVis();
 
         if (serverUtils.GetServerData("towFiringStatus") == 3)
+        {
             FireTorpedo();
+
+            flashTimer += Time.deltaTime * flashSpeed;
+            float sinWave = Mathf.Sin(flashTimer);
+
+            if (flashTimer > flashSpeed)
+                flashTimer = flashPause;
+
+            targetText.Color = Color.Lerp(Color.black, textFiredColor, Mathf.Sin(sinWave));
+        }
 
         if (serverUtils.GetServerData("towFiringStatus") != 3 && fired)
             ResetTorpedo();

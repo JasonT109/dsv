@@ -48,6 +48,9 @@ public class glScreenManager : Singleton<glScreenManager>
 
     public void SetRightScreenID(int rScreenID)
     {
+        if (rightScreenID == rScreenID)
+            return;
+
         rightScreenID = rScreenID;
         hasChanged = true;
     }
@@ -153,7 +156,7 @@ public class glScreenManager : Singleton<glScreenManager>
         // Update the shared screen state to match.
         var player = serverUtils.LocalPlayer;
         var inputs = player ? player.GameInputs : null;
-        if (inputs && inputs.activeScreen != screenToShow)
+        if (inputs && inputs.activeScreen != screenToShow && !inputs.IsRightGliderScreen)
         {
             inputs.activeScreen = screenToShow;
             player.PostGliderScreenContentId(player.netId, screenToShow);
@@ -299,22 +302,13 @@ public class glScreenManager : Singleton<glScreenManager>
     {
 
         if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenLeft"))
-        {
-            screenID = 2;
-            hasChanged = true;
-        }
+            serverUtils.PostGliderScreenId(serverUtils.LocalPlayer.netId, LeftScreenId);
 
         if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenMiddle"))
-        {
-            screenID = 1;
-            hasChanged = true;
-        }
+            serverUtils.PostGliderScreenId(serverUtils.LocalPlayer.netId, MidScreenId);
 
         if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenRight"))
-        {
-            screenID = 0;
-            hasChanged = true;
-        }
+            serverUtils.PostGliderScreenId(serverUtils.LocalPlayer.netId, RightScreenId);
 
         activeScreen = serverUtils.getGliderScreen(screenID);
         SetActiveScreen(screenID, activeScreen);
