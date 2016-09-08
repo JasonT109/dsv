@@ -126,6 +126,11 @@ public class gameInputs : NetworkBehaviour
         if (_input != null && _input.GetButtonDown("DescentMode"))
             if (serverUtils.GetServerBool("iscontroldecentmodeonjoystick"))
                 ToggleDescentMode();
+
+        //check that we are locked on to a target before allowing torpedo to be released
+        if (_input != null && _input.GetButtonDown("Fire"))
+            if (serverUtils.GetServerData("towFiringStatus") == 2)
+                serverUtils.PostServerData("towFiringStatus", 3);
     }
 
 

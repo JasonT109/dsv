@@ -84,7 +84,7 @@ public class glScreenData : NetworkBehaviour
         objectLabelsOn = inputs.mapLabelState;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (!isServer)
             return;
