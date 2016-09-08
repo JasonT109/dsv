@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.6";
+        public const string Version = "1.1.7";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -472,6 +472,8 @@ namespace Meg.Networking
             "crewheartrate6",
             "crewheartstrengthmin1",
             "crewheartstrengthmax1",
+            "crewmonitorleds1",
+            "crewmonitorgraphs1",
             "crewpapmin1",
             "crewpapmax1",
             "crewrespirationrate1",
@@ -873,6 +875,8 @@ namespace Meg.Networking
             { "crewheartrate1", new ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1."} },
             { "crewheartstrengthmin1", new ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)."} },
             { "crewheartstrengthmax1", new ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)."} },
+            { "crewmonitorleds1", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether LEDs are on in the Medical bay monitor screen."} },
+            { "crewmonitorgraphs1", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether graphs are on in the Medical bay monitor screen."} },
             { "crewpapmin1", new ParameterInfo { description = "Minimum pulmonary arterial pressure."} },
             { "crewpapmax1", new ParameterInfo { description = "Maximum pulmonary arterial pressure."} },
             { "crewrespirationrate1", new ParameterInfo { description = "Current resipiration rate for crew member 1"} },
@@ -1529,6 +1533,10 @@ namespace Meg.Networking
                     return CrewData.crewPAPMin1;
                 case "crewpapmax1":
                     return CrewData.crewPAPMax1;
+                case "crewmonitorleds1":
+                    return CrewData.crewMonitorLeds1 ? 1 : 0;
+                case "crewmonitorgraphs1":
+                    return CrewData.crewMonitorGraphs1 ? 1 : 0;
                 case "playervessel":
                     return VesselData.PlayerVessel;
                 case "initiatemapevent":
