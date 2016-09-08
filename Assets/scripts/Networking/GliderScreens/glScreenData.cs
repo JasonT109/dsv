@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+using System.Linq;
+using Meg.Networking;
+using UnityEngine;
 using UnityEngine.Networking;
 
 /** Sets the screen matrix for the glider screens. The right hand screen determines the content of the other 2 screens. */
@@ -63,19 +65,23 @@ public class glScreenData : NetworkBehaviour
     /** Set the matrix ID based on which client is displaying the right screen */
     void setMatrixID()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        // Prefer right screens that are on client instances.  
+        // This will help the glider screens behave sensibly even if the host 
+        // is also configured to display a right screen.
+        var right = serverUtils.GetPlayers()
+            .Where(p => p.GameInputs.IsRightGliderScreen)
+            .OrderBy(p => p.isLocalPlayer)
+            .ThenBy(p => p.netId)
+            .FirstOrDefault();
 
-        for (int i = 0; i < players.Length; i++)
-        {
-            //if this client is screen 0 (right screen)
-            if (players[i].GetComponent<gameInputs>().glScreenID == 0)
-            {
-                screenMatrixID = players[i].GetComponent<gameInputs>().activeScreen;
-                mapElevation = players[i].GetComponent<gameInputs>().map3dState;
-                recentreMap = players[i].GetComponent<gameInputs>().mapCentreState;
-                objectLabelsOn = players[i].GetComponent<gameInputs>().mapLabelState;
-            }
-        }
+        if (!right)
+            return;
+
+        var inputs = right.GameInputs;
+        screenMatrixID = inputs.activeScreen;
+        mapElevation = inputs.map3dState;
+        recentreMap = inputs.mapCentreState;
+        objectLabelsOn = inputs.mapLabelState;
     }
 
     void Update()

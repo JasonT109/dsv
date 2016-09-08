@@ -67,9 +67,13 @@ public class gameInputs : NetworkBehaviour
     private bool prevLabelState;
 
 
-    /** Return the input soruce for this client. */
+    /** Return the input source for this client. */
     public Player Input
         { get { return _input; } }
+
+    /** Whether this player's screen is a right-hand side screen (gliders). */
+    public bool IsRightGliderScreen
+        { get { return glScreenID == glScreenManager.RightScreenId; } }
 
 
     // Members
