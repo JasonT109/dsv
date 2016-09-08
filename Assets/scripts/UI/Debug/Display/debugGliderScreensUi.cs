@@ -31,7 +31,10 @@ public class debugGliderScreensUi : MonoBehaviour
 
         var index = 0;
         var players = serverUtils.GetPlayers()
-            .OrderBy(p => p.Id).ToList();
+            .OrderByDescending(p => p.isLocalPlayer)
+            .ThenByDescending(p => p.GameInputs.glScreenID)
+            .ThenBy(p => p.Id)
+            .ToList();
 
         foreach (var player in players)
             GetScreen(index++).Player = player;

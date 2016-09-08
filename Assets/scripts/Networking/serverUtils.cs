@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.7";
+        public const string Version = "1.1.8";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -45,7 +45,7 @@ namespace Meg.Networking
             get
             {
                 var player = ClientScene.localPlayers.FirstOrDefault();
-                if (player != null)
+                if (player != null && player.gameObject)
                     return player.gameObject.GetComponent<serverPlayer>();
 
                 return null;
@@ -443,6 +443,7 @@ namespace Meg.Networking
             "batterytimeremaining",
             "bootcodeduration",
             "bootprogress",
+            "bowtiedeadzone",
             "cabinhumidity",
             "cabinoxygen",
             "cabinpressure",
@@ -613,6 +614,9 @@ namespace Meg.Networking
 			"motionhazardsensitivity",
 			"motionscaleimpacts",
 			"motionminimpactinterval",
+            "motionpitchmax",
+            "motionrollmax",
+            "motionyawmax",
             "o1",
             "o2",
             "o3",
@@ -654,6 +658,8 @@ namespace Meg.Networking
             "reserveoxygentank6",
             "rollangle",
             "rollspeed",
+            "stabiliserspeed",
+            "stabiliserstability",
             "scene",
             "screenglitchamount",
             "screenglitchautodecay",
@@ -856,6 +862,7 @@ namespace Meg.Networking
             { "batterytimeremaining", new ParameterInfo { maxValue = 3600 * 12, type = ParameterType.Int, description = "Battery time remaining (seconds)." } },
             { "bootcodeduration", new ParameterInfo { minValue = 1, maxValue = 5, description = "Duration of the bootup sequence's code section."} },
             { "bootprogress", new ParameterInfo { description = "Progress for the bootup systems online sequence."} },
+            { "bowtiedeadzone", new ParameterInfo { description = "deadzone for the joystick when controlling a sub"} },
             { "cabinhumidity", new ParameterInfo { description = "Cabin humidity (%)."} },
             { "cabinoxygen", new ParameterInfo { description = "Cabin oxygen percentage (tops out to nominal 20.9% at 5% reserves)."} },
             { "cabinpressure", new ParameterInfo { maxValue = 1.25f, description = "Cabin pressure (in bar)." } },
@@ -1009,6 +1016,9 @@ namespace Meg.Networking
 			{ "motionhazardsensitivity", new ParameterInfo { maxValue = 30, description = "Sensitivity of tripping a motion base hazard (unsafe rate of change threshold)."} },
 			{ "motionscaleimpacts", new ParameterInfo { maxValue = 0.75f, description = "Scaling factor for reducing the intensity of physics impacts."} },
 			{ "motionminimpactinterval", new ParameterInfo { maxValue = 5.0f, description = "min interval for impacts on the sub"} },
+            { "motionpitchmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
+            { "motionyawmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
+            { "motionrollmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1070,6 +1080,8 @@ namespace Meg.Networking
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
             { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for front-scanning (short-range) sonar (%)."} },
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
+            { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "auto stabiliser speed."} },
+            { "stabiliserstability", new ParameterInfo { minValue = 0, maxValue = 10, description = "auto stabiliser stability."} },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
             { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
             { "towtargetx", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen x position from bottom left."} },
@@ -1234,6 +1246,8 @@ namespace Meg.Networking
                     return BatteryData.bank6Error;
                 case "b7error":
                     return BatteryData.bank7Error;
+                case "bowtiedeadzone":
+                    return SubControl.BowtieDeadzone;
                 case "oxygen":
                     return OxygenData.oxygen;
                 case "oxygenlitres":
@@ -1593,6 +1607,12 @@ namespace Meg.Networking
 					return SubControl.MotionMinImpactInterval;
 				case "motionhazardsensitivity":
 					return MotionBaseData.MotionHazardSensitivity;
+                case "motionpitchmax":
+                    return MotionBaseData.MotionPitchMax;
+                case "motionyawmax":
+                    return MotionBaseData.MotionYawMax;
+                case "motionrollmax":
+                    return MotionBaseData.MotionRollMax;
                 case "sonarheadingup":
                     return SonarData.HeadingUp ? 1 : 0;
                 case "sonarlongfrequency":
@@ -1613,6 +1633,10 @@ namespace Meg.Networking
                     return SonarData.ShortRange;
                 case "sonarshortsensitivity":
                     return SonarData.ShortSensitivity;
+                case "stabiliserspeed":
+                    return SubControl.StabiliserSpeed;
+                case "stabiliserstability":
+                    return SubControl.StabiliserStability;
                 case "dcccommscontent":
                     return DCCScreenData.DCCcommsContent;
                 case "dccvesselnameintitle":
@@ -1795,6 +1819,8 @@ namespace Meg.Networking
                     return BatteryData.bank6.ToString("n1");
                 case "b7":
                     return BatteryData.bank7.ToString("n1");
+                case "bowtiedeadzone":
+                    return SubControl.BowtieDeadzone.ToString("n1");
                 case "o1":
                 case "oxygentank1":
                     return OxygenData.oxygenTank1.ToString("n1");
@@ -1931,6 +1957,16 @@ namespace Meg.Networking
 					return SubControl.MotionScaleImpacts.ToString("n1");
 				case "motionminimpactinterval":
 					return SubControl.MotionMinImpactInterval.ToString("n1");
+                case "motionpitchmax":
+                    return MotionBaseData.MotionPitchMax.ToString("n1");
+                case "motionyawmax":
+                    return MotionBaseData.MotionYawMax.ToString("n1");
+                case "motionrollmax":
+                    return MotionBaseData.MotionRollMax.ToString("n1");
+                case "StabiliserStability":
+                    return SubControl.StabiliserStability.ToString("n1");
+                case "StabiliserSpeed":
+                    return SubControl.StabiliserSpeed.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
@@ -2483,6 +2519,20 @@ namespace Meg.Networking
             }
 
             return buttonState;
+        }
+
+        /** Post glider screen id for the given player. */
+        public static void PostGliderScreenId(NetworkInstanceId playerId, int screenId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostGliderScreenId(playerId, screenId);
+        }
+
+        /** Post glider screen content id for the given player. */
+        public static void PostGliderScreenContentId(NetworkInstanceId playerId, int contentId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostGliderScreenContentId(playerId, contentId);
         }
 
         /** Post screen state for the given player. */

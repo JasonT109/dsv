@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.IO.Ports;
 using System;
+using Meg.Networking;
 
 public class UnityToArduino : MonoBehaviour 
 {
@@ -9,6 +10,7 @@ public class UnityToArduino : MonoBehaviour
 	public serverData Server;
 	public SubControl Controls;
     public MotionBaseData MotionData;
+    public GameObject MotionBaseTester;
 	public string COMPort = "";
 
 	private Quaternion motionBase;
@@ -19,6 +21,10 @@ public class UnityToArduino : MonoBehaviour
 
 	private Vector3 flat;
 	private Quaternion flatQ;
+
+    public Vector3 preMapped;
+
+    public float slerpNerf;
 
 	// initialization
 	void Start()
@@ -71,18 +77,26 @@ public class UnityToArduino : MonoBehaviour
 			{
 				if(!MotionData.MotionHazard)
 				{
-					motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime* MotionData.MotionSlerpSpeed);
+                    if (serverUtils.IsGlider())
+                    {
+                        SlerpWithRemap();
+
+                    }
+                    else
+                    {
+                        motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime * MotionData.MotionSlerpSpeed);
+                    }
 				}
 				else
 				{
-					motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
-				}
+                    motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime * 0.5f);
+                }
 
                 MotionData.MotionBasePitch = motionBase.eulerAngles.x;
                 MotionData.MotionBaseYaw = motionBase.eulerAngles.y;
                 MotionData.MotionBaseRoll = motionBase.eulerAngles.z;
 
-				if(MotionData.MotionBasePitch > 180f)
+                if (MotionData.MotionBasePitch > 180f)
 				{
                     MotionData.MotionBasePitch = motionBase.eulerAngles.x-360f;
 				}
@@ -104,41 +118,66 @@ public class UnityToArduino : MonoBehaviour
 				motionBase = Quaternion.Slerp(motionBase, flatQ, Time.deltaTime*0.5f);
 			}
 
-			if(MotionData.MotionBaseRoll > 33f)
+			if(MotionData.MotionBaseRoll > MotionData.MotionRollMax)
 			{
-                MotionData.MotionBaseRoll = 33f;
+                MotionData.MotionBaseRoll = MotionData.MotionRollMax;
 			}
 
-			if(MotionData.MotionBaseRoll < -33f)
+			if(MotionData.MotionBaseRoll < -MotionData.MotionRollMax)
 			{
-                MotionData.MotionBaseRoll = -33f;
+                MotionData.MotionBaseRoll = -MotionData.MotionRollMax;
 			}
 
-			if(MotionData.MotionBasePitch > 37f)
+			if(MotionData.MotionBasePitch > MotionData.MotionPitchMax)
 			{
-                MotionData.MotionBasePitch = 37f;
+                MotionData.MotionBasePitch = MotionData.MotionPitchMax;
 			}
 
-			if(MotionData.MotionBasePitch < -37f)
+			if(MotionData.MotionBasePitch < -MotionData.MotionPitchMax)
 			{
-                MotionData.MotionBasePitch = -37f;
+                MotionData.MotionBasePitch = -MotionData.MotionPitchMax;
 			}
-				
 
-			//if(!Controls.MotionHazard)
-			//{
-			//	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-			//		(Controls.MotionBaseYaw.ToString("F3")),
-			//		(Controls.MotionBasePitch.ToString("F3")),
-			//		(Controls.MotionBaseRoll.ToString("F3")),
-			//	
-			//		(Controls.inputXaxis.ToString("F3")),
-			//		(Controls.inputYaxis.ToString("F3")),
-			//		(Controls.inputZaxis.ToString("F3")))
-			//	); 
-			//}
+            if(MotionData.MotionBaseYaw > 180)
+            {
+                MotionData.MotionBaseYaw -= 360f;
+            }
 
-			port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+            if (MotionData.MotionBaseYaw > MotionData.MotionYawMax)
+            {
+                MotionData.MotionBaseYaw = MotionData.MotionYawMax;
+            }
+            
+            if (MotionData.MotionBaseYaw < -MotionData.MotionYawMax)
+            {
+                MotionData.MotionBaseYaw = -MotionData.MotionYawMax;
+            }
+
+
+            //if(!Controls.MotionHazard)
+            //{
+            //	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+            //		(Controls.MotionBaseYaw.ToString("F3")),
+            //		(Controls.MotionBasePitch.ToString("F3")),
+            //		(Controls.MotionBaseRoll.ToString("F3")),
+            //	
+            //		(Controls.inputXaxis.ToString("F3")),
+            //		(Controls.inputYaxis.ToString("F3")),
+            //		(Controls.inputZaxis.ToString("F3")))
+            //	); 
+            //}
+
+            if (MotionBaseTester)
+            {
+                Quaternion MotionBaseTestQ;
+                MotionBaseTestQ = Quaternion.Euler(new Vector3(MotionData.MotionBasePitch, MotionData.MotionBaseYaw, MotionData.MotionBaseRoll));
+                MotionBaseTester.transform.rotation = MotionBaseTestQ;
+            }
+
+
+
+
+            port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
 				(MotionData.MotionBaseYaw.ToString("F3")),
 				(MotionData.MotionBasePitch.ToString("F3")),
 				(MotionData.MotionBaseRoll.ToString("F3")),
@@ -149,14 +188,15 @@ public class UnityToArduino : MonoBehaviour
 			);
 
 
-			//port.Write(String.Format("${0}\0",
-			//	(Controls.MotionBasePitch.ToString("F3")))
-			//);
-				
-				
 
-			//yield return new WaitForSeconds(0.016f);
-			yield return new WaitForSeconds(0.0083f);
+            //port.Write(String.Format("${0}\0",
+            //	(Controls.MotionBasePitch.ToString("F3")))
+            //);
+
+
+
+            //yield return new WaitForSeconds(0.016f);
+            yield return new WaitForSeconds(0.0083f);
 		}
 	} 
 
@@ -194,4 +234,43 @@ public class UnityToArduino : MonoBehaviour
 		LastMove.y = MotionData.MotionBaseYaw;
 		LastMove.z = MotionData.MotionBaseRoll;
 	}
+
+    private void SlerpWithRemap()
+    {
+        Controls.CalculateYawVelocity();
+
+        MotionData.MotionBaseYaw *= MotionData.MotionYawMax;
+
+        preMapped = Server.transform.rotation.eulerAngles;
+
+        if (preMapped.x > 180f)
+        {
+            preMapped.x -= 360f;
+        }
+
+        if (preMapped.z > 180f)
+        {
+            preMapped.z -= 360f;
+        }
+
+        preMapped.x /= 90f;
+        preMapped.z /= 180f;
+
+        preMapped.x *= (MotionData.MotionPitchMax * 1.3f);
+        preMapped.z *= (MotionData.MotionRollMax * 1.3f);
+        
+        Quaternion reMapped;
+        reMapped = Quaternion.Euler(preMapped.x, MotionData.MotionBaseYaw, preMapped.z);
+
+        //lerp the slerp
+        //float lerpSlerp1;
+
+        float angle = Quaternion.Angle(reMapped, motionBase);
+
+        //slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
+        slerpNerf = Mathf.Clamp(angle / 30f, 0.1f, 2f);
+        slerpNerf = 2f - slerpNerf +2f;
+
+        motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed * slerpNerf));
+    }
 }

@@ -87,6 +87,10 @@
 				{
 					"type":"Value",
 					"serverParam":"ispitchalsostabilised"
+				},
+				{
+					"type":"Value",
+					"serverParam":"bowtiedeadzone"
 				}
 			]
 		},
@@ -165,6 +169,40 @@
 				{
 					"type":"Value",
 					"serverParam":"motionMinImpactInterval"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionBaseYaw"
+				}
+			]
+		},
+		{
+			"id":"SHIP MOTION BASE LIMITS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"MotionPitchMax"
+				},
+				{
+					"type":"Value",
+					"serverParam":"MotionRollMax"
+				},
+				{
+					"type":"Value",
+					"serverParam":"MotionYawMax"
+				}
+			]
+		},
+		{
+			"id":"SHIP STABILISER",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"stabiliserspeed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"stabiliserstability"
 				}
 			]
 		}

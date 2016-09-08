@@ -71,8 +71,22 @@ public class SubControl : NetworkBehaviour
 	[SyncVar] 
 	public float MotionMinImpactInterval = 0.75f;
 
+    [SyncVar]
     public float StabiliserSpeed = 20f;
+    [SyncVar]
     public float StabiliserStability = 30f;
+    [SyncVar]
+    public float BowtieDeadzone; //syncvar this
+
+
+    //TODO Make these sync vars
+
+    public AnimationCurve RollLimitCurve;
+    public AnimationCurve PitchLimitCurve;
+
+    public bool TripPitch = false;
+    public bool TripRoll = false;
+    //public float ScaleRoll;
 
 
     // Members
@@ -117,7 +131,10 @@ public class SubControl : NetworkBehaviour
             return;
 
         // Apply the appropriate control logic.
-        ApplySubForces();
+        if (serverUtils.IsGlider())
+            ApplyGliderForces();
+        else
+            ApplySubForces();
     }
 
     /** Apply an impact impulse vector to the sub's rigidbody. */
@@ -145,20 +162,30 @@ public class SubControl : NetworkBehaviour
     public Vector3 GetWorldVelocity()
         { return _rigidbody.velocity; }
 
+    /** set the y velocity to the motion base.  */
+    public void CalculateYawVelocity()
+    {
+        serverUtils.MotionBaseData.MotionBaseYaw = _rigidbody.angularVelocity.y;
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
 
-    /* Apply defaults that relate to the glider here */
+    /** Apply defaults that relate to the glider here */
     private void ApplyGliderDefaults()
     {
-        _rigidbody.angularDrag = 5.0f;
-        
-        pitchSpeed = 4000f;
-        rollSpeed = 4000f;
+        _rigidbody.angularDrag = 1.3f;
+        _rigidbody.mass = 0.2f;
+
+        pitchSpeed = 350f;
+        rollSpeed = 500f;
         yawSpeed = 0;
         
-        StabiliserSpeed = 50f;
+        StabiliserSpeed = 7f;
+        StabiliserStability = 1f;
+
+        serverUtils.MotionBaseData.MotionSlerpSpeed = 5.0f;
     }
 
     /** Apply control forces to pilot a big sub. */
@@ -175,6 +202,115 @@ public class SubControl : NetworkBehaviour
 
         // Apply thrust to move the sub forward or backwards.
         ApplyThrustForce();
+    }
+
+    private void ApplyGliderForces()
+    {
+        // Apply the orientation forces.
+        //_rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+
+        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
+
+        GliderRollLogic();
+
+        GliderPitchLogic();
+
+
+        // Adjust mix for pitch when doing a banking turn.
+        _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
+
+        // Auto-stabilize the sub if desired, and if inputs are weak.
+        if(inputYaxis < 0.3f && inputYaxis > -0.3f)
+        {
+            if (inputXaxis < 0.3f && inputXaxis > -0.3f)
+                ApplyStabilizationForce();
+        }
+
+        // Apply thrust to move the sub forward or backwards.
+        ApplyThrustForce();
+
+        //DEBUG STUFF
+        if (transform.localRotation.eulerAngles.z > 175f && transform.localRotation.eulerAngles.z < 185f)
+        {
+            TripRoll = true;
+            serverUtils.MotionBaseData.MotionHazard = true;
+            Debug.Log("MotionHazard too much roll detected");
+        }
+           
+        if (transform.localRotation.eulerAngles.x > 85f && transform.localRotation.eulerAngles.x < 265f)
+        {
+            TripPitch = true;
+            serverUtils.MotionBaseData.MotionHazard = true;
+            Debug.Log("MotionHazard too much pitch detected");
+        }
+    }
+
+    /* Roll with constraints */
+    private void GliderRollLogic()
+    {
+        //test for bowtie deadzone
+        if (inputXaxis < BowtieDeadzone * inputYaxis && inputXaxis > -0.2f * inputYaxis)
+        {
+            //fallin within deadzone. Go directly to jail, do not pass go.
+            return;
+        }
+
+        //roll curve value
+        var currentRoll = transform.localRotation.eulerAngles.z;
+        if (currentRoll > 180f)
+        {
+            currentRoll = Mathf.Abs(currentRoll - 360f);
+        }
+        var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / 180f);
+        ScaleRoll = Mathf.Abs(ScaleRoll);
+
+        //roll logiic
+        if (inputXaxis > 0 && transform.localRotation.eulerAngles.z > 180f && transform.localRotation.eulerAngles.z < 360f)
+        {
+            _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+        }
+        else if (inputXaxis < 0 && transform.localRotation.eulerAngles.z > 0f && transform.localRotation.eulerAngles.z < 180f)
+        {
+            _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+        }
+        else
+        {
+            _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+        }
+    }
+
+    /* Pitch with constraints */
+    private void GliderPitchLogic()
+    {
+        //test for bowtie deadzone
+        if(inputYaxis < BowtieDeadzone * inputXaxis && inputYaxis > -0.2f * inputXaxis)
+        {
+            //fallin within deadzone. Go directly to jail, do not pass go.
+            return;
+        }
+
+        //pitch curve value
+        var currentPitch = transform.localRotation.eulerAngles.x;
+        if (currentPitch > 180f)
+        {
+            currentPitch = Mathf.Abs(currentPitch - 360f);
+        }
+        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / 180f);
+        ScalePitch = Mathf.Abs(ScalePitch);
+
+        //pitch logic
+        if (inputYaxis > 0 && transform.localRotation.eulerAngles.x > 180f && transform.localRotation.eulerAngles.x < 360f)
+        {
+            _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+        }
+        else if (inputYaxis < 0 && transform.localRotation.eulerAngles.x > 0f && transform.localRotation.eulerAngles.x < 180f)
+        {
+            _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+        }
+        else
+        {
+            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+        }
     }
 
     /** Apply standard control forces for the big sub. */

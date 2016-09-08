@@ -477,6 +477,9 @@ public class serverData : NetworkBehaviour
             case "b7":
                 BatteryData.bank7 = newValue;
                 break;
+            case "bowtiedeadzone":
+                SubControl.BowtieDeadzone = newValue;
+                break;
             case "batteryerrorthreshold":
                 BatteryData.batteryErrorThreshold = newValue;
                 break;
@@ -951,6 +954,15 @@ public class serverData : NetworkBehaviour
 			case "motionminimpactinterval":
 				SubControl.MotionMinImpactInterval = newValue;
 				break;
+            case "motionpitchmax":
+                MotionBaseData.MotionPitchMax = newValue;
+                break;
+            case "motionrollmax":
+                MotionBaseData.MotionRollMax = newValue;
+                break;
+            case "motionyawmax":
+                MotionBaseData.MotionYawMax = newValue;
+                break;
             case "sonarheadingup":
                 SonarData.HeadingUp = newValue > 0;
                 break;
@@ -980,6 +992,12 @@ public class serverData : NetworkBehaviour
                 break;
             case "sonarshortsensitivity":
                 SonarData.ShortSensitivity = newValue;
+                break;
+            case "stabiliserstability":
+                SubControl.StabiliserStability = newValue;
+                break;
+            case "stabiliserspeed":
+                SubControl.StabiliserSpeed = newValue;
                 break;
             case "error_thruster_l":
                 GliderErrorData.error_thruster_l = newValue;
