@@ -45,7 +45,7 @@ namespace Meg.Networking
             get
             {
                 var player = ClientScene.localPlayers.FirstOrDefault();
-                if (player != null)
+                if (player != null && player.gameObject)
                     return player.gameObject.GetComponent<serverPlayer>();
 
                 return null;

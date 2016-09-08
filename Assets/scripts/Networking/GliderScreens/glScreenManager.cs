@@ -149,6 +149,15 @@ public class glScreenManager : Singleton<glScreenManager>
                 radarScreen.SetActive(true);        //<---
                 break;
         }
+
+        // Update the shared screen state to match.
+        var player = serverUtils.LocalPlayer;
+        var inputs = player ? player.GameInputs : null;
+        if (inputs && inputs.activeScreen != screenToShow)
+        {
+            inputs.activeScreen = screenToShow;
+            player.PostGliderScreenContentId(player.netId, screenToShow);
+        }
     }
 
     /** Return a readable name for the given glider screen id. */
@@ -159,7 +168,7 @@ public class glScreenManager : Singleton<glScreenManager>
             case 0:
                 return "Controls";
             case 1:
-                return "Nav";
+                return "NavMap";
             case 2:
             case 10:
                 return "TCAS";

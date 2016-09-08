@@ -644,8 +644,11 @@ public class serverPlayer : NetworkBehaviour
     public void ServerSetGliderScreenContentId(NetworkInstanceId playerId, int contentId)
     {
         var player = serverUtils.GetPlayer(playerId);
-        if (player)
-            player.RpcSetGliderScreenContentId(contentId);
+        if (!player)
+            return;
+
+        player.GameInputs.activeScreen = contentId;
+        player.RpcSetGliderScreenContentId(contentId);
     }
 
     /** Set screen state for this player. */
