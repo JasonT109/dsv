@@ -28,6 +28,7 @@ public class NavSubPins : Singleton<NavSubPins>
     public Vector2 imageSize = new Vector2(5, 5);
     public float distanceScale = 0.01f;
     public float lineXOffset = -0.1f;
+    public bool isGliderMap = false;
 
     [Header("Prefabs")]
 
