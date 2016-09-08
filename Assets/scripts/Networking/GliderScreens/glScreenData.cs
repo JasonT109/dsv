@@ -78,13 +78,15 @@ public class glScreenData : NetworkBehaviour
             return;
 
         var inputs = right.GameInputs;
-        screenMatrixID = inputs.activeScreen;
         mapElevation = inputs.map3dState;
         recentreMap = inputs.mapCentreState;
         objectLabelsOn = inputs.mapLabelState;
+
+        if (inputs.activeScreen <= 7)
+            screenMatrixID = inputs.activeScreen;
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!isServer)
             return;

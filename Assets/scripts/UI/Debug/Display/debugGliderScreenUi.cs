@@ -40,7 +40,6 @@ public class debugGliderScreenUi : MonoBehaviour
     private void Start()
     {
         _screenLabel = ScreenButton.GetComponentInChildren<Text>();
-        ScreenButton.onClick.AddListener(OnNextClicked);
         NextButton.onClick.AddListener(OnNextClicked);
         PreviousButton.onClick.AddListener(OnPreviousClicked);
         NextContentButton.onClick.AddListener(OnNextContentClicked);
