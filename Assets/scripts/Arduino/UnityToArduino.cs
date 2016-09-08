@@ -236,7 +236,8 @@ public class UnityToArduino : MonoBehaviour
 
         float angle = Quaternion.Angle(reMapped, motionBase);
 
-        slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
+        //slerpNerf = angle / 30f; //Mathf.Clamp(angle / 30f, 0f, 1f);
+        Mathf.Clamp(angle / 30f, 0.1f, 2f);
 
         motionBase = Quaternion.Slerp(motionBase, reMapped, Time.deltaTime * (MotionData.MotionSlerpSpeed * slerpNerf));
     }
