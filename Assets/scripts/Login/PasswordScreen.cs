@@ -27,6 +27,7 @@ public class PasswordScreen : MonoBehaviour
     public Image BigSubButtonImg;
     public Image DCCButtonImg;
     public Image MMBButtonImg;
+    public Image EvacButtonImg;
 
     public GameObject StartButtonObj;
     public Text StartButtonText;
@@ -68,6 +69,7 @@ public class PasswordScreen : MonoBehaviour
         _sceneButtonImages.Add(BigSubButtonImg);
         _sceneButtonImages.Add(DCCButtonImg);
         _sceneButtonImages.Add(MMBButtonImg);
+        _sceneButtonImages.Add(EvacButtonImg);
 
         var scene = _manager.Scene;
         var host = _manager.Host;
@@ -89,6 +91,8 @@ public class PasswordScreen : MonoBehaviour
             ToggleDCC();
         else if (scene == NetworkManagerCustom.MmbScene)
             ToggleMMB();
+        else if (scene == NetworkManagerCustom.EvacScene)
+            ToggleEvac();
         else
             ToggleBigSub();
 
@@ -169,6 +173,14 @@ public class PasswordScreen : MonoBehaviour
         ResetSceneSelection();
         MMBButtonImg.color = SelectedColor;
         _manager.SetScene(NetworkManagerCustom.MmbScene);
+    }
+
+    public void ToggleEvac()
+    {
+        Debug.Log("PasswordScreen.ToggleEvac() - Configuring UI for Evac Ship.");
+        ResetSceneSelection();
+        EvacButtonImg.color = SelectedColor;
+        _manager.SetScene(NetworkManagerCustom.EvacScene);
     }
 
     private void ResetSceneSelection()
