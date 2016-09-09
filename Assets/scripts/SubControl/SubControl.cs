@@ -249,7 +249,7 @@ public class SubControl : NetworkBehaviour
     private void GliderRollLogic()
     {
         //test for bowtie deadzone
-        if (inputXaxis < BowtieDeadzone * inputYaxis && inputXaxis > -BowtieDeadzone * inputYaxis)
+        if (inputXaxis < BowtieDeadzone * Mathf.Abs(inputYaxis) && inputXaxis > -BowtieDeadzone * Mathf.Abs(inputYaxis))
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
@@ -283,7 +283,7 @@ public class SubControl : NetworkBehaviour
     private void GliderPitchLogic()
     {
         //test for bowtie deadzone
-        if(inputYaxis < BowtieDeadzone * inputXaxis && inputYaxis > -BowtieDeadzone * inputXaxis)
+        if(inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis))
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
