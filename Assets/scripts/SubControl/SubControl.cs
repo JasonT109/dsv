@@ -175,11 +175,11 @@ public class SubControl : NetworkBehaviour
     /** Apply defaults that relate to the glider here */
     private void ApplyGliderDefaults()
     {
-        _rigidbody.angularDrag = 1.3f;
+        _rigidbody.angularDrag = 2.0f;
         _rigidbody.mass = 0.2f;
 
-        pitchSpeed = 350f;
-        rollSpeed = 500f;
+        pitchSpeed = 700f;
+        rollSpeed = 1000f;
         yawSpeed = 0;
         
         StabiliserSpeed = 7f;
@@ -249,7 +249,7 @@ public class SubControl : NetworkBehaviour
     private void GliderRollLogic()
     {
         //test for bowtie deadzone
-        if (inputXaxis < BowtieDeadzone * inputYaxis && inputXaxis > -0.2f * inputYaxis)
+        if (inputXaxis < BowtieDeadzone * Mathf.Abs(inputYaxis) && inputXaxis > -BowtieDeadzone * Mathf.Abs(inputYaxis))
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
@@ -283,7 +283,7 @@ public class SubControl : NetworkBehaviour
     private void GliderPitchLogic()
     {
         //test for bowtie deadzone
-        if(inputYaxis < BowtieDeadzone * inputXaxis && inputYaxis > -0.2f * inputXaxis)
+        if(inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis))
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
