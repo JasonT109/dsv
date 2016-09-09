@@ -33,6 +33,9 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Name of the scene containing MMB (Medical Bay) screens. */
     public const string MmbScene = "screen_mmb";
 
+    /** Name of the scene containing Evac Ship screens. */
+    public const string EvacScene = "screen_evac";
+
 
 
     // Properties
