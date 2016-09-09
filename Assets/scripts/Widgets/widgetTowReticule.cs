@@ -224,7 +224,7 @@ public class widgetTowReticule : MonoBehaviour
         {
             SetTarget(target.position, true, lockRing1EndScale, lockColor, lockColor, textLockedColor);
 
-            if (serverUtils.GetServerData("towFiringStatus") != 3)
+            if (serverUtils.GetServerData("towFiringStatus") < 2)
                 serverUtils.PostServerData("towfiringstatus", 2);
         }
         else if (distance > lockDistance && distance < trackDistance && serverUtils.GetServerData("towtargetvisible") == 1)
@@ -232,7 +232,7 @@ public class widgetTowReticule : MonoBehaviour
             SetTarget(Vector3.Lerp(initialPos, target.position, 1 - distanceLerp), false, Vector3.Lerp(lockRing1StartScale, lockRing1EndScale, 1 - distanceLerp), Color.Lerp(targetColor, lockColor, 1 - distanceLerp), lockColor, textAcquiringColor);
             lockedTime = 0;
 
-            if (serverUtils.GetServerData("towFiringStatus") != 3)
+            if (serverUtils.GetServerData("towFiringStatus") != 3 && serverUtils.GetServerData("towFiringStatus") != 1)
                 serverUtils.PostServerData("towfiringstatus", 1);
         }
         else
@@ -240,7 +240,7 @@ public class widgetTowReticule : MonoBehaviour
             SetTarget(initialPos, false, lockRing1StartScale, targetColor, targetColor, textUnlockedColor);
             lockedTime = 0;
 
-            if (serverUtils.GetServerData("towFiringStatus") != 3)
+            if (serverUtils.GetServerData("towFiringStatus") != 3 && serverUtils.GetServerData("towFiringStatus") != 0)
                 serverUtils.PostServerData("towfiringstatus", 0);
         }
 
