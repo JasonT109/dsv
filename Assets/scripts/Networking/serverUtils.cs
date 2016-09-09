@@ -607,6 +607,7 @@ namespace Meg.Networking
 			"motionbasepitch",
 			"motionbaseyaw",
 			"motionbaseroll",
+            "motioncomport",
 			"motionsafety",
 			"motionhazard",
 			"motionhazardenabled",
@@ -1009,7 +1010,8 @@ namespace Meg.Networking
 			{ "motionbasepitch", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base"} },
 			{ "motionbaseyaw", new ParameterInfo { minValue = 0, maxValue = 360, description = "current orientation sent to the motion base"} },
 			{ "motionbaseroll", new ParameterInfo { minValue = -90, maxValue = 90, description = "current orientation sent to the motion base."} },
-			{ "motionsafety", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether motion-base values are slerped from raw sub state (for safety)."} },
+            { "motioncomport", new ParameterInfo { minValue = 0, maxValue = 10, description = "COM (serial) port used to connect to the motion base."} },
+            { "motionsafety", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether motion-base values are slerped from raw sub state (for safety)."} },
 			{ "motionhazard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether output to motion-base has reached unsafe levels."} },
 			{ "motionhazardenabled", new ParameterInfo {  maxValue = 1, type = ParameterType.Bool, description = "Whether motion-base hazard detection is enabled."} },
 			{ "motionslerpspeed", new ParameterInfo { maxValue = 30, description = "t multiplier for the motion base's slerp."} },
@@ -1599,9 +1601,13 @@ namespace Meg.Networking
 					return MotionBaseData.MotionBaseYaw;
 				case "motionbaseroll":
 					return MotionBaseData.MotionBaseRoll;
-				case "motionslerpspeed":
+                case "motioncomport":
+                    return MotionBaseData.MotionComPort;
+                case "motionslerpspeed":
 					return MotionBaseData.MotionSlerpSpeed;
-				case "motionscaleimpacts":
+                case "motioncomportopen":
+                    return MotionBaseData.MotionComPortOpen ? 1 : 0;
+                case "motionscaleimpacts":
 					return SubControl.MotionScaleImpacts;
 				case "motionminimpactinterval":
 					return SubControl.MotionMinImpactInterval;
@@ -2072,6 +2078,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCcommsUseSliders;
                 case "sonarheadingup":
                     return SonarData.HeadingUp;
+                case "motioncomportopen":
+                    return MotionBaseData.MotionComPortOpen;
                 default:
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName, defaultValue ? 1 : 0);

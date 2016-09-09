@@ -948,7 +948,10 @@ public class serverData : NetworkBehaviour
 			case "motionhazardenabled":
 				MotionBaseData.MotionHazardEnabled = newValue > 0;
 				break;
-			case "motionscaleimpacts":
+            case "motioncomport":
+                MotionBaseData.MotionComPort = Mathf.RoundToInt(newValue);
+                break;
+            case "motionscaleimpacts":
 				SubControl.MotionScaleImpacts = newValue;
 				break;
 			case "motionminimpactinterval":
