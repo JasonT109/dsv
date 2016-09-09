@@ -157,20 +157,6 @@ public class UnityToArduino : Singleton<UnityToArduino>
                 MotionData.MotionBaseYaw = -MotionData.MotionYawMax;
             }
 
-
-            //if(!Controls.MotionHazard)
-            //{
-            //	port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-            //		(Controls.MotionBaseYaw.ToString("F3")),
-            //		(Controls.MotionBasePitch.ToString("F3")),
-            //		(Controls.MotionBaseRoll.ToString("F3")),
-            //	
-            //		(Controls.inputXaxis.ToString("F3")),
-            //		(Controls.inputYaxis.ToString("F3")),
-            //		(Controls.inputZaxis.ToString("F3")))
-            //	); 
-            //}
-
             if (MotionBaseTester)
             {
                 Quaternion MotionBaseTestQ;
@@ -180,21 +166,27 @@ public class UnityToArduino : Singleton<UnityToArduino>
 
             if (port != null && port.IsOpen)
             {
-                port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
-                    (MotionData.MotionBaseYaw.ToString("F3")),
-                    (MotionData.MotionBasePitch.ToString("F3")),
-                    (MotionData.MotionBaseRoll.ToString("F3")),
+                try
+                {
+                    port.Write(String.Format("${0},{1},{2},{3},{4},{5}\0",
+                        (MotionData.MotionBaseYaw.ToString("F3")),
+                        (MotionData.MotionBasePitch.ToString("F3")),
+                        (MotionData.MotionBaseRoll.ToString("F3")),
 
-                    (Controls.inputXaxis.ToString("F3")),
-                    (Controls.inputYaxis.ToString("F3")),
-                    (Controls.inputZaxis.ToString("F3")))
-                    );
+                        (Controls.inputXaxis.ToString("F3")),
+                        (Controls.inputYaxis.ToString("F3")),
+                        (Controls.inputZaxis.ToString("F3")))
+                        );
+                }
+                catch (Exception)
+                {
+                    Debug.LogWarning("Failed to write to COM port - closing the port.");
+                    if (port != null)
+                        port.Close();
+
+                    port = null;
+                }
             }
-
-            //port.Write(String.Format("${0}\0",
-            //	(Controls.MotionBasePitch.ToString("F3")))
-            //);
-
 
 
             //yield return new WaitForSeconds(0.016f);
@@ -221,11 +213,6 @@ public class UnityToArduino : Singleton<UnityToArduino>
         {
             MotionData.MotionHazard = true;
         }
-
-        //if(Mathf.Abs(LastMove.y - Controls.MotionBaseYaw) > Controls.MotionHazardSensitivity)
-        //{
-        //	Controls.MotionHazard = true;
-        //}
 
         if (Mathf.Abs(LastMove.z - MotionData.MotionBaseRoll) > MotionData.MotionHazardSensitivity)
         {
