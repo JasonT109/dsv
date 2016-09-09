@@ -33,12 +33,13 @@ public class SonarRays : MonoBehaviour
 	{
         if (Rays)
 	        _material = Rays.GetComponent<Renderer>().material;
-
-        _config = serverUtils.SonarData.GetConfigForType(Type);
     }
 
     void Update()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         if (_material)
             UpdateMaterial();
 
@@ -48,6 +49,9 @@ public class SonarRays : MonoBehaviour
 
     void UpdateMaterial()
     {
+        if (_config == null)
+            _config = serverUtils.SonarData.GetConfigForType(Type);
+
         var range = _config.Range;
         var gain = _config.Gain;
         var r = (range - _config.MinRange) / (_config.MaxRange - _config.MinRange);
