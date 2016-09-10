@@ -130,7 +130,7 @@ namespace SVGImporter
                 GameObjectUtility.SetParentAndAlign(eventSystem, parent);
                 esys = eventSystem.AddComponent<EventSystem>();
                 eventSystem.AddComponent<StandaloneInputModule>();
-                eventSystem.AddComponent<TouchInputModule>();                
+                // eventSystem.AddComponent<TouchInputModule>();                
                 Undo.RegisterCreatedObjectUndo(eventSystem, "Create " + eventSystem.name);
             }
             
