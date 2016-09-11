@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"09/09/16 04:38:48.6",
-		"startedTimestamp":"09/09/16 04:34:50.6",
-		"stoppedTimestamp":"09/09/16 04:35:06.0"
+		"utc":"11/09/16 10:43:13.4",
+		"startedTimestamp":"11/09/16 10:42:57.1",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
@@ -119,6 +119,35 @@
 			]
 		},
 		{
+			"id":"Glider Warnings off",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"Oxygen",
+					"serverParam":"o1",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Power",
+					"serverParam":"b1",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Overheating",
+					"serverParam":"thruster_heat_l",
+					"serverValue":48
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"VertranThruster",
+					"serverParam":"error_vertran_l",
+					"serverValue":1
+				}
+			]
+		},
+		{
 			"id":"GLIDER WARNINGS ON",
 			"events":[
 				{
@@ -149,6 +178,35 @@
 					"type":"Value",
 					"triggerLabel":"GRAPPLE",
 					"serverParam":"error_grapple",
+					"serverValue":0
+				}
+			]
+		},
+		{
+			"id":"Glider Warnings On",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"Oxygen",
+					"serverParam":"o1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Power",
+					"serverParam":"b1",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"Overheating",
+					"serverParam":"thruster_heat_l",
+					"serverValue":100
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"VertranThruster",
+					"serverParam":"error_vertran_l",
 					"serverValue":0
 				}
 			]
