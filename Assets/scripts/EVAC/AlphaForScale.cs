@@ -10,15 +10,18 @@ public class AlphaForScale : MonoBehaviour
     public AnimationCurve AlphaCurve;
     public Vector2 ScaleRange;
 
-    public CanvasGroup Group;
+    private CanvasGroup _group;
+
+    private float _initialAlpha = 1;
 
     private void Start()
     {
-        if (!Group)
-            Group = GetComponent<CanvasGroup>();
+        _group = GetComponent<CanvasGroup>();
 
         if (!Root)
             Root = transform;
+
+        _initialAlpha = _group.alpha;
 
         UpdateAlpha();
     }
@@ -32,7 +35,7 @@ public class AlphaForScale : MonoBehaviour
     {
         var scale = Root.localScale.x;
         var t = graphicsMaths.remapValue(scale, ScaleRange.x, ScaleRange.y, 0, 1);
-        Group.alpha = AlphaCurve.Evaluate(t);
+        _group.alpha = _initialAlpha * AlphaCurve.Evaluate(t);
     }
 
 }

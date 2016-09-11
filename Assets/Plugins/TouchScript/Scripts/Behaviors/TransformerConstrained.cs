@@ -69,7 +69,7 @@ namespace TouchScript.Behaviors
             var center = min + extents;
 
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(center, extents * 2);
+            Gizmos.DrawWireCube(center, extents);
         }
 
         #endregion
