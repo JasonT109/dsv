@@ -43,6 +43,16 @@
 		"header-03-parameter" : "co2",
 		"header-03-format" : "{0:N2}",
 
+		"glider-header-02-title" : "CABIN TEMP.",
+		"glider-header-02-chinese" : "座舱温度",
+		"glider-header-02-parameter" : "cabinTemp",
+		"glider-header-02-format" : "{0:N1}°c",
+
+		"glider-header-03-title" : "VELOCITY",
+		"glider-header-03-chinese" : "速度",
+		"glider-header-03-parameter" : "velocity",
+		"glider-header-03-format" : "{0:n0}",
+
 		"vessels" : 
 		[
 			{ 
