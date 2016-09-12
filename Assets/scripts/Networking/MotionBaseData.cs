@@ -37,6 +37,10 @@ public class MotionBaseData : NetworkBehaviour
     [SyncVar]
     public float MotionYawMax = 37f;
 
+    //TODO SyncVar
+    public bool MotionBaseHost = true;
+    public bool DecoupleMotionBase = false;
+
 
     public override void OnStartServer()
     {
