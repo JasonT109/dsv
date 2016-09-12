@@ -190,7 +190,7 @@ public class SubControl : NetworkBehaviour
 
         pitchSpeed = 1200f;
         rollSpeed = 1600f;
-        yawSpeed = 0;
+        yawSpeed = 600f;
         
         StabiliserSpeed = 7f;
         StabiliserStability = 1f;
@@ -229,7 +229,7 @@ public class SubControl : NetworkBehaviour
 
         MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
 
-        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
+        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis2));
 
         GliderRollLogic();
 
