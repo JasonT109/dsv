@@ -78,6 +78,13 @@ public class SubControl : NetworkBehaviour
     [SyncVar]
     public float BowtieDeadzone; //syncvar this
 
+    [SyncVar]
+    public float MaxGliderAngle = 90f;
+    private float SoftMaxGliderAngle = 90f;
+
+    public float MaxAngularVelocity = 1.7f;
+    public float AbsoluteMaxAngularVel = 1.7f;
+
 
     //TODO Make these sync vars
 
@@ -178,12 +185,14 @@ public class SubControl : NetworkBehaviour
         _rigidbody.angularDrag = 2.0f;
         _rigidbody.mass = 0.2f;
 
-        pitchSpeed = 700f;
-        rollSpeed = 1000f;
+        pitchSpeed = 1200f;
+        rollSpeed = 1600f;
         yawSpeed = 0;
         
         StabiliserSpeed = 7f;
         StabiliserStability = 1f;
+
+        //_rigidbody.maxAngularVelocity = 0.0001f;
 
         serverUtils.MotionBaseData.MotionSlerpSpeed = 5.0f;
     }
@@ -209,6 +218,14 @@ public class SubControl : NetworkBehaviour
         // Apply the orientation forces.
         //_rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
 
+        AbsoluteMaxAngularVel = Mathf.Clamp(AbsoluteMaxAngularVel, 0.1f, 3f);
+        pitchSpeed = Mathf.Clamp(pitchSpeed, 0f, 1500f);
+
+        MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax), 89f);
+        SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
+
+        MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
+
         _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
 
         GliderRollLogic();
@@ -230,19 +247,21 @@ public class SubControl : NetworkBehaviour
         ApplyThrustForce();
 
         //DEBUG STUFF
-        if (transform.localRotation.eulerAngles.z > 175f && transform.localRotation.eulerAngles.z < 185f)
+        if (transform.localRotation.eulerAngles.z > 179.9f && transform.localRotation.eulerAngles.z < 170.1f)
         {
             TripRoll = true;
             serverUtils.MotionBaseData.MotionHazard = true;
             Debug.Log("MotionHazard too much roll detected");
         }
            
-        if (transform.localRotation.eulerAngles.x > 85f && transform.localRotation.eulerAngles.x < 265f)
+        if (transform.localRotation.eulerAngles.x > 89.9f && transform.localRotation.eulerAngles.x < 270.1f)
         {
             TripPitch = true;
             serverUtils.MotionBaseData.MotionHazard = true;
             Debug.Log("MotionHazard too much pitch detected");
         }
+
+        _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, MaxAngularVelocity);
     }
 
     /* Roll with constraints */
@@ -261,17 +280,19 @@ public class SubControl : NetworkBehaviour
         {
             currentRoll = Mathf.Abs(currentRoll - 360f);
         }
-        var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / 180f);
+        var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderAngle);
         ScaleRoll = Mathf.Abs(ScaleRoll);
 
         //roll logiic
         if (inputXaxis > 0 && transform.localRotation.eulerAngles.z > 180f && transform.localRotation.eulerAngles.z < 360f)
         {
             _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
         else if (inputXaxis < 0 && transform.localRotation.eulerAngles.z > 0f && transform.localRotation.eulerAngles.z < 180f)
         {
             _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll,0.4f, 1f)));
         }
         else
         {
@@ -295,17 +316,19 @@ public class SubControl : NetworkBehaviour
         {
             currentPitch = Mathf.Abs(currentPitch - 360f);
         }
-        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / 180f);
+        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f,(90f - MaxAngularVelocity * 1f)));
         ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
         if (inputYaxis > 0 && transform.localRotation.eulerAngles.x > 180f && transform.localRotation.eulerAngles.x < 360f)
         {
             _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else if (inputYaxis < 0 && transform.localRotation.eulerAngles.x > 0f && transform.localRotation.eulerAngles.x < 180f)
         {
             _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else
         {

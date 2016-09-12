@@ -243,11 +243,11 @@ public class UnityToArduino : Singleton<UnityToArduino>
             preMapped.z -= 360f;
         }
 
-        preMapped.x /= 90f;
-        preMapped.z /= 180f;
+        preMapped.x /= Controls.MaxGliderAngle;
+        preMapped.z /= Controls.MaxGliderAngle;
 
-        preMapped.x *= (MotionData.MotionPitchMax * 1.3f);
-        preMapped.z *= (MotionData.MotionRollMax * 1.3f);
+        preMapped.x *= (MotionData.MotionPitchMax);
+        preMapped.z *= (MotionData.MotionRollMax);
 
         Quaternion reMapped;
         reMapped = Quaternion.Euler(preMapped.x, MotionData.MotionBaseYaw, preMapped.z);
