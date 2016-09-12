@@ -6,7 +6,6 @@ public class textValueFromServer : widgetText
 {
     [Header("Server Data")]
     public string linkDataString = "depth";
-    public string configDataKey = "";
 
     [Header("Output Value")]
     public bool useOutputCurve;
@@ -19,14 +18,21 @@ public class textValueFromServer : widgetText
     [Header("Formatting")]
     public bool unsigned = false;
     public string format = "";
-    public string configFormatKey = "";
     public string prefix = "";
     public bool upperCase;
     public ValueRange[] Ranges;
 
     [Header("Updating")]
     public float updateTick = 0.2f;
-    private float nextUpdate = 0;
+
+    [Header("Configuration Overrides")]
+    public string configDataOverrideParam = "";
+    public string configDataKey = "";
+    public string configFormatKey = "";
+
+    private float _nextUpdate;
+    private string _initialLinkData;
+    private string _initialFormat;
 
     [System.Serializable]
     public struct ValueRange
@@ -38,6 +44,9 @@ public class textValueFromServer : widgetText
 
     private void Start()
     {
+        _initialLinkData = linkDataString;
+        _initialFormat = format;
+
         if (!string.IsNullOrEmpty(configDataKey))
             linkDataString = Configuration.Get(configDataKey, linkDataString);
 
@@ -48,7 +57,7 @@ public class textValueFromServer : widgetText
             noise.Start();
 
         Update();
-        nextUpdate = Time.time + updateTick;
+        _nextUpdate = Time.time + updateTick;
     }
 
     private void Update()
@@ -58,12 +67,22 @@ public class textValueFromServer : widgetText
             noise.Update();
 
         // Check if it's time for the next update.
-        if (Time.time < nextUpdate)
+        if (Time.time < _nextUpdate)
             return;
-        nextUpdate = Time.time + updateTick;
+        _nextUpdate = Time.time + updateTick;
+
+        // Optionally check whether to apply configuration data overrides.
+        var parameter = linkDataString;
+        var formatString = format;
+        if (!string.IsNullOrEmpty(configDataOverrideParam))
+        {
+            var applyConfig = serverUtils.GetServerBool(configDataOverrideParam, true);
+            parameter = applyConfig ? linkDataString : _initialLinkData;
+            formatString = applyConfig ? format : _initialFormat;
+        }
 
         // Determine current value.
-        var value = serverUtils.GetServerData(linkDataString);
+        var value = serverUtils.GetServerData(parameter);
 
         if (unsigned)
             value = Mathf.Abs(value);
@@ -80,10 +99,10 @@ public class textValueFromServer : widgetText
         value = value * scale;
 
         // Apply baseline value formatting.
-        if (string.IsNullOrEmpty(format))
-            Text = serverUtils.GetServerDataAsText(linkDataString);
+        if (string.IsNullOrEmpty(formatString))
+            Text = serverUtils.GetServerDataAsText(parameter);
         else
-            Text = string.Format(format, value);
+            Text = string.Format(formatString, value);
 
         // Convert to uppercase if desired.
         if (upperCase)
