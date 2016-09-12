@@ -13,9 +13,6 @@ public class UnityToArduino : Singleton<UnityToArduino>
     private const float PortTimeoutInterval = 10;
 
     private SerialPort port;
-    public serverData Server;
-    public SubControl Controls;
-    public MotionBaseData MotionData;
     public GameObject MotionBaseTester;
 
     private Quaternion motionBase;
@@ -31,20 +28,25 @@ public class UnityToArduino : Singleton<UnityToArduino>
 
     private float _nextPortUpdate;
 
+    private static MotionBaseData MotionData
+        { get { return serverUtils.MotionBaseData; } }
+
+    private static serverData Server
+        { get { return serverUtils.ServerData; } }
+
+    private static SubControl Controls
+        { get { return serverUtils.SubControl; } }
+
+
     // initialization
     void Start()
     {
         UpdateComPort();
 
-        StartCoroutine(UpdateMotionBaseRoutine());
-
-        LastMove.x = MotionData.MotionBasePitch;
-        LastMove.y = MotionData.MotionBaseYaw;
-        LastMove.z = MotionData.MotionBaseRoll;
-
         flat = new Vector3(0, 0, 0);
         flatQ = Quaternion.Euler(flat);
 
+        StartCoroutine(UpdateMotionBaseRoutine());
     }
 
     void Update()
@@ -56,25 +58,15 @@ public class UnityToArduino : Singleton<UnityToArduino>
         _nextPortUpdate = Time.time + PortUpdateInterval;
     }
 
-
-    void Awake()
-    {
-        //if(GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>())
-        //{
-        //	Settings = GameObject.FindGameObjectWithTag("ArduinoManager").GetComponent<ArduinoManager>();
-        //	COMPort = Settings.ComPort;
-        //}
-
-        LastMove.x = MotionData.MotionBasePitch;
-        LastMove.y = MotionData.MotionBaseYaw;
-        LastMove.z = MotionData.MotionBaseRoll;
-    }
-
     IEnumerator UpdateMotionBaseRoutine()
     {
+        // Wait until server is started up.
+        while (!serverUtils.IsServer())
+            yield return 0;
+
+        // Motion base update loop.
         while (gameObject.activeSelf)
         {
-
             HazardCheck();
 
             if (MotionData.MotionSafety)
@@ -88,7 +80,7 @@ public class UnityToArduino : Singleton<UnityToArduino>
                     }
                     else
                     {
-                        motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime * MotionData.MotionSlerpSpeed);
+                        motionBase = Quaternion.Slerp(motionBase, Controls.GetMotionBaseQuaternion(), Time.deltaTime * MotionData.MotionSlerpSpeed);
                     }
                 }
                 else
@@ -207,7 +199,7 @@ public class UnityToArduino : Singleton<UnityToArduino>
         }
     }
 
-    void HazardCheck()
+    private void HazardCheck()
     {
         if (Mathf.Abs(LastMove.x - MotionData.MotionBasePitch) > MotionData.MotionHazardSensitivity)
         {
@@ -231,7 +223,7 @@ public class UnityToArduino : Singleton<UnityToArduino>
 
         MotionData.MotionBaseYaw *= MotionData.MotionYawMax;
 
-        preMapped = Server.transform.rotation.eulerAngles;
+        preMapped = Controls.GetMotionBaseQuaternion().eulerAngles;
 
         if (preMapped.x > 180f)
         {

@@ -1,0 +1,21 @@
+{
+	"groups":[
+		{
+			"id":"MAP",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"latitude"
+				},
+				{
+					"type":"Value",
+					"serverParam":"longitude"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapscale"
+				}
+			]
+		}
+	]
+}

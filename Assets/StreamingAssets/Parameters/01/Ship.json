@@ -1,6 +1,27 @@
 {
 	"groups":[
 		{
+			"id":"UI",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"pilotButtonEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"dockingButtonEnabled"
+				},
+				{
+					"type":"Value",
+					"serverParam":"depthDisplayed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"floorDistanceDisplayed"
+				}
+			]
+		},
+		{
 			"id":"SHIP STATE",
 			"parameters":[
 				{
@@ -128,6 +149,10 @@
 				{
 					"type":"Value",
 					"serverParam":"absolutemaxangularvel"
+				},
+				{
+					"type":"Value",
+					"serverParam":"stabiliserspeed"
 				}
 			]
 		},

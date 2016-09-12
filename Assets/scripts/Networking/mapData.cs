@@ -19,6 +19,10 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public float longitude = 112.244285f;
 
+    [SyncVar]
+    public float mapScale = 1f;
+
+
     [Header("Map Events")]
 
     [SyncVar]

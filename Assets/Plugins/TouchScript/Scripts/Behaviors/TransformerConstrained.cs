@@ -15,12 +15,16 @@ namespace TouchScript.Behaviors
     {
         #region Public properties
 
+        /** Smooth time for transform. */
+        public float SmoothTime = 0.25f;
+
         /** Bounds of the panning zone (local space). */
         public Bounds PanLimits;
 
         /** Zoom limits. */
         public Vector2 ZoomSoftLimits = new Vector2(0, float.MaxValue);
         public float ZoomSmoothTime = 1;
+
 
 
         #endregion
@@ -34,6 +38,11 @@ namespace TouchScript.Behaviors
         private Vector3 _smoothPositionVelocity;
         private Vector3 _smoothScaleVelocity;
 
+        private Vector3 _targetPosition;
+        private Vector3 _targetPositionVelocity;
+        private Vector3 _targetScale;
+        private Vector3 _targetScaleVelocity;
+
         #endregion
 
         #region Unity methods
@@ -41,6 +50,8 @@ namespace TouchScript.Behaviors
         private void Awake()
         {
             cachedTransform = transform;
+            _targetPosition = transform.position;
+            _targetScale = transform.localScale;
         }
 
         private void OnEnable()
@@ -56,6 +67,7 @@ namespace TouchScript.Behaviors
                 transformGesture.TransformStarted += transformStartedHandler;
                 transformGesture.TransformCompleted += transformCompletedHandler;
             }
+
         }
 
         private void OnDisable()
@@ -101,18 +113,18 @@ namespace TouchScript.Behaviors
         /// <inheritdoc />
         private void ApplyTransform(TransformGesture gesture, Transform target)
         {
-            target.localScale *= gesture.DeltaScale;
+            _targetScale *= gesture.DeltaScale;
 
             // Remember last acceptable values so we can reset to them.
-            var scale = target.localScale.x;
+            var scale = _targetScale.x;
             if (scale > ZoomSoftLimits.x && scale < ZoomSoftLimits.y)
             {
-                _lastOkScale = target.localScale;
-                _lastOkPosition = target.position;
+                _lastOkScale = _targetScale;
+                _lastOkPosition = _targetPosition;
             }
             else if (scale < ZoomSoftLimits.x)
             {
-                target.localScale = new Vector3(ZoomSoftLimits.x, ZoomSoftLimits.x, target.localScale.z);
+                _targetScale = new Vector3(ZoomSoftLimits.x, ZoomSoftLimits.x, _targetScale.z);
                 return;
             }
 
@@ -121,11 +133,11 @@ namespace TouchScript.Behaviors
 
             if (gesture.DeltaPosition != Vector3.zero)
             {
-                var s = target.localScale.x;
-                var min = target.parent.TransformPoint(PanLimits.min*s);
-                var max = target.parent.TransformPoint(PanLimits.max*s);
-                var p = target.position + gesture.DeltaPosition;
-                target.position = Vector3.Min(Vector3.Max(p, min), max);
+                var s = _targetScale.x;
+                var min = target.parent.TransformPoint(PanLimits.min * s);
+                var max = target.parent.TransformPoint(PanLimits.max * s);
+                var p = _targetPosition + gesture.DeltaPosition;
+                _targetPosition = Vector3.Min(Vector3.Max(p, min), max);
             }
 
         }
@@ -133,14 +145,23 @@ namespace TouchScript.Behaviors
         private void LateUpdate()
         {
             // Return to acceptable values.
-            var scale = transform.localScale.x;
-            if (scale > ZoomSoftLimits.x && scale < ZoomSoftLimits.y)
-                return;
+            var scale = _targetScale.x;
+            if (scale < ZoomSoftLimits.x || scale > ZoomSoftLimits.y)
+                ReturnToLastOkState();
 
+            // Smooth out pan and zoom.
             transform.localScale = Vector3.SmoothDamp(transform.localScale, 
+                _targetScale, ref _targetScaleVelocity, SmoothTime);
+            transform.position = Vector3.SmoothDamp(transform.position,
+                _targetPosition, ref _targetPositionVelocity, SmoothTime);
+        }
+
+        private void ReturnToLastOkState()
+        {
+            _targetScale = Vector3.SmoothDamp(_targetScale,
                 _lastOkScale, ref _smoothScaleVelocity, ZoomSmoothTime);
 
-            transform.position = Vector3.SmoothDamp(transform.position, 
+            _targetPosition = Vector3.SmoothDamp(_targetPosition,
                 _lastOkPosition, ref _smoothPositionVelocity, ZoomSmoothTime);
         }
 
