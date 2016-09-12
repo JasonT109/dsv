@@ -80,10 +80,13 @@ public class SubControl : NetworkBehaviour
 
     [SyncVar]
     public float MaxGliderAngle = 90f;
-    private float SoftMaxGliderAngle = 90f;
+    [SyncVar]
+    public float AbsoluteMaxAngularVel = 1.7f;
+
+
+    //private float SoftMaxGliderAngle = 90f;
 
     public float MaxAngularVelocity = 1.7f;
-    public float AbsoluteMaxAngularVel = 1.7f;
 
 
     //TODO Make these sync vars
@@ -222,7 +225,7 @@ public class SubControl : NetworkBehaviour
         pitchSpeed = Mathf.Clamp(pitchSpeed, 0f, 1500f);
 
         MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax), 89f);
-        SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
+        //SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
 
         MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
 

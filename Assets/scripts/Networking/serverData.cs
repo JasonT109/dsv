@@ -978,6 +978,12 @@ public class serverData : NetworkBehaviour
             case "motionyawmax":
                 MotionBaseData.MotionYawMax = newValue;
                 break;
+            case "maxgliderangle":
+                SubControl.MaxGliderAngle = newValue;
+                break;
+            case "absolutemaxangularvel":
+                SubControl.AbsoluteMaxAngularVel = newValue;
+                break;
             case "sonarheadingup":
                 SonarData.HeadingUp = newValue > 0;
                 break;

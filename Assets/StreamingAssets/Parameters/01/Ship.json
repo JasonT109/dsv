@@ -120,6 +120,14 @@
 				{
 					"type":"Value",
 					"serverParam":"acceleration"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maxgliderangle"
+				},
+				{
+					"type":"Value",
+					"serverParam":"absolutemaxangularvel"
 				}
 			]
 		},

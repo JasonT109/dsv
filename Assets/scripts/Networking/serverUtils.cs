@@ -630,6 +630,8 @@ namespace Meg.Networking
             "motionpitchmax",
             "motionrollmax",
             "motionyawmax",
+            "maxgliderangle",
+            "absolutemaxangularvel",
             "o1",
             "o2",
             "o3",
@@ -1034,6 +1036,8 @@ namespace Meg.Networking
             { "motionpitchmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "motionyawmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "motionrollmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
+            { "maxgliderangle", new ParameterInfo { maxValue = 89.0f, description = "max angle the glider can rotate at"} },
+            { "absolutemaxangularvel", new ParameterInfo { minValue = 0.1f, maxValue = 3.0f, description = "max angular velocity of the glider"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
             { "o2", new ParameterInfo { description = "Oxygen tank 2 capacity (%) (maps to oxygenTank2)."} },
             { "o3", new ParameterInfo { description = "Oxygen tank 3 capacity (%) (maps to oxygenTank3)."} },
@@ -1495,6 +1499,10 @@ namespace Meg.Networking
                     return SubControl.MaxSpeed;
                 case "minspeed":
                     return SubControl.MinSpeed;
+                case "maxgliderangle":
+                    return SubControl.MaxGliderAngle;
+                case "absolutemaxangularvel":
+                    return SubControl.AbsoluteMaxAngularVel;
 				case "isAutoPilot":
 					return SubControl.isAutoPilot ? 1 : 0;
                 case "isControlDecentMode":
@@ -1989,6 +1997,10 @@ namespace Meg.Networking
                     return SubControl.StabiliserStability.ToString("n1");
                 case "StabiliserSpeed":
                     return SubControl.StabiliserSpeed.ToString("n1");
+                case "maxgliderangle":
+                    return SubControl.MaxGliderAngle.ToString("n1");
+                case "absolutemaxangularvel":
+                    return SubControl.AbsoluteMaxAngularVel.ToString("n1");
                 case "domecenter":
                     return DomeData.domeCenter.ToString();
                 case "domecornerbottomleft":
