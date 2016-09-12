@@ -1,0 +1,29 @@
+{
+	"groups":[
+		{
+			"id":"GLIDER UI",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"header01override"
+				},
+				{
+					"type":"Value",
+					"serverParam":"header02override"
+				},
+				{
+					"type":"Value",
+					"serverParam":"header03override"
+				},
+				{
+					"type":"Value",
+					"serverParam":"header04override"
+				},
+				{
+					"type":"Value",
+					"serverParam":"header05override"
+				}
+			]
+		}
+	]
+}

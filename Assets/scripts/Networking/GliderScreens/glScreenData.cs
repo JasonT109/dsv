@@ -34,6 +34,22 @@ public class glScreenData : NetworkBehaviour
     [SyncVar]
     public bool taws_online;
 
+    [SyncVar]
+    public bool header01Override;
+
+    [SyncVar]
+    public bool header02Override;
+
+    [SyncVar]
+    public bool header03Override;
+
+    [SyncVar]
+    public bool header04Override;
+
+    [SyncVar]
+    public bool header05Override;
+
+
     /**Get which screen we should be on by passing in our screen ID (0 = right, 1 = middle, 2 = left). */
     public int getScreen(int screenInID)
     {
