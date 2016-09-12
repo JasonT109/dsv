@@ -39,6 +39,7 @@ public class MotionBaseData : NetworkBehaviour
 
     //TODO SyncVar
     public bool MotionBaseHost = true;
+    [SyncVar]
     public bool DecoupleMotionBase = false;
 
 

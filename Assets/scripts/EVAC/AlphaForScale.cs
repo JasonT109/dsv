@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Maths;
+using TouchScript.Gestures;
 
 public class AlphaForScale : MonoBehaviour
 {
@@ -24,7 +25,10 @@ public class AlphaForScale : MonoBehaviour
         _renderer = GetComponent<Renderer>();
 
         if (!Root)
-            Root = transform;
+        {
+            var gesture = transform.GetComponentInParents<TransformGesture>();
+            Root = gesture ? gesture.transform : transform;
+        }
 
         if (_group)
             _initialAlpha = _group.alpha;

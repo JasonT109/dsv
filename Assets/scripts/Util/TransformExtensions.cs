@@ -87,5 +87,21 @@ public static class TransformExtensions
         return child;
     }
 
+    /** Get a component in the transform's parents. */
+    public static T GetComponentInParents<T>(this Transform transform) where T : Component
+    {
+        var t = transform.parent;
+        while (t)
+        {
+            var c = t.GetComponent<T>();
+            if (c)
+                return c;
+
+            t = t.parent;
+        }
+
+        return null;
+    }
+
 
 }

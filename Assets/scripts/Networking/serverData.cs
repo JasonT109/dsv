@@ -732,6 +732,9 @@ public class serverData : NetworkBehaviour
             case "isautostabilised":
                 SubControl.isAutoStabilised = newValue > 0;
                 break;
+            case "decouplemotionbase":
+                MotionBaseData.DecoupleMotionBase = newValue > 0;
+                break;
             case "ispitchalsostabilised":
                 SubControl.IsPitchAlsoStabilised = newValue > 0;
                 break;
@@ -879,6 +882,9 @@ public class serverData : NetworkBehaviour
             case "longitude":
                 MapData.longitude = newValue;
                 break;
+            case "mapscale":
+                MapData.mapScale = newValue;
+                break;
             case "initiatemapevent":
                 MapData.initiateMapEvent = newValue;
                 break;
@@ -936,15 +942,6 @@ public class serverData : NetworkBehaviour
             case "megturnspeed":
                 SonarData.MegTurnSpeed = newValue;
 				break;
-			//case "motionbasepitch":
-			//	SubControl.MotionBasePitch = newValue;
-            //    break;
-			//case "motionbaseyaw":
-			//	SubControl.MotionBaseYaw = newValue;
-			//	break;
-			//case "motionbaseroll":
-			//	SubControl.MotionBaseRoll = newValue;
-			//	break;
 			case "motionslerpspeed":
 				MotionBaseData.MotionSlerpSpeed = newValue;
 				break;
@@ -1327,6 +1324,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "isautostabilised":
                 SubControl.isAutoStabilised = newValue;
+                break;
+            case "decouplemotionbase":
+                MotionBaseData.DecoupleMotionBase = newValue;
                 break;
             case "ispitchalsostabilised":
                 SubControl.IsPitchAlsoStabilised = newValue;
