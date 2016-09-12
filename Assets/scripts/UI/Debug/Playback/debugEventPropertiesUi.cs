@@ -571,13 +571,13 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateServerValueInput()
     {
-        var format = "{0:N" + Precision(ValueEvent.serverValue) + "}";
+        var format = "{0:N" + Precision(ValueEvent.serverParam, ValueEvent.serverValue) + "}";
         ServerValueInput.text = string.Format(format, ValueEvent.serverValue);
     }
 
     private void UpdateInitialValueInput()
     {
-        var format = "{0:N" + Precision(ValueEvent.initialValue) + "}";
+        var format = "{0:N" + Precision(ValueEvent.serverParam, ValueEvent.initialValue) + "}";
         InitialValueInput.text = string.Format(format, ValueEvent.initialValue);
         InitialValueInput.gameObject.SetActive(ValueEvent.applyInitialValue);
     }
@@ -1597,8 +1597,12 @@ public class debugEventPropertiesUi : MonoBehaviour
     }
 
     /** Return the number of decimal places to use for a given value. */
-    private static int Precision(double value)
+    private static int Precision(string param, double value)
     {
+        var info = serverUtils.GetServerDataInfo(param);
+        if (info.precision > 0)
+            return info.precision;
+
         var isInt = Math.Abs(value - Math.Round(value)) < 0.00001;
         if (isInt)
             return 0;

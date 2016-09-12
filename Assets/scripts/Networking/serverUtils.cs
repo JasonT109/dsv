@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.1.8";
+        public const string Version = "1.1.9";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -792,6 +792,7 @@ namespace Meg.Networking
             public float maxValue = 100;
             public bool readOnly;
             public bool hideInUi;
+            public int precision = 0;
             public string description = "";
             public noiseData.Profile noiseProfile;
 
@@ -1005,7 +1006,7 @@ namespace Meg.Networking
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub pitch is also automatically stabilised."} },
             { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether pilot input is overridden by joysticks attached to the server."} },
             { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether input updates from pilot's joysticks (turn off for manual input editing)."} },
-            { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees)." } },
+            { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees).", precision = 6 } },
             { "lightarray1", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray2", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray3", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
@@ -1016,7 +1017,7 @@ namespace Meg.Networking
             { "lightarray8", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
-            { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees)." } },
+            { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },

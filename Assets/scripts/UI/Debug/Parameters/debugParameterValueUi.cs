@@ -167,7 +167,7 @@ public class debugParameterValueUi : debugParameterUi
     private void UpdateServerValueInput()
     {
         var value = ValueParameter.serverValue;
-        var format = "{0:N" + Precision(value) + "}";
+        var format = "{0:N" + Precision(ValueParameter.serverParam, value) + "}";
         ServerValueInput.text = string.Format(format, value);
     }
 
@@ -231,8 +231,12 @@ public class debugParameterValueUi : debugParameterUi
     }
 
     /** Return the number of decimal places to use for a given value. */
-    private static int Precision(double value)
+    private static int Precision(string param, double value)
     {
+        var info = serverUtils.GetServerDataInfo(param);
+        if (info.precision > 0)
+            return info.precision;
+
         var isInt = Math.Abs(value - Math.Round(value)) < 0.00001;
         if (isInt)
             return 0;
