@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Meg.Networking;
+using MidiJack;
 
 namespace Meg.EventSystem
 {
@@ -325,6 +326,10 @@ namespace Meg.EventSystem
         {
             var input = serverUtils.LocalInput;
             if (input != null && input.GetButtonDown("HotKey" + hotKey))
+                paused = !paused;
+
+            var key = MidiKeys.HotKey(hotKey);
+            if (MidiMaster.GetKeyDown(key))
                 paused = !paused;
         }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using Meg.Networking;
+using MidiJack;
 
 namespace Meg.EventSystem
 {
@@ -269,6 +270,10 @@ namespace Meg.EventSystem
         {
             var input = serverUtils.LocalInput;
             if (input != null && input.GetButtonDown("HotKey" + triggerHotKey))
+                Trigger();
+
+            var key = MidiKeys.HotKey(triggerHotKey);
+            if (MidiMaster.GetKeyDown(key))
                 Trigger();
         }
 
