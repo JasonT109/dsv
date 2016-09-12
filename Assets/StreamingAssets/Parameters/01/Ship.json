@@ -1,27 +1,6 @@
 {
 	"groups":[
 		{
-			"id":"UI",
-			"parameters":[
-				{
-					"type":"Value",
-					"serverParam":"pilotButtonEnabled"
-				},
-				{
-					"type":"Value",
-					"serverParam":"dockingButtonEnabled"
-				},
-				{
-					"type":"Value",
-					"serverParam":"depthDisplayed"
-				},
-				{
-					"type":"Value",
-					"serverParam":"floorDistanceDisplayed"
-				}
-			]
-		},
-		{
 			"id":"SHIP STATE",
 			"parameters":[
 				{
@@ -59,6 +38,10 @@
 				{
 					"type":"Value",
 					"serverParam":"motionslerpspeed"
+				},
+				{
+					"type":"Value",
+					"serverParam":"decouplemotionbase"
 				}
 			]
 		},

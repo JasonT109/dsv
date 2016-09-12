@@ -732,6 +732,9 @@ public class serverData : NetworkBehaviour
             case "isautostabilised":
                 SubControl.isAutoStabilised = newValue > 0;
                 break;
+            case "decouplemotionbase":
+                MotionBaseData.DecoupleMotionBase = newValue > 0;
+                break;
             case "ispitchalsostabilised":
                 SubControl.IsPitchAlsoStabilised = newValue > 0;
                 break;
@@ -1321,6 +1324,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "isautostabilised":
                 SubControl.isAutoStabilised = newValue;
+                break;
+            case "decouplemotionbase":
+                MotionBaseData.DecoupleMotionBase = newValue;
                 break;
             case "ispitchalsostabilised":
                 SubControl.IsPitchAlsoStabilised = newValue;
