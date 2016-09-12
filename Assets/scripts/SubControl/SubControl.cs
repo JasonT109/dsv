@@ -209,7 +209,7 @@ public class SubControl : NetworkBehaviour
         rollSpeed = 1600f;
         yawSpeed = 0;
 
-        StabiliserSpeed = 7f;
+        StabiliserSpeed = 14f;
         StabiliserStability = 1f;
 
         //_rigidbody.maxAngularVelocity = 0.0001f;
@@ -241,7 +241,7 @@ public class SubControl : NetworkBehaviour
         AbsoluteMaxAngularVel = Mathf.Clamp(AbsoluteMaxAngularVel, 0.1f, 3f);
         pitchSpeed = Mathf.Clamp(pitchSpeed, 0f, 1500f);
 
-        MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax), 89f);
+        MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax), 50f);
         //SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
 
         MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
@@ -299,7 +299,7 @@ public class SubControl : NetworkBehaviour
         }
 
         //roll curve value
-        var currentRoll = MotionBaseSub.transform.localRotation.eulerAngles.z;
+        var currentRoll = MotionBaseSub.transform.rotation.eulerAngles.z;
         if (currentRoll > 180f)
         {
             currentRoll = Mathf.Abs(currentRoll - 360f);
@@ -308,7 +308,7 @@ public class SubControl : NetworkBehaviour
         ScaleRoll = Mathf.Abs(ScaleRoll);
 
         //roll logiic
-        if (inputXaxis > 0 && MotionBaseSub.transform.localRotation.eulerAngles.z > 180f && MotionBaseSub.transform.localRotation.eulerAngles.z < 360f)
+        if (inputXaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 180f && MotionBaseSub.transform.rotation.eulerAngles.z < 360f)
         {
             _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
@@ -316,7 +316,7 @@ public class SubControl : NetworkBehaviour
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
-        else if (inputXaxis < 0 && MotionBaseSub.transform.localRotation.eulerAngles.z > 0f && MotionBaseSub.transform.localRotation.eulerAngles.z < 180f)
+        else if (inputXaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 0f && MotionBaseSub.transform.rotation.eulerAngles.z < 180f)
         {
             _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
@@ -343,7 +343,7 @@ public class SubControl : NetworkBehaviour
         }
 
         //pitch curve value
-        var currentPitch = MotionBaseSub.transform.localRotation.eulerAngles.x;
+        var currentPitch = MotionBaseSub.transform.rotation.eulerAngles.x;
         if (currentPitch > 180f)
         {
             currentPitch = Mathf.Abs(currentPitch - 360f);
@@ -352,7 +352,7 @@ public class SubControl : NetworkBehaviour
         ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
-        if (inputYaxis > 0 && MotionBaseSub.transform.localRotation.eulerAngles.x > 180f && MotionBaseSub.transform.localRotation.eulerAngles.x < 360f)
+        if (inputYaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 180f && MotionBaseSub.transform.rotation.eulerAngles.x < 360f)
         {
             _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
@@ -360,7 +360,7 @@ public class SubControl : NetworkBehaviour
             _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
-        else if (inputYaxis < 0 && MotionBaseSub.transform.localRotation.eulerAngles.x > 0f && MotionBaseSub.transform.localRotation.eulerAngles.x < 180f)
+        else if (inputYaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 0f && MotionBaseSub.transform.rotation.eulerAngles.x < 180f)
         {
             _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
