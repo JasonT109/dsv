@@ -26,36 +26,31 @@ public class widgetWarningSwapTexture : MonoBehaviour
         if (greaterThanLevel)
         {
             float currentWarningLevel = Mathf.Max(serverVarValues);
+
             if (currentWarningLevel > warningLevel)
-            {
-                //do swap texture
                 m.mainTexture = swapTexture;
-            }
             else
-            {
                 m.mainTexture = originalTexture;
-            }
         }
         else
         {
             float currentWarningLevel = Mathf.Min(serverVarValues);
+
             if (currentWarningLevel <= warningLevel)
-            {
-                //do swap texture
                 m.mainTexture = swapTexture;
-            }
             else
-            {
                 m.mainTexture = originalTexture;
-            }
         }
     }
 
     void OnEnable()
     {
-        r = gameObject.GetComponent<Renderer>();
-        m = r.material;
-        originalTexture = m.mainTexture;
+        if (!r)
+            r = gameObject.GetComponent<Renderer>();
+        if (!m)
+            m = r.material;
+        if (!originalTexture)
+            originalTexture = m.mainTexture;
         SetTexture();
     }
 

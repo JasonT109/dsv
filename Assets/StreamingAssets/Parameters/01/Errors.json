@@ -161,6 +161,35 @@
 					"serverParam":"error_thruster_l"
 				}
 			]
+		},
+		{
+			"id":"GLIDER ERRORS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"thruster_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"thruster_heat_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"vertran_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"vertran_heat_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"jet_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"jet_heat_r"
+				}
+			]
 		}
 	]
 }

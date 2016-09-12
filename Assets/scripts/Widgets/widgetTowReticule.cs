@@ -153,7 +153,11 @@ public class widgetTowReticule : MonoBehaviour
     /** Handles the torpedo / grapple launch graphics. */
     void FireTorpedo()
     {
-        fired = true;
+        if (!fired)
+        {
+            fired = true;
+            torpedoTravelTime = 0;
+        }
 
         torpedoTravelTime += Time.deltaTime;
 

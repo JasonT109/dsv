@@ -347,6 +347,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the docking data object. */
+        private static glScreenData __glScreenData;
+        public static glScreenData GLScreenData
+        {
+            get
+            {
+                if (!__glScreenData && ServerObject)
+                    __glScreenData = ServerObject.GetComponent<glScreenData>();
+                return __glScreenData;
+            }
+        }
+
         /** Return the parameter noise data object. */
         private static noiseData _noiseData;
         public static noiseData NoiseData
@@ -682,6 +694,7 @@ namespace Meg.Networking
             "sonarshortsensitivity",
             "startimagesequence",
             "take",
+            "taws_online",
             "thruster_heat_l",
             "thruster_heat_r",
             "timetointercept",
@@ -1084,6 +1097,7 @@ namespace Meg.Networking
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
             { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "auto stabiliser speed."} },
             { "stabiliserstability", new ParameterInfo { minValue = 0, maxValue = 10, description = "auto stabiliser stability."} },
+            { "taws_online", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "TAWS online status. Displays piloting aids on glider middle screens." } },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
             { "timetointercept", new ParameterInfo { description = "Time to Intercept (used by vessel interception logic, drives dueTime when simulation is active."} },
             { "towtargetx", new ParameterInfo { minValue = 0, maxValue = 1, description = "Tow target screen x position from bottom left."} },
@@ -1757,6 +1771,8 @@ namespace Meg.Networking
                     return GLTowingData.towTargetDistance;
                 case "glpowerupprogress":
                     return GLTowingData.glpowerupprogress;
+                case "taws_online":
+                    return GLScreenData.taws_online ? 1 : 0;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

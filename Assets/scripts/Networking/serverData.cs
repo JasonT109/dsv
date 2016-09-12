@@ -288,6 +288,18 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private glScreenData _glScreenData;
+    public glScreenData GLScreenData
+    {
+        get
+        {
+            if (!_glScreenData)
+                _glScreenData = GetComponent<glScreenData>();
+            return _glScreenData;
+        }
+    }
+
+
     private popupData _popupData;
     public popupData PopupData
     {
@@ -1184,6 +1196,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "glpowerupprogress":
                 GLTowingData.glpowerupprogress = (int)newValue;
+                break;
+            case "taws_online":
+                GLScreenData.taws_online = newValue > 0;
                 break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);

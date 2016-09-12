@@ -31,6 +31,9 @@ public class glScreenData : NetworkBehaviour
     [SyncVar]
     public bool objectLabelsOn;
 
+    [SyncVar]
+    public bool taws_online;
+
     /**Get which screen we should be on by passing in our screen ID (0 = right, 1 = middle, 2 = left). */
     public int getScreen(int screenInID)
     {
@@ -41,14 +44,17 @@ public class glScreenData : NetworkBehaviour
                 screenOutID = screenInID;
                 break;
             case 1:
-                if (screenMatrixID == 0 || screenMatrixID == 6 || screenMatrixID == 7) 
+                if (screenMatrixID == 0 || screenMatrixID == 6 || screenMatrixID == 7)
                     screenOutID = 8; //thrusters
                 else if (screenMatrixID == 1 || screenMatrixID == 4)
                     screenOutID = 9; //map
                 else if (screenMatrixID == 3)
                     screenOutID = 14; //sonar
                 else if (screenMatrixID == 2)
-                    screenOutID = 10; //tcas
+                    if (taws_online)
+                        screenOutID = 10; //tcas
+                    else
+                        screenOutID = 9;
                 else if (screenMatrixID == 5)
                     screenOutID = 11; //towing
                 break;
