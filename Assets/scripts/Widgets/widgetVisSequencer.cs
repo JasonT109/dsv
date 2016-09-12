@@ -19,10 +19,9 @@ public class widgetVisSequencer : MonoBehaviour
 
         for (int i = 0; i < sequenceObjects.Length; i++)
         {
-            if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show)
-                sequenceObjects[i].visObject.SetActive(false);
-            //if (sequenceObjects[i].visibility == visSequenceObject.visStatus.hide)
-                //sequenceObjects[i].visObject.SetActive(true);
+            if (sequenceObjects[i].visObject)
+                if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show)
+                    sequenceObjects[i].visObject.SetActive(false);
         }
     }
 
@@ -73,17 +72,19 @@ public class widgetVisSequencer : MonoBehaviour
 
             for (int i = 0; i < sequenceObjects.Length; i++)
             {
-                
-                if (timer > sequenceObjects[i].visTime)
+                if (sequenceObjects[i].visObject)
                 {
-                    if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show && !sequenceObjects[i].visObject.activeSelf)
-                        sequenceObjects[i].visObject.SetActive(true);
-                    if (sequenceObjects[i].visibility == visSequenceObject.visStatus.hide && sequenceObjects[i].visObject.activeSelf)
-                        sequenceObjects[i].visObject.SetActive(false);
-                }
-                else
-                {
-                    isRunning = true;
+                    if (timer > sequenceObjects[i].visTime)
+                    {
+                        if (sequenceObjects[i].visibility == visSequenceObject.visStatus.show && !sequenceObjects[i].visObject.activeSelf)
+                            sequenceObjects[i].visObject.SetActive(true);
+                        if (sequenceObjects[i].visibility == visSequenceObject.visStatus.hide && sequenceObjects[i].visObject.activeSelf)
+                            sequenceObjects[i].visObject.SetActive(false);
+                    }
+                    else
+                    {
+                        isRunning = true;
+                    }
                 }
             }
 
