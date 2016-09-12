@@ -154,7 +154,7 @@ public class SonarPing : MonoBehaviour
         }
 
         NameLabel.Text = Vessel.Name.ToUpper();
-        if (t > _nextDepthUpdate)
+        if (t > _nextDepthUpdate && DepthLabel)
         { 
             UpdateDepth();
             _nextDepthUpdate = t + DepthUpdateInterval;

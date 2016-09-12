@@ -2,6 +2,12 @@ using UnityEngine;
 using System.Collections;
 using Meg.Maths;
 
+/**
+ * Provides a space that is registered to latitude and longitude via 
+ * two markers.  Child objects with LatLongPoints on them will be 
+ * automatically positioned according to their LatLong coordinate.
+ */
+
 public class LatLongSpace : MonoBehaviour
 {
 

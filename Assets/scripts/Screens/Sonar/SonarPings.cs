@@ -24,6 +24,9 @@ public class SonarPings : MonoBehaviour
     /** Scaling factor from normalized sonar space into root space. */
     public float SonarToRootScale = 1;
 
+    /** Server parameter used to drive scale factor (optional). */
+    public string ScaleServerParam;
+
     /** Possible display spaces. */
     public enum DisplaySpace
     {
@@ -81,6 +84,9 @@ public class SonarPings : MonoBehaviour
 
     /** The list of ping instances. */
     private readonly List<SonarPing> _pings = new List<SonarPing>();
+
+    /** Initial root scale. */
+    private float _initialRootScale;
     
 
     // Unity Methods
@@ -89,6 +95,8 @@ public class SonarPings : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        _initialRootScale = SonarToRootScale;
+
         if (!Root)
             Root = transform;
     }
@@ -137,6 +145,10 @@ public class SonarPings : MonoBehaviour
     {
         if (!VesselData)
             return;
+
+        if (!string.IsNullOrEmpty(ScaleServerParam))
+            SonarToRootScale = serverUtils.GetServerData(ScaleServerParam, 
+                SonarToRootScale) * _initialRootScale;
 
         var index = 0;
         for (var i = 0; i < VesselData.VesselCount; i++)

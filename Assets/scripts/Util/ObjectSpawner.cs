@@ -11,6 +11,7 @@ public class ObjectSpawner : MonoBehaviour
     public float MinDistance = 0;
 
     public bool Siblings;
+    public bool InheritScale;
 
     private Graphic _graphic;
 
@@ -46,6 +47,9 @@ public class ObjectSpawner : MonoBehaviour
 
             go.transform.position = transform.position;
             go.transform.rotation = transform.rotation;
+
+            if (InheritScale)
+                go.transform.localScale = transform.localScale;
 
             // Inherit color from spawner.
             if (_graphic)
