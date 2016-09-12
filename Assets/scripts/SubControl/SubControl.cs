@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Meg.Networking;
 
-public class SubControl : NetworkBehaviour 
+public class SubControl : NetworkBehaviour
 {
 
     // Constants
@@ -58,18 +58,18 @@ public class SubControl : NetworkBehaviour
     public float MaxSpeed = 200f;
     [SyncVar]
     public float MinSpeed = -100f;
-	[SyncVar]
-	public bool isAutoPilot = false;
-	[SyncVar]
-	public bool isControlDecentMode = false;
     [SyncVar]
-	public bool isControlModeOverride = false;
-	[SyncVar]
-	public bool isControlOverrideStandard = false;
-	[SyncVar] 
-	public float MotionScaleImpacts = 1.0f;
-	[SyncVar] 
-	public float MotionMinImpactInterval = 0.75f;
+    public bool isAutoPilot = false;
+    [SyncVar]
+    public bool isControlDecentMode = false;
+    [SyncVar]
+    public bool isControlModeOverride = false;
+    [SyncVar]
+    public bool isControlOverrideStandard = false;
+    [SyncVar]
+    public float MotionScaleImpacts = 1.0f;
+    [SyncVar]
+    public float MotionMinImpactInterval = 0.75f;
 
     [SyncVar]
     public float StabiliserSpeed = 20f;
@@ -119,7 +119,7 @@ public class SubControl : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** Preinitialization. */
-    private void Awake() 
+    private void Awake()
     {
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.centerOfMass = Vector3.zero;
@@ -183,12 +183,13 @@ public class SubControl : NetworkBehaviour
 
     /** Return the sub's current world velocity. */
     public Vector3 GetWorldVelocity()
-        { return _rigidbody.velocity; }
+    { return _rigidbody.velocity; }
 
     /** set the y velocity to the motion base.  */
     public void CalculateYawVelocity()
     {
-        serverUtils.MotionBaseData.MotionBaseYaw = _motionRigidBody.angularVelocity.y;
+        if (serverUtils.IsReady())
+            serverUtils.MotionBaseData.MotionBaseYaw = _motionRigidBody.angularVelocity.y;
     }
 
 
@@ -207,7 +208,7 @@ public class SubControl : NetworkBehaviour
         pitchSpeed = 1200f;
         rollSpeed = 1600f;
         yawSpeed = 0;
-        
+
         StabiliserSpeed = 7f;
         StabiliserStability = 1f;
 
@@ -274,7 +275,7 @@ public class SubControl : NetworkBehaviour
             serverUtils.MotionBaseData.MotionHazard = true;
             Debug.Log("MotionHazard too much roll detected");
         }
-           
+
         if (MotionBaseSub.transform.localRotation.eulerAngles.x > 89.9f && MotionBaseSub.transform.localRotation.eulerAngles.x < 270.1f)
         {
             TripPitch = true;
@@ -318,7 +319,7 @@ public class SubControl : NetworkBehaviour
         else if (inputXaxis < 0 && MotionBaseSub.transform.localRotation.eulerAngles.z > 0f && MotionBaseSub.transform.localRotation.eulerAngles.z < 180f)
         {
             _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll,0.4f, 1f)));
+            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
@@ -335,7 +336,7 @@ public class SubControl : NetworkBehaviour
     private void GliderPitchLogic()
     {
         //test for bowtie deadzone
-        if(inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis))
+        if (inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis))
         {
             //fallin within deadzone. Go directly to jail, do not pass go.
             return;
@@ -347,7 +348,7 @@ public class SubControl : NetworkBehaviour
         {
             currentPitch = Mathf.Abs(currentPitch - 360f);
         }
-        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f,(90f - MaxAngularVelocity * 1f)));
+        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f, (90f - MaxAngularVelocity * 1f)));
         ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
@@ -377,7 +378,7 @@ public class SubControl : NetworkBehaviour
 
     /** Apply standard control forces for the big sub. */
     private void ApplyStandardForces()
-	{
+    {
         // Check if input has been disabled.
         if (disableInput)
             return;
@@ -389,11 +390,11 @@ public class SubControl : NetworkBehaviour
 
         // Adjust mix for pitch when doing a banking turn.
         _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
-	}
+    }
 
     /** Apply control forces while in descent mode for the big sub. */
     private void ApplyDescentForces()
-	{
+    {
         // Check if input has been disabled.
         if (disableInput)
             return;
@@ -401,7 +402,7 @@ public class SubControl : NetworkBehaviour
         // Apply the orientation forces.
         _rigidbody.AddTorque(Vector3.up * (yawSpeed * inputXaxis));
         _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
-	}
+    }
 
     /** Update auto-stabilization logic. */
     private void ApplyStabilizationForce()
@@ -413,8 +414,13 @@ public class SubControl : NetworkBehaviour
         var roll = transform.eulerAngles.z;
         var pitch = transform.eulerAngles.x;
 
-        var motionRoll = MotionBaseSub.transform.eulerAngles.z;
-        var motionPitch = MotionBaseSub.transform.eulerAngles.x;
+        var motionRoll = 0f;
+        var motionPitch = 0f;
+        if (serverUtils.IsGlider())
+        {
+            motionRoll = MotionBaseSub.transform.eulerAngles.z;
+            motionPitch = MotionBaseSub.transform.eulerAngles.x;
+        }
 
         // If roll is almost right, stop adjusting (PID dampening todo here?)
         if (roll > MinRoll && roll < MaxRoll)
@@ -422,10 +428,13 @@ public class SubControl : NetworkBehaviour
         else if (pitch > MinPitch && roll < MaxRoll)
             AutoStabilize();
 
-        if (motionRoll > MinRoll && motionRoll < MaxRoll)
-            MotionAutoStabilize();
-        else if (motionPitch > MinPitch && motionRoll < MaxRoll)
-            MotionAutoStabilize();
+        if (serverUtils.IsGlider())
+        {
+            if (motionRoll > MinRoll && motionRoll < MaxRoll)
+                MotionAutoStabilize();
+            else if (motionPitch > MinPitch && motionRoll < MaxRoll)
+                MotionAutoStabilize();
+        }
     }
 
     /** Apply autostabilization to the sub's rigidbody. */
@@ -462,7 +471,7 @@ public class SubControl : NetworkBehaviour
 
     /** Apply thrust forces to the sub's rigidbody. */
     public void ApplyThrustForce()
-	{
+    {
         // Check if input has been disabled.
         if (disableInput)
             return;
