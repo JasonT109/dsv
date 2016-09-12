@@ -80,7 +80,7 @@ public class UnityToArduino : Singleton<UnityToArduino>
                     }
                     else
                     {
-                        motionBase = Quaternion.Slerp(motionBase, Server.transform.rotation, Time.deltaTime * MotionData.MotionSlerpSpeed);
+                        motionBase = Quaternion.Slerp(motionBase, Controls.GetMotionBaseQuaternion(), Time.deltaTime * MotionData.MotionSlerpSpeed);
                     }
                 }
                 else
@@ -223,7 +223,7 @@ public class UnityToArduino : Singleton<UnityToArduino>
 
         MotionData.MotionBaseYaw *= MotionData.MotionYawMax;
 
-        preMapped = Server.transform.rotation.eulerAngles;
+        preMapped = Controls.GetMotionBaseQuaternion().eulerAngles;
 
         if (preMapped.x > 180f)
         {

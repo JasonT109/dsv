@@ -192,6 +192,22 @@ public class SubControl : NetworkBehaviour
             serverUtils.MotionBaseData.MotionBaseYaw = _motionRigidBody.angularVelocity.y;
     }
 
+    public Quaternion GetMotionBaseQuaternion()
+    {
+        Quaternion r;
+
+        if(serverUtils.IsGlider())
+        {
+            r = MotionBaseSub.transform.rotation;
+        }
+        else
+        {
+            r = transform.rotation;
+        }
+
+        return r;
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
