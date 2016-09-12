@@ -1203,6 +1203,22 @@ public class serverData : NetworkBehaviour
             case "taws_online":
                 GLScreenData.taws_online = newValue > 0;
                 break;
+            case "header01override":
+                GLScreenData.header01Override = newValue > 0;
+                break;
+            case "header02override":
+                GLScreenData.header02Override = newValue > 0;
+                break;
+            case "header03override":
+                GLScreenData.header03Override = newValue > 0;
+                break;
+            case "header04override":
+                GLScreenData.header04Override = newValue > 0;
+                break;
+            case "header05override":
+                GLScreenData.header05Override = newValue > 0;
+                break;
+
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;

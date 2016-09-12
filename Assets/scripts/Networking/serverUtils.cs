@@ -573,6 +573,11 @@ namespace Meg.Networking
             "glpowerupprogress",
             "greenscreenbrightness",
             "heading",
+            "header01override",
+            "header02override",
+            "header03override",
+            "header04override",
+            "header05override",
             "horizontalvelocity",
             "hydraulicpressure",
             "hydraulictemp",
@@ -989,6 +994,11 @@ namespace Meg.Networking
             { "glpowerupprogress", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Glider power up progress."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
             { "heading", new ParameterInfo { description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
+            { "header01override", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to override the default header quantity in Glider screens."} },
+            { "header02override", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to override the default header quantity in Glider screens."} },
+            { "header03override", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to override the default header quantity in Glider screens."} },
+            { "header04override", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to override the default header quantity in Glider screens."} },
+            { "header05override", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to override the default header quantity in Glider screens."} },
             { "horizontalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the horizontal direction (m/s)." } },
             { "hydraulicpressure", new ParameterInfo { description = "Hydraulic system pressure (psi)."} },
             { "hydraulictemp", new ParameterInfo { description = "Hydraulic system temperature (°c)."} },
@@ -1790,6 +1800,16 @@ namespace Meg.Networking
                     return GLTowingData.glpowerupprogress;
                 case "taws_online":
                     return GLScreenData.taws_online ? 1 : 0;
+                case "header01override":
+                    return GLScreenData.header01Override ? 1 : 0;
+                case "header02override":
+                    return GLScreenData.header02Override ? 1 : 0;
+                case "header03override":
+                    return GLScreenData.header03Override ? 1 : 0;
+                case "header04override":
+                    return GLScreenData.header04Override ? 1 : 0;
+                case "header05override":
+                    return GLScreenData.header05Override ? 1 : 0;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }
