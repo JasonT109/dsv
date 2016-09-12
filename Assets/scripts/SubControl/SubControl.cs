@@ -123,7 +123,6 @@ public class SubControl : NetworkBehaviour
     {
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.centerOfMass = Vector3.zero;
-        _motionRigidBody.centerOfMass = Vector3.zero;
 
         MinSpeed = -(0.5f * MaxSpeed);
         JoystickOverride = false;
@@ -135,6 +134,7 @@ public class SubControl : NetworkBehaviour
         base.OnStartServer();
         if (serverUtils.IsGlider())
             ApplyGliderDefaults();
+
     }
 
 
@@ -228,6 +228,8 @@ public class SubControl : NetworkBehaviour
         StabiliserSpeed = 14f;
         StabiliserStability = 1f;
 
+        _motionRigidBody.centerOfMass = Vector3.zero;
+
         //_rigidbody.maxAngularVelocity = 0.0001f;
 
         serverUtils.MotionBaseData.MotionSlerpSpeed = 5.0f;
@@ -262,17 +264,23 @@ public class SubControl : NetworkBehaviour
 
         MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
 
-        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
-        _motionRigidBody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis));
+        GliderYawLogic();
 
         GliderRollLogic();
 
         GliderPitchLogic();
 
+        if (serverUtils.MotionBaseData.DecoupleMotionBase)
+        {
+            _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+
+        }
+
 
         // Adjust mix for pitch when doing a banking turn.
-        _rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
-        _motionRigidBody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
+        //_rigidbody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
+        //_motionRigidBody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
 
         // Auto-stabilize the sub if desired, and if inputs are weak.
         if (inputYaxis < 0.3f && inputYaxis > -0.3f)
@@ -326,23 +334,44 @@ public class SubControl : NetworkBehaviour
         //roll logiic
         if (inputXaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 180f && MotionBaseSub.transform.rotation.eulerAngles.z < 360f)
         {
-            _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            if(serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
         else if (inputXaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 0f && MotionBaseSub.transform.rotation.eulerAngles.z < 180f)
         {
-            _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
         else
         {
-            _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
         }
@@ -370,26 +399,55 @@ public class SubControl : NetworkBehaviour
         //pitch logic
         if (inputYaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 180f && MotionBaseSub.transform.rotation.eulerAngles.x < 360f)
         {
-            _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            }
+
 
             _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else if (inputYaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 0f && MotionBaseSub.transform.rotation.eulerAngles.x < 180f)
         {
-            _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-            _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            }
 
             _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else
         {
-            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+            }
 
             _motionRigidBody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
         }
+    }
+
+    private void GliderYawLogic()
+    {
+        //banking yaw doesn't make a lot of sense on gliders. avoid if possible
+        _rigidbody.AddTorque(Vector3.forward * (yawSpeed * inputXaxis));
+        _motionRigidBody.AddTorque(Vector3.forward * (yawSpeed * inputXaxis));
     }
 
     /** Apply standard control forces for the big sub. */
