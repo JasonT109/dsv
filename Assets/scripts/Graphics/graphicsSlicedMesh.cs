@@ -95,6 +95,8 @@ public class graphicsSlicedMesh : MonoBehaviour
         }
     }
 
+    public bool RecalculateBounds;
+
     void Awake()
     {
         if (!mesh)
@@ -168,6 +170,9 @@ public class graphicsSlicedMesh : MonoBehaviour
             CreateTopAndMid();
         else
             CreateAll();
+
+        if (RecalculateBounds)
+            mesh.RecalculateBounds();
     }
 
     private void CreateQuad()
