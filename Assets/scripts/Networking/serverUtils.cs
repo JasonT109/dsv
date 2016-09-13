@@ -496,6 +496,7 @@ namespace Meg.Networking
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
+            "descentmodevalue",
             "depth",
             "depthdisplayed",
             "depthoverride",
@@ -916,6 +917,7 @@ namespace Meg.Networking
             { "crewspo2min1", new ParameterInfo { description = "Minimum Oxygen saturation level."} },
             { "crewspo2max1", new ParameterInfo { description = "Maximum Oxygen saturation level."} },
             { "crewspo2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph."} },
+            { "descentmodevalue", new ParameterInfo {minValue = -90, maxValue = 90, description = "Descent mode value."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
@@ -992,7 +994,7 @@ namespace Meg.Networking
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
             { "floordistancedisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether floor distance is displayed in header area."} },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
-            { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
+            { "genericerror", new ParameterInfo { minValue = 0, maxValue = 1, description = "Generic error indicator popup control."} },
             { "glpowerupprogress", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Glider power up progress."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
             { "heading", new ParameterInfo { description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
@@ -1818,6 +1820,8 @@ namespace Meg.Networking
                     return GLScreenData.header04Override ? 1 : 0;
                 case "header05override":
                     return GLScreenData.header05Override ? 1 : 0;
+                case "descentmodevalue":
+                    return GLScreenData.descentModeValue;
                 default:
                     return GetDynamicValue(valueName, defaultValue);
             }

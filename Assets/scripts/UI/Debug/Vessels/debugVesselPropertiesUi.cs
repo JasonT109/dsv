@@ -472,6 +472,11 @@ public class debugVesselPropertiesUi : MonoBehaviour
         if (Vessel.Id == vesselData.InterceptId && type == vesselMovements.InterceptType)
             return false;
 
+        // Don't allow player vessel to be moved if connected to motion base.
+        var isPlayerVessel = Vessel.Id == serverUtils.GetPlayerVessel();
+        if (isPlayerVessel && serverUtils.GetServerBool("motionComPortOpen"))
+            return false;
+
         return true;
     }
 

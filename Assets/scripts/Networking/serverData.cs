@@ -1224,6 +1224,9 @@ public class serverData : NetworkBehaviour
             case "header05override":
                 GLScreenData.header05Override = newValue > 0;
                 break;
+            case "descentmodevalue":
+                GLScreenData.descentModeValue = newValue;
+                break;
 
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);

@@ -61,16 +61,21 @@ public class debugGliderScreenUi : MonoBehaviour
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
-
-        var screenId = Player.GameInputs.glScreenID;
-        var canSetContent = CanSetContent(screenId) && !Player.isLocalPlayer;
-
+        
+        var canSetContent = CanSetContent();
         NextContentButton.gameObject.SetActive(canSetContent);
         PreviousContentButton.gameObject.SetActive(canSetContent);
     }
 
-    private static bool CanSetContent(int screenId)
+    private bool CanSetContent()
     {
+        if (Player.isLocalPlayer)
+            return false;
+
+        if (Player.ScreenState.Content == screenData.Content.Debug)
+            return false;
+
+        var screenId = Player.GameInputs.glScreenID;
         return screenId == glScreenManager.RightScreenId
             || screenId == glScreenManager.LeftScreenId;
     }
@@ -144,10 +149,10 @@ public class debugGliderScreenUi : MonoBehaviour
 
     private void OnNextContentClicked()
     {
-        var current = Player.ScreenState.Content;
-        if (current == screenData.Content.Debug)
+        if (!CanSetContent())
             return;
 
+        var current = Player.ScreenState.Content;
         var type = GetScreenType(Player);
         var next = GetNextContent(type, current);
         serverUtils.PostScreenState(Player.netId, GetScreenState(next));
@@ -155,10 +160,10 @@ public class debugGliderScreenUi : MonoBehaviour
 
     private void OnPreviousContentClicked()
     {
-        var current = Player.ScreenState.Content;
-        if (current == screenData.Content.Debug)
+        if (!CanSetContent())
             return;
 
+        var current = Player.ScreenState.Content;
         var type = GetScreenType(Player);
         var next = GetPreviousContent(type, current);
         serverUtils.PostScreenState(Player.netId, GetScreenState(next));

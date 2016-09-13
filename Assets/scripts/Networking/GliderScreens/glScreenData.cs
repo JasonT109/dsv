@@ -35,6 +35,9 @@ public class glScreenData : NetworkBehaviour
     public bool taws_online;
 
     [SyncVar]
+    public float descentModeValue;
+
+    [SyncVar]
     public bool header01Override;
 
     [SyncVar]
@@ -87,12 +90,13 @@ public class glScreenData : NetworkBehaviour
     /** Set the matrix ID based on which client is displaying the right screen */
     void setMatrixID()
     {
-        // Prefer right screens that are on client instances.  
+        // Prefer right screens that are on non-debug client instances.  
         // This will help the glider screens behave sensibly even if the host 
         // is also configured to display a right screen.
         var right = serverUtils.GetPlayers()
             .Where(p => p.GameInputs.IsRightGliderScreen)
             .OrderBy(p => p.isLocalPlayer)
+            .ThenBy(p => p.ScreenState.Content == screenData.Content.Debug)
             .ThenBy(p => p.netId.Value)
             .FirstOrDefault();
 
