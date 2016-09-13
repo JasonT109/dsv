@@ -99,6 +99,11 @@ public class SubControl : NetworkBehaviour
 
     public bool TripPitch = false;
     public bool TripRoll = false;
+
+    private float MaxGliderPitch;
+    private float MinGliderPitch;
+    private float MaxGliderRoll;
+    private float MinGliderRoll;
     //public float ScaleRoll;
 
 
@@ -259,10 +264,12 @@ public class SubControl : NetworkBehaviour
         AbsoluteMaxAngularVel = Mathf.Clamp(AbsoluteMaxAngularVel, 0.1f, 3f);
         pitchSpeed = Mathf.Clamp(pitchSpeed, 0f, 1500f);
 
-        MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax), 50f);
+        MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax, serverUtils.MotionBaseData.MotionPitchMin, serverUtils.MotionBaseData.MotionRollMin), 50f);
         //SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
 
         MaxAngularVelocity = (MaxGliderAngle / 90f) * AbsoluteMaxAngularVel;
+
+        CalculateMaxAngles();
 
         GliderYawLogic();
 
@@ -312,6 +319,22 @@ public class SubControl : NetworkBehaviour
         _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, MaxAngularVelocity);
     }
 
+    private void CalculateMaxAngles()
+    {
+        var maxAngle = Mathf.Max(serverUtils.MotionBaseData.MotionPitchMax,
+            Mathf.Abs(serverUtils.MotionBaseData.MotionPitchMin),
+            serverUtils.MotionBaseData.MotionRollMax,
+            Mathf.Abs(serverUtils.MotionBaseData.MotionRollMin));
+
+        var ratio = MaxGliderAngle / maxAngle;
+
+        MaxGliderPitch = Mathf.Abs(serverUtils.MotionBaseData.MotionPitchMax * ratio);
+        MinGliderPitch = Mathf.Abs(serverUtils.MotionBaseData.MotionPitchMin * ratio);
+        MaxGliderRoll = Mathf.Abs(serverUtils.MotionBaseData.MotionRollMax * ratio);
+        MinGliderRoll = Mathf.Abs(serverUtils.MotionBaseData.MotionRollMin * ratio);
+
+    }
+
     /* Roll with constraints */
     private void GliderRollLogic()
     {
@@ -328,7 +351,18 @@ public class SubControl : NetworkBehaviour
         {
             currentRoll = Mathf.Abs(currentRoll - 360f);
         }
-        var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderAngle);
+        //var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderAngle);
+        //ScaleRoll = Mathf.Abs(ScaleRoll);
+
+        var ScaleRoll = 0f;
+        if (MotionBaseSub.transform.localRotation.z > 0)
+        {
+            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderRoll);
+        }
+        else
+        {
+            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MinGliderRoll);
+        }
         ScaleRoll = Mathf.Abs(ScaleRoll);
 
         //roll logiic
@@ -393,7 +427,17 @@ public class SubControl : NetworkBehaviour
         {
             currentPitch = Mathf.Abs(currentPitch - 360f);
         }
-        var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f, (90f - MaxAngularVelocity * 1f)));
+
+        var ScalePitch = 0f;
+        if (MotionBaseSub.transform.localRotation.x > 0)
+        {          
+            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        }
+        else
+        {
+            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MinGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        }
+        //var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f, (90f - MaxAngularVelocity * 1f)));
         ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
