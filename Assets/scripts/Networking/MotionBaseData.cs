@@ -35,6 +35,8 @@ public class MotionBaseData : NetworkBehaviour
     [SyncVar]
     public float MotionPitchMin = -20f;
     [SyncVar]
+    public float MotionRollMax = -30f;
+    [SyncVar]
     public float MotionRollMin = -30f;
     [SyncVar]
     public float MotionYawMax = 37f;

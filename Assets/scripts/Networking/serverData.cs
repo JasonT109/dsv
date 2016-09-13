@@ -969,8 +969,14 @@ public class serverData : NetworkBehaviour
             case "motionpitchmax":
                 MotionBaseData.MotionPitchMax = newValue;
                 break;
+            case "motionpitchmin":
+                MotionBaseData.MotionPitchMin = newValue;
+                break;
             case "motionrollmax":
                 MotionBaseData.MotionRollMax = newValue;
+                break;
+            case "motionrollmin":
+                MotionBaseData.MotionRollMin = newValue;
                 break;
             case "motionyawmax":
                 MotionBaseData.MotionYawMax = newValue;

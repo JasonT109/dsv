@@ -635,7 +635,9 @@ namespace Meg.Networking
 			"motionscaleimpacts",
 			"motionminimpactinterval",
             "motionpitchmax",
+            "motionpitchmin",
             "motionrollmax",
+            "motionrollmin",
             "motionyawmax",
             "maxgliderangle",
             "absolutemaxangularvel",
@@ -1049,8 +1051,10 @@ namespace Meg.Networking
 			{ "motionscaleimpacts", new ParameterInfo { maxValue = 0.75f, description = "Scaling factor for reducing the intensity of physics impacts."} },
 			{ "motionminimpactinterval", new ParameterInfo { maxValue = 5.0f, description = "min interval for impacts on the sub"} },
             { "motionpitchmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
+            { "motionpitchmin", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "motionyawmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "motionrollmax", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
+            { "motionrollmin", new ParameterInfo { maxValue = 50.0f, description = "max value for motion base movements"} },
             { "maxgliderangle", new ParameterInfo { maxValue = 89.0f, description = "max angle the glider can rotate at"} },
             { "absolutemaxangularvel", new ParameterInfo { minValue = 0.1f, maxValue = 3.0f, description = "max angular velocity of the glider"} },
             { "o1", new ParameterInfo { description = "Oxygen tank 1 capacity (%) (maps to oxygenTank1)."} },
@@ -1656,10 +1660,14 @@ namespace Meg.Networking
 					return MotionBaseData.MotionHazardSensitivity;
                 case "motionpitchmax":
                     return MotionBaseData.MotionPitchMax;
+                case "motionpitchmin":
+                    return MotionBaseData.MotionPitchMin;
                 case "motionyawmax":
                     return MotionBaseData.MotionYawMax;
                 case "motionrollmax":
                     return MotionBaseData.MotionRollMax;
+                case "motionrollmin":
+                    return MotionBaseData.MotionRollMin;
                 case "sonarheadingup":
                     return SonarData.HeadingUp ? 1 : 0;
                 case "sonarlongfrequency":
@@ -2018,10 +2026,14 @@ namespace Meg.Networking
 					return SubControl.MotionMinImpactInterval.ToString("n1");
                 case "motionpitchmax":
                     return MotionBaseData.MotionPitchMax.ToString("n1");
+                case "motionpitchmin":
+                    return MotionBaseData.MotionPitchMin.ToString("n1");
                 case "motionyawmax":
                     return MotionBaseData.MotionYawMax.ToString("n1");
                 case "motionrollmax":
                     return MotionBaseData.MotionRollMax.ToString("n1");
+                case "motionrollmin":
+                    return MotionBaseData.MotionRollMin.ToString("n1");
                 case "StabiliserStability":
                     return SubControl.StabiliserStability.ToString("n1");
                 case "StabiliserSpeed":
