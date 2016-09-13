@@ -4,6 +4,7 @@ using System.Collections;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.Maths;
+using Meg.Networking;
 
 public class widget3DMap : MonoBehaviour {
 
@@ -37,6 +38,9 @@ public class widget3DMap : MonoBehaviour {
     public float maxScroll;
     public float scaleDelta;
     public bool deactivateChildrenOnScroll = true;
+    public bool snapToPlayerVessel;
+    public float CameraSnapSmoothTime = 0.5f;
+    public float CameraSnapDelay = 5.0f;
 
     [Header("Terrain")]
     public Material TerrainMaterial2d;
@@ -88,6 +92,8 @@ public class widget3DMap : MonoBehaviour {
     private Material _waterMaterial;
     private Material _acidMaterial;
 
+    private Vector3 _cameraSmoothVelocity;
+    private float _lastPressTime;
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
@@ -224,6 +230,8 @@ public class widget3DMap : MonoBehaviour {
 
         if (pressed)
         {
+            _lastPressTime = Time.time;
+
             //scale or rotate the camera
             if (multiTouch)
             {
@@ -302,6 +310,10 @@ public class widget3DMap : MonoBehaviour {
                 previousHit = currentHit;
             }
         }
+
+        // Snap camera to player vessel if desired.
+        if (snapToPlayerVessel && NavSubPins.Instance)
+            UpdateCameraSnapping();
     }
 
     void Start()
@@ -313,6 +325,24 @@ public class widget3DMap : MonoBehaviour {
 	void Update()
     {
         UpdateMap();
+    }
+
+    private void UpdateCameraSnapping()
+    {
+        if (Time.time < (_lastPressTime + CameraSnapDelay))
+            return;
+
+        var player = serverUtils.GetPlayerVessel();
+        var pin = NavSubPins.Instance.GetVesselPin(player);
+        if (!pin)
+            return;
+
+        var p = pin.transform.position;
+        var c = mapCameraRoot.transform.position;
+        var target = new Vector3(p.x, c.y, p.z);
+
+        mapCameraRoot.transform.position = Vector3.SmoothDamp(c,
+            target, ref _cameraSmoothVelocity, CameraSnapSmoothTime);
     }
 
     private void UpdateTerrain()
