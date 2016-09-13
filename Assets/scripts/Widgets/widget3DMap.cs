@@ -25,6 +25,8 @@ public class widget3DMap : MonoBehaviour {
     public float camMinZ = -160f;
     public float camMaxFOV = 50f;
     public float camMinFOV = 22f;
+    public float camMinOrthoSize = 100;
+    public float camMaxOrthoSize = 300;
     public float mapMaxScale = 10f;
     public float mapMinScale = 1;
     public float mapMaxOffset = -9f;
@@ -234,13 +236,24 @@ public class widget3DMap : MonoBehaviour {
                 //scale amount is -1 to 1
                 scaleAmount = graphicsMaths.remapValue(scaleDelta, 0.5f, 1.5f, -1f, 1f);
 
-                // Add scale amount to current camera position value
-                var camZ = mapCamera.transform.localPosition.z;
-                camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
+                var cam = mapCamera.GetComponent<Camera>();
+                if (cam && cam.orthographic)
+                {
+                    var camSize = cam.orthographicSize;
+                    camSize -= scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
+                    cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, camSize, dt * 0.05f);
+                    cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, camMinOrthoSize, camMaxOrthoSize);
+                }
+                else
+                { 
+                    // Add scale amount to current camera position value
+                    var camZ = mapCamera.transform.localPosition.z;
+                    camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
 
-                // Add this to the camera pos z
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
+                    // Add this to the camera pos z
+                    mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
+                    mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
+                }
             }
 
             //inverse scale the local position constraints so we can't scroll when zoomed out
