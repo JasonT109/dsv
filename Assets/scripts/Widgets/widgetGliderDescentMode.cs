@@ -48,7 +48,10 @@ public class widgetGliderDescentMode : MonoBehaviour
         }
 
         if (descentValue != prevValue)
+        {
             hasChanged = true;
+            prevValue = descentValue;
+        }
 
         if (Time.time < timer)
             return;
