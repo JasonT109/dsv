@@ -159,6 +159,26 @@
 				{
 					"type":"Value",
 					"serverParam":"error_thruster_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_thruster_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_vertran_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_vertran_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_jet_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"error_jet_r"
 				}
 			]
 		},

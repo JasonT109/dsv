@@ -994,7 +994,7 @@ namespace Meg.Networking
             { "floordistance", new ParameterInfo { readOnly = true, description = "Distance of sub to the ocean floor (m)." } },
             { "floordistancedisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether floor distance is displayed in header area."} },
             { "floordepth", new ParameterInfo { description = "Depth of the ocean floor (from sea level) at sub's current location (m)." } },
-            { "genericerror", new ParameterInfo { description = "Generic error indicator popup control."} },
+            { "genericerror", new ParameterInfo { minValue = 0, maxValue = 1, description = "Generic error indicator popup control."} },
             { "glpowerupprogress", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Glider power up progress."} },
             { "greenscreenbrightness", new ParameterInfo { maxValue = 1, description = "Brightness level for greenscreen elements [0..1]."} },
             { "heading", new ParameterInfo { description = "Vessel's current heading angle (degrees, same as yawAngle.)"} },
