@@ -119,9 +119,9 @@ public class UnityToArduino : Singleton<UnityToArduino>
                 MotionData.MotionBaseRoll = MotionData.MotionRollMax;
             }
 
-            if (MotionData.MotionBaseRoll < -MotionData.MotionRollMax)
+            if (MotionData.MotionBaseRoll < MotionData.MotionRollMin)
             {
-                MotionData.MotionBaseRoll = -MotionData.MotionRollMax;
+                MotionData.MotionBaseRoll = MotionData.MotionRollMin;
             }
 
             if (MotionData.MotionBasePitch > MotionData.MotionPitchMax)
@@ -129,9 +129,9 @@ public class UnityToArduino : Singleton<UnityToArduino>
                 MotionData.MotionBasePitch = MotionData.MotionPitchMax;
             }
 
-            if (MotionData.MotionBasePitch < -MotionData.MotionPitchMax)
+            if (MotionData.MotionBasePitch < MotionData.MotionPitchMin)
             {
-                MotionData.MotionBasePitch = -MotionData.MotionPitchMax;
+                MotionData.MotionBasePitch = MotionData.MotionPitchMin;
             }
 
             if (MotionData.MotionBaseYaw > 180)
@@ -238,8 +238,30 @@ public class UnityToArduino : Singleton<UnityToArduino>
         preMapped.x /= Controls.MaxGliderAngle;
         preMapped.z /= Controls.MaxGliderAngle;
 
-        preMapped.x *= (MotionData.MotionPitchMax);
-        preMapped.z *= (MotionData.MotionRollMax);
+        //if(preMapped.x > 0)
+        //{
+        //    preMapped.x *= (MotionData.MotionPitchMax);
+        //}
+        //else
+        //{
+        //    preMapped.x *= (Mathf.Abs(MotionData.MotionPitchMin));
+        //}
+        //
+        //if (preMapped.z > 0)
+        //{
+        //    preMapped.z *= (MotionData.MotionRollMax);
+        //}
+        //else
+        //{
+        //    preMapped.z *= (Mathf.Abs(MotionData.MotionRollMin));
+        //}
+        var maxAngle = Mathf.Max(serverUtils.MotionBaseData.MotionPitchMax,
+            Mathf.Abs(serverUtils.MotionBaseData.MotionPitchMin),
+            serverUtils.MotionBaseData.MotionRollMax,
+            Mathf.Abs(serverUtils.MotionBaseData.MotionRollMin));
+
+        preMapped.x *= (maxAngle);
+        preMapped.z *= (maxAngle);
 
         Quaternion reMapped;
         reMapped = Quaternion.Euler(preMapped.x, MotionData.MotionBaseYaw, preMapped.z);
