@@ -35,6 +35,9 @@ public class glScreenData : NetworkBehaviour
     public bool taws_online;
 
     [SyncVar]
+    public float descentModeValue;
+
+    [SyncVar]
     public bool header01Override;
 
     [SyncVar]
