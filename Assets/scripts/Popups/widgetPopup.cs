@@ -225,6 +225,7 @@ public class widgetPopup : MonoBehaviour
         switch (Popup.Type)
         {
             case popupData.Type.Info:
+            case popupData.Type.Warning:
             case popupData.Type.GreenScreen:
                 Topmost = false;
                 break;

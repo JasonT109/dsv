@@ -22,8 +22,11 @@ public class popupData : NetworkBehaviour
 
     [Header("Prefabs")]
 
-    /** Prefab to use when instantiating warning popups. */
+    /** Prefab to use when instantiating info popups. */
     public widgetPopup PopupInfoPrefab;
+
+    /** Prefab to use when instantiating warning popups. */
+    public widgetPopup PopupWarningPrefab;
 
     /** Prefab to use when instantiating greenscreen popups. */
     public widgetPopup PopupGreenPrefab;
@@ -53,7 +56,8 @@ public class popupData : NetworkBehaviour
         Info,
         GreenScreen,
         Boot,
-        BootLowPower
+        BootLowPower,
+        Warning
     }
 
     /** Possible popup icons. */
@@ -140,6 +144,7 @@ public class popupData : NetworkBehaviour
                     return icon == Icon.None || icon == Icon.Dots;
                 case Type.Boot:
                 case Type.BootLowPower:
+                case Type.Warning:
                     return false;
                 default:
                     return true;
@@ -156,6 +161,7 @@ public class popupData : NetworkBehaviour
                     case Type.Info:
                     case Type.Boot:
                     case Type.BootLowPower:
+                    case Type.Warning:
                         return true;
                     case Type.GreenScreen:
                         return false;
@@ -171,7 +177,7 @@ public class popupData : NetworkBehaviour
 
         /** Whether popup's color can be changed. */
         public bool CanSetColor
-            { get { return Type == Type.Info; } }
+            { get { return Type == Type.Info || Type == Type.Warning; } }
 
         /** Whether popup's position can be changed. */
         public bool CanSetPosition
@@ -182,6 +188,7 @@ public class popupData : NetworkBehaviour
                 {
                     case Type.Info:
                     case Type.GreenScreen:
+                    case Type.Warning:
                         return true;
                     case Type.Boot:
                     case Type.BootLowPower:
@@ -350,6 +357,8 @@ public class popupData : NetworkBehaviour
         {
             case Type.Info:
                 return PopupInfoPrefab;
+            case Type.Warning:
+                return PopupWarningPrefab;
             case Type.GreenScreen:
                 return PopupGreenPrefab;
             case Type.Boot:
