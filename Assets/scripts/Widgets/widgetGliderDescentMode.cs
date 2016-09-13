@@ -14,7 +14,7 @@ public class widgetGliderDescentMode : MonoBehaviour
     private float timer = 0f;
     private float updateTick = 0.2f;
 
-    private float degreesPerSecond = 10f;
+    public float degreesPerSecond = 10f;
 
 	void Start ()
     {
@@ -30,12 +30,13 @@ public class widgetGliderDescentMode : MonoBehaviour
             descentValue = Mathf.Clamp(descentValue, -90, 90);
         }
 
-        if (cruise.active)
+        if (cruise.active && descentValue != 0)
         {
-            if (descentValue > -90f)
-                descentValue -= Time.deltaTime * degreesPerSecond;
-            if (descentValue < 90f)
+            if (descentValue >= -90f && descentValue < 0)
                 descentValue += Time.deltaTime * degreesPerSecond;
+            else if (descentValue <= 90f && descentValue > 0)
+                descentValue -= Time.deltaTime * degreesPerSecond;
+
             if (Mathf.Approximately(descentValue, 0f))
                 descentValue = 0f;
         }
