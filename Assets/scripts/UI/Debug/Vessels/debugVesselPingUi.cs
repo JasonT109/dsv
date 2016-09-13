@@ -218,6 +218,11 @@ public class debugVesselPingUi : MonoBehaviour
 
     private void UpdateVectorFromPing()
     {
+        // Don't allow player vessel to be moved if connected to motion base.
+        var isPlayerVessel = Vessel.Id == serverUtils.GetPlayerVessel();
+        if (isPlayerVessel && serverUtils.GetServerBool("motionComPortOpen"))
+            return;
+
         // If dragging vessel during playback, make sure it's in vector movement mode.
         if (!SetVector)
             serverUtils.PostVesselMovementType(Vessel.Id, vesselMovements.SetVectorType);

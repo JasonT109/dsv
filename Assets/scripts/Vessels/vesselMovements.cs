@@ -427,6 +427,11 @@ public class vesselMovements : NetworkBehaviour
     {
         if (IsAnyIntercepting())
             UpdateTimeToIntercept();
+
+        // Don't allow player vessel to be moved if connected to motion base.
+        var playerMovement = GetPlayerVesselMovement();
+        if (playerMovement && serverUtils.GetServerBool("motionComPortOpen"))
+            SetNone(serverUtils.GetPlayerVessel());
     }
 
     /** Update vessel time to intercept. */
