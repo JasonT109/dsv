@@ -80,7 +80,11 @@ public class NavSubPins : Singleton<NavSubPins>
 
     /** Locate a pin by the vessel id it represents. */
     public NavSubPin GetVesselPin(int vessel)
-        { return _pinLookup[vessel]; }
+    {
+        NavSubPin pin;
+        _pinLookup.TryGetValue(vessel, out pin);
+        return pin;
+    }
 
     public Vector3 ConvertToMapScreenSpace(Vector3 position)
     {

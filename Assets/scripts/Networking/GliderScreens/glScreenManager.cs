@@ -295,10 +295,14 @@ public class glScreenManager : Singleton<glScreenManager>
     void Start ()
     {
         activeScreen = serverUtils.getGliderScreen(screenID);
+
+        // Set up initial screen scaling state.
+        if (graphicsDisplaySettings.Instance)
+            graphicsDisplaySettings.Instance.Initialize();
     }
-	
-	/** Update */
-	void Update ()
+
+    /** Update */
+    void Update ()
     {
 
         if (Input.GetButton("Left Alt") && Input.GetButtonDown("ScreenLeft"))

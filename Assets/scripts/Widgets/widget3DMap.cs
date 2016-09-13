@@ -4,6 +4,7 @@ using System.Collections;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.Maths;
+using Meg.Networking;
 
 public class widget3DMap : MonoBehaviour {
 
@@ -25,6 +26,8 @@ public class widget3DMap : MonoBehaviour {
     public float camMinZ = -160f;
     public float camMaxFOV = 50f;
     public float camMinFOV = 22f;
+    public float camMinOrthoSize = 100;
+    public float camMaxOrthoSize = 300;
     public float mapMaxScale = 10f;
     public float mapMinScale = 1;
     public float mapMaxOffset = -9f;
@@ -35,6 +38,9 @@ public class widget3DMap : MonoBehaviour {
     public float maxScroll;
     public float scaleDelta;
     public bool deactivateChildrenOnScroll = true;
+    public bool snapToPlayerVessel;
+    public float CameraSnapSmoothTime = 0.5f;
+    public float CameraSnapDelay = 5.0f;
 
     [Header("Terrain")]
     public Material TerrainMaterial2d;
@@ -86,6 +92,8 @@ public class widget3DMap : MonoBehaviour {
     private Material _waterMaterial;
     private Material _acidMaterial;
 
+    private Vector3 _cameraSmoothVelocity;
+    private float _lastPressTime;
 
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
@@ -222,6 +230,8 @@ public class widget3DMap : MonoBehaviour {
 
         if (pressed)
         {
+            _lastPressTime = Time.time;
+
             //scale or rotate the camera
             if (multiTouch)
             {
@@ -234,13 +244,24 @@ public class widget3DMap : MonoBehaviour {
                 //scale amount is -1 to 1
                 scaleAmount = graphicsMaths.remapValue(scaleDelta, 0.5f, 1.5f, -1f, 1f);
 
-                // Add scale amount to current camera position value
-                var camZ = mapCamera.transform.localPosition.z;
-                camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
+                var cam = mapCamera.GetComponent<Camera>();
+                if (cam && cam.orthographic)
+                {
+                    var camSize = cam.orthographicSize;
+                    camSize -= scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
+                    cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, camSize, dt * 0.05f);
+                    cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, camMinOrthoSize, camMaxOrthoSize);
+                }
+                else
+                { 
+                    // Add scale amount to current camera position value
+                    var camZ = mapCamera.transform.localPosition.z;
+                    camZ += scaleAmount * (scaleSpeed * zoomeSpeedMultiplier);
 
-                // Add this to the camera pos z
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
-                mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
+                    // Add this to the camera pos z
+                    mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Lerp(mapCamera.transform.localPosition.z, camZ, dt * 0.2f));
+                    mapCamera.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(mapCamera.transform.localPosition.z, camMaxZ, camMinZ));
+                }
             }
 
             //inverse scale the local position constraints so we can't scroll when zoomed out
@@ -289,6 +310,10 @@ public class widget3DMap : MonoBehaviour {
                 previousHit = currentHit;
             }
         }
+
+        // Snap camera to player vessel if desired.
+        if (snapToPlayerVessel && NavSubPins.Instance)
+            UpdateCameraSnapping();
     }
 
     void Start()
@@ -300,6 +325,24 @@ public class widget3DMap : MonoBehaviour {
 	void Update()
     {
         UpdateMap();
+    }
+
+    private void UpdateCameraSnapping()
+    {
+        if (Time.time < (_lastPressTime + CameraSnapDelay))
+            return;
+
+        var player = serverUtils.GetPlayerVessel();
+        var pin = NavSubPins.Instance.GetVesselPin(player);
+        if (!pin)
+            return;
+
+        var p = pin.transform.position;
+        var c = mapCameraRoot.transform.position;
+        var target = new Vector3(p.x, c.y, p.z);
+
+        mapCameraRoot.transform.position = Vector3.SmoothDamp(c,
+            target, ref _cameraSmoothVelocity, CameraSnapSmoothTime);
     }
 
     private void UpdateTerrain()

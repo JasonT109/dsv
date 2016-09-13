@@ -114,14 +114,16 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
         if (!panelRightLarge)
             panelRightLarge = ObjectFinder.FindUiByRegex(".*PanelRightLarge", "Panels_21x9");
 
-        var screenMode = Configuration.Get("screen-mode", "16x9").ToLower();
+        var screenMode = NetworkManagerCustom.IsInGlider ? "16x10" : "16x9";
+        screenMode = Configuration.Get("screen-mode", screenMode).ToLower();
         b16x9.GetComponent<buttonControl>().active = (screenMode == "16x9");
         b16x10.GetComponent<buttonControl>().active = (screenMode == "16x10");
         b21x9l.GetComponent<buttonControl>().active = (screenMode == "21x9l");
         b21x9c.GetComponent<buttonControl>().active = (screenMode == "21x9c");
         b21x9r.GetComponent<buttonControl>().active = (screenMode == "21x9r");
 
-        var screenScaling = Configuration.Get("screen-scaling", false);
+        var screenScaling = NetworkManagerCustom.IsInGlider;
+        screenScaling = Configuration.Get("screen-scaling", screenScaling);
         scaling.GetComponent<buttonControl>().active = screenScaling;
 
         // Perform an initial update to set things up.

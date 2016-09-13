@@ -21,11 +21,11 @@
 		"dcc-station-id" : 0,
 		"dcc-station-names" : 
 		[
-			"Server",
-			"STATION B",
-			"STATION C",
-			"STATION D",
-			"STATION E"
+			"A - Server",
+			"B - Heller",
+			"C - Jaxx",
+			"D - Jones",
+			"E - DJ"
 		],
 
 		"header-01-title" : "OXYGEN",

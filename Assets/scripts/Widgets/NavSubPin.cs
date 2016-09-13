@@ -204,17 +204,9 @@ public class NavSubPin : MonoBehaviour
             _icon = vesselButton.GetComponent<graphicsMapIcon>();
 
         // Set up button handler for stats boxes.
-        _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
-        _vesselButtonControl.onPress.AddListener(OnButtonPressed);
-
-        /*
-        // Create a stats box if needed.
-        if (VesselId <= vesselData.BaseVesselCount)
-        {
-            _statsBox = CreateStatsBox();
-            _vesselButtonControl.visGroup = _statsBox;
-        }
-        */
+        // TODO: Re-enable stats boxes if desired.
+        // _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
+        // _vesselButtonControl.onPress.AddListener(OnButtonPressed);
     }
 
     /** Handle the map pin button being pressed. */
@@ -234,26 +226,6 @@ public class NavSubPin : MonoBehaviour
     {
         // Toggle label visibility.
         ShowLabel = !ShowLabel;
-
-        /*
-        // Fade the label in/out.
-        var label = _icon.label;
-        var c = label.color;
-        var to = new Color(c.r, c.g, c.g, ShowLabel ? 1 : 0);
-        label.DOKill();
-        DOTween.To(() => label.color, x => label.color = x, to, 0.25f);
-
-        // Fade the label's backdrop in/out.
-        if (label.transform.childCount <= 0)
-            return;
-
-        var backdrop = label.transform.GetChild(0).GetComponentInChildren<MeshRenderer>();
-        if (!backdrop)
-            return;
-
-        backdrop.DOKill();
-        backdrop.material.DOFade(ShowLabel ? 0.5f : 0, "_TintColor", 0.25f);
-        */
     }
 
     /** Updating. */
@@ -315,6 +287,10 @@ public class NavSubPin : MonoBehaviour
      
         // Update label visibility.
         UpdateLabel();
+
+        // Hide indicator line at screen margins.
+        if (_icon.atBounds)
+            vesselHeightIndicator.SetActive(false);
     }
 
     /** Update indicator lines for this vessel pin. */
@@ -368,27 +344,35 @@ public class NavSubPin : MonoBehaviour
         // 0 no direction, 1 left, 2 upleft, 3 up, 4 up right, 5 right, 6 down right, 7 down, 8 down left
         int mapIconDirection = 0;
         var local = vesselButton.transform.localPosition;
-        var x = ImageSize.x;
-        var y = ImageSize.y;
+
+        var top = ImageSize.y;
+        var bottom = -ImageSize.y;
+        var right = ImageSize.x * 0.85f;
+        var left = -ImageSize.x;
+
+        var isLeft = local.x <= left;
+        var isRight = local.x >= right;
+        var isTop = local.y >= top;
+        var isBottom = local.y <= bottom;
 
         // Check to see if child is at edge of the map.
-        if (local.x == -x && local.y == -y)
+        if (isLeft && isBottom)
             mapIconDirection = 8;
-        else if (local.x == -x && local.y == y)
+        else if (isLeft && isTop)
             mapIconDirection = 2;
-        else if (local.x == -x)
+        else if (isLeft)
             mapIconDirection = 1;
 
-        if (local.x == x && local.y == -y)
+        if (isRight && isBottom)
             mapIconDirection = 6;
-        else if (local.x == x && local.y == y)
+        else if (isRight && isTop)
             mapIconDirection = 4;
-        else if (local.x == x)
+        else if (isRight)
             mapIconDirection = 5;
 
-        if (local.y == y && local.x != x && local.x != -x)
+        if (isTop && !isLeft && !isRight)
             mapIconDirection = 3;
-        if (local.y == -y && local.x != x && local.x != -x)
+        if (isBottom && !isLeft && !isRight)
             mapIconDirection = 7;
 
         // Set the orientation of the child to indicate the direction.
