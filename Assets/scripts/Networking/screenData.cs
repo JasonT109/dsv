@@ -55,6 +55,7 @@ public class screenData : NetworkBehaviour
         DccScreen4,
         DccScreen5,
         DccSurface,
+        DccStrategy
     }
 
 
@@ -142,6 +143,24 @@ public class screenData : NetworkBehaviour
     // Static Methods
     // ------------------------------------------------------------
 
+    /** Determine if a given screen is a DCC screen. */
+    public static bool IsDccScreen(Type type)
+    {
+        switch (type)
+        {
+            case Type.DccControl:
+            case Type.DccQuad:
+            case Type.DccScreen3:
+            case Type.DccScreen4:
+            case Type.DccScreen5:
+            case Type.DccSurface:
+            case Type.DccStrategy:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /** Return a DCC screen type for the given screen state. */
     public static DCCScreenID._screenID GetDccScreenId(Type type)
     {
@@ -159,6 +178,8 @@ public class screenData : NetworkBehaviour
                 return DCCScreenID._screenID.screen5;
             case Type.DccSurface:
                 return DCCScreenID._screenID.surface;
+            case Type.DccStrategy:
+                return DCCScreenID._screenID.strategy;
             default:
                 return DCCScreenID._screenID.control;
         }

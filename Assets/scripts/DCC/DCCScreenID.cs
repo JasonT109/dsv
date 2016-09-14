@@ -12,7 +12,8 @@ public class DCCScreenID : MonoBehaviour
         screen3,
         screen4,
         screen5,
-        surface
+        surface,
+        strategy
     }
 
     //our screen id
@@ -96,8 +97,33 @@ public class DCCScreenID : MonoBehaviour
                 return screenData.Type.DccScreen5;
             case _screenID.surface:
                 return screenData.Type.DccSurface;
+            case _screenID.strategy:
+                return screenData.Type.DccStrategy;
             default:
                 return screenData.Type.DccControl;
+        }
+    }
+
+    public static _screenID ScreenIdForType(screenData.Type type)
+    {
+        switch (type)
+        {
+            case screenData.Type.DccControl:
+                return _screenID.control;
+            case screenData.Type.DccQuad:
+                return _screenID.qaud;
+            case screenData.Type.DccScreen3:
+                return _screenID.screen3;
+            case screenData.Type.DccScreen4:
+                return _screenID.screen4;
+            case screenData.Type.DccScreen5:
+                return _screenID.screen5;
+            case screenData.Type.DccSurface:
+                return _screenID.surface;
+            case screenData.Type.DccStrategy:
+                return _screenID.strategy;
+            default:
+                return _screenID.control;
         }
     }
 

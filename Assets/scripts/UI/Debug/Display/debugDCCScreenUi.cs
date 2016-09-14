@@ -130,6 +130,8 @@ public class debugDCCScreenUi : MonoBehaviour
             case screenData.Type.DccScreen5:
                 return screenData.Type.DccSurface;
             case screenData.Type.DccSurface:
+                return screenData.Type.DccStrategy;
+            case screenData.Type.DccStrategy:
                 return screenData.Type.DccControl;
             default:
                 return screenData.Type.DccControl;
@@ -142,7 +144,7 @@ public class debugDCCScreenUi : MonoBehaviour
         switch (current)
         {
             case screenData.Type.DccControl:
-                return screenData.Type.DccSurface;
+                return screenData.Type.DccStrategy;
             case screenData.Type.DccQuad:
                 return screenData.Type.DccControl;
             case screenData.Type.DccScreen3:
@@ -153,6 +155,8 @@ public class debugDCCScreenUi : MonoBehaviour
                 return screenData.Type.DccScreen4;
             case screenData.Type.DccSurface:
                 return screenData.Type.DccScreen5;
+            case screenData.Type.DccStrategy:
+                return screenData.Type.DccSurface;
             default:
                 return screenData.Type.DccControl;
         }
