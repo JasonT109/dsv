@@ -38,17 +38,11 @@ public class debugDCCStationUi : MonoBehaviour
         TopLeft.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen3));
         TopMid.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen4));
         TopRight.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen5));
-        // QuadTopLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topLeft));
-        // QuadTopRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topRight));
-        // QuadBottomLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomLeft));
-        // QuadBottomRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomRight));
-        // QuadMiddle.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.middle));
-
-        QuadTopLeft.interactable = false;
-        QuadTopRight.interactable = false;
-        QuadBottomLeft.interactable = false;
-        QuadBottomRight.interactable = false;
-        QuadMiddle.interactable = false;
+        QuadTopLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topLeft));
+        QuadTopRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topRight));
+        QuadBottomLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomLeft));
+        QuadBottomRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomRight));
+        QuadMiddle.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.middle));
     }
 
     void Update()
@@ -120,22 +114,52 @@ public class debugDCCStationUi : MonoBehaviour
 
             serverUtils.PostScreenContent(id, current, StationId);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+            Debug.LogWarning("Error setting screen content for id: " + id);
+        }
     }
 
     public void NextQuadContent(DCCScreenContentPositions.positionID id)
     {
         try
-        { 
+        {
             var current = serverUtils.GetQuadContent(id, StationId);
             if (current >= DCCWindow.contentID.batteries)
                 current = DCCWindow.contentID.none;
             else
-                current = (DCCWindow.contentID) ((int)current + 1);
+                current = (DCCWindow.contentID) ((int) current + 1);
 
-            serverUtils.PostQuadContent(id, current, StationId);
+            SetQuadContent(id, current);
         }
-        catch (Exception) { }
+        catch (Exception)
+        {
+            Debug.LogWarning("Error setting quad content for position: " + id);
+        }
+    }
+
+    private void SetQuadContent(DCCScreenContentPositions.positionID position, DCCWindow.contentID content)
+    {
+        // Check what's in the target position.
+        var replaced = serverUtils.GetQuadContent(position, StationId);
+        if (replaced == content)
+            return;
+
+        // Check to see if content is already on the quad screen.
+        // If so, swap content between the old and new positions.
+        var oldPosition = serverUtils.GetQuadPosition(content, StationId);
+        if (oldPosition != DCCScreenContentPositions.positionID.hidden && content != DCCWindow.contentID.none)
+            PostQuadContent(oldPosition, replaced);
+
+        // Place content in the new location.
+        PostQuadContent(position, content);
+    }
+
+    private void PostQuadContent(DCCScreenContentPositions.positionID position, DCCWindow.contentID content)
+    {
+        serverUtils.PostQuadContent(position, content, StationId);
+        if (position == DCCScreenContentPositions.positionID.middle)
+            serverUtils.PostQuadFullScreen(content != DCCWindow.contentID.none ? 1 : 0, StationId);
     }
 
 }

@@ -2684,6 +2684,15 @@ namespace Meg.Networking
             return DCCScreenData.GetQuadContent(id, stationId);
         }
 
+        /** Return content ID for the specified DCC quad screen. */
+        public static DCCScreenContentPositions.positionID GetQuadPosition(DCCWindow.contentID content, int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetQuadPosition(content, stationId);
+        }
+
         /** Post cycle state for the specified quad screen. */
         public static void PostQuadCycle(int value, int stationId)
         {
