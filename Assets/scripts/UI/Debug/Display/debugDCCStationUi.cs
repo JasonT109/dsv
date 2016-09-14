@@ -67,11 +67,17 @@ public class debugDCCStationUi : MonoBehaviour
 
     private void UpdateLayout()
     {
+        var dcc = serverUtils.DCCScreenData;
+        if (!dcc)
+            return;
+
+        var station = dcc.GetStation(StationId);
+
         Title.text = "ID " + StationId + ": "+ DCCScreenData.GetStationName(StationId);
 
-        var topLeft = serverUtils.GetScreenContent(DCCScreenID._screenID.screen3, StationId);
-        var topMid = serverUtils.GetScreenContent(DCCScreenID._screenID.screen4, StationId);
-        var topRight = serverUtils.GetScreenContent(DCCScreenID._screenID.screen5, StationId);
+        var topLeft = station.Screen3;
+        var topMid = station.Screen4;
+        var topRight = station.Screen5;
 
         var quadTopLeft = serverUtils.GetQuadContent(DCCScreenContentPositions.positionID.topLeft, StationId);
         var quadTopRight = serverUtils.GetQuadContent(DCCScreenContentPositions.positionID.topRight, StationId);
@@ -80,8 +86,12 @@ public class debugDCCStationUi : MonoBehaviour
         var quadMiddle = serverUtils.GetQuadContent(DCCScreenContentPositions.positionID.middle, StationId);
 
         TopLeft.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), topLeft).ToUpper();
+        TopLeft.gameObject.SetActive(station.HasScreen(screenData.Type.DccScreen3));
         TopMid.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), topMid).ToUpper();
+        TopMid.gameObject.SetActive(station.HasScreen(screenData.Type.DccScreen4));
         TopRight.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), topRight).ToUpper();
+        TopRight.gameObject.SetActive(station.HasScreen(screenData.Type.DccScreen5));
+
         QuadTopLeft.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), quadTopLeft).ToUpper();
         QuadTopRight.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), quadTopRight).ToUpper();
         QuadBottomLeft.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), quadBottomLeft).ToUpper();
@@ -89,13 +99,13 @@ public class debugDCCStationUi : MonoBehaviour
         QuadMiddle.GetComponentInChildren<Text>().text = Enum.GetName(typeof(DCCWindow.contentID), quadMiddle).ToUpper();
 
         TopLeftOn.gameObject.SetActive(topLeft != DCCWindow.contentID.none);
-        TopMidOn.gameObject.SetActive(topMid!= DCCWindow.contentID.none);
-        TopRightOn.gameObject.SetActive(topRight!= DCCWindow.contentID.none);
-        QuadTopLeftOn.gameObject.SetActive(quadTopLeft!= DCCWindow.contentID.none);
+        TopMidOn.gameObject.SetActive(topMid != DCCWindow.contentID.none);
+        TopRightOn.gameObject.SetActive(topRight != DCCWindow.contentID.none);
+        QuadTopLeftOn.gameObject.SetActive(quadTopLeft != DCCWindow.contentID.none);
         QuadTopRightOn.gameObject.SetActive(quadTopRight != DCCWindow.contentID.none);
         QuadBottomLeftOn.gameObject.SetActive(quadBottomLeft != DCCWindow.contentID.none);
         QuadBottomRightOn.gameObject.SetActive(quadBottomRight != DCCWindow.contentID.none);
-        QuadMiddleOn.gameObject.SetActive(quadMiddle!= DCCWindow.contentID.none);
+        QuadMiddleOn.gameObject.SetActive(quadMiddle != DCCWindow.contentID.none);
     }
 
     public void NextScreenContent(DCCScreenID._screenID id)

@@ -91,6 +91,9 @@ public class DCCScreenData : NetworkBehaviour
             QuadFullScreen = other.QuadFullScreen;
             QuadCycle = other.QuadCycle;
         }
+
+        public bool HasScreen(screenData.Type type)
+            { return GetStationHasScreen(Id, type); }
     }
 
 
@@ -108,7 +111,7 @@ public class DCCScreenData : NetworkBehaviour
     private static int _stationId = Unknown;
 
     /** Default station names. */
-    private static string[] _defaultStationNames =
+    private static readonly string[] DefaultStationNames =
     {
         "STATION A",
         "STATION B",
@@ -152,6 +155,15 @@ public class DCCScreenData : NetworkBehaviour
         int stationId;
         if (int.TryParse(value, out stationId))
             SetStationId(stationId);
+    }
+
+    /** Return a station for the given id. */
+    public Station GetStation(int id)
+    {
+        if (id >= 0 && id < Stations.Count)
+            return Stations[id];
+
+        return new Station(id);
     }
 
     /** Updates a server shared station value. */
@@ -305,23 +317,53 @@ public class DCCScreenData : NetworkBehaviour
     {
         try
         {
-            if (stationId < 0)
-                return UnknownStationName;
+            var result = UnknownStationName;
+            if (stationId >= 0 && stationId < DefaultStationNames.Length)
+                result = DefaultStationNames[stationId];
 
-            var names = Configuration.GetJson("dcc-station-names");
-            if (names != null && names.IsArray && stationId < names.Count)
-                return names[stationId].str;
+            var config = GetStationConfig(stationId);
+            if (config)
+                config.GetField(ref result, "name");
 
-            if (stationId >= _defaultStationNames.Length)
-                return UnknownStationName;
-
-            return _defaultStationNames[stationId];
+            return result;
         }
         catch (Exception)
         {
             return UnknownStationName;
         }
     }
+
+    /** Return a station's logical name from an id. */
+    public static bool GetStationHasScreen(int stationId, screenData.Type screen)
+    {
+        var result = true;
+        var config = GetStationConfig(stationId);
+        if (config)
+            config.GetField(ref result, screenData.NameForType(screen).ToLower() + "-visible");
+
+        return result;
+    }
+
+    /** Return a station's configuration data. */
+    public static JSONObject GetStationConfig(int stationId)
+    {
+        try
+        {
+            if (stationId < 0)
+                return JSONObject.nullJO;
+
+            var stations = Configuration.GetJson("dcc-stations");
+            if (stations != null && stations.IsArray && stationId < stations.Count)
+                return stations[stationId];
+
+            return JSONObject.nullJO;
+        }
+        catch (Exception)
+        {
+            return JSONObject.nullJO;
+        }
+    }
+
 
     /** Expand out DCC information in the given string. */
     public string Expanded(string value)
@@ -371,16 +413,10 @@ public class DCCScreenData : NetworkBehaviour
 
         // Update station's data in the synchronized list.
         if (id >= 0 && id < Stations.Count)
+        {
+            station.Id = id;
             Stations[id] = station;
-    }
-
-    /** Return a station for the given id. */
-    private Station GetStation(int id)
-    {
-        if (id >= 0 && id < Stations.Count)
-            return Stations[id];
-
-        return new Station(id);
+        }
     }
 
 }

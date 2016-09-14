@@ -208,4 +208,18 @@ public class screenData : NetworkBehaviour
         }
     }
 
+    /** Return string representation of the given screen type. */
+    public static string NameForType(Type type)
+    {
+        var result = Enum.GetName(typeof (Type), type);
+        return result ?? "";
+    }
+
+    /** Return string representation of the given screen content. */
+    public static string NameForContentype(Content content)
+    {
+        var result = Enum.GetName(typeof(Content), content);
+        return result ?? "";
+    }
+
 }

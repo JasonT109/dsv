@@ -19,13 +19,13 @@
 
 		"dcc-window-title-prefix" : "DIVE CONTROL",
 		"dcc-station-id" : 0,
-		"dcc-station-names" : 
+		"dcc-stations" : 
 		[
-			"A - Server",
-			"B - Heller",
-			"C - Jaxx",
-			"D - Jones",
-			"E - DJ"
+			{ "name" : "A - Server" },
+			{ "name" : "B - Heller" },
+			{ "name" : "C - Jaxx", "dccscreen4-visible" : false },
+			{ "name" : "D - Jones" },
+			{ "name" : "E - DJ", "dccscreen4-visible" : false }
 		],
 
 		"header-01-title" : "OXYGEN",

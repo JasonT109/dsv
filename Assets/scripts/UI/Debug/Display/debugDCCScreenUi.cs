@@ -12,6 +12,12 @@ public class debugDCCScreenUi : MonoBehaviour
     /** Screen type button. */
     public Button TypeButton;
 
+    /** Next station button. */
+    // public Button NextStationButton;
+
+    /** Previous station type button. */
+    // public Button PreviousStationButton;
+
     /** Next screen button. */
     public Button NextButton;
 
@@ -31,9 +37,10 @@ public class debugDCCScreenUi : MonoBehaviour
     private void Start()
     {
         _typeLabel = TypeButton.GetComponentInChildren<Text>();
-        TypeButton.onClick.AddListener(OnNextClicked);
         NextButton.onClick.AddListener(OnNextClicked);
         PreviousButton.onClick.AddListener(OnPreviousClicked);
+        // NextStationButton.onClick.AddListener(OnNextStationClicked);
+        // PreviousStationButton.onClick.AddListener(OnPreviousStationClicked);
     }
 
     private void Update()
@@ -46,6 +53,8 @@ public class debugDCCScreenUi : MonoBehaviour
         TypeButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;
+        // PreviousStationButton.interactable = !Player.isLocalPlayer;
+        // NextStationButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
     }
 
@@ -80,6 +89,29 @@ public class debugDCCScreenUi : MonoBehaviour
         var next = GetPreviousType(current);
         serverUtils.PostScreenStateType(Player.netId, next);
     }
+
+    private void OnNextStationClicked()
+    {
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return;
+
+        var current = Player.ScreenState.Type;
+        var next = GetNextType(current);
+        serverUtils.PostScreenStateType(Player.netId, next);
+    }
+
+    private void OnPreviousStationClicked()
+    {
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return;
+
+        var current = Player.ScreenState.Type;
+        var next = GetPreviousType(current);
+        serverUtils.PostScreenStateType(Player.netId, next);
+    }
+
 
     /** Given a type value, return the next valid value, cycling round to None. */
     private screenData.Type GetNextType(screenData.Type current)

@@ -144,19 +144,19 @@ public class DCCWindow : MonoBehaviour
         {
             DCCScreenID._screenID screenDirection = DCCScreenID._screenID.control;
 
-            if (transformDirection.x < -0.2f && transformDirection.y > 0)
+            if (transformDirection.x < -0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen3))
             {
                 screenDirection = DCCScreenID._screenID.screen3;
                 TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
             }
 
-            if (transformDirection.x >= -0.2f &&  transformDirection.x <= 0.2f && transformDirection.y > 0)
+            if (transformDirection.x >= -0.2f &&  transformDirection.x <= 0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen4))
             {
                 screenDirection = DCCScreenID._screenID.screen4;
                 TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
             }
 
-            if (transformDirection.x > 0.2f && transformDirection.y > 0)
+            if (transformDirection.x > 0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen5))
             {
                 screenDirection = DCCScreenID._screenID.screen5;
                 TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
@@ -171,6 +171,11 @@ public class DCCWindow : MonoBehaviour
         transformSpeedHistory = new float[8];
         screenManager.swipeIndicator.SetActive(false);
         pressTimer = 0;
+    }
+
+    private static bool HasScreen(screenData.Type type)
+    {
+        return DCCScreenData.GetStationHasScreen(DCCScreenData.StationId, type);
     }
 
     private void transformHandler(object sender, EventArgs e)
