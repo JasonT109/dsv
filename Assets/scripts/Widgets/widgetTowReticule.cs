@@ -162,14 +162,9 @@ public class widgetTowReticule : MonoBehaviour
         torpedoTravelTime += Time.deltaTime;
 
         float lineRemaining = serverUtils.GetServerData("towlineremaining");
-        float decay = 1;
-
-        if (torpedoTravelTime > 5)
-            decay = graphicsEasing.EaseIn(graphicsMaths.remapValue(torpedoTravelTime, 5, 45, 1, 0), EasingType.Quadratic);
-
-        float towLineSpeed = (serverUtils.GetServerData("towfiringpressure") * decay) * 0.1f;
+        float towLineSpeed = serverUtils.GetServerData("towfiringpressure") * 0.1f;
         float lineLength = serverUtils.GetServerData("towlinelength");
-        float lineDistance = Mathf.Clamp(serverUtils.GetServerData("towlineremaining") - (Time.deltaTime * towLineSpeed), 0, 1000);
+        float lineDistance = Mathf.Clamp(lineRemaining - (Time.deltaTime * towLineSpeed), 0, 1000);
         lineLengthValue = (lineLength - lineDistance);
 
         torpedoTimer += Time.deltaTime;
@@ -228,7 +223,7 @@ public class widgetTowReticule : MonoBehaviour
         {
             SetTarget(target.position, true, lockRing1EndScale, lockColor, lockColor, textLockedColor);
 
-            if (serverUtils.GetServerData("towFiringStatus") < 2)
+            if (serverUtils.GetServerData("towfiringstatus") < 2)
                 serverUtils.PostServerData("towfiringstatus", 2);
         }
         else if (distance > lockDistance && distance < trackDistance && serverUtils.GetServerData("towtargetvisible") == 1)
@@ -236,7 +231,7 @@ public class widgetTowReticule : MonoBehaviour
             SetTarget(Vector3.Lerp(initialPos, target.position, 1 - distanceLerp), false, Vector3.Lerp(lockRing1StartScale, lockRing1EndScale, 1 - distanceLerp), Color.Lerp(targetColor, lockColor, 1 - distanceLerp), lockColor, textAcquiringColor);
             lockedTime = 0;
 
-            if (serverUtils.GetServerData("towFiringStatus") != 3 && serverUtils.GetServerData("towFiringStatus") != 1)
+            if (serverUtils.GetServerData("towfiringstatus") != 3 && serverUtils.GetServerData("towfiringstatus") != 1)
                 serverUtils.PostServerData("towfiringstatus", 1);
         }
         else
@@ -244,7 +239,7 @@ public class widgetTowReticule : MonoBehaviour
             SetTarget(initialPos, false, lockRing1StartScale, targetColor, targetColor, textUnlockedColor);
             lockedTime = 0;
 
-            if (serverUtils.GetServerData("towFiringStatus") != 3 && serverUtils.GetServerData("towFiringStatus") != 0)
+            if (serverUtils.GetServerData("towfiringstatus") != 3 && serverUtils.GetServerData("towfiringstatus") != 0)
                 serverUtils.PostServerData("towfiringstatus", 0);
         }
 
@@ -259,7 +254,7 @@ public class widgetTowReticule : MonoBehaviour
 
         SetLockedVis();
 
-        if (serverUtils.GetServerData("towFiringStatus") == 3)
+        if (serverUtils.GetServerData("towfiringstatus") == 3)
         {
             FireTorpedo();
 
@@ -272,7 +267,7 @@ public class widgetTowReticule : MonoBehaviour
             targetText.Color = Color.Lerp(Color.black, textFiredColor, Mathf.Sin(sinWave));
         }
 
-        if (serverUtils.GetServerData("towFiringStatus") != 3 && fired)
+        if (serverUtils.GetServerData("towfiringstatus") != 3 && fired)
             ResetTorpedo();
 
         moveDir.y = -serverUtils.GetServerData("inputYaxis");
