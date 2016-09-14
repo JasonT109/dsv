@@ -69,6 +69,12 @@ public class widgetTowReticule : MonoBehaviour
         return worldPosition;
     }
 
+    public IEnumerator SetLockedOnText(float lockTime)
+    {
+        yield return new WaitForSeconds(lockTime);
+        targetLockText.SetActive(true);
+    }
+
     /** Sets the target status text. */
     void SetTargetText()
     {
@@ -103,7 +109,10 @@ public class widgetTowReticule : MonoBehaviour
 
         //status
         locked = status;
-        targetLockText.SetActive(status);
+        if (status == true && !targetLockText.activeInHierarchy)
+            StartCoroutine(SetLockedOnText(0.8f));
+        else
+            targetLockText.SetActive(status);
 
         //scale
         lockRing1.transform.localScale = ringScale;
