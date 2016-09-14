@@ -25,7 +25,7 @@ public class DCCWindow : MonoBehaviour
         oxygen,
         batteries
     }
-
+    public GameObject windowGlow;
     public contentID windowContent;
     public bool hasFocus;
     public bool isLerping = false;
@@ -121,6 +121,8 @@ public class DCCWindow : MonoBehaviour
             DCCScreenContentPositions.SetScreenScale(transform, quadPosition);
         }
 
+        windowGlow.SetActive(false);
+
         Register();
     }
 
@@ -165,6 +167,8 @@ public class DCCWindow : MonoBehaviour
             }
         }
         pressTimer = 0;
+
+        windowGlow.SetActive(false);
     }
 
     private static bool HasScreen(screenData.Type type)
@@ -177,6 +181,13 @@ public class DCCWindow : MonoBehaviour
         var gesture = sender as TransformGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
+
+        GameObject DropTargetObject = GetDropTarget();
+        if (DropTargetObject)
+            windowGlow.SetActive(true);
+        else
+            windowGlow.SetActive(false);
+
     }
 
     /** Sets up data for sending content offscreen. */
