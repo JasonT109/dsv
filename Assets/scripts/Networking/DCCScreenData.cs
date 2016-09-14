@@ -1,5 +1,6 @@
 using System;
 using Meg.DCC;
+using Meg.Networking;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -103,12 +104,15 @@ public class DCCScreenData : NetworkBehaviour
     /** The station ID that this instance belongs to. */
     public static int StationId { get { return GetStationId(); } }
 
+    /** The station ID that this instance starts up in. */
+    public static int InitialStationId { get { return _initialStationId; } }
+
 
     // Static Members
     // ------------------------------------------------------------
 
     /** The station ID that this instance belongs to. */
-    private static int _stationId = Unknown;
+    private static int _initialStationId = Unknown;
 
     /** Default station names. */
     private static readonly string[] DefaultStationNames =
@@ -129,7 +133,9 @@ public class DCCScreenData : NetworkBehaviour
     /** Initialization. */
     private void Awake()
     {
-        InitStationId();
+        // Initialize default station id on demand.
+        if (_initialStationId < 0)
+            InitStationId();
     }
 
     /** Serverside initialization logic. */
@@ -145,9 +151,28 @@ public class DCCScreenData : NetworkBehaviour
     // Setters and Getters
     // ------------------------------------------------------------
 
+    /** Set the station ID that this instance will start up with. */
+    public static void SetInitialStationId(int id)
+    {
+        _initialStationId = Mathf.Clamp(id, MinStationId, MaxStationId);
+    }
+
+    /** Set the station ID that this instance will start up with. */
+    public static void SetInitialStationId(string value)
+    {
+        int stationId;
+        if (int.TryParse(value, out stationId))
+            SetInitialStationId(stationId);
+    }
+
     /** Set the station ID that this instance belongs to. */
     public static void SetStationId(int id)
-        { _stationId = Mathf.Clamp(id, MinStationId, MaxStationId); }
+    {
+        id = Mathf.Clamp(id, MinStationId, MaxStationId);
+        var player = serverUtils.LocalPlayer;
+        if (player)
+            player.PostStationId(player.netId, id);
+    }
 
     /** Set the station ID that this instance belongs to. */
     public static void SetStationId(string value)
@@ -376,21 +401,30 @@ public class DCCScreenData : NetworkBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    /** Initialize the station id. */
-    private static void InitStationId()
-    {
-        if (_stationId < 0)
-            SetStationId(Configuration.Get("dcc-station-id", 0));
-    }
-
     /** Return the current station id. */
     private static int GetStationId()
     {
         // Initialize default station id on demand.
-        if (_stationId < 0)
+        if (_initialStationId < 0)
             InitStationId();
 
-        return _stationId;
+        // Once local player exists, use that as station authority.
+        var player = serverUtils.LocalPlayer;
+        if (player)
+            return player.StationId;
+
+        return _initialStationId;
+    }
+
+    /** Initialize the station id. */
+    private static void InitStationId()
+    {
+        // Check if initialization has already occurred.
+        if (_initialStationId >= 0)
+            return;
+
+        var id = Configuration.Get("dcc-station-id", 0);
+        _initialStationId = Mathf.Clamp(id, MinStationId, MaxStationId);
     }
 
     /** Initialize the station state list. */

@@ -211,12 +211,22 @@ public class screenData : NetworkBehaviour
     /** Return string representation of the given screen type. */
     public static string NameForType(Type type)
     {
-        var result = Enum.GetName(typeof (Type), type);
-        return result ?? "";
+        switch (type)
+        {
+            case Type.DccScreen3:
+                return "DccTopLeft";
+            case Type.DccScreen4:
+                return "DccTopMid";
+            case Type.DccScreen5:
+                return "DccTopRight";
+            default:
+                var result = Enum.GetName(typeof(Type), type);
+                return result ?? "";
+        }
     }
 
     /** Return string representation of the given screen content. */
-    public static string NameForContentype(Content content)
+    public static string NameForContent(Content content)
     {
         var result = Enum.GetName(typeof(Content), content);
         return result ?? "";

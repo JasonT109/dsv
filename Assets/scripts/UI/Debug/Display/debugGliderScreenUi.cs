@@ -123,7 +123,7 @@ public class debugGliderScreenUi : MonoBehaviour
         if (player.isLocalPlayer)
             return "";
 
-        return Enum.GetName(typeof(screenData.Content), player.ScreenState.Content).ToUpper();
+        return screenData.NameForContent(player.ScreenState.Content).ToUpper();
 
         // var screenId = player.GameInputs.activeScreen;
         // return glScreenManager.GetScreenName(screenId);

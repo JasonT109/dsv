@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections;
 using Meg.Networking;
 
 public class debugDCCScreenUi : MonoBehaviour
@@ -9,14 +8,20 @@ public class debugDCCScreenUi : MonoBehaviour
     /** Screen instance title. */
     public Text Title;
 
-    /** Screen type button. */
-    public Button TypeButton;
+    /** Station button. */
+    public Button StationButton;
+
+    /** Station name text. */
+    public Text StationName;
 
     /** Next station button. */
-    // public Button NextStationButton;
+    public Button NextStationButton;
 
     /** Previous station type button. */
-    // public Button PreviousStationButton;
+    public Button PreviousStationButton;
+
+    /** Screen type button. */
+    public Button TypeButton;
 
     /** Next screen button. */
     public Button NextButton;
@@ -39,8 +44,8 @@ public class debugDCCScreenUi : MonoBehaviour
         _typeLabel = TypeButton.GetComponentInChildren<Text>();
         NextButton.onClick.AddListener(OnNextClicked);
         PreviousButton.onClick.AddListener(OnPreviousClicked);
-        // NextStationButton.onClick.AddListener(OnNextStationClicked);
-        // PreviousStationButton.onClick.AddListener(OnPreviousStationClicked);
+        NextStationButton.onClick.AddListener(OnNextStationClicked);
+        PreviousStationButton.onClick.AddListener(OnPreviousStationClicked);
     }
 
     private void Update()
@@ -49,12 +54,14 @@ public class debugDCCScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
+        StationButton.interactable = !Player.isLocalPlayer;
+        StationName.text = DCCScreenData.GetStationName(Player.StationId);
         _typeLabel.text = GetScreenLabel();
         TypeButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;
-        // PreviousStationButton.interactable = !Player.isLocalPlayer;
-        // NextStationButton.interactable = !Player.isLocalPlayer;
+        PreviousStationButton.interactable = !Player.isLocalPlayer;
+        NextStationButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
     }
 
@@ -64,8 +71,7 @@ public class debugDCCScreenUi : MonoBehaviour
         if (content == screenData.Content.Debug)
             return "DEBUG";
 
-        var nameForType = Enum.GetName(typeof (screenData.Type), Player.ScreenState.Type);
-        return nameForType != null ? nameForType.ToUpper() : "";
+        return screenData.NameForType(Player.ScreenState.Type).ToUpper();
     }
 
     private void OnNextClicked()
@@ -96,9 +102,7 @@ public class debugDCCScreenUi : MonoBehaviour
         if (content == screenData.Content.Debug)
             return;
 
-        var current = Player.ScreenState.Type;
-        var next = GetNextType(current);
-        serverUtils.PostScreenStateType(Player.netId, next);
+        serverUtils.PostStationId(Player.netId, Player.StationId + 1);
     }
 
     private void OnPreviousStationClicked()
@@ -107,11 +111,8 @@ public class debugDCCScreenUi : MonoBehaviour
         if (content == screenData.Content.Debug)
             return;
 
-        var current = Player.ScreenState.Type;
-        var next = GetPreviousType(current);
-        serverUtils.PostScreenStateType(Player.netId, next);
+        serverUtils.PostStationId(Player.netId, Player.StationId - 1);
     }
-
 
     /** Given a type value, return the next valid value, cycling round to None. */
     private screenData.Type GetNextType(screenData.Type current)

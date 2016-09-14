@@ -64,6 +64,12 @@ public class DCCWindow : MonoBehaviour
         }
     }
 
+    public static string NameForContent(contentID content)
+    {
+        var result = Enum.GetName(typeof(contentID), content);
+        return result ?? "";
+    }
+
     /** Moves a window to a destination position. */
     public void MoveWindow(DCCScreenContentPositions.positionID destination)
     {

@@ -71,8 +71,8 @@ public class PasswordScreen : MonoBehaviour
         _sceneButtonImages.Add(MMBButtonImg);
         _sceneButtonImages.Add(EvacButtonImg);
 
-        var scene = _manager.Scene;
-        var host = _manager.Host;
+        var scene = PlayerPrefs.GetString("DefaultScene", _manager.Scene);
+        var host = PlayerPrefs.GetString("DefaultHost", _manager.Host);
         var role = Configuration.Get("network-role", "").ToLower();
 
         if (role == "host" || role == "server")
@@ -147,7 +147,7 @@ public class PasswordScreen : MonoBehaviour
         Debug.Log("PasswordScreen.ToggleGlider() - Configuring UI for Glider mode.");
         ResetSceneSelection();
         GliderButtonImg.color = SelectedColor;
-        _manager.SetScene(NetworkManagerCustom.GliderScene);
+        SetScene(NetworkManagerCustom.GliderScene);
     }
 
     public void ToggleBigSub()
@@ -155,7 +155,7 @@ public class PasswordScreen : MonoBehaviour
         Debug.Log("PasswordScreen.ToggleBigSub() - Configuring UI for main sub mode.");
         ResetSceneSelection();
         BigSubButtonImg.color = SelectedColor;
-        _manager.SetScene(NetworkManagerCustom.BigSubScene);
+        SetScene(NetworkManagerCustom.BigSubScene);
     }
 
     public void ToggleDCC()
@@ -164,7 +164,7 @@ public class PasswordScreen : MonoBehaviour
         ResetSceneSelection();
         DCCButtonImg.color = SelectedColor;
         StationRoot.gameObject.SetActive(true);
-        _manager.SetScene(NetworkManagerCustom.DccScene);
+        SetScene(NetworkManagerCustom.DccScene);
     }
 
     public void ToggleMMB()
@@ -172,7 +172,7 @@ public class PasswordScreen : MonoBehaviour
         Debug.Log("PasswordScreen.ToggleBigSub() - Configuring UI for Medical Bay (MMB) mode.");
         ResetSceneSelection();
         MMBButtonImg.color = SelectedColor;
-        _manager.SetScene(NetworkManagerCustom.MmbScene);
+        SetScene(NetworkManagerCustom.MmbScene);
     }
 
     public void ToggleEvac()
@@ -180,7 +180,7 @@ public class PasswordScreen : MonoBehaviour
         Debug.Log("PasswordScreen.ToggleEvac() - Configuring UI for Evac Ship.");
         ResetSceneSelection();
         EvacButtonImg.color = SelectedColor;
-        _manager.SetScene(NetworkManagerCustom.EvacScene);
+        SetScene(NetworkManagerCustom.EvacScene);
     }
 
     private void ResetSceneSelection()
@@ -193,7 +193,7 @@ public class PasswordScreen : MonoBehaviour
     public void UpdateStationId(string value)
     {
         Debug.Log("PasswordScreen.UpdateStationId() - Updating station id to: " + value);
-        DCCScreenData.SetStationId(value);
+        DCCScreenData.SetInitialStationId(value);
 
         // Station id might have been clamped to a valid id.
         StationIdInput.text = DCCScreenData.StationId.ToString();
@@ -202,14 +202,14 @@ public class PasswordScreen : MonoBehaviour
 
     public void PreviousStation()
     {
-        DCCScreenData.SetStationId(DCCScreenData.StationId - 1);
+        DCCScreenData.SetInitialStationId(DCCScreenData.StationId - 1);
         StationIdInput.text = DCCScreenData.StationId.ToString();
         StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
     }
 
     public void NextStation()
     {
-        DCCScreenData.SetStationId(DCCScreenData.StationId + 1);
+        DCCScreenData.SetInitialStationId(DCCScreenData.StationId + 1);
         StationIdInput.text = DCCScreenData.StationId.ToString();
         StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
     }
@@ -225,7 +225,10 @@ public class PasswordScreen : MonoBehaviour
     {
         var mode = _client ? "client" : "server";
         Debug.Log(string.Format("PasswordScreen.StartButton() - Starting up in {0} mode.", mode));
-        
+
+        PlayerPrefs.SetString("DefaultScene", _manager.Scene);
+        PlayerPrefs.SetString("DefaultHost", _manager.Host);
+
         if (_client)
             _manager.StartClient();
         else
@@ -234,6 +237,11 @@ public class PasswordScreen : MonoBehaviour
         ConnectingSpinner.gameObject.SetActive(true);
         ConnectingSpinner.DOKill();
         ConnectingSpinner.DOFade(0.0f, 0.25f).From();
+    }
+
+    private void SetScene(string scene)
+    {
+        _manager.SetScene(scene);
     }
 
 }

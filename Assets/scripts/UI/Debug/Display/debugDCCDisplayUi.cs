@@ -37,7 +37,7 @@ public class debugDCCDisplayUi : MonoBehaviour
         var popup = new popupData.Popup
         {
             Title = "{player-id}",
-            Message = "STATION: {station-id}, SCREEN: {screen-type}",
+            Message = "{station-id} : {screen-type}",
             Icon = popupData.Icon.None,
             Type = popupData.Type.Warning,
             Color = Color.red
