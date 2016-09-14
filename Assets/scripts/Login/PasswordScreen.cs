@@ -73,8 +73,9 @@ public class PasswordScreen : MonoBehaviour
 
         var scene = PlayerPrefs.GetString("DefaultScene", _manager.Scene);
         var host = PlayerPrefs.GetString("DefaultHost", _manager.Host);
-        var role = Configuration.Get("network-role", "").ToLower();
+        var stationId = PlayerPrefs.GetString("DefaultStationId", "0");
 
+        var role = Configuration.Get("network-role", "").ToLower();
         if (role == "host" || role == "server")
             ToggleHost();
         else
@@ -97,6 +98,7 @@ public class PasswordScreen : MonoBehaviour
             ToggleBigSub();
 
         // Initialize DCC station id.
+        UpdateStationId(stationId);
         StationIdInput.text = DCCScreenData.StationId.ToString();
         StationIdInput.onEndEdit.AddListener(UpdateStationId);
         StationName.text = DCCScreenData.GetStationName(DCCScreenData.StationId);
@@ -226,8 +228,10 @@ public class PasswordScreen : MonoBehaviour
         var mode = _client ? "client" : "server";
         Debug.Log(string.Format("PasswordScreen.StartButton() - Starting up in {0} mode.", mode));
 
+        // Save out selections so we can set them as defaults next time around.
         PlayerPrefs.SetString("DefaultScene", _manager.Scene);
         PlayerPrefs.SetString("DefaultHost", _manager.Host);
+        PlayerPrefs.SetString("DefaultStationId", DCCScreenData.StationId.ToString());
 
         if (_client)
             _manager.StartClient();
