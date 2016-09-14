@@ -37,6 +37,8 @@ public class UnityToArduino : Singleton<UnityToArduino>
     private static SubControl Controls
         { get { return serverUtils.SubControl; } }
 
+    public GameObject YawElement;
+
 
     // initialization
     void Start()
@@ -154,6 +156,10 @@ public class UnityToArduino : Singleton<UnityToArduino>
                 Quaternion MotionBaseTestQ;
                 MotionBaseTestQ = Quaternion.Euler(new Vector3(MotionData.MotionBasePitch, MotionData.MotionBaseYaw, MotionData.MotionBaseRoll));
                 MotionBaseTester.transform.rotation = MotionBaseTestQ;
+
+                Quaternion MotionBaseTestQYawless;
+                MotionBaseTestQYawless = Quaternion.Euler(new Vector3(MotionData.MotionBasePitch, YawElement.transform.rotation.eulerAngles.y, MotionData.MotionBaseRoll));
+                YawElement.transform.rotation = MotionBaseTestQYawless; 
             }
 
             if (port != null && port.IsOpen)
@@ -164,11 +170,13 @@ public class UnityToArduino : Singleton<UnityToArduino>
                         (MotionData.MotionBaseYaw.ToString("F3")),
                         (MotionData.MotionBasePitch.ToString("F3")),
                         (MotionData.MotionBaseRoll.ToString("F3")),
-
+                    
                         (Controls.inputXaxis.ToString("F3")),
                         (Controls.inputYaxis.ToString("F3")),
                         (Controls.inputZaxis.ToString("F3")))
                         );
+
+                    //port.Write(String.Format("${0}\0", (MotionData.MotionBaseRoll.ToString("F3"))));
                 }
                 catch (Exception)
                 {

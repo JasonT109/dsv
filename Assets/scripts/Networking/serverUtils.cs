@@ -684,6 +684,7 @@ namespace Meg.Networking
             "rollangle",
             "rollspeed",
             "stabiliserspeed",
+            "motionstabiliserkicker",
             "stabiliserstability",
             "scene",
             "screenglitchamount",
@@ -1120,7 +1121,8 @@ namespace Meg.Networking
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
             { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for front-scanning (short-range) sonar (%)."} },
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
-            { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "auto stabiliser speed."} },
+            { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "input value where the stabiliser kicks out."} },
+            { "motionstabiliserkicker", new ParameterInfo { minValue = 0, maxValue = 1, description = "auto stabiliser speed."} },
             { "stabiliserstability", new ParameterInfo { minValue = 0, maxValue = 10, description = "auto stabiliser stability."} },
             { "taws_online", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "TAWS online status. Displays piloting aids on glider middle screens." } },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
@@ -1692,6 +1694,8 @@ namespace Meg.Networking
                     return SonarData.ShortSensitivity;
                 case "stabiliserspeed":
                     return SubControl.StabiliserSpeed;
+                case "motionstabiliserkicker":
+                    return MotionBaseData.MotionStabiliserKicker;
                 case "stabiliserstability":
                     return SubControl.StabiliserStability;
                 case "dcccommscontent":
@@ -2042,6 +2046,8 @@ namespace Meg.Networking
                     return SubControl.StabiliserStability.ToString("n1");
                 case "StabiliserSpeed":
                     return SubControl.StabiliserSpeed.ToString("n1");
+                case "motionstabiliserkicker":
+                    return MotionBaseData.MotionStabiliserKicker.ToString("n1");
                 case "maxgliderangle":
                     return SubControl.MaxGliderAngle.ToString("n1");
                 case "absolutemaxangularvel":

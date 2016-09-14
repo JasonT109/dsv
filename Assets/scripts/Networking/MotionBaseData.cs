@@ -40,6 +40,8 @@ public class MotionBaseData : NetworkBehaviour
     public float MotionRollMin = -30f;
     [SyncVar]
     public float MotionYawMax = 37f;
+    [SyncVar]
+    public float MotionStabiliserKicker = 0.3f;
 
     //TODO SyncVar
     public bool MotionBaseHost = true;

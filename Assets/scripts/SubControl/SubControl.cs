@@ -96,6 +96,7 @@ public class SubControl : NetworkBehaviour
 
     public AnimationCurve RollLimitCurve;
     public AnimationCurve PitchLimitCurve;
+    public AnimationCurve YawLimitCurve;
 
     public bool TripPitch = false;
     public bool TripRoll = false;
@@ -104,6 +105,11 @@ public class SubControl : NetworkBehaviour
     private float MinGliderPitch;
     private float MaxGliderRoll;
     private float MinGliderRoll;
+
+    public float motionYawSpeed;
+
+    public GameObject FakeMotionBase;
+    public GameObject YawElement;
     //public float ScaleRoll;
 
 
@@ -194,7 +200,7 @@ public class SubControl : NetworkBehaviour
     public void CalculateYawVelocity()
     {
         if (serverUtils.IsReady())
-            serverUtils.MotionBaseData.MotionBaseYaw = _motionRigidBody.angularVelocity.y;
+            serverUtils.MotionBaseData.MotionBaseYaw = _motionRigidBody.angularVelocity.y + YawElement.GetComponent<Rigidbody>().angularVelocity.y;
     }
 
     public Quaternion GetMotionBaseQuaternion()
@@ -226,11 +232,11 @@ public class SubControl : NetworkBehaviour
         _motionRigidBody.angularDrag = 2.0f;
         _motionRigidBody.mass = 0.2f;
 
-        pitchSpeed = 1200f;
-        rollSpeed = 1600f;
-        yawSpeed = 0;
+        pitchSpeed = 400f;
+        rollSpeed = 400f;
+        yawSpeed = 400;
 
-        StabiliserSpeed = 14f;
+        StabiliserSpeed = 25f;
         StabiliserStability = 1f;
 
         _motionRigidBody.centerOfMass = Vector3.zero;
@@ -263,6 +269,8 @@ public class SubControl : NetworkBehaviour
 
         AbsoluteMaxAngularVel = Mathf.Clamp(AbsoluteMaxAngularVel, 0.1f, 3f);
         pitchSpeed = Mathf.Clamp(pitchSpeed, 0f, 1500f);
+        motionYawSpeed = yawSpeed;
+        motionYawSpeed = Mathf.Clamp(motionYawSpeed, 0f, 380f);
 
         MaxGliderAngle = Mathf.Clamp(MaxGliderAngle, Mathf.Min(serverUtils.MotionBaseData.MotionPitchMax, serverUtils.MotionBaseData.MotionRollMax, serverUtils.MotionBaseData.MotionPitchMin, serverUtils.MotionBaseData.MotionRollMin), 50f);
         //SoftMaxGliderAngle = MaxGliderAngle - AbsoluteMaxAngularVel;
@@ -290,9 +298,9 @@ public class SubControl : NetworkBehaviour
         //_motionRigidBody.AddRelativeTorque(Vector3.right * (yawSpeed * 0.5f * Mathf.Abs(inputXaxis)));
 
         // Auto-stabilize the sub if desired, and if inputs are weak.
-        if (inputYaxis < 0.3f && inputYaxis > -0.3f)
+        if (inputYaxis < serverUtils.MotionBaseData.MotionStabiliserKicker && inputYaxis > -serverUtils.MotionBaseData.MotionStabiliserKicker)
         {
-            if (inputXaxis < 0.3f && inputXaxis > -0.3f)
+            if (inputXaxis < serverUtils.MotionBaseData.MotionStabiliserKicker && inputXaxis > -serverUtils.MotionBaseData.MotionStabiliserKicker)
                 ApplyStabilizationForce();
         }
 
@@ -317,6 +325,8 @@ public class SubControl : NetworkBehaviour
         _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, MaxAngularVelocity);
 
         _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, MaxAngularVelocity);
+
+        YawElement.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(YawElement.GetComponent<Rigidbody>().angularVelocity, serverUtils.MotionBaseData.MotionYawMax / 10f);
     }
 
     private void CalculateMaxAngles()
@@ -490,8 +500,22 @@ public class SubControl : NetworkBehaviour
     private void GliderYawLogic()
     {
         //banking yaw doesn't make a lot of sense on gliders. avoid if possible
-        _rigidbody.AddTorque(Vector3.forward * (yawSpeed * inputXaxis));
-        _motionRigidBody.AddTorque(Vector3.forward * (yawSpeed * inputXaxis));
+        //_rigidbody.AddRelativeTorque(Vector3.forward * (yawSpeed * inputXaxis2));
+        //_motionRigidBody.AddRelativeTorque(Vector3.forward * (yawSpeed * inputXaxis2));
+        YawElement.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis2));
+
+        _rigidbody.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis2));
+
+        if (serverUtils.MotionBaseData.DecoupleMotionBase)
+        {
+            //motion base is decoupled. Different physics is happening
+        }
+        else
+        {
+            //Quaternion SubYawQ;
+            //SubYawQ = Quaternion.Euler(new Vector3(transform.rotation.x, YawElement.transform.rotation.y, transform.rotation.z));
+            //this.transform.rotation = SubYawQ;
+        }
     }
 
     /** Apply standard control forces for the big sub. */

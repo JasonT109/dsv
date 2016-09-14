@@ -223,6 +223,10 @@
 				{
 					"type":"Value",
 					"serverParam":"stabiliserstability"
+				},
+				{
+					"type":"Value",
+					"serverParam":"motionstabiliserkicker"
 				}
 			]
 		}

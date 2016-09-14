@@ -1023,6 +1023,9 @@ public class serverData : NetworkBehaviour
             case "stabiliserspeed":
                 SubControl.StabiliserSpeed = newValue;
                 break;
+            case "motionstabiliserkicker":
+                MotionBaseData.MotionStabiliserKicker = newValue;
+                break;
             case "error_thruster_l":
                 GliderErrorData.error_thruster_l = newValue;
                 break;
