@@ -23,9 +23,9 @@
 		[
 			{ "name" : "A - Server" },
 			{ "name" : "B - Heller" },
-			{ "name" : "C - Jaxx", "dccscreen4-visible" : false },
+			{ "name" : "C - Jaxx", "dcctopmid-visible" : false },
 			{ "name" : "D - Jones" },
-			{ "name" : "E - DJ", "dccscreen4-visible" : false }
+			{ "name" : "E - DJ", "dcctopmid-visible" : false }
 		],
 
 		"header-01-title" : "OXYGEN",
