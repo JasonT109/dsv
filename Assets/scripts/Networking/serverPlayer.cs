@@ -279,6 +279,21 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post screen state for this player. */
+    public void PostScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+    {
+        if (isServer)
+            ServerSetScreenStateType(playerId, type);
+        else
+        {
+            var player = serverUtils.GetPlayer(playerId);
+            if (player)
+                player.ScreenState.Type = type;
+
+            CmdSetScreenStateType(playerId, type);
+        }
+    }
+
+    /** Post screen state for this player. */
     public void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
     {
         if (isServer)
@@ -493,6 +508,11 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetScreenState(NetworkInstanceId id, screenData.State state)
         { ServerSetScreenState(id, state); }
 
+    /** Set screen type for this player. */
+    [Command]
+    public void CmdSetScreenStateType(NetworkInstanceId id, screenData.Type type)
+        { ServerSetScreenStateType(id, type); }
+
     /** Set screen content for this player. */
     [Command]
     public void CmdSetScreenStateContent(NetworkInstanceId id, screenData.Content content)
@@ -667,7 +687,18 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
     {
-        ServerSetScreenState(playerId, new screenData.State { Type = ScreenState.Type, Content = content }); 
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ScreenState = new screenData.State { Type = player.ScreenState.Type, Content = content }; 
+    }
+
+    /** Set screen type for this player. */
+    [Server]
+    public void ServerSetScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ScreenState = new screenData.State { Type = type, Content = player.ScreenState.Content };
     }
 
 

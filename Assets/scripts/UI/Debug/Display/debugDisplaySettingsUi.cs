@@ -6,7 +6,7 @@ public class debugDisplaySettingsUi : MonoBehaviour
 {
 
     /** DCC Configuration interface. */
-    public debugDCCScreensUi DccSettings;
+    public debugDCCDisplayUi Dcc;
 
     /** Sub display settings. */
     public debugSubScreensUi SubSettings;
@@ -19,7 +19,7 @@ public class debugDisplaySettingsUi : MonoBehaviour
     private void Start()
     {
         // Activate the appropriate screen management interface.
-        DccSettings.gameObject.SetActive(false);
+        Dcc.gameObject.SetActive(false);
         SubSettings.gameObject.SetActive(false);
         GliderSettings.gameObject.SetActive(false);
 
@@ -27,7 +27,7 @@ public class debugDisplaySettingsUi : MonoBehaviour
         switch (scene.name)
         {
             case NetworkManagerCustom.DccScene:
-                DccSettings.gameObject.SetActive(true);
+                Dcc.gameObject.SetActive(true);
                 break;
             case NetworkManagerCustom.BigSubScene:
                 SubSettings.gameObject.SetActive(true);

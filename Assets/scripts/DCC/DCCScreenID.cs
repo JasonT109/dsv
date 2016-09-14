@@ -41,6 +41,8 @@ public class DCCScreenID : MonoBehaviour
             UpdateVisibleWindow(content);
 
         visibleContent = content;
+
+        UpdateScreenType();
     }
 
     private void UpdateVisibleWindow(DCCWindow.contentID content)
@@ -66,4 +68,35 @@ public class DCCScreenID : MonoBehaviour
             }
         }
     }
+
+    private void UpdateScreenType()
+    {
+        if (!serverUtils.IsReady())
+            return;
+
+        var type = TypeForScreenId(screenID);
+        var player = serverUtils.LocalPlayer;
+        if (player && !Equals(player.ScreenState.Type, type))
+            serverUtils.PostScreenStateType(player.netId, type);
+    }
+
+    public static screenData.Type TypeForScreenId(_screenID id)
+    {
+        switch (id)
+        {
+            case _screenID.control:
+                return screenData.Type.DccControl;
+            case _screenID.qaud:
+                return screenData.Type.DccQuad;
+            case _screenID.screen3:
+                return screenData.Type.DccScreen3;
+            case _screenID.screen4:
+                return screenData.Type.DccScreen4;
+            case _screenID.screen5:
+                return screenData.Type.DccScreen5;
+            default:
+                return screenData.Type.DccControl;
+        }
+    }
+
 }

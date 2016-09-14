@@ -273,6 +273,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(false);
                 surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                PostScreenType(screenData.Type.DccControl);
                 break;
             case 2:
                 controlScreen.SetActive(false);
@@ -280,6 +281,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(false);
                 surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                PostScreenType(screenData.Type.DccQuad);
                 break;
             case 3:
                 controlScreen.SetActive(false);
@@ -287,6 +289,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(true);
                 surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
+                PostScreenType(screenData.Type.DccScreen3);
                 break;
             case 4:
                 controlScreen.SetActive(false);
@@ -294,6 +297,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(true);
                 surfaceScreen.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
+                PostScreenType(screenData.Type.DccScreen4);
                 break;
             case 5:
                 controlScreen.SetActive(false);
@@ -301,6 +305,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(true);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
                 surfaceScreen.SetActive(false);
+                PostScreenType(screenData.Type.DccScreen5);
                 break;
             case 6:
                 controlScreen.SetActive(false);
@@ -308,6 +313,7 @@ public class DCCScreenManager : MonoBehaviour
                 screen3.SetActive(false);
                 screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
                 surfaceScreen.SetActive(true);
+                PostScreenType(screenData.Type.DccSurface);
                 break;
         }
     }
@@ -356,37 +362,21 @@ public class DCCScreenManager : MonoBehaviour
             TestPattern();
         }
 
+        // TODO: Reinstate.
+        // UpdateScreenType();
+
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha1))
-        {
             SetScreen(1);
-        }
-
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha2))
-        {
             SetScreen(2);
-        }
-
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha3))
-        {
             SetScreen(3);
-        }
-
-
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha4))
-        {
             SetScreen(4);
-        }
-
-
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
-        {
             SetScreen(5);
-        }
-
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha6))
-        {
             SetScreen(6);
-        }
 
         if (Time.time < updateTimer)
             return;
@@ -400,4 +390,50 @@ public class DCCScreenManager : MonoBehaviour
             serverUtils.PostQuadCycle(0, DCCScreenData.StationId);
         }
     }
+
+    private void PostScreenType(screenData.Type type)
+    {
+        /*
+        if (!serverUtils.IsReady())
+            return;
+
+        var player = serverUtils.LocalPlayer;
+        if (player && !Equals(player.ScreenState.Type, type))
+            serverUtils.PostScreenStateType(player.netId, type);
+        */
+    }
+
+    private void UpdateScreenType()
+    {
+        if (!serverUtils.IsReady())
+            return;
+
+        var player = serverUtils.LocalPlayer;
+        if (!player)
+            return;
+
+        switch (player.ScreenState.Type)
+        {
+            case screenData.Type.DccControl:
+                SetScreen(1);
+                break;
+            case screenData.Type.DccQuad:
+                SetScreen(2);
+                break;
+            case screenData.Type.DccScreen3:
+                SetScreen(3);
+                break;
+            case screenData.Type.DccScreen4:
+                SetScreen(4);
+                break;
+            case screenData.Type.DccScreen5:
+                SetScreen(5);
+                break;
+            case screenData.Type.DccSurface:
+                SetScreen(6);
+                break;
+        }
+
+    }
+
 }

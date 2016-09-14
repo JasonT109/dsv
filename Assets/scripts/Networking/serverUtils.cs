@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.2.0";
+        public const string Version = "1.2.1";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -2623,6 +2623,13 @@ namespace Meg.Networking
         {
             if (LocalPlayer)
                 LocalPlayer.PostScreenState(playerId, state);
+        }
+
+        /** Post screen state for the given player. */
+        public static void PostScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateType(playerId, type);
         }
 
         /** Post screen state for this player. */
