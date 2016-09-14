@@ -38,13 +38,10 @@ public class DCCWindow : MonoBehaviour
     private float lerpTimer = 0f;
     private graphicsDCCWindowSize window;
     private DCCScreenManager screenManager;
-    private float transformSpeed = 0;
-    private float[] transformSpeedHistory = new float[3];
-    private Vector3[] deltaHistory = new Vector3[3];
+    private float transformSpeed = 1f;
     private Vector2 transformDirection;
     private DCCScreenID._screenID swipeScreenID;
     private float pressTimer = 0;
-    private float colorLerpTimer = 0;
     private int _commsContent = 0;
     private bool transformOffscreen;
     private float offscreenLerpTimer = 0f;
@@ -146,36 +143,27 @@ public class DCCWindow : MonoBehaviour
 
         hasFocus = false;
 
-        if (transformSpeed > minSwipeSpeed)
+        GameObject DropTargetObject = GetDropTarget();
+        if (DropTargetObject)
         {
-            DCCScreenID._screenID screenDirection = DCCScreenID._screenID.control;
+            DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
+            DCCScreenID._screenID targetScreen = DCCScreenID._screenID.control;
 
-            if (transformDirection.x < -0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen3))
+            if (DropTarget == DCCDropBucket.dropBucket.left && HasScreen(screenData.Type.DccScreen3))
+                targetScreen = DCCScreenID._screenID.screen3;
+
+            if (DropTarget == DCCDropBucket.dropBucket.middle && HasScreen(screenData.Type.DccScreen4))
+                targetScreen = DCCScreenID._screenID.screen4;
+
+            if (DropTarget == DCCDropBucket.dropBucket.right && HasScreen(screenData.Type.DccScreen5))
+                targetScreen = DCCScreenID._screenID.screen5;
+
+            if (targetScreen != DCCScreenID._screenID.control)
             {
-                screenDirection = DCCScreenID._screenID.screen3;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
+                TransformOffscreen(transformDirection, transformSpeed);
+                screenManager.ActivateWindow(windowContent, targetScreen);
             }
-
-            if (transformDirection.x >= -0.2f &&  transformDirection.x <= 0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen4))
-            {
-                screenDirection = DCCScreenID._screenID.screen4;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
-            }
-
-            if (transformDirection.x > 0.2f && transformDirection.y > 0 && HasScreen(screenData.Type.DccScreen5))
-            {
-                screenDirection = DCCScreenID._screenID.screen5;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
-            }
-
-            if (screenDirection != DCCScreenID._screenID.control)
-                screenManager.ActivateWindow(windowContent, screenDirection);
-
-            //Debug.Log("Swipe detected in direction of screen: " + screenDirection + " " + transformDirection + " at a speed of " + transformSpeed);
         }
-
-        transformSpeedHistory = new float[8];
-        screenManager.swipeIndicator.SetActive(false);
         pressTimer = 0;
     }
 
@@ -189,26 +177,9 @@ public class DCCWindow : MonoBehaviour
         var gesture = sender as TransformGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
-
-        if (transformSpeed > minSwipeSpeed)
-        {
-            screenManager.swipeIndicator.SetActive(true);
-        }
-        else
-        {
-            screenManager.swipeIndicator.SetActive(false);
-        }
-
-        Renderer r = screenManager.swipeIndicator.GetComponentInChildren<Renderer>();
-
-        r.material.SetColor("_TintColor", Color.Lerp(new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.5f), colorLerpTimer));
-
-        screenManager.swipeIndicator.transform.position = hit.Point;
-        Quaternion q = new Quaternion();    
-        q.SetLookRotation(-Vector3.forward, transformDirection);
-        screenManager.swipeIndicator.transform.rotation = q;
     }
 
+    /** Sets up data for sending content offscreen. */
     private void TransformOffscreen(Vector2 direction, float speed)
     {
         offscreenLerpTimer = 0;
@@ -244,34 +215,21 @@ public class DCCWindow : MonoBehaviour
         hasFocus = false;
     }
 
-    void StoreWindowMoveSpeed()
+    /** Returns a drop bucket target gameobject for sending content to other screens. */
+    private GameObject GetDropTarget()
     {
-        //calculate transform direction based on last few frames
-        Vector3 p = transform.position;
-
-        //copy array over itself moving it one index
-        Array.Copy(deltaHistory, 1, deltaHistory, 0, deltaHistory.Length - 1);
-        deltaHistory[deltaHistory.Length - 1] = p;
-
-        //get transform direction
-        transformDirection = (deltaHistory[1] - deltaHistory[0]).normalized;
-
-        //get distance travelled last frame
-        float t = Vector3.Distance(deltaHistory[0], deltaHistory[1]);
-
-        //copy array over itself moving it one index
-        Array.Copy(transformSpeedHistory, 1, transformSpeedHistory, 0, transformSpeedHistory.Length - 1);
-
-        //add distance we moved last frame to array
-        transformSpeedHistory[transformSpeedHistory.Length - 1] = t;
-
-        //add all the distances together
-        transformSpeed = 0;
-        for (int i = 0; i < transformSpeedHistory.Length; i++)
-            transformSpeed += transformSpeedHistory[i];
-
-        //get average distance travelled
-        transformSpeed /= transformSpeedHistory.Length;
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics.RaycastAll(ray);
+        foreach (var hit in hits)
+        {
+            var dropzone = hit.transform.GetComponent<DCCDropBucket>();
+            if (dropzone)
+            {
+                transformDirection = hit.transform.position - transform.position;
+                return hit.transform.gameObject;
+            }
+        }
+        return null;
     }
 
     void Awake ()
@@ -300,15 +258,6 @@ public class DCCWindow : MonoBehaviour
             }
         }
 
-        if (!isLerping)
-        {
-            StoreWindowMoveSpeed();
-            if (transformSpeed > minSwipeSpeed)
-                Mathf.Clamp01(colorLerpTimer += Time.deltaTime * 3f);
-            else
-                colorLerpTimer = 0;
-        }
-
         if (!quadWindow)
         {
             if (hasFocus)
@@ -320,9 +269,7 @@ public class DCCWindow : MonoBehaviour
         if (transformOffscreen)
         {
             offscreenLerpTimer += Time.deltaTime;
-            transform.localPosition = new Vector3 (transform.localPosition.x + (offscreenDirection.x * offscreenSpeed), transform.localPosition.y + (offscreenDirection.y * offscreenSpeed), transform.localPosition.z);
-            //GetComponent<graphicsDCCWindowSize>().windowWidth *= 1 - offscreenLerpTimer;
-            //GetComponent<graphicsDCCWindowSize>().windowHeight *= 1 - offscreenLerpTimer;
+            transform.localPosition = new Vector3 (transform.localPosition.x + (offscreenDirection.x * (offscreenSpeed * Time.deltaTime)), transform.localPosition.y + (offscreenDirection.y * (offscreenSpeed * Time.deltaTime)), transform.localPosition.z);
 
             if (offscreenLerpTimer > 1)
             {
