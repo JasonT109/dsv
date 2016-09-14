@@ -95,6 +95,7 @@ public class DCCScreenData : NetworkBehaviour
 
         public bool HasScreen(screenData.Type type)
             { return GetStationHasScreen(Id, type); }
+
     }
 
 
@@ -269,6 +270,24 @@ public class DCCScreenData : NetworkBehaviour
             default:
                 return 0;
         }
+    }
+
+    /** Find existing position of a piece of content on a station's quad screen. */
+    public DCCScreenContentPositions.positionID GetQuadPosition(DCCWindow.contentID content, int stationId)
+    {
+        var station = GetStation(stationId);
+        if (station.Quad0 == content)
+            return DCCScreenContentPositions.positionID.topLeft;
+        if (station.Quad1 == content)
+            return DCCScreenContentPositions.positionID.topRight;
+        if (station.Quad2 == content)
+            return DCCScreenContentPositions.positionID.bottomLeft;
+        if (station.Quad3 == content)
+            return DCCScreenContentPositions.positionID.bottomRight;
+        if (station.Quad4 == content)
+            return DCCScreenContentPositions.positionID.middle;
+
+        return DCCScreenContentPositions.positionID.hidden;
     }
 
     /** Set quad screen content by position */
