@@ -323,6 +323,13 @@ public class DCCScreenData : NetworkBehaviour
         }
     }
 
+    /** Expand out DCC information in the given string. */
+    public string Expanded(string value)
+    {
+        value = value.Replace("{station-id}", GetStationName(StationId));
+        return value;
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------

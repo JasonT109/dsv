@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.2.1";
+        public const string Version = "1.2.2";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -2743,7 +2743,11 @@ namespace Meg.Networking
 
             // Expand out local player values.
             if (LocalPlayer)
-                value = value.Replace("{player-id}", LocalPlayer.Id);
+                value = LocalPlayer.Expanded(value);
+
+            // Expand out DCC information.
+            if (DCCScreenData)
+                value = DCCScreenData.Expanded(value);
 
             // Lastly, Look for parameter references (e.g. '{o2}') and expand them.
             var matches = Regex.Matches(value, @"{([\w-]+)}");

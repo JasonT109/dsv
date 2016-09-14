@@ -362,8 +362,8 @@ public class DCCScreenManager : MonoBehaviour
             TestPattern();
         }
 
-        // TODO: Reinstate.
-        // UpdateScreenType();
+        // Update DCC screen to match shared state.
+        UpdateScreenType();
 
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha1))
             SetScreen(1);
@@ -393,14 +393,12 @@ public class DCCScreenManager : MonoBehaviour
 
     private void PostScreenType(screenData.Type type)
     {
-        /*
         if (!serverUtils.IsReady())
             return;
 
         var player = serverUtils.LocalPlayer;
         if (player && !Equals(player.ScreenState.Type, type))
             serverUtils.PostScreenStateType(player.netId, type);
-        */
     }
 
     private void UpdateScreenType()

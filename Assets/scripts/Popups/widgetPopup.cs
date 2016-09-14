@@ -107,25 +107,11 @@ public class widgetPopup : MonoBehaviour
 
         // Configure popup title.
         if (Title)
-        {
-            var title = serverUtils.Expanded(popup.Title);
-            var scrolling = Title.GetComponent<graphicsScrollingText>();
-            if (scrolling)
-                scrolling.Lines = title;
-            else
-                Title.text = title;
-        }
+            Title.text = serverUtils.Expanded(popup.Title);
 
         // Configure popup message.
         if (Message)
-        {
-            var message = serverUtils.Expanded(popup.Message);
-            var scrolling = Message.GetComponent<graphicsScrollingText>();
-            if (scrolling)
-                scrolling.Lines = message;
-            else
-                Message.text = message;
-        }
+            Message.text = serverUtils.Expanded(popup.Message);
 
         // Configure icons.
         var iconIndex = (int) popup.Icon;
@@ -206,6 +192,14 @@ public class widgetPopup : MonoBehaviour
             SetActive(_target && _target.gameObject.activeInHierarchy);
         else
             SetActive(!serverUtils.IsInDebugScreen());
+
+        // Configure popup title.
+        if (Title)
+            Title.text = serverUtils.Expanded(Popup.Title);
+
+        // Configure popup message.
+        if (Message)
+            Message.text = serverUtils.Expanded(Popup.Message);
     }
 
     /** Set whether the popup is active. */

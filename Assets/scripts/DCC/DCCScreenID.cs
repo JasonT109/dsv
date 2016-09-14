@@ -94,6 +94,8 @@ public class DCCScreenID : MonoBehaviour
                 return screenData.Type.DccScreen4;
             case _screenID.screen5:
                 return screenData.Type.DccScreen5;
+            case _screenID.surface:
+                return screenData.Type.DccSurface;
             default:
                 return screenData.Type.DccControl;
         }

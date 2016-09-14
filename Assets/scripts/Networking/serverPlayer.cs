@@ -47,6 +47,24 @@ public class serverPlayer : NetworkBehaviour
     // Public Methods
     // ------------------------------------------------------------
 
+    /** Expand out DCC information in the given string. */
+    public string Expanded(string value)
+    {
+        value = value.Replace("{player-id}", Id);
+
+        var nameForType = Enum.GetName(typeof(screenData.Type), ScreenState.Type);
+        if (!string.IsNullOrEmpty(nameForType))
+            value = value.Replace("{screen-type}", nameForType);
+
+        var nameForContent = Enum.GetName(typeof(screenData.Content), ScreenState.Content);
+        if (!string.IsNullOrEmpty(nameForContent))
+            value = value.Replace("{screen-content}", nameForContent);
+
+        return value;
+    }
+
+
+
     /** Set a numeric data value on the server. */
     public void PostServerData(string key, float value, bool add)
     {

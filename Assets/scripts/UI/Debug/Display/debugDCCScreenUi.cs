@@ -42,11 +42,21 @@ public class debugDCCScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
-        _typeLabel.text = Enum.GetName(typeof(screenData.Type), Player.ScreenState.Type).ToUpper();
+        _typeLabel.text = GetScreenLabel();
         TypeButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
+    }
+
+    private string GetScreenLabel()
+    {
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return "DEBUG";
+
+        var nameForType = Enum.GetName(typeof (screenData.Type), Player.ScreenState.Type);
+        return nameForType != null ? nameForType.ToUpper() : "";
     }
 
     private void OnNextClicked()

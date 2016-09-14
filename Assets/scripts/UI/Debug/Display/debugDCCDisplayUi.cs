@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Meg.Networking;
 
 public class debugDCCDisplayUi : MonoBehaviour
 {
@@ -28,6 +29,21 @@ public class debugDCCDisplayUi : MonoBehaviour
     {
         Screens.gameObject.SetActive(false);
         Stations.gameObject.SetActive(true);
+    }
+
+
+    public void Identify()
+    {
+        var popup = new popupData.Popup
+        {
+            Title = "{player-id}",
+            Message = "STATION: {station-id}, SCREEN: {screen-type}",
+            Icon = popupData.Icon.None,
+            Type = popupData.Type.Warning,
+            Color = Color.red
+        };
+
+        serverUtils.PostTogglePopup(popup);
     }
 
 }
