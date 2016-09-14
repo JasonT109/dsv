@@ -176,6 +176,9 @@ public class UnityToArduino : Singleton<UnityToArduino>
                         (Controls.inputXaxis2.ToString("F3")))
                         );
 
+                    port.BaseStream.Flush();
+
+
                     //port.Write(String.Format("${0}\0", (MotionData.MotionBaseRoll.ToString("F3"))));
                 }
                 catch (Exception)
