@@ -57,6 +57,12 @@ public class widget3DMap : MonoBehaviour {
     public Color AcidColor2d;
     public Color AcidColor3d;
 
+    public bool Is3DMode
+        { get { return button3dMapping.active; } }
+
+    public bool IsContourMode
+        { get { return buttonContourMapping.active; } }
+
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;

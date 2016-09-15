@@ -13,12 +13,6 @@ public class DCCStrategyMenu : MonoBehaviour
     /** The 3D map widget. */
     public widget3DMap Map3D;
 
-    /** The (old) contour mode button. */
-    public buttonControl MapContoursButton;
-
-    /** The (old) 3d map mode button. */
-    public buttonControl Map3DButton;
-
 
     [Header("UI")]
 
@@ -28,6 +22,9 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Toggle indicator for 3d mode. */
     public Graphic Map3DOn;
 
+    /** Toggle indicator for vessel labels. */
+    public Graphic VesselLabelsOn;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -35,28 +32,29 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Updating. */
     private void Update()
     {
-        MapContoursOn.gameObject.SetActive(IsContourMode());
-        Map3DOn.gameObject.SetActive(Is3DMode());
+        MapContoursOn.gameObject.SetActive(Map3D.IsContourMode);
+        Map3DOn.gameObject.SetActive(Map3D.Is3DMode);
+        VesselLabelsOn.gameObject.SetActive(NavSubPins.Instance.HasLabels);
     }
 
 
     // Public Methods
     // ------------------------------------------------------------
 
-    /** Returns whether map is in contour viewing mode. */
-    public bool IsContourMode()
-        { return MapContoursButton.active; }
-
-    /** Returns whether map is in 3d viewing mode. */
-    public bool Is3DMode()
-        { return Map3DButton.active; }
-
     /** Set contour mode on the 3d map. */
     public void ActivateContourMode()
-        { MapContoursButton.Group.toggleButtonOn(MapContoursButton.gameObject); }
+        { megMapCameraEventManager.Instance.triggerByName("MapContours"); }
 
     /** Set 3d mode on the map. */
     public void Activate3DMode()
-        { Map3DButton.Group.toggleButtonOn(Map3DButton.gameObject); }
+        { megMapCameraEventManager.Instance.triggerByName("Map3d"); }
+
+    /** Toggle vessel labels on the map. */
+    public void ToggleVesselLabels()
+        { NavSubPins.Instance.ToggleLabels(); }
+
+    /** Recenter on selected vessel. */
+    public void RecenterVessel()
+        { megMapCameraEventManager.Instance.triggerByName("RecenterVessel"); }
 
 }
