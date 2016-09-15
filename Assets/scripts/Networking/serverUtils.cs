@@ -2402,6 +2402,10 @@ namespace Meg.Networking
         public static Vector3 GetVesselPosition(int vessel)
             { return VesselData.GetPosition(vessel); }
 
+        /** Return a vessel's current 3d map position (1-based index). */
+        public static Vector3 GetVesselMapPosition(int vessel)
+            { return VesselData.GetMapPosition(vessel); }
+
         /** Return a vessel's velocity (1-based index). */
         public static float GetVesselVelocity(int vessel)
             { return VesselData.GetSpeed(vessel); }

@@ -217,8 +217,8 @@ public class NavSubPin : MonoBehaviour
         var root = GameObject.Find("MapRoot");
         if (root)
             _mapCamera = root.GetComponentInChildren<Camera>();
-        else if (NavMapCamera.Instance)
-            _mapCamera = NavMapCamera.Instance.Camera;
+        else if (Map.Instance)
+            _mapCamera = Map.Instance.Camera;
     }
 
     /** Handle the map pin button being pressed. */
@@ -261,8 +261,8 @@ public class NavSubPin : MonoBehaviour
         else
             _position = Vector3.SmoothDamp(_position, position, ref _velocity, SmoothTime);
 
-        vesselModel.transform.position = _manager.VesselToWorld(_position);
-        // vesselModel.transform.localPosition = _manager.VesselToWorldOld(_position);
+        // Locate the vessel in 3d map world space.
+        vesselModel.transform.position = serverUtils.GetVesselMapPosition(VesselId);
 
         // Get position in map space and position button there.
         var mapPos = VesselToMapScreen(vesselModel.transform.position);

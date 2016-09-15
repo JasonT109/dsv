@@ -213,14 +213,14 @@ public class widget3DMap : MonoBehaviour {
         if (mapCameraRoot)
             return;
 
-        var navMap = NavMapCamera.Instance;
-        if (!navMap)
+        var map = Map.Instance;
+        if (!map)
             return;
 
-        mapCameraRoot = navMap.Root.gameObject;
-        mapCameraPitch = navMap.Pitch.gameObject;
-        mapCamera = navMap.Camera.gameObject;
-        tilt = navMap.Camera.GetComponent<TiltShift>();
+        mapCameraRoot = map.CameraRoot.gameObject;
+        mapCameraPitch = map.CameraPitch.gameObject;
+        mapCamera = map.Camera.gameObject;
+        tilt = map.Camera.GetComponent<TiltShift>();
     }
 
     public void UpdateMap()
@@ -451,13 +451,13 @@ public class widget3DMap : MonoBehaviour {
         terrain.materialTemplate = new Material(terrain.materialTemplate);
         terrain.basemapDistance = 10000;
 
-        if (!Water && NavMapTerrain.Instance)
-            Water = NavMapTerrain.Instance.Water;
+        if (!Water && Map.Instance)
+            Water = Map.Instance.Water;
         if (Water)
             _waterMaterial = Water.GetComponent<Renderer>().material;
 
-        if (!Acid && NavMapTerrain.Instance)
-            Acid = NavMapTerrain.Instance.Acid;
+        if (!Acid && Map.Instance)
+            Acid = Map.Instance.Acid;
         if (Acid)
             _acidMaterial = Acid.GetComponent<Renderer>().material;
 

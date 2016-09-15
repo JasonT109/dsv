@@ -163,13 +163,13 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         if (mapCameraRoot)
             return;
 
-        var navMap = NavMapCamera.Instance;
-        if (!navMap)
+        var map = Map.Instance;
+        if (!map)
             return;
 
-        mapCameraRoot = navMap.Root.gameObject;
-        mapCameraPitch = navMap.Pitch.gameObject;
-        mapCameraObject = navMap.Camera.gameObject;
+        mapCameraRoot = map.CameraRoot.gameObject;
+        mapCameraPitch = map.CameraPitch.gameObject;
+        mapCameraObject = map.Camera.gameObject;
     }
 
     /** Start running the given camera event. */
