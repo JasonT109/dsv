@@ -48,6 +48,7 @@ public class DCCWindow : MonoBehaviour
     private Vector2 offscreenDirection;
     private float offscreenSpeed;
     private Vector3 offscreenInitPos;
+    private DCCDropBucketManager lastBucketManager;
 
     public int commsContent
     {
@@ -164,6 +165,8 @@ public class DCCWindow : MonoBehaviour
             {
                 TransformOffscreen(transformDirection, transformSpeed);
                 screenManager.ActivateWindow(windowContent, targetScreen);
+                if (lastBucketManager)
+                    lastBucketManager.highlightedBucket = null;
             }
         }
         pressTimer = 0;
@@ -184,9 +187,17 @@ public class DCCWindow : MonoBehaviour
 
         GameObject DropTargetObject = GetDropTarget();
         if (DropTargetObject)
+        {
             windowGlow.SetActive(true);
+            DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
+            lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
+        }
         else
+        {
             windowGlow.SetActive(false);
+            if (lastBucketManager)
+                lastBucketManager.highlightedBucket = null;
+        }
 
     }
 

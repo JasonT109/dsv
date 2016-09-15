@@ -4,6 +4,7 @@ public class DCCDropBucketManager : MonoBehaviour
 {
     public GameObject dropBucketGroup1;
     public GameObject dropBucketGroup2;
+    public GameObject highlightedBucket;
 
     private static bool HasScreen(screenData.Type type)
     {
