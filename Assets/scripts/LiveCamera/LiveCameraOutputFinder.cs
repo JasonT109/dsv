@@ -3,76 +3,66 @@ using System.Collections;
 
 public class LiveCameraOutputFinder : MonoBehaviour 
 {
-	LiveFeedInputManager LiveFeeds;
-	public bool isLive = false;
+    public bool _isLive;
+    public bool isLive
+    {
+        get
+        {
+            EnableCameras();
+            return _isLive;
+        }
+        set
+        {
+            _isLive = value;
+        }
+    }
 
-	int iNumCams;
+    private LiveFeedInputManager LiveFeeds;
+    private int iNumCams;
 
-	// Use this for initialization
-	void Start () 
+    public void EnableCameras()
+    {
+        LiveFeedInputManager livefeedmanager = ObjectFinder.Find<LiveFeedInputManager>();
+
+        if (livefeedmanager)
+        {
+            LiveFeeds = livefeedmanager;
+            if (LiveFeeds.getNumCams() > 0)
+                isLive = true;
+            else
+                Debug.Log("AVPro live feed manager found but no cameras active!");
+        }
+        else
+            Debug.Log("No AVPro live feed manager found!");
+    }
+
+    public AVProLiveCamera GetOutput(int _OutPut)
+    {
+        EnableCameras();
+
+        if (!LiveFeeds)
+            return (null);
+
+        return (LiveFeeds.AVLiveCameras[_OutPut]);
+    }
+
+    public int getNumCams()
+    {
+        EnableCameras();
+
+        if (!LiveFeeds)
+            return 0;
+
+        return LiveFeeds.getNumCams();
+    }
+
+    void Start () 
 	{
-		if(GameObject.FindGameObjectWithTag("LiveFeedManager"))
-		{
-			if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
-			{
-				LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-				if(LiveFeeds.getNumCams() >0)
-				{
-					isLive = true;
-				}
-			}
-		}
+        EnableCameras();
 	}
 
 	void Awake()
 	{
-		if(GameObject.FindGameObjectWithTag("LiveFeedManager"))
-		{
-			if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
-			{
-				LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-				if(LiveFeeds.getNumCams() >0)
-				{
-					isLive = true;
-				}
-			}
-		}
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		
-	}
-
-	public AVProLiveCamera GetOutput(int _OutPut)
-	{
-		if(!LiveFeeds)
-		{
-			if(GameObject.FindGameObjectWithTag("LiveFeedManager"))
-			{
-				if(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>())
-				{
-					LiveFeeds = GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>();
-					if(LiveFeeds.getNumCams() >0)
-					{
-						isLive = true;
-					}
-				}
-			}
-		}
-		
-		if(!LiveFeeds)
-		{
-			//return(this.GetComponent<AVProLiveCamera>());
-			return(null);
-		}
-	
-		return(LiveFeeds.AVLiveCameras[_OutPut]);
-	}
-
-	public int getNumCams()
-	{
-		return(GameObject.FindGameObjectWithTag("LiveFeedManager").GetComponent<LiveFeedInputManager>().getNumCams());
-	}
+        EnableCameras();
+    }
 }

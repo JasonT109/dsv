@@ -178,6 +178,10 @@ public class DCCCameraFeed : MonoBehaviour
 
     void SetMaterial(int ID)
     {
+
+        if (!Outputs || !Outputs.isLive)
+            Debug.Log("AVPro offline...");
+
 		if(!Outputs || (!Outputs.isLive || ID > Outputs.getNumCams()-1))
 		{
         	if (materials[ID])
@@ -188,11 +192,11 @@ public class DCCCameraFeed : MonoBehaviour
 		}
 		else
         {
-            if (!Outputs)
-                return;
-
             if (Outputs.GetOutput(ID) != null && Outputs.GetOutput(ID).OutputTexture != null)
+            {
 				ApplyMapping(Outputs.GetOutput(ID).OutputTexture);
+                Debug.Log("Applying live feed texture of ID: " + ID + " to: " + gameObject);
+            }
 		}
 
         isLerping = true;
