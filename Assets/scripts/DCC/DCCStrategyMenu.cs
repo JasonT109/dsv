@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using Meg.Networking;
 using UnityEngine.UI;
 
 public class DCCStrategyMenu : MonoBehaviour
@@ -35,6 +36,12 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Toggle indicator for nautical map. */
     public Graphic NauticalMapOn;
 
+    /** Toggle indicator for acid layer. */
+    public Graphic AcidLayerOn;
+
+    /** Toggle indicator for nautical map. */
+    public Graphic WaterLayerOn;
+
 
     // Private Properties
     // ------------------------------------------------------------
@@ -66,6 +73,8 @@ public class DCCStrategyMenu : MonoBehaviour
         Map3DOn.gameObject.SetActive(Map3D.Is3DMode);
         VesselLabelsOn.gameObject.SetActive(NavSubPins.Instance.HasLabels);
         NauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2d);
+        AcidLayerOn.gameObject.SetActive(serverUtils.GetServerBool("acidlayer"));
+        WaterLayerOn.gameObject.SetActive(serverUtils.GetServerBool("waterlayer"));
         ViewMenuVisible = StrategyMap.IsMap3d;
     }
 
@@ -92,6 +101,20 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Toggle the nautical map. */
     public void ToggleNauticalMap()
         { StrategyMap.ToggleMap2d(); }
+
+    /** Toggle the acid layer. */
+    public void ToggleAcidLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("acidlayer");
+        serverUtils.PostServerData("acidlayer", wasOn ? 0 : 1);
+    }
+
+    /** Toggle the water layer. */
+    public void ToggleWaterLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("waterlayer");
+        serverUtils.PostServerData("waterlayer", wasOn ? 0 : 1);
+    }
 
 
     // Private Methods

@@ -777,6 +777,7 @@ namespace Meg.Networking
             "vessel6icon",
             "vessel6vis",
             "vesselmovementenabled",
+            "waterlayer",
             "watertemp",
             "watertempoverride",
             "watertempoverrideamount",
@@ -857,7 +858,7 @@ namespace Meg.Networking
         private static readonly Dictionary<string, ParameterInfo> ParameterData = new Dictionary<string, ParameterInfo>
         {
             { "acceleration", new ParameterInfo { description = "Sub's acceleration (scaling factor)."} },
-            { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Acid layer map visibility."} },
+            { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Acid layer map visibility."} },
             { "air", new ParameterInfo { readOnly = true } },
             { "airtank1", new ParameterInfo { description = "Main air tank 1 capacity (%)."} },
             { "airtank2", new ParameterInfo { description = "Main air tank 2 capacity (%)."} },
@@ -1145,6 +1146,7 @@ namespace Meg.Networking
             { "version", new ParameterInfo { readOnly = true, description = "Current application version." } },
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
             { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
+            { "waterlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Water layer map visibility."} },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
             { "watertempoverride", new ParameterInfo { description = "Override value for water temperature (C)"} },
             { "watertempoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for water temperature (C)"} },
@@ -1750,6 +1752,8 @@ namespace Meg.Networking
                     return ScreenData.greenScreenBrightness;
                 case "acidlayer":
                     return MapData.acidLayer;
+                case "waterlayer":
+                    return MapData.waterLayer;
                 case "lightarray1":
                     return LightData.lightArray1;
                 case "lightarray2":

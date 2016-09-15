@@ -34,4 +34,7 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public int acidLayer;
 
+    [SyncVar]
+    public int waterLayer = 1;
+
 }
