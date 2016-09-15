@@ -30,6 +30,8 @@ public class NavSubPins : Singleton<NavSubPins>
 
     public NavSubPin PinPrefab;
 
+    public Camera MapCamera
+        { get { return _mapCamera; } }
 
     // Members
     // ------------------------------------------------------------
@@ -119,7 +121,7 @@ public class NavSubPins : Singleton<NavSubPins>
         var root = GameObject.Find("MapRoot");
         if (root)
             _mapCamera = root.GetComponentInChildren<Camera>();
-        else if (Map.Instance)
+        if (!_mapCamera && Map.Instance)
             _mapCamera = Map.Instance.Camera;
     }
 
