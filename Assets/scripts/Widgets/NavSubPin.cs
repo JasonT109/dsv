@@ -261,10 +261,11 @@ public class NavSubPin : MonoBehaviour
         else
             _position = Vector3.SmoothDamp(_position, position, ref _velocity, SmoothTime);
 
-        vesselModel.transform.localPosition = ConvertVesselCoords(_position);
+        vesselModel.transform.position = _manager.VesselToWorld(_position);
+        // vesselModel.transform.localPosition = _manager.VesselToWorldOld(_position);
 
         // Get position in map space and position button there.
-        var mapPos = ConvertToMapScreenSpace(vesselModel.transform.position);
+        var mapPos = VesselToMapScreen(vesselModel.transform.position);
         vesselButton.transform.localPosition = mapPos;
 
         // Cast a ray down to the terrain from the original position.
@@ -275,7 +276,7 @@ public class NavSubPin : MonoBehaviour
         if (Distance > 0)
         {
             // Set the position of the height indicators to be at ground level
-            var groundPos = ConvertToMapScreenSpace(_hit.point);
+            var groundPos = VesselToMapScreen(_hit.point);
             vesselHeightIndicator.transform.localPosition = groundPos;
 
             // Set the x position to be exactly the same as button plus offset
@@ -393,17 +394,13 @@ public class NavSubPin : MonoBehaviour
     }
 
     /** Convert a vessel's position into map screenspace. */
-    private Vector3 ConvertToMapScreenSpace(Vector3 p)
+    private Vector3 VesselToMapScreen(Vector3 p)
         { return _manager.ConvertToMapScreenSpace(p); }
 
-    /** Convert a vessel's position into 3D map space. */
-    private Vector3 ConvertVesselCoords(Vector3 p)
-        { return _manager.ConvertVesselCoords(p); }
-
     /** Convert a vessel's position into 2D screen space. */
-    private Vector3 ConvertVesselToScreenSpace(Vector3 p)
+    private Vector3 VesselToScreen(Vector3 p)
     {
-        var map = ConvertToMapScreenSpace(p);
+        var map = VesselToMapScreen(p);
         var world = vesselButton.transform.parent.TransformPoint(map);
         return Camera.main.WorldToScreenPoint(world);
     }
@@ -500,8 +497,8 @@ public class NavSubPin : MonoBehaviour
         // Get direction of movement in screen space.
         var p = vesselModel.transform.position;
         var v = movement.WorldVelocity;
-        var from = ConvertVesselToScreenSpace(p);
-        var to = ConvertVesselToScreenSpace(p + v);
+        var from = VesselToScreen(p);
+        var to = VesselToScreen(p + v);
         var delta = to - from;
 
         var angle = -(90 + Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
