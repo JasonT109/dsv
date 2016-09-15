@@ -45,9 +45,6 @@ public class DCCScreenManager : Singleton<DCCScreenManager>
     private float updateTick = 0.3f;
     private bool canPress = true;
 
-    /** List of active windows. */
-    private readonly List<DCCWindow> _windows = new List<DCCWindow>();
-
 
     void TestPattern()
     {
@@ -180,9 +177,6 @@ public class DCCScreenManager : Singleton<DCCScreenManager>
     /** Non quad windows register with this so we can sort them. */
     public void RegisterWindow(DCCWindow newWindow)
     {
-        if (!_windows.Contains(newWindow))
-            _windows.Add(newWindow);
-
         if (nonQuadWindows.Length == 0)
         {
             nonQuadWindows = new DCCWindow[1];
@@ -203,16 +197,35 @@ public class DCCScreenManager : Singleton<DCCScreenManager>
     /** Removes a window from the nonQuadWindows array. Called by a DCCWindow onDisable and ensures we don't have invisible windows in the sort order. */
     public void UnregisterWindow(DCCWindow oldWindow)
     {
-        int x = System.Array.IndexOf(nonQuadWindows, oldWindow);
-
-        nonQuadWindows = RemoveAt(nonQuadWindows, x);
-
-        _windows.Remove(oldWindow);
+        var x = System.Array.IndexOf(nonQuadWindows, oldWindow);
+        if (x >= 0)
+            nonQuadWindows = RemoveAt(nonQuadWindows, x);
     }
 
     /** Whether a given piece of window content is currently visible on screen. */
     public bool IsContentVisible(DCCWindow.contentID content)
-        { return _windows.Exists(w => w.windowContent == content); }
+    {
+        // Check if content is visible on regular a DCC window.
+        for (var i = 0; i < nonQuadWindows.Length; i++)
+            if (nonQuadWindows[i].windowContent == content)
+                return true;
+        
+        // Check if content is visible in a quad window.
+        for (var i = 0; i < quadWindows.Length; i++)
+            if (quadWindows[i].windowContent == content)
+                if (quadWindows[i].quadPosition != DCCScreenContentPositions.positionID.hidden)
+                    return true;
+
+        // Nav content is always required on the strategy table.
+        if (content == DCCWindow.contentID.nav)
+        {
+            var player = serverUtils.LocalPlayer;
+            if (player && player.ScreenState.Type == screenData.Type.DccStrategy)
+                return true;
+        }
+
+        return false;
+    }
 
     /** Removes a window from a specified array at index. */
     DCCWindow[] RemoveAt(DCCWindow[] source, int index)

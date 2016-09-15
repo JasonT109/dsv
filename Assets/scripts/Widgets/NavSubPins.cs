@@ -58,8 +58,7 @@ public class NavSubPins : Singleton<NavSubPins>
             RegisterPin(pin);
 
         // Locate the map camera.
-        var mapRoot = GameObject.Find("MapRoot");
-        _mapCamera = mapRoot.GetComponentInChildren<Camera>(true);
+        ResolveMapCamera();
 
         // Check that we have everything configured properly.
         if (!VesselButtonRoot)
@@ -129,6 +128,19 @@ public class NavSubPins : Singleton<NavSubPins>
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Resolve map camera components. */
+    private void ResolveMapCamera()
+    {
+        if (_mapCamera)
+            return;
+
+        var root = GameObject.Find("MapRoot");
+        if (root)
+            _mapCamera = root.GetComponentInChildren<Camera>();
+        else if (NavMapCamera.Instance)
+            _mapCamera = NavMapCamera.Instance.Camera;
+    }
 
     /** Create a new pin at runtime. */
     private NavSubPin CreatePin()

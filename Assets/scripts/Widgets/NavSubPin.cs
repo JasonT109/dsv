@@ -174,8 +174,7 @@ public class NavSubPin : MonoBehaviour
         }
 
         // Get hold of all dependencies and objects we need.
-        if (!_mapCamera)
-            _mapCamera = GameObject.Find("MapRoot").GetComponentInChildren<Camera>();
+        ResolveMapCamera();
 
         if (!vesselModel)
             vesselModel = gameObject;
@@ -207,6 +206,19 @@ public class NavSubPin : MonoBehaviour
         // TODO: Re-enable stats boxes if desired.
         // _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
         // _vesselButtonControl.onPress.AddListener(OnButtonPressed);
+    }
+
+    /** Resolve map camera components. */
+    private void ResolveMapCamera()
+    {
+        if (_mapCamera)
+            return;
+
+        var root = GameObject.Find("MapRoot");
+        if (root)
+            _mapCamera = root.GetComponentInChildren<Camera>();
+        else if (NavMapCamera.Instance)
+            _mapCamera = NavMapCamera.Instance.Camera;
     }
 
     /** Handle the map pin button being pressed. */
