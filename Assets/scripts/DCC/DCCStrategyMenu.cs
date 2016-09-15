@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
-public class DCCStrategyMap : MonoBehaviour
+public class DCCStrategyMenu : MonoBehaviour
 {
 
     // Components
@@ -19,10 +20,24 @@ public class DCCStrategyMap : MonoBehaviour
     public buttonControl Map3DButton;
 
 
-    // [Header("UI")]
+    [Header("UI")]
 
-    /** The 3D map widget. */
-    // public widget3DMap Map3d;
+    /** Toggle indicator for contour mode. */
+    public Graphic MapContoursOn;
+
+    /** Toggle indicator for 3d mode. */
+    public Graphic Map3DOn;
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    /** Updating. */
+    private void Update()
+    {
+        MapContoursOn.gameObject.SetActive(IsContourMode());
+        Map3DOn.gameObject.SetActive(Is3DMode());
+    }
 
 
     // Public Methods
@@ -37,11 +52,11 @@ public class DCCStrategyMap : MonoBehaviour
         { return Map3DButton.active; }
 
     /** Set contour mode on the 3d map. */
-    public void ActivateContourMode(bool value)
+    public void ActivateContourMode()
         { MapContoursButton.Group.toggleButtonOn(MapContoursButton.gameObject); }
 
     /** Set 3d mode on the map. */
-    public void Activate3DMode(bool value)
+    public void Activate3DMode()
         { Map3DButton.Group.toggleButtonOn(Map3DButton.gameObject); }
 
 }
