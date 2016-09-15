@@ -99,23 +99,31 @@ public class NavSubPins : Singleton<NavSubPins>
         return p;
     }
 
-    public Vector3 ConvertVesselCoords(Vector3 position)
+    /** Convert a vessel coordinate into 3d map worldspace. */
+    public Vector3 VesselToWorld(Vector3 position)
+    {
+        return MapToWorld(VesselToMap(position));
+    }
+
+    /*
+    public Vector3 VesselToWorldOld(Vector3 position)
     {
         Vector3 p;
 
         //"normalise" the coordinate system used in the crew data map
         //hardcoded with the size of the crew map size
-        p.x = (position.x + 5.0f) / 10.0f;
-        p.y = ((seaFloor - position.z) / 1000.0f) * heightMul;
-        p.z = (position.y + 5.0f) / 10.0f;
+        p.x = (position.x + 5.0f)/10.0f;
+        p.y = ((seaFloor - position.z)/1000.0f)*heightMul;
+        p.z = (position.y + 5.0f)/10.0f;
 
         //convert the normalised coordinates to map to the nav map
         //hardcoded with a displacement to the nav map
-        p.x = p.x * MapSize + 130.0f;
-        p.z = p.z * MapSize + -25.0f;
+        p.x = p.x*MapSize + 130.0f;
+        p.z = p.z*MapSize + -25.0f;
 
         return (p);
     }
+    */
 
     public float GetVesselFloorDistance(int vessel)
     {
@@ -214,6 +222,21 @@ public class NavSubPins : Singleton<NavSubPins>
         // Update indicators that span between pins. (e.g. intercept lines).
         for (var i = 0; i < _pins.Count; i++)
             _pins[i].UpdateIndicators();
+    }
+
+    /** Convert a vessel coordinate into normalized 3d map space - X,Z = (0..1), Y = depth. */
+    private Vector3 VesselToMap(Vector3 p)
+        { return new Vector3((p.x + 5.0f) / 10.0f, p.z, (p.y + 5.0f) / 10.0f); }
+
+    /** Convert a normalized map-space 3d position into world space. */
+    private Vector3 MapToWorld(Vector3 p)
+    {
+        // Convert normalized position to the terrain's coordinate system.
+        var o = NavMapTerrain.Instance.Origin.position;
+        return new Vector3(
+            o.x + (p.x - 0.5f) * MapSize * 10,
+            o.y + (seaFloor - p.y) * heightMul * 0.01f,
+            o.z + (p.z - 0.5f) * MapSize * 10);
     }
 
 }
