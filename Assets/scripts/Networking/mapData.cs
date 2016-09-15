@@ -10,6 +10,12 @@ public class mapData : NetworkBehaviour
     /** Default floor depth to assume. */
     public const float DefaultFloorDepth = 11050;
 
+    /** Map modes. */
+    public enum Mode
+    {
+        Mode3D = 0,
+        Mode2D = 1
+    };
 
     [Header("Coordinates")]
 
@@ -36,5 +42,15 @@ public class mapData : NetworkBehaviour
 
     [SyncVar]
     public int waterLayer = 1;
+
+    [SyncVar]
+    public Mode mapMode = Mode.Mode3D;
+
+
+    public bool IsMap2D
+        { get { return mapMode == Mode.Mode2D; } }
+
+    public bool IsMap3D
+        { get { return mapMode == Mode.Mode3D; } }
 
 }

@@ -5,6 +5,10 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"mapmode"
+				},
+				{
+					"type":"Value",
 					"serverParam":"latitude"
 				},
 				{
@@ -14,6 +18,14 @@
 				{
 					"type":"Value",
 					"serverParam":"mapscale"
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayer"
+				},
+				{
+					"type":"Value",
+					"serverParam":"waterlayer"
 				}
 			]
 		}

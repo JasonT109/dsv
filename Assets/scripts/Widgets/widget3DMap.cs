@@ -469,4 +469,19 @@ public class widget3DMap : MonoBehaviour {
 
         _terrainInitialized = true;
     }
+
+    /** Toggle the acid layer. */
+    public void ToggleAcidLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("acidlayer");
+        serverUtils.PostServerData("acidlayer", wasOn ? 0 : 1);
+    }
+
+    /** Toggle the water layer. */
+    public void ToggleWaterLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("waterlayer");
+        serverUtils.PostServerData("waterlayer", wasOn ? 0 : 1);
+    }
+
 }

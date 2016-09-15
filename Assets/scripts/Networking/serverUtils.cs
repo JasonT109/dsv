@@ -613,6 +613,7 @@ namespace Meg.Networking
             "lightarray9",
             "lightarray10",
             "longitude",
+            "mapmode",
             "mapscale",
             "maxwildlife",
             "maxspeed",
@@ -1037,6 +1038,7 @@ namespace Meg.Networking
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
+            { "mapmode", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
@@ -1754,6 +1756,8 @@ namespace Meg.Networking
                     return MapData.acidLayer;
                 case "waterlayer":
                     return MapData.waterLayer;
+                case "mapmode":
+                    return (int) MapData.mapMode;
                 case "lightarray1":
                     return LightData.lightArray1;
                 case "lightarray2":

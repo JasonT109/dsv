@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
+using Meg.Networking;
 
 public class DCCStrategyMap : MonoBehaviour
 {
@@ -9,24 +10,66 @@ public class DCCStrategyMap : MonoBehaviour
     public GameObject Map2DRoot;
     public CanvasGroup Fader;
 
-    public bool IsMap2d
-        { get { return !IsMap3d; } }
+    private mapData.Mode _mode = mapData.Mode.Mode3D ;
 
-    public bool IsMap3d
-        { get { return Map3DRoot.activeSelf; } }
+    public bool IsMap2D
+        { get { return serverUtils.MapData.IsMap2D; } }
 
-    public void ActivateMap2D()
-        { StartCoroutine(ActivateMap2DRoutine()); }
+    public bool IsMap3D
+        { get { return serverUtils.MapData.IsMap3D; } }
 
-    public void ActivateMap3D()
-        { StartCoroutine(ActivateMap3DRoutine()); }
-
-    public void ToggleMap2d()
+    private void Update()
     {
-        if (IsMap3d)
-            ActivateMap2D();
-        else
-            ActivateMap3D();
+        if (serverUtils.MapData)
+            UpdateMapMode(serverUtils.MapData.mapMode);
+    }
+
+    public void ToggleMapMode()
+    {
+        if (DOTween.IsTweening(Fader))
+            return;
+
+        var oldMode = (mapData.Mode) serverUtils.GetServerData("mapMode");
+        switch (oldMode)
+        {
+            case mapData.Mode.Mode2D:
+                serverUtils.PostServerData("mapMode", (int) mapData.Mode.Mode3D);
+                break;
+            case mapData.Mode.Mode3D:
+                serverUtils.PostServerData("mapMode", (int) mapData.Mode.Mode2D);
+                break;
+        }
+    }
+
+    private void UpdateMapMode(mapData.Mode mode)
+    {
+        switch (mode)
+        {
+            case mapData.Mode.Mode2D:
+                ActivateMap2D();
+                break;
+            case mapData.Mode.Mode3D:
+                ActivateMap3D();
+                break;
+        }
+    }
+
+    private void ActivateMap2D()
+    {
+        if (_mode == mapData.Mode.Mode2D)
+            return;
+
+        _mode = mapData.Mode.Mode2D;
+        StartCoroutine(ActivateMap2DRoutine());
+    }
+
+    private void ActivateMap3D()
+    {
+        if (_mode == mapData.Mode.Mode3D)
+            return;
+
+        _mode = mapData.Mode.Mode3D;
+        StartCoroutine(ActivateMap3DRoutine());
     }
 
     private IEnumerator ActivateMap2DRoutine()
