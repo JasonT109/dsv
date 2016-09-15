@@ -191,9 +191,14 @@ public class widget3DMap : MonoBehaviour {
 
     void UpdateZoom()
     {
+        // Try to resolve map camera components.
+        ResolveMapCamera();
+
         // Get current zoom level from camera
         zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         var camZ = mapCamera.transform.localPosition.z;
+
+        // Update tilt-shift effect.
         if (tilt)
             tilt.focalPoint = Math.Abs(camZ);
 
@@ -203,8 +208,30 @@ public class widget3DMap : MonoBehaviour {
         mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
     }
 
+    private void ResolveMapCamera()
+    {
+        if (mapCameraRoot)
+            return;
+
+        var navMap = NavMapCamera.Instance;
+        if (!navMap)
+            return;
+
+        mapCameraRoot = navMap.Root.gameObject;
+        mapCameraPitch = navMap.Pitch.gameObject;
+        mapCamera = navMap.Camera.gameObject;
+        tilt = navMap.Camera.GetComponent<TiltShift>();
+    }
+
     public void UpdateMap()
     {
+        // Try to resolve map camera components.
+        ResolveMapCamera();
+
+        // Ensure that camera exists.
+        if (!mapCameraRoot)
+            return;
+
         // Cap delta time to avoid jumps at low framerates.
         const float maxDeltaTime = 1 / 50.0f;
         var dt = Mathf.Min(maxDeltaTime, Time.deltaTime);
@@ -388,9 +415,11 @@ public class widget3DMap : MonoBehaviour {
         m.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
         m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
 
-        _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
+        if (_waterMaterial)
+            _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
 
-        _acidMaterial.SetColor("_FogColor", Color.Lerp(AcidColor2d, AcidColor3d, t));
+        if (_acidMaterial)
+            _acidMaterial.SetColor("_FogColor", Color.Lerp(AcidColor2d, AcidColor3d, t));
     }
 
     private void InitTerrain()
@@ -422,9 +451,15 @@ public class widget3DMap : MonoBehaviour {
         terrain.materialTemplate = new Material(terrain.materialTemplate);
         terrain.basemapDistance = 10000;
 
-        _waterMaterial = Water.GetComponent<Renderer>().material;
+        if (!Water && NavMapTerrain.Instance)
+            Water = NavMapTerrain.Instance.Water;
+        if (Water)
+            _waterMaterial = Water.GetComponent<Renderer>().material;
 
-        _acidMaterial = Acid.GetComponent<Renderer>().material;
+        if (!Acid && NavMapTerrain.Instance)
+            Acid = NavMapTerrain.Instance.Acid;
+        if (Acid)
+            _acidMaterial = Acid.GetComponent<Renderer>().material;
 
         _terrainInitialized = true;
     }
