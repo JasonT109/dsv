@@ -100,6 +100,18 @@ public class buttonControl : MonoBehaviour
 
     private buttonControl[] _autoWarningsInVisGroup;
 
+    private buttonGroup _group;
+    public buttonGroup Group
+    {
+        get
+        {
+            if (!_group)
+                _group = buttonGroup.GetComponent<buttonGroup>();
+
+            return _group;
+        }
+    }
+
     public Color Color
     {
         get { return m ? m.color : Color.white; }
