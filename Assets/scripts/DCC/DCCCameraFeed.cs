@@ -2,10 +2,8 @@ using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
-[ExecuteInEditMode]
 public class DCCCameraFeed : MonoBehaviour
 {
-    
     public enum sizes
     {
         small,
@@ -42,7 +40,7 @@ public class DCCCameraFeed : MonoBehaviour
         }
         set
         {
-            if (value != materialID)
+            if (value != materialID || r.material.mainTexture == null)
             {
                 feedMaterialID = value;
                 SetMaterial(feedMaterialID);
@@ -68,6 +66,8 @@ public class DCCCameraFeed : MonoBehaviour
     public float smallOffsetY = 100f;
     public Material[] materials = new Material[10];
 
+    [Header("Live feed")]
+    public LiveCameraOutputFinder Outputs;
 
     private Color fadecolor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
     private Color defaultColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
@@ -75,14 +75,6 @@ public class DCCCameraFeed : MonoBehaviour
     private float lerpValue = 0;
     private bool isLerping = false;
     private Renderer r;
-
-	[Header("Live feed")]
-	public LiveCameraOutputFinder Outputs;
-	public GameObject LivePlane;
-	public GameObject FakePlane;
-	//public MeshRenderer _mesh;
-	//public AVProLiveCamera[] _liveCameras;
-
 
     public void SetPosition()
     {
@@ -186,34 +178,31 @@ public class DCCCameraFeed : MonoBehaviour
 
     void SetMaterial(int ID)
     {
-        if (!Outputs)
-            return;
-
-		if(!Outputs.isLive || ID > Outputs.getNumCams()-1)
+		if(!Outputs || (!Outputs.isLive || ID > Outputs.getNumCams()-1))
 		{
         	if (materials[ID])
         	{
-        	    //works
-				Renderer r = videoPlane.GetComponentInChildren<Renderer>();
-				//Renderer r = FakePlane.GetComponentInChildren<Renderer>();
+				r = videoPlane.GetComponentInChildren<Renderer>();
         	    r.material = materials[ID];
-        	    isLerping = true;
-        	    lerpValue = 0;
-				
-        	    if (position == positions.midLeft && !isTopScreen)
-        	    {
-        	        window.commsContent = ID;
-        	        serverUtils.PostServerData("dcccommscontent", ID);
-        	    }
         	}
 		}
 		else
-		{
-			if (Outputs.GetOutput(ID) != null && Outputs.GetOutput(ID).OutputTexture != null)
-			{
+        {
+            if (!Outputs)
+                return;
+
+            if (Outputs.GetOutput(ID) != null && Outputs.GetOutput(ID).OutputTexture != null)
 				ApplyMapping(Outputs.GetOutput(ID).OutputTexture);
-			}
 		}
+
+        isLerping = true;
+        lerpValue = 0;
+
+        if (position == positions.midLeft && !isTopScreen)
+        {
+            window.commsContent = ID;
+            serverUtils.PostServerData("dcccommscontent", ID);
+        }
     }
 
     void SetTitle(string newTitle)
@@ -221,78 +210,19 @@ public class DCCCameraFeed : MonoBehaviour
         title.Text = newTitle;
     }
 
-	void Start ()
-    {
-		//TODO if live camera valid, then video plane = liveplane
-		//else video plane = fake plane
-		//link up all video planes in inspector
-
-
-
-	}
-
-	void Awake()
+	void Start()
 	{
-        if (!Outputs)
-            return;
-
-        if (materialID < 4 && Outputs.isLive)
-		{
-			if(materialID == 0)
-			{
-				FakePlane.SetActive(false);
-				LivePlane.SetActive(true);
-				r = LivePlane.GetComponentInChildren<Renderer>();
-			}
-
-			if(Outputs.getNumCams() > 1 && materialID == 1)
-			{
-				FakePlane.SetActive(false);
-				LivePlane.SetActive(true);
-				r = LivePlane.GetComponentInChildren<Renderer>();
-			}
-
-			if(Outputs.getNumCams() > 2 && materialID == 2)
-			{
-				FakePlane.SetActive(false);
-				LivePlane.SetActive(true);
-				r = LivePlane.GetComponentInChildren<Renderer>();
-			}
-
-			if(Outputs.getNumCams() > 3 && materialID == 3)
-			{
-				FakePlane.SetActive(false);
-				LivePlane.SetActive(true);
-				r = LivePlane.GetComponentInChildren<Renderer>();
-			}
-		}
-		else
-		{
-			if(materialID < 4)
-			{
-				FakePlane.SetActive(true);
-				LivePlane.SetActive(false);
-			}
-			r = videoPlane.GetComponentInChildren<Renderer>();
-		}
-
-		window = GetComponentInParent<DCCWindow>();
-		Update();
+        window = GetComponentInParent<DCCWindow>();
+        r = videoPlane.GetComponentInChildren<Renderer>();
+        SetMaterial(feedMaterialID);
+        Update();
 	}
-
-	//void Awake()
-	//{
-	//	if(Outputs.isLive)
-	//	{
-	//		for(int i = 0; i < Outputs.getNumCams(); ++i)
-	//		{
-	//			SetMaterial(i);
-	//		}
-	//	}
-	//}
 
 	void Update ()
     {
+        if (r.material.mainTexture == null)
+            SetMaterial(feedMaterialID);
+
         SetPosition();
         SetTitle(titleText + " " + (feedMaterialID + 1));
 
@@ -300,8 +230,6 @@ public class DCCCameraFeed : MonoBehaviour
         {
             lerpValue += Time.deltaTime;
             lerpColor = Color.Lerp(fadecolor, defaultColor, Mathf.Clamp01(lerpValue));
-
-            //Renderer r = videoPlane.GetComponentInChildren<Renderer>();
             r.material.SetColor("_TintColor", lerpColor);
 
             if (lerpValue > 1)
@@ -310,7 +238,6 @@ public class DCCCameraFeed : MonoBehaviour
                 lerpValue = 0;
             }
         }
-
         if (isTopScreen)
         {
             int feed = (int)serverUtils.GetServerData("dcccommscontent");
@@ -321,7 +248,7 @@ public class DCCCameraFeed : MonoBehaviour
 
 	private void ApplyMapping(Texture texture)
 	{
-		if (r != null)
+        if (r != null)
 		{
 			foreach (Material m in r.materials)
 			{
