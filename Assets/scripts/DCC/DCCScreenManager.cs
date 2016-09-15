@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Meg.Networking;
 using Meg.DCC;
 
-public class DCCScreenManager : MonoBehaviour
+public class DCCScreenManager : Singleton<DCCScreenManager>
 {
     [Header("Screen 1")]
     public GameObject controlScreen;
@@ -43,6 +44,10 @@ public class DCCScreenManager : MonoBehaviour
     private float updateTimer = 0;
     private float updateTick = 0.3f;
     private bool canPress = true;
+
+    /** List of active windows. */
+    private readonly List<DCCWindow> _windows = new List<DCCWindow>();
+
 
     void TestPattern()
     {
@@ -175,6 +180,9 @@ public class DCCScreenManager : MonoBehaviour
     /** Non quad windows register with this so we can sort them. */
     public void RegisterWindow(DCCWindow newWindow)
     {
+        if (!_windows.Contains(newWindow))
+            _windows.Add(newWindow);
+
         if (nonQuadWindows.Length == 0)
         {
             nonQuadWindows = new DCCWindow[1];
@@ -198,7 +206,13 @@ public class DCCScreenManager : MonoBehaviour
         int x = System.Array.IndexOf(nonQuadWindows, oldWindow);
 
         nonQuadWindows = RemoveAt(nonQuadWindows, x);
+
+        _windows.Remove(oldWindow);
     }
+
+    /** Whether a given piece of window content is currently visible on screen. */
+    public bool IsContentVisible(DCCWindow.contentID content)
+        { return _windows.Exists(w => w.windowContent == content); }
 
     /** Removes a window from a specified array at index. */
     DCCWindow[] RemoveAt(DCCWindow[] source, int index)
