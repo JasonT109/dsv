@@ -73,6 +73,9 @@ public class NavSubPins : Singleton<NavSubPins>
             _pins[i].ToggleLabel();
     }
 
+    public bool HasLabels
+        { get { return _pins.Exists(pin => pin.ShowLabel); } }
+
     /** Locate a pin by the vessel id it represents. */
     public NavSubPin GetVesselPin(int vessel)
     {
