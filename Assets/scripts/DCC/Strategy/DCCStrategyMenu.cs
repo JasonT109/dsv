@@ -25,25 +25,18 @@ public class DCCStrategyMenu : MonoBehaviour
     public CanvasGroup ViewGroup;
 
     /** Toggle indicators for 3d dive map. */
-    [Header("Dive Map Options")]
-    public Button MapContoursButton;
-    public Button Map3DButton;
-    public Button VesselLabelsButton;
-    public Button AcidLayerButton;
-    public Button WaterLayerButton;
-    public Button RecenterVesselButton;
+    public Button DiveMapButton;
+    public Button NauticalMapButton;
+    public Button SubSchematicButton;
+
+
+    // Members
+    // ------------------------------------------------------------
 
     /** Toggle indicators for 3d dive map. */
-    [Header("Dive Map Indicators")]
-    public Graphic MapContoursOn;
-    public Graphic Map3DOn;
-    public Graphic VesselLabelsOn;
-    public Graphic AcidLayerOn;
-    public Graphic WaterLayerOn;
-
-    public Graphic DiveMapOn;
-    public Graphic NauticalMapOn;
-    public Graphic SubSchematicOn;
+    private Graphic _diveMapOn;
+    private Graphic _nauticalMapOn;
+    private Graphic _subSchematicOn;
 
 
     // Unity Methods
@@ -53,54 +46,27 @@ public class DCCStrategyMenu : MonoBehaviour
     private void Start()
     {
         StrategyMap.OnMapModeChanged += OnMapModeChanged;
+
+        DiveMapButton.onClick.AddListener(ToggleDiveMap);
+        NauticalMapButton.onClick.AddListener(ToggleNauticalMap);
+        SubSchematicButton.onClick.AddListener(ToggleSubSchematic);
+
+        _diveMapOn = DiveMapButton.GetComponentInChildrenNotMe<Image>(true);
+        _nauticalMapOn = NauticalMapButton.GetComponentInChildrenNotMe<Image>(true);
+        _subSchematicOn = SubSchematicButton.GetComponentInChildrenNotMe<Image>(true);
     }
 
     /** Updating. */
     private void Update()
     {
-        // Update 3d dive map options.
-        var isMap3D = StrategyMap.IsMap3D;
-        MapContoursButton.gameObject.SetActive(isMap3D);
-        Map3DButton.gameObject.SetActive(isMap3D);
-        VesselLabelsButton.gameObject.SetActive(isMap3D);
-        AcidLayerButton.gameObject.SetActive(isMap3D);
-        WaterLayerButton.gameObject.SetActive(isMap3D);
-        RecenterVesselButton.gameObject.SetActive(isMap3D);
-
-        MapContoursOn.gameObject.SetActive(Map3D.IsContourMode);
-        Map3DOn.gameObject.SetActive(Map3D.Is3DMode);
-        VesselLabelsOn.gameObject.SetActive(NavSubPins.Instance.HasLabels);
-        AcidLayerOn.gameObject.SetActive(serverUtils.GetServerBool("acidlayer"));
-        WaterLayerOn.gameObject.SetActive(serverUtils.GetServerBool("waterlayer"));
-
-        // Update 2d nautical map options.
-        var isMap2D = StrategyMap.IsMap2D;
-        
-
-        DiveMapOn.gameObject.SetActive(isMap3D);
-        NauticalMapOn.gameObject.SetActive(isMap2D);
-        SubSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);
+        _diveMapOn.gameObject.SetActive(StrategyMap.IsMap3D);
+        _nauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2D);
+        _subSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);
     }
 
 
     // Public Methods
     // ------------------------------------------------------------
-
-    /** Set contour mode on the 3d map. */
-    public void ActivateContourMode()
-        { megMapCameraEventManager.Instance.triggerByName("MapContours"); }
-
-    /** Set 3d mode on the map. */
-    public void Activate3DMode()
-        { megMapCameraEventManager.Instance.triggerByName("Map3d"); }
-
-    /** Toggle vessel labels on the map. */
-    public void ToggleVesselLabels()
-        { NavSubPins.Instance.ToggleLabels(); }
-
-    /** Recenter on selected vessel. */
-    public void RecenterVessel()
-        { megMapCameraEventManager.Instance.triggerByName("RecenterVessel"); }
 
     /** Toggle the 3d dive map. */
     public void ToggleDiveMap()
@@ -113,14 +79,6 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Toggle the sub schematic. */
     public void ToggleSubSchematic()
         { StrategyMap.ActivateMapMode(mapData.Mode.ModeSubSchematic); }
-
-    /** Toggle the acid layer. */
-    public void ToggleAcidLayer()
-        { Map3D.ToggleAcidLayer(); }
-
-    /** Toggle the water layer. */
-    public void ToggleWaterLayer()
-        { Map3D.ToggleWaterLayer(); }
 
 
     // Private Methods
