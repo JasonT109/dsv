@@ -110,9 +110,6 @@ public class NavSubPin : MonoBehaviour
     /** Vessel button control. */
     private buttonControl _vesselButtonControl;
 
-    /** Map camera. */
-    private Camera _mapCamera;
-
     /** Icon. */
     private graphicsMapIcon _icon;
 
@@ -173,9 +170,6 @@ public class NavSubPin : MonoBehaviour
             return;
         }
 
-        // Get hold of all dependencies and objects we need.
-        ResolveMapCamera();
-
         if (!vesselModel)
             vesselModel = gameObject;
 
@@ -206,19 +200,6 @@ public class NavSubPin : MonoBehaviour
         // TODO: Re-enable stats boxes if desired.
         // _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
         // _vesselButtonControl.onPress.AddListener(OnButtonPressed);
-    }
-
-    /** Resolve map camera components. */
-    private void ResolveMapCamera()
-    {
-        if (_mapCamera)
-            return;
-
-        var root = GameObject.Find("MapRoot");
-        if (root)
-            _mapCamera = root.GetComponentInChildren<Camera>();
-        else if (Map.Instance)
-            _mapCamera = Map.Instance.Camera;
     }
 
     /** Handle the map pin button being pressed. */
@@ -314,7 +295,7 @@ public class NavSubPin : MonoBehaviour
             return;
 
         // Set the correct camera for lines in nav screen.
-        VectorLine.SetCamera3D(_mapCamera);
+        VectorLine.SetCamera3D(_manager.MapCamera);
 
         var movement = serverUtils.GetVesselMovement(VesselId);
         var intercept = movement as vesselIntercept;

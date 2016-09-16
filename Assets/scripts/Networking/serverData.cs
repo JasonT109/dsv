@@ -1116,6 +1116,12 @@ public class serverData : NetworkBehaviour
             case "acidlayer":
                 MapData.acidLayer = (int)newValue;
                 break;
+            case "waterlayer":
+                MapData.waterLayer = (int)newValue;
+                break;
+            case "mapmode":
+                MapData.mapMode = (mapData.Mode) newValue;
+                break;
             case "maxwildlife":
                 SonarData.MaxWildlife = (int)newValue;
                 break;

@@ -1,15 +1,18 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Meg.Networking;
 
 public class mapFeatureVis : MonoBehaviour
 {
     public GameObject acidLayer;
+    public GameObject waterLayer;
 
-	void Update ()
+    void Update ()
     {
-        if (serverUtils.GetServerData("acidLayer") > 0)
-            acidLayer.SetActive(true);
-        else
-            acidLayer.SetActive(false);
-	}
+        if (acidLayer)
+            acidLayer.SetActive(serverUtils.GetServerBool("acidLayer"));
+
+        if (waterLayer)
+            waterLayer.SetActive(serverUtils.GetServerBool("waterLayer"));
+        
+    }
 }
