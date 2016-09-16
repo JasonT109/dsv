@@ -18,6 +18,9 @@ public class DCCStrategyMap : MonoBehaviour
 
     public event MapModeChangeEvent OnMapModeChanged;
 
+    public mapData.Mode Mode
+        { get { return _mode; } }
+
     public bool IsMap2D
         { get { return serverUtils.MapData.IsMap2D; } }
 

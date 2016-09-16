@@ -38,6 +38,12 @@ public class AlphaForScale : MonoBehaviour
         UpdateAlpha();
     }
 
+    private void OnEnable()
+    {
+        if (Root && _group)
+            UpdateAlpha();
+    }
+
     private void Update()
     {
         UpdateAlpha();

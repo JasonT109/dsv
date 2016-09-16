@@ -52,10 +52,16 @@ public class mapData : NetworkBehaviour
     public int mapLayerContours = 1;
 
     [SyncVar]
+    public int mapLayerGrid = 1;
+
+    [SyncVar]
     public int mapLayerDepths = 1;
 
     [SyncVar]
     public int mapLayerLabels = 1;
+
+    [SyncVar]
+    public int mapLayerSatellite = 1;
 
     [SyncVar]
     public int mapLayerShipping = 1;

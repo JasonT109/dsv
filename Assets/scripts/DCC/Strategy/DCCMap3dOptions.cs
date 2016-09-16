@@ -60,6 +60,8 @@ public class DCCMap3dOptions : MonoBehaviour
         AcidLayerButton.onClick.AddListener(ToggleAcidLayer);
         WaterLayerButton.onClick.AddListener(ToggleWaterLayer);
         RecenterVesselButton.onClick.AddListener(RecenterVessel);
+
+        Update();
     }
 
     /** Updating. */

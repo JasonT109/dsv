@@ -1131,8 +1131,14 @@ public class serverData : NetworkBehaviour
             case "maplayerdepths":
                 MapData.mapLayerDepths = (int) newValue;
                 break;
+            case "maplayergrid":
+                MapData.mapLayerGrid = (int)newValue;
+                break;
             case "maplayerlabels":
                 MapData.mapLayerLabels = (int) newValue;
+                break;
+            case "maplayersatellite":
+                MapData.mapLayerSatellite = (int)newValue;
                 break;
             case "maplayershipping":
                 MapData.mapLayerShipping = (int) newValue;

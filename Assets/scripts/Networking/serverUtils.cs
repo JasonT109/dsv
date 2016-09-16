@@ -616,7 +616,9 @@ namespace Meg.Networking
             "maplayeralerts",
             "maplayercontours",
             "maplayerdepths",
+            "maplayergrid",
             "maplayerlabels",
+            "maplayersatellite",
             "maplayershipping",
             "maplayertemperatures",
             "mapmode",
@@ -1047,7 +1049,9 @@ namespace Meg.Networking
             { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether ELB alerts are displayed on the map."} },
             { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether contour lines are displayed on the map."} },
             { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether depth soundings are displayed on the map."} },
+            { "maplayergrid", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether grid lines are displayed on the map."} },
             { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether labels are displayed on the map."} },
+            { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether satellite imagery is displayed on the map."} },
             { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether shipping lanes are displayed on the map."} },
             { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map)."} },
@@ -1630,8 +1634,12 @@ namespace Meg.Networking
                     return MapData.mapLayerContours;
                 case "maplayerdepths":
                     return MapData.mapLayerDepths;
+                case "maplayergrid":
+                    return MapData.mapLayerGrid;
                 case "maplayerlabels":
                     return MapData.mapLayerLabels;
+                case "maplayersatellite":
+                    return MapData.mapLayerSatellite;
                 case "maplayershipping":
                     return MapData.mapLayerShipping;
                 case "maplayertemperatures":
