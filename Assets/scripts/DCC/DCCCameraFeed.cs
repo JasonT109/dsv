@@ -15,6 +15,7 @@ public class DCCCameraFeed : MonoBehaviour
         largeCentre,
         midLeft,
         midRight,
+        midLeftLow,
         small1,
         small2,
         small3,
@@ -28,7 +29,6 @@ public class DCCCameraFeed : MonoBehaviour
     }
 
     [Header("Appearance")]
-    //public sizes size = sizes.medium;
     public positions position = positions.midLeft;
     [Range(0, 9)]
     public int feedMaterialID;
@@ -56,12 +56,15 @@ public class DCCCameraFeed : MonoBehaviour
     public widgetText title;
     public graphicsSlicedMesh frame;
     public DCCWindow window;
+    public Transform overlay1;
 
     [Header("Initial Setup")]
     public Vector2[] frameSizes = new Vector2[3];
     public float[] windowScales = new float[3];
     public Vector3[] windowPositions = new Vector3[3];
-    public float midOffset = 200f;
+    public Vector3[] TitleOffset = new Vector3[3];
+    public float midOffsetX = 200f;
+    public float midOffsetY = -10f;
     public float smallOffsetX = 100f;
     public float smallOffsetY = 100f;
     public Material[] materials = new Material[10];
@@ -82,67 +85,72 @@ public class DCCCameraFeed : MonoBehaviour
         {
             case positions.largeCentre:
                 transform.localPosition = windowPositions[0];
-                titleBox.localPosition = new Vector3(0, 0, 0);
+                titleBox.localPosition = TitleOffset[0];
                 SetSize(sizes.large);
                 break;
             case positions.midLeft:
                 transform.localPosition = windowPositions[1];
-                titleBox.localPosition = new Vector3(0, 0, 0);
+                titleBox.localPosition = TitleOffset[1];
+                SetSize(sizes.medium);
+                break;
+            case positions.midLeftLow:
+                transform.localPosition = new Vector3 (windowPositions[1].x, windowPositions[1].y + midOffsetY, windowPositions[1].z);
+                titleBox.localPosition = TitleOffset[1];
                 SetSize(sizes.medium);
                 break;
             case positions.midRight:
-                transform.localPosition = new Vector3 (windowPositions[1].x + midOffset, windowPositions[1].y, windowPositions[1].z);
-                titleBox.localPosition = new Vector3(0, 0, 0);
+                transform.localPosition = new Vector3 (windowPositions[1].x + midOffsetX, windowPositions[1].y, windowPositions[1].z);
+                titleBox.localPosition = TitleOffset[1];
                 SetSize(sizes.medium);
                 break;
             case positions.small1:
                 transform.localPosition = windowPositions[2];
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small2:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX, 0, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small3:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 2, 0, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small4:
-                transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 3, 0, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                transform.localPosition = windowPositions[2] + new Vector3(0, smallOffsetY, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small5:
-                transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 4, 0, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX , smallOffsetY, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small6:
-                transform.localPosition = windowPositions[2] + new Vector3(0, smallOffsetY, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 2, smallOffsetY, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small7:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX, smallOffsetY, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small8:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 2, smallOffsetY, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small9:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 3, smallOffsetY, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
             case positions.small10:
                 transform.localPosition = windowPositions[2] + new Vector3(smallOffsetX * 4, smallOffsetY, 0);
-                titleBox.localPosition = new Vector3(-7.6f, 0, 0);
+                titleBox.localPosition = TitleOffset[2];
                 SetSize(sizes.small);
                 break;
         }
@@ -158,6 +166,8 @@ public class DCCCameraFeed : MonoBehaviour
                 frame.Width = frameSizes[0].x;
                 frame.Height = frameSizes[0].y;
                 GetComponent<BoxCollider>().size = frameSizes[0];
+                if (overlay1)
+                    overlay1.localScale = Vector3.one * windowScales[0];
                 break;
             case sizes.medium:
                 titleBox.localScale = Vector3.one * windowScales[1];
@@ -165,6 +175,8 @@ public class DCCCameraFeed : MonoBehaviour
                 frame.Width = frameSizes[1].x;
                 frame.Height = frameSizes[1].y;
                 GetComponent<BoxCollider>().size = frameSizes[1];
+                if (overlay1)
+                    overlay1.localScale = Vector3.one * windowScales[1];
                 break;
             case sizes.small:
                 titleBox.localScale = Vector3.one * windowScales[2];
@@ -172,6 +184,8 @@ public class DCCCameraFeed : MonoBehaviour
                 frame.Width = frameSizes[2].x;
                 frame.Height = frameSizes[2].y;
                 GetComponent<BoxCollider>().size = frameSizes[2];
+                if (overlay1)
+                    overlay1.localScale = Vector3.one * windowScales[2];
                 break;
         }
     }
@@ -205,7 +219,7 @@ public class DCCCameraFeed : MonoBehaviour
         if (position == positions.midLeft && !isTopScreen)
         {
             window.commsContent = ID;
-            serverUtils.PostServerData("dcccommscontent", ID);
+            //serverUtils.PostServerData("dcccommscontent", ID);
         }
     }
 
@@ -216,6 +230,9 @@ public class DCCCameraFeed : MonoBehaviour
 
 	void Start()
 	{
+        if (!Outputs)
+            Outputs = ObjectFinder.Find<LiveCameraOutputFinder>();
+
         window = GetComponentInParent<DCCWindow>();
         r = videoPlane.GetComponentInChildren<Renderer>();
         SetMaterial(feedMaterialID);

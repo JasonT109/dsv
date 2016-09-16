@@ -30,7 +30,8 @@ public class DCCWindow : MonoBehaviour
     public bool hasFocus;
     public bool isLerping = false;
     public float lerpTime = 0.6f;
-    public float minSwipeSpeed = 1f;
+    public bool canDropBucket = true;
+
     private Vector3 toPosition;
     private Vector3 fromPosition;
     private Vector2 toScale;
@@ -40,8 +41,6 @@ public class DCCWindow : MonoBehaviour
     private DCCScreenManager screenManager;
     private float transformSpeed = 1f;
     private Vector2 transformDirection;
-    private DCCScreenID._screenID swipeScreenID;
-    private float pressTimer = 0;
     private int _commsContent = 0;
     private bool transformOffscreen;
     private float offscreenLerpTimer = 0f;
@@ -133,8 +132,6 @@ public class DCCWindow : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        pressTimer += Time.deltaTime;
-
         hasFocus = true;
     }
 
@@ -146,30 +143,32 @@ public class DCCWindow : MonoBehaviour
 
         hasFocus = false;
 
-        GameObject DropTargetObject = GetDropTarget();
-        if (DropTargetObject)
+        if (canDropBucket)
         {
-            DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
-            DCCScreenID._screenID targetScreen = DCCScreenID._screenID.control;
-
-            if (DropTarget == DCCDropBucket.dropBucket.left && HasScreen(screenData.Type.DccScreen3))
-                targetScreen = DCCScreenID._screenID.screen3;
-
-            if (DropTarget == DCCDropBucket.dropBucket.middle && HasScreen(screenData.Type.DccScreen4))
-                targetScreen = DCCScreenID._screenID.screen4;
-
-            if (DropTarget == DCCDropBucket.dropBucket.right && HasScreen(screenData.Type.DccScreen5))
-                targetScreen = DCCScreenID._screenID.screen5;
-
-            if (targetScreen != DCCScreenID._screenID.control)
+            GameObject DropTargetObject = GetDropTarget();
+            if (DropTargetObject)
             {
-                TransformOffscreen(transformDirection, transformSpeed);
-                screenManager.ActivateWindow(windowContent, targetScreen);
-                if (lastBucketManager)
-                    lastBucketManager.highlightedBucket = null;
+                DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
+                DCCScreenID._screenID targetScreen = DCCScreenID._screenID.control;
+
+                if (DropTarget == DCCDropBucket.dropBucket.left && HasScreen(screenData.Type.DccScreen3))
+                    targetScreen = DCCScreenID._screenID.screen3;
+
+                if (DropTarget == DCCDropBucket.dropBucket.middle && HasScreen(screenData.Type.DccScreen4))
+                    targetScreen = DCCScreenID._screenID.screen4;
+
+                if (DropTarget == DCCDropBucket.dropBucket.right && HasScreen(screenData.Type.DccScreen5))
+                    targetScreen = DCCScreenID._screenID.screen5;
+
+                if (targetScreen != DCCScreenID._screenID.control)
+                {
+                    TransformOffscreen(transformDirection, transformSpeed);
+                    screenManager.ActivateWindow(windowContent, targetScreen);
+                    if (lastBucketManager)
+                        lastBucketManager.highlightedBucket = null;
+                }
             }
         }
-        pressTimer = 0;
 
         windowGlow.SetActive(false);
     }
@@ -185,20 +184,22 @@ public class DCCWindow : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        GameObject DropTargetObject = GetDropTarget();
-        if (DropTargetObject)
+        if (canDropBucket)
         {
-            windowGlow.SetActive(true);
-            DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
-            lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
+            GameObject DropTargetObject = GetDropTarget();
+            if (DropTargetObject)
+            {
+                windowGlow.SetActive(true);
+                DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
+                lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
+            }
+            else
+            {
+                windowGlow.SetActive(false);
+                if (lastBucketManager)
+                    lastBucketManager.highlightedBucket = null;
+            }
         }
-        else
-        {
-            windowGlow.SetActive(false);
-            if (lastBucketManager)
-                lastBucketManager.highlightedBucket = null;
-        }
-
     }
 
     /** Sets up data for sending content offscreen. */
