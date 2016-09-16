@@ -36,6 +36,8 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Name of the scene containing Evac Ship screens. */
     public const string EvacScene = "screen_evac";
 
+    /** Name of the scene containing Strategy Table screens. */
+    public const string StrategyTableScene = "screen_strategy";
 
 
     // Properties

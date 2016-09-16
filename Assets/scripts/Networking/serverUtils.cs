@@ -613,6 +613,12 @@ namespace Meg.Networking
             "lightarray9",
             "lightarray10",
             "longitude",
+            "maplayeralerts",
+            "maplayercontours",
+            "maplayerdepths",
+            "maplayerlabels",
+            "maplayershipping",
+            "maplayertemperatures",
             "mapmode",
             "mapscale",
             "maxwildlife",
@@ -1038,6 +1044,12 @@ namespace Meg.Networking
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
+            { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether ELB alerts are displayed on the map."} },
+            { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether contour lines are displayed on the map."} },
+            { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether depth soundings are displayed on the map."} },
+            { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether labels are displayed on the map."} },
+            { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether shipping lanes are displayed on the map."} },
+            { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
@@ -1612,6 +1624,18 @@ namespace Meg.Networking
                     return MapData.latitude;
                 case "longitude":
                     return MapData.longitude;
+                case "maplayeralerts":
+                    return MapData.mapLayerAlerts;
+                case "maplayercontours":
+                    return MapData.mapLayerContours;
+                case "maplayerdepths":
+                    return MapData.mapLayerDepths;
+                case "maplayerlabels":
+                    return MapData.mapLayerLabels;
+                case "maplayershipping":
+                    return MapData.mapLayerShipping;
+                case "maplayertemperatures":
+                    return MapData.mapLayerTemperatures;
                 case "mapscale":
                     return MapData.mapScale;
                 case "towwinchload":

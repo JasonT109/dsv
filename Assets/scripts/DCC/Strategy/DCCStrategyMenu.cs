@@ -24,58 +24,62 @@ public class DCCStrategyMenu : MonoBehaviour
     /** View menu. */
     public CanvasGroup ViewGroup;
 
-    /** Toggle indicator for contour mode. */
+    /** Toggle indicators for 3d dive map. */
+    [Header("Dive Map Options")]
+    public Button MapContoursButton;
+    public Button Map3DButton;
+    public Button VesselLabelsButton;
+    public Button AcidLayerButton;
+    public Button WaterLayerButton;
+    public Button RecenterVesselButton;
+
+    /** Toggle indicators for 3d dive map. */
+    [Header("Dive Map Indicators")]
     public Graphic MapContoursOn;
-
-    /** Toggle indicator for 3d mode. */
     public Graphic Map3DOn;
-
-    /** Toggle indicator for vessel labels. */
     public Graphic VesselLabelsOn;
-
-    /** Toggle indicator for nautical map. */
-    public Graphic NauticalMapOn;
-
-    /** Toggle indicator for acid layer. */
     public Graphic AcidLayerOn;
-
-    /** Toggle indicator for nautical map. */
     public Graphic WaterLayerOn;
 
-
-    // Private Properties
-    // ------------------------------------------------------------
-
-    /** Whether view menu is visible. */
-    private bool _viewMenuVisible = true;
-    private bool ViewMenuVisible
-    {
-        get { return _viewMenuVisible; }
-        set
-        {
-            if (_viewMenuVisible == value)
-                return;
-
-            _viewMenuVisible = value;
-            StopAllCoroutines();
-            StartCoroutine(value ? ShowViewMenuRoutine() : HideViewMenuRoutine());
-        }
-    }
+    public Graphic DiveMapOn;
+    public Graphic NauticalMapOn;
+    public Graphic SubSchematicOn;
 
 
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Initialization. */
+    private void Start()
+    {
+        StrategyMap.OnMapModeChanged += OnMapModeChanged;
+    }
+
     /** Updating. */
     private void Update()
     {
+        // Update 3d dive map options.
+        var isMap3D = StrategyMap.IsMap3D;
+        MapContoursButton.gameObject.SetActive(isMap3D);
+        Map3DButton.gameObject.SetActive(isMap3D);
+        VesselLabelsButton.gameObject.SetActive(isMap3D);
+        AcidLayerButton.gameObject.SetActive(isMap3D);
+        WaterLayerButton.gameObject.SetActive(isMap3D);
+        RecenterVesselButton.gameObject.SetActive(isMap3D);
+
         MapContoursOn.gameObject.SetActive(Map3D.IsContourMode);
         Map3DOn.gameObject.SetActive(Map3D.Is3DMode);
         VesselLabelsOn.gameObject.SetActive(NavSubPins.Instance.HasLabels);
-        NauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2D);
         AcidLayerOn.gameObject.SetActive(serverUtils.GetServerBool("acidlayer"));
         WaterLayerOn.gameObject.SetActive(serverUtils.GetServerBool("waterlayer"));
-        ViewMenuVisible = StrategyMap.IsMap3D;
+
+        // Update 2d nautical map options.
+        var isMap2D = StrategyMap.IsMap2D;
+        
+
+        DiveMapOn.gameObject.SetActive(isMap3D);
+        NauticalMapOn.gameObject.SetActive(isMap2D);
+        SubSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);
     }
 
 
@@ -98,9 +102,17 @@ public class DCCStrategyMenu : MonoBehaviour
     public void RecenterVessel()
         { megMapCameraEventManager.Instance.triggerByName("RecenterVessel"); }
 
-    /** Toggle the nautical map. */
+    /** Toggle the 3d dive map. */
+    public void ToggleDiveMap()
+        { StrategyMap.ActivateMapMode(mapData.Mode.Mode3D); }
+
+    /** Toggle the 2d nautical map. */
     public void ToggleNauticalMap()
-        { StrategyMap.ToggleMapMode(); }
+        { StrategyMap.ActivateMapMode(mapData.Mode.Mode2D); }
+
+    /** Toggle the sub schematic. */
+    public void ToggleSubSchematic()
+        { StrategyMap.ActivateMapMode(mapData.Mode.ModeSubSchematic); }
 
     /** Toggle the acid layer. */
     public void ToggleAcidLayer()
@@ -114,23 +126,15 @@ public class DCCStrategyMenu : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    /** Reveal the view menu. */
-    private IEnumerator ShowViewMenuRoutine()
+    /** Handle the map mode changing. */
+    private void OnMapModeChanged(mapData.Mode oldmode, mapData.Mode newmode)
     {
-        ViewGroup.gameObject.SetActive(true);
-        ViewGroup.transform.localScale = Vector3.zero;
-        ViewGroup.transform.DOScale(1, 0.25f);
-        ViewGroup.alpha = 0;
-        ViewGroup.DOFade(1, 0.25f);
-
-        yield return 0;
+        StartCoroutine(CycleViewOptionsRoutine());
     }
 
-    /** Hide the view menu. */
-    private IEnumerator HideViewMenuRoutine()
+    /** Reveal the view menu. */
+    private IEnumerator CycleViewOptionsRoutine()
     {
-        yield return new WaitForSeconds(0.25f);
-
         ViewGroup.transform.localScale = Vector3.one;
         ViewGroup.transform.DOScale(Vector3.zero, 0.25f);
         ViewGroup.DOFade(0, 0.25f);
@@ -138,7 +142,11 @@ public class DCCStrategyMenu : MonoBehaviour
         while (DOTween.IsTweening(ViewGroup))
             yield return 0;
 
-        ViewGroup.gameObject.SetActive(false);
+        ViewGroup.gameObject.SetActive(true);
+        ViewGroup.transform.localScale = Vector3.zero;
+        ViewGroup.transform.DOScale(1, 0.25f);
+        ViewGroup.alpha = 0;
+        ViewGroup.DOFade(1, 0.25f);
     }
 
 }

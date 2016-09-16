@@ -1122,6 +1122,24 @@ public class serverData : NetworkBehaviour
             case "mapmode":
                 MapData.mapMode = (mapData.Mode) newValue;
                 break;
+            case "maplayeralerts":
+                MapData.mapLayerAlerts = (int) newValue;
+                break;
+            case "maplayercontours":
+                MapData.mapLayerContours = (int) newValue;
+                break;
+            case "maplayerdepths":
+                MapData.mapLayerDepths = (int) newValue;
+                break;
+            case "maplayerlabels":
+                MapData.mapLayerLabels = (int) newValue;
+                break;
+            case "maplayershipping":
+                MapData.mapLayerShipping = (int) newValue;
+                break;
+            case "maplayertemperatures":
+                MapData.mapLayerTemperatures = (int) newValue;
+                break;
             case "maxwildlife":
                 SonarData.MaxWildlife = (int)newValue;
                 break;

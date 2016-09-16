@@ -14,8 +14,16 @@ public class mapData : NetworkBehaviour
     public enum Mode
     {
         Mode3D = 0,
-        Mode2D = 1
+        Mode2D = 1,
+        ModeSubSchematic = 2   // Used in the DCC strategy table.
     };
+
+
+    [Header("Mode")]
+
+    [SyncVar]
+    public Mode mapMode = Mode.Mode3D;
+
 
     [Header("Coordinates")]
 
@@ -29,13 +37,7 @@ public class mapData : NetworkBehaviour
     public float mapScale = 1f;
 
 
-    [Header("Map Events")]
-
-    [SyncVar]
-    public float initiateMapEvent;
-
-    [SyncVar]
-    public string mapEventName;
+    [Header("Layers")]
 
     [SyncVar]
     public int acidLayer;
@@ -44,7 +46,31 @@ public class mapData : NetworkBehaviour
     public int waterLayer = 1;
 
     [SyncVar]
-    public Mode mapMode = Mode.Mode3D;
+    public int mapLayerAlerts = 1;
+
+    [SyncVar]
+    public int mapLayerContours = 1;
+
+    [SyncVar]
+    public int mapLayerDepths = 1;
+
+    [SyncVar]
+    public int mapLayerLabels = 1;
+
+    [SyncVar]
+    public int mapLayerShipping = 1;
+
+    [SyncVar]
+    public int mapLayerTemperatures = 1;
+
+
+    [Header("Events")]
+
+    [SyncVar]
+    public float initiateMapEvent;
+
+    [SyncVar]
+    public string mapEventName;
 
 
     public bool IsMap2D
@@ -52,5 +78,8 @@ public class mapData : NetworkBehaviour
 
     public bool IsMap3D
         { get { return mapMode == Mode.Mode3D; } }
+
+    public bool IsSubSchematic
+        { get { return mapMode == Mode.ModeSubSchematic; } }
 
 }

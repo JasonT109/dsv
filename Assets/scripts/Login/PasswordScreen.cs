@@ -28,6 +28,7 @@ public class PasswordScreen : MonoBehaviour
     public Image DCCButtonImg;
     public Image MMBButtonImg;
     public Image EvacButtonImg;
+    public Image StrategyButtonImg;
 
     public GameObject StartButtonObj;
     public Text StartButtonText;
@@ -70,6 +71,7 @@ public class PasswordScreen : MonoBehaviour
         _sceneButtonImages.Add(DCCButtonImg);
         _sceneButtonImages.Add(MMBButtonImg);
         _sceneButtonImages.Add(EvacButtonImg);
+        _sceneButtonImages.Add(StrategyButtonImg);
 
         var scene = PlayerPrefs.GetString("DefaultScene", _manager.Scene);
         var host = PlayerPrefs.GetString("DefaultHost", _manager.Host);
@@ -94,6 +96,8 @@ public class PasswordScreen : MonoBehaviour
             ToggleMMB();
         else if (scene == NetworkManagerCustom.EvacScene)
             ToggleEvac();
+        else if (scene == NetworkManagerCustom.StrategyTableScene)
+            ToggleStrategy();
         else
             ToggleBigSub();
 
@@ -183,6 +187,14 @@ public class PasswordScreen : MonoBehaviour
         ResetSceneSelection();
         EvacButtonImg.color = SelectedColor;
         SetScene(NetworkManagerCustom.EvacScene);
+    }
+
+    public void ToggleStrategy()
+    {
+        Debug.Log("PasswordScreen.ToggleStrategy() - Configuring UI for Strategy Table.");
+        ResetSceneSelection();
+        StrategyButtonImg.color = SelectedColor;
+        SetScene(NetworkManagerCustom.StrategyTableScene);
     }
 
     private void ResetSceneSelection()
