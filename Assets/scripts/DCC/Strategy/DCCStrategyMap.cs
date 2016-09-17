@@ -12,7 +12,7 @@ public class DCCStrategyMap : MonoBehaviour
 
     public CanvasGroup Fader;
 
-    private mapData.Mode _mode = mapData.Mode.None;
+    private mapData.Mode _mode = mapData.Mode.Mode3D;
 
     public delegate void MapModeChangeEvent(mapData.Mode oldMode, mapData.Mode newMode);
 
@@ -32,10 +32,9 @@ public class DCCStrategyMap : MonoBehaviour
 
     private void Start()
     {
-        Map3DRoot.SetActive(false);
+        Map3DRoot.SetActive(true);
         Map2DRoot.SetActive(false);
         MapSubSchematicRoot.SetActive(false);
-        Update();
     }
 
     private void Update()
