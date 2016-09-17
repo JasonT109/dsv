@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using DG.Tweening;
 using Meg.Maths;
+using TouchScript.Behaviors;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 
