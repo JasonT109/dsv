@@ -62,6 +62,9 @@ public class DCCStrategyMenu : MonoBehaviour
         _diveMapOn.gameObject.SetActive(StrategyMap.IsMap3D);
         _nauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2D);
         _subSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);
+
+        // TODO: Remove this once sub schematic has some options.
+        ViewGroup.gameObject.SetActive(!StrategyMap.IsSubSchematic);
     }
 
 

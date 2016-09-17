@@ -1,13 +1,12 @@
 {
 	"metadata":{
-		"utc":"02/09/16 05:24:32.5",
-		"startedTimestamp":"02/09/16 05:21:36.6",
-		"stoppedTimestamp":"02/09/16 05:21:44.6"
+		"utc":"17/09/16 04:08:26.8",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
 	"groups":[
 		{
 			"id":"FULLSCREEN RED",
-			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Value",
@@ -25,7 +24,6 @@
 		},
 		{
 			"id":"IMPACT ALERT POPUP",
-			"hideTimeline":true,
 			"events":[
 				{
 					"type":"Popup",
@@ -74,6 +72,12 @@
 					"type":"Value",
 					"triggerTime":0.6,
 					"serverParam":"error_doppler",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":0.808587,
+					"serverParam":"error_pressure",
 					"serverValue":0
 				},
 				{
