@@ -1054,7 +1054,7 @@ namespace Meg.Networking
             { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether satellite imagery is displayed on the map."} },
             { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether shipping lanes are displayed on the map."} },
             { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether temperatures are displayed on the map."} },
-            { "mapmode", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map)."} },
+            { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },

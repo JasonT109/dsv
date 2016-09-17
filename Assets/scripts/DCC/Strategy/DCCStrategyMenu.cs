@@ -62,9 +62,6 @@ public class DCCStrategyMenu : MonoBehaviour
         _diveMapOn.gameObject.SetActive(StrategyMap.IsMap3D);
         _nauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2D);
         _subSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);
-
-        // TODO: Remove this once sub schematic has some options.
-        ViewGroup.gameObject.SetActive(!StrategyMap.IsSubSchematic);
     }
 
 
@@ -88,26 +85,38 @@ public class DCCStrategyMenu : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Handle the map mode changing. */
-    private void OnMapModeChanged(mapData.Mode oldmode, mapData.Mode newmode)
+    private void OnMapModeChanged(mapData.Mode oldMode, mapData.Mode newMode)
     {
-        StartCoroutine(CycleViewOptionsRoutine());
+        StartCoroutine(CycleViewOptionsRoutine(oldMode, newMode));
     }
 
     /** Reveal the view menu. */
-    private IEnumerator CycleViewOptionsRoutine()
+    private IEnumerator CycleViewOptionsRoutine(mapData.Mode oldMode, mapData.Mode newMode)
     {
-        ViewGroup.transform.localScale = Vector3.one;
-        ViewGroup.transform.DOScale(Vector3.zero, 0.25f);
-        ViewGroup.DOFade(0, 0.25f);
+        if (HasViewOptionsInMode(oldMode))
+        {
+            ViewGroup.transform.localScale = Vector3.one;
+            ViewGroup.transform.DOScale(Vector3.zero, 0.25f);
+            ViewGroup.DOFade(0, 0.25f);
+        }
 
         while (DOTween.IsTweening(ViewGroup))
             yield return 0;
 
-        ViewGroup.gameObject.SetActive(true);
-        ViewGroup.transform.localScale = Vector3.zero;
-        ViewGroup.transform.DOScale(1, 0.25f);
-        ViewGroup.alpha = 0;
-        ViewGroup.DOFade(1, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+
+        if (HasViewOptionsInMode(newMode))
+        {
+            ViewGroup.transform.localScale = Vector3.zero;
+            ViewGroup.transform.DOScale(1, 0.25f);
+            ViewGroup.alpha = 0;
+            ViewGroup.DOFade(1, 0.25f);
+        }
+    }
+
+    private static bool HasViewOptionsInMode(mapData.Mode mode)
+    {
+        return mode != mapData.Mode.ModeSubSchematic;
     }
 
 }
