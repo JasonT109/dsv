@@ -138,6 +138,35 @@
 			]
 		},
 		{
+			"id":"GLIDER ERRORS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"thruster_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"thruster_heat_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"vertran_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"vertran_heat_r"
+				},
+				{
+					"type":"Value",
+					"serverParam":"jet_heat_l"
+				},
+				{
+					"type":"Value",
+					"serverParam":"jet_heat_r"
+				}
+			]
+		},
+		{
 			"id":"DCC GLIDER SCHEMATIC ERRORS",
 			"parameters":[
 				{
@@ -183,31 +212,31 @@
 			]
 		},
 		{
-			"id":"GLIDER ERRORS",
+			"id":"DCC SUB SCHEMATIC ERRORS",
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"thruster_heat_l"
+					"serverParam":"error_ballasttank"
 				},
 				{
 					"type":"Value",
-					"serverParam":"thruster_heat_r"
+					"serverParam":"error_batteryleak"
 				},
 				{
 					"type":"Value",
-					"serverParam":"vertran_heat_l"
+					"serverParam":"error_oxygenext"
 				},
 				{
 					"type":"Value",
-					"serverParam":"vertran_heat_r"
+					"serverParam":"error_oxygenpump"
 				},
 				{
 					"type":"Value",
-					"serverParam":"jet_heat_l"
+					"serverParam":"error_pressure"
 				},
 				{
 					"type":"Value",
-					"serverParam":"jet_heat_r"
+					"serverParam":"error_hatch"
 				}
 			]
 		}
