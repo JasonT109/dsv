@@ -152,6 +152,8 @@ namespace TouchScript.Behaviors
             // Smooth out pan and zoom.
             transform.localScale = Vector3.SmoothDamp(transform.localScale, 
                 _targetScale, ref _targetScaleVelocity, SmoothTime);
+
+            _targetPosition.z = transform.parent.position.z;
             transform.position = Vector3.SmoothDamp(transform.position,
                 _targetPosition, ref _targetPositionVelocity, SmoothTime);
         }

@@ -12,7 +12,7 @@ public class DCCStrategyMap : MonoBehaviour
 
     public CanvasGroup Fader;
 
-    private mapData.Mode _mode = mapData.Mode.Mode3D ;
+    private mapData.Mode _mode = mapData.Mode.None;
 
     public delegate void MapModeChangeEvent(mapData.Mode oldMode, mapData.Mode newMode);
 
@@ -29,6 +29,14 @@ public class DCCStrategyMap : MonoBehaviour
 
     public bool IsSubSchematic
         { get { return serverUtils.MapData.IsSubSchematic; } }
+
+    private void Start()
+    {
+        Map3DRoot.SetActive(false);
+        Map2DRoot.SetActive(false);
+        MapSubSchematicRoot.SetActive(false);
+        Update();
+    }
 
     private void Update()
     {

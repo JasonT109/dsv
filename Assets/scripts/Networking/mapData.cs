@@ -13,6 +13,7 @@ public class mapData : NetworkBehaviour
     /** Map modes. */
     public enum Mode
     {
+        None = -1,
         Mode3D = 0,
         Mode2D = 1,
         ModeSubSchematic = 2   // Used in the DCC strategy table.
