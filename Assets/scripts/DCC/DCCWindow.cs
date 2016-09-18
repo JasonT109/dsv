@@ -125,7 +125,8 @@ public class DCCWindow : MonoBehaviour
             DCCScreenContentPositions.SetScreenScale(transform, quadPosition);
         }
 
-        windowGlow.SetActive(false);
+        if (windowGlow)
+            windowGlow.SetActive(false);
 
         Register();
     }
@@ -173,8 +174,8 @@ public class DCCWindow : MonoBehaviour
                 }
             }
         }
-
-        windowGlow.SetActive(false);
+        if (windowGlow)
+            windowGlow.SetActive(false);
     }
 
     private static bool HasScreen(screenData.Type type)
@@ -193,13 +194,15 @@ public class DCCWindow : MonoBehaviour
             GameObject DropTargetObject = GetDropTarget();
             if (DropTargetObject)
             {
-                windowGlow.SetActive(true);
+                if (windowGlow)
+                    windowGlow.SetActive(true);
                 DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
                 lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
             }
             else
             {
-                windowGlow.SetActive(false);
+                if (windowGlow)
+                    windowGlow.SetActive(false);
                 if (lastBucketManager)
                     lastBucketManager.highlightedBucket = null;
             }
