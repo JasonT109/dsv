@@ -67,6 +67,9 @@ public class DCCMap3dOptions : MonoBehaviour
     /** Updating. */
     private void Update()
     {
+        if (!serverUtils.MapData)
+            return;
+
         // Update 3d dive map options.
         var isMap3D = StrategyMap.IsMap3D;
         MapContoursButton.gameObject.SetActive(isMap3D);
