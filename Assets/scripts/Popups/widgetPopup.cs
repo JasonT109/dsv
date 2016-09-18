@@ -85,6 +85,9 @@ public class widgetPopup : MonoBehaviour
     /** Whether user has moved this popup. */
     private bool _moved;
 
+    /** Popup's root canvas. */
+    private Canvas _canvas;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -92,6 +95,8 @@ public class widgetPopup : MonoBehaviour
     /** Initialization. */
     protected virtual void Start()
     {
+        _canvas = GetComponent<Canvas>();
+
         if (Root)
             _gesture = Root.GetComponent<TransformGesture>();
 
@@ -258,6 +263,10 @@ public class widgetPopup : MonoBehaviour
     /** Update the popup's position. */
     protected virtual void UpdatePosition()
     {
+        // Update sorting order for topmost popups.
+        if (_canvas && _topmost)
+            _canvas.sortingOrder = 100 + transform.GetSiblingIndex();
+
         // Only update if user hasn't moved the popup.
         if (_moved)
             return;
