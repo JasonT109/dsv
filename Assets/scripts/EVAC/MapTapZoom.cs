@@ -14,6 +14,8 @@ public class MapTapZoom : MonoBehaviour
     public Vector2 ZoomLimits = new Vector2(0.3f, 20f);
     public float Duration = 1;
 
+    public GameObject TapEffectPrefab;
+
     private TransformGesture _gesture;
     private TapGesture _tap;
 
@@ -54,6 +56,20 @@ public class MapTapZoom : MonoBehaviour
         _gesture.Cancel();
         t.DOScale(zoom, Duration).SetEase(Ease.OutSine);
         t.DOLocalMove(target, Duration).SetEase(Ease.OutSine);
+
+        if (TapEffectPrefab)
+            SpawnTapEffect(local, zoom);
     }
-    
+
+    private void SpawnTapEffect(Vector3 local, float zoom)
+    {
+        var effect = Instantiate(TapEffectPrefab);
+        effect.transform.SetParent(transform);
+        effect.transform.localPosition = local;
+
+        var rt = effect.GetComponent<RectTransform>();
+        if (rt)
+            rt.sizeDelta /= zoom;
+    }
+
 }
