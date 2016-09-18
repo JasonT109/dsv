@@ -23,7 +23,11 @@ public class DCCWindow : MonoBehaviour
         comms,
         power,
         oxygen,
-        batteries
+        batteries,
+        gliderpower,
+        gliderthrusters,
+        gliderdiagnostics,
+        glidersonar
     }
     public GameObject windowGlow;
     public contentID windowContent;
