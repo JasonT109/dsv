@@ -29,6 +29,7 @@ public class PasswordScreen : MonoBehaviour
     public Image MMBButtonImg;
     public Image EvacButtonImg;
     public Image StrategyButtonImg;
+    public Image ROVButtonImg;
 
     public GameObject StartButtonObj;
     public Text StartButtonText;
@@ -195,6 +196,14 @@ public class PasswordScreen : MonoBehaviour
         ResetSceneSelection();
         StrategyButtonImg.color = SelectedColor;
         SetScene(NetworkManagerCustom.StrategyTableScene);
+    }
+
+    public void ToggleROV()
+    {
+        Debug.Log("PasswordScreen.ToggleROV() - Configuring UI for ROV.");
+        ResetSceneSelection();
+        ROVButtonImg.color = SelectedColor;
+        SetScene(NetworkManagerCustom.RovScene);
     }
 
     private void ResetSceneSelection()
