@@ -262,6 +262,11 @@ public class widgetPopup : MonoBehaviour
         if (_moved)
             return;
 
+        // Rescale the popup.
+        if (Popup.Scale.sqrMagnitude > 0)
+            Root.transform.localScale = Popup.Scale;
+
+        // Position the popup.
         if (_target)
             PositionOverTarget(_target);
         else

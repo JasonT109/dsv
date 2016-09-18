@@ -28,6 +28,7 @@ namespace Meg.EventSystem
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;
+        public Vector3 Scale = Vector3.one;
         public popupData.Icon Icon = popupData.Icon.Exclamation;
         public Color Color = Color.white;
 
@@ -45,6 +46,7 @@ namespace Meg.EventSystem
                     Target = Target,
                     Position = Position,
                     Size = Size,
+                    Scale = Scale,
                     Icon = Icon,
                     Color = Color
                 };
@@ -96,6 +98,7 @@ namespace Meg.EventSystem
             json.AddField("Target", Target);
             json.AddField("Position", Position);
             json.AddField("Size", Size);
+            json.AddField("Scale", Scale);
             json.AddField("Icon", (int) Icon);
             json.AddField("Color", Color);
 
@@ -117,6 +120,7 @@ namespace Meg.EventSystem
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
             json.GetField(ref Size, "Size");
+            json.GetField(ref Scale, "Scale");
             json.GetField(ref Color, "Color");
 
             var icon = 0;

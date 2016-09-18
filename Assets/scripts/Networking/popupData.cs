@@ -84,6 +84,7 @@ public class popupData : NetworkBehaviour
         public string Target;
         public Vector3 Position;
         public Vector2 Size;
+        public Vector3 Scale;
         public Icon Icon;
         public Color Color;
 
@@ -97,6 +98,7 @@ public class popupData : NetworkBehaviour
             Target = popup.Target;
             Position = popup.Position;
             Size = popup.Size;
+            Scale = popup.Scale;
             Icon = popup.Icon;
             Color = popup.Color;
         }
@@ -115,6 +117,7 @@ public class popupData : NetworkBehaviour
                 && string.Equals(Target, other.Target) 
                 && Position.Equals(other.Position) 
                 && Size.Equals(other.Size)
+                && Scale.Equals(other.Scale)
                 && Icon == other.Icon
                 && Color == other.Color;
         }
@@ -131,6 +134,7 @@ public class popupData : NetworkBehaviour
                 hashCode = (hashCode * 397) ^ (Target != null ? Target.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Position.GetHashCode();
                 hashCode = (hashCode * 397) ^ Size.GetHashCode();
+                hashCode = (hashCode * 397) ^ Scale.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Icon;
                 hashCode = (hashCode * 397) ^ Color.GetHashCode();
                 return hashCode;
