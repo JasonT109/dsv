@@ -146,6 +146,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField PopupTitleInput;
     public InputField PopupMessageInput;
     public InputField PopupTargetInput;
+    public Button PopupTargetSelect;
     public InputField PopupXInput;
     public InputField PopupYInput;
     public InputField PopupZInput;
@@ -1361,6 +1362,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         PopupTypeSelect.onClick.AddListener(PopupTypeSelectClicked);
         PopupMessageInput.onEndEdit.AddListener(PopupMessageInputChanged);
         PopupTargetInput.onEndEdit.AddListener(PopupTargetInputChanged);
+        PopupTargetSelect.onClick.AddListener(PopupTargetSelectClicked);
         PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
         PopupYInput.onEndEdit.AddListener(PopupYInputChanged);
         PopupZInput.onEndEdit.AddListener(PopupZInputChanged);
@@ -1474,6 +1476,25 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PopupEvent.Target = value;
+    }
+
+    private void PopupTargetSelectClicked()
+    {
+        var targets = ObjectFinder.FindAll<PopupTarget>()
+            .OrderBy(target => target.Id)
+            .Select(target => target.Id)
+            .Distinct()
+            .Select(id => new DialogList.Item { Id = id, Name = id});
+
+        DialogManager.Instance.ShowList("SELECT POPUP TARGET",
+            "Please select a target (blank = show on all screens):",
+            targets,
+            PopupTargetInput.text,
+            (item) =>
+            {
+                PopupEvent.Target = item.Id;
+                PopupTargetInput.text = item.Id;
+            });
     }
 
     private void UpdatePopupPositionInputs()

@@ -2,7 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 
 
-public class widgetPopupThemed : widgetPopupInfo
+public class widgetPopupThemed : widgetPopup
 {
 
     /** Set whether the popup is active. */
@@ -21,6 +21,17 @@ public class widgetPopupThemed : widgetPopupInfo
             Title.gameObject.SetActive(Popup.HasTitle);
         if (Message)
             Message.gameObject.SetActive(Popup.HasMessage);
+    }
+
+
+    /** Animate the popup into place. */
+    protected override void AnimateIn()
+    {
+        base.AnimateIn();
+
+        // Resize and display the popup area box.
+        if (Area)
+            Area.GetComponent<RectTransform>().sizeDelta = Popup.Size;
     }
 
 }

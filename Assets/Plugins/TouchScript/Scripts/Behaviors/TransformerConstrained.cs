@@ -15,15 +15,11 @@ namespace TouchScript.Behaviors
     {
         #region Public properties
 
-        /** Smooth time for transform. */
-        public float SmoothTime = 0.25f;
-
         /** Bounds of the panning zone (local space). */
         public Bounds PanLimits;
 
         /** Zoom limits. */
         public Vector2 ZoomSoftLimits = new Vector2(0, float.MaxValue);
-        public float ZoomSmoothTime = 1;
 
 
         #endregion
@@ -31,13 +27,9 @@ namespace TouchScript.Behaviors
         #region Private variables
 
         private Transform _cachedTransform;
-        private readonly List<ITransformGesture> _gestures = new List<ITransformGesture>();
-        private Vector3 _lastOkPosition;
-        private Vector3 _lastOkScale;
-        private Vector3 _smoothPositionVelocity;
-        private Vector3 _smoothScaleVelocity;
         private Vector3 _targetPosition;
         private Vector3 _targetScale;
+        private readonly List<ITransformGesture> _gestures = new List<ITransformGesture>();
 
         #endregion
 
@@ -87,20 +79,14 @@ namespace TouchScript.Behaviors
         /// <inheritdoc />
         private void ApplyTransform(TransformGesture gesture, Transform target)
         {
-            _targetScale *= gesture.DeltaScale;
-
-            // Remember last acceptable values so we can reset to them.
-            var scale = _targetScale.x;
-            if (scale > ZoomSoftLimits.x && scale < ZoomSoftLimits.y)
+            var scale = _targetScale.x * gesture.DeltaScale;
+            if (scale < ZoomSoftLimits.x || scale > ZoomSoftLimits.y)
             {
-                _lastOkScale = _targetScale;
-                _lastOkPosition = _targetPosition;
-            }
-            else if (scale < ZoomSoftLimits.x)
-            {
-                _targetScale = new Vector3(ZoomSoftLimits.x, ZoomSoftLimits.x, _targetScale.z);
+                gesture.Cancel(true, true);
                 return;
             }
+
+            _targetScale *= gesture.DeltaScale;
 
             if (!Mathf.Approximately(gesture.DeltaRotation, 0f))
                 target.rotation = Quaternion.AngleAxis(gesture.DeltaRotation, gesture.RotationAxis) * target.rotation;
@@ -118,11 +104,6 @@ namespace TouchScript.Behaviors
                 _targetPosition = transform.position;
             }
 
-            // Return to acceptable zoom values when needed.
-            var scale = _targetScale.x;
-            if (scale < ZoomSoftLimits.x || scale > ZoomSoftLimits.y)
-                ReturnToLastOkState();
-
             // Apply scaling.
             transform.localScale = _targetScale;
 
@@ -135,16 +116,6 @@ namespace TouchScript.Behaviors
             transform.localPosition = constrainedLocal;
             _targetPosition = transform.position;
         }
-
-        private void ReturnToLastOkState()
-        {
-            _targetScale = Vector3.SmoothDamp(_targetScale,
-                _lastOkScale, ref _smoothScaleVelocity, ZoomSmoothTime);
-
-            _targetPosition = Vector3.SmoothDamp(_targetPosition,
-                _lastOkPosition, ref _smoothPositionVelocity, ZoomSmoothTime);
-        }
-
 
         #endregion
     }
