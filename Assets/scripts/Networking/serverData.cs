@@ -1260,7 +1260,9 @@ public class serverData : NetworkBehaviour
             case "descentmodevalue":
                 GLScreenData.descentModeValue = newValue;
                 break;
-
+            case "dccschematicstoggle":
+                DCCScreenData.DCCschematicsToggle = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;

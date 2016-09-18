@@ -496,6 +496,7 @@ namespace Meg.Networking
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
+            "dccschematicstoggle",
             "descentmodevalue",
             "depth",
             "depthdisplayed",
@@ -931,6 +932,7 @@ namespace Meg.Networking
             { "descentmodevalue", new ParameterInfo {minValue = -90, maxValue = 90, description = "Descent mode value."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
+            { "dccschematicstoggle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Sub schematic (0) / glider schematic (1) toggle." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
@@ -1740,6 +1742,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
                 case "dcccommsusesliders":
                     return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
+                case "dccschematicstoggle":
+                    return DCCScreenData.DCCschematicsToggle;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":

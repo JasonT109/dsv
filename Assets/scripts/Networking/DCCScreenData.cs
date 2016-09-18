@@ -41,6 +41,9 @@ public class DCCScreenData : NetworkBehaviour
     [SyncVar]
     public bool DCCcommsUseSliders;
 
+    [SyncVar]
+    public int DCCschematicsToggle = 0;
+
 
     /** 
      * Represents the screen state for a given DCC station. 
