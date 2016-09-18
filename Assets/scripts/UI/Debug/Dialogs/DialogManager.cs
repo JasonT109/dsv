@@ -39,17 +39,21 @@ public class DialogManager : Singleton<DialogManager>
 
     /** Display a list dialog. */
     public DialogList ShowList(string title, string message, List<DialogList.Item> items)
-        { return ShowList(title, message, items, default(DialogList.Item)); }
+        { return ShowList(title, message, items, null, null); }
 
     /** Display a list dialog. */
-    public DialogList ShowList(string title, string message, List<DialogList.Item> items, DialogList.Item selected, UnityAction<DialogList.Item> chosen = null)
+    public DialogList ShowList(string title, string message, List<DialogList.Item> items, UnityAction<DialogList.Item> chosen)
+        { return ShowList(title, message, items, null, chosen); }
+
+    /** Display a list dialog. */
+    public DialogList ShowList(string title, string message, List<DialogList.Item> items, string selectedId, UnityAction<DialogList.Item> chosen = null)
     {
         if (Showing)
             return null;
 
         var dialog = Instantiate(DialogListPrefab);
         dialog.transform.SetParent(transform, false);
-        dialog.Configure(title.ToUpper(), message, items);
+        dialog.Configure(title.ToUpper(), message, items, selectedId);
         Current = dialog;
 
         if (chosen != null)

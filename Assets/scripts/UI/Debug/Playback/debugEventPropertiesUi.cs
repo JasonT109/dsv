@@ -141,6 +141,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     public Transform PopupProperties;
     public Toggle[] PopupTypeToggles;
+    public Text PopupTypeLabel;
+    public Button PopupTypeSelect;
     public InputField PopupTitleInput;
     public InputField PopupMessageInput;
     public InputField PopupTargetInput;
@@ -1355,6 +1357,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void ConfigurePopupProperties()
     {
         PopupTitleInput.onEndEdit.AddListener(PopupTitleInputChanged);
+        PopupTypeSelect.onClick.AddListener(PopupTypeSelectClicked);
         PopupMessageInput.onEndEdit.AddListener(PopupMessageInputChanged);
         PopupTargetInput.onEndEdit.AddListener(PopupTargetInputChanged);
         PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
@@ -1403,6 +1406,16 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupProperties()
     {
+        PopupTypeLabel.text = popupData.NameForType(PopupEvent.Type);
+    }
+
+    private void PopupTypeSelectClicked()
+    {
+        DialogManager.Instance.ShowList("SELECT POPUP TYPE",
+            "Please select the type of popup you want to display:",
+            serverUtils.PopupData.PopupListItems,
+            popupData.NameForType(PopupEvent.Type),
+            (item) => { PopupEvent.Type = popupData.TypeForId(item.Id); });
     }
 
     private void UpdatePopupTitleInput()

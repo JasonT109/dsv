@@ -304,6 +304,49 @@ public class popupData : NetworkBehaviour
     public void UnregisterTarget(PopupTarget target)
         { _popupTargets.Remove(target.Id.ToLower()); }
 
+    /** Return a list of possible popups. */
+    public List<DialogList.Item> PopupListItems
+    {
+        get
+        {
+            return new List<DialogList.Item>(new []
+            {
+                new DialogList.Item { Name = "Info", Id = "Info" },
+                new DialogList.Item { Name = "Warning", Id = "Warning" },
+                new DialogList.Item { Name = "Greenscreen", Id = "GreenScreen" },
+                new DialogList.Item { Name = "Boot", Id = "Boot" },
+                new DialogList.Item { Name = "Boot (Low Power Mode)", Id = "BootLowPower" },
+            });
+        }
+    }
+
+    /** Return a popup type, given it's id. */
+    public static Type TypeForId(string id)
+    {
+        switch (id)
+        {
+            case "Info":
+                return Type.Info;
+            case "GreenScreen":
+                return Type.GreenScreen;
+            case "Boot":
+                return Type.Boot;
+            case "BootLowPower":
+                return Type.BootLowPower;
+            case "Warning":
+                return Type.Warning;
+            default:
+                return Type.Info;
+        }
+    }
+
+    /** Return string representation of the given screen content. */
+    public static string NameForType(Type type)
+    {
+        var result = Enum.GetName(typeof(Type), type);
+        return result ?? "";
+    }
+
 
     // Unity Methods
     // ------------------------------------------------------------

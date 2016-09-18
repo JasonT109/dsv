@@ -24,7 +24,7 @@ public class DialogList : Dialog
     public struct Item
     {
         public string Name;
-        public string Value;
+        public string Id;
 
         public override bool Equals(object o)
         {
@@ -32,11 +32,11 @@ public class DialogList : Dialog
                 return false;
 
             var s = (Item) o;
-            return Value == s.Value;
+            return Id == s.Id;
         }
 
         public override int GetHashCode()
-            { return Value.GetHashCode(); }
+            { return Id.GetHashCode(); }
     }
 
     public Item Selected { get; private set; }
@@ -48,10 +48,10 @@ public class DialogList : Dialog
 
     /** Configure the dialog. */
     public virtual void Configure(string title, string message, List<Item> items)
-        { Configure(title, message, items, default(Item)); }
+        { Configure(title, message, items, null); }
 
     /** Configure the dialog. */
-    public virtual void Configure(string title, string message, List<Item> items, Item selected)
+    public virtual void Configure(string title, string message, List<Item> items, string selectedId)
     {
         Title.text = title;
         Message.text = message;
@@ -67,8 +67,8 @@ public class DialogList : Dialog
             _uis.Add(ui);
         }
 
-        if (!string.IsNullOrEmpty(selected.Value))
-            Select(selected);
+        if (!string.IsNullOrEmpty(selectedId))
+            Select(selectedId);
         else if (items.Count > 0)
             Select(items[0]);
     }
@@ -83,17 +83,38 @@ public class DialogList : Dialog
     }
 
     /** Select the given item. */
+    public void Select(string id)
+    {
+        Selected = default(Item);
+
+        foreach (var ui in _uis)
+        {
+            ui.Selected = Equals(ui.Item.Id, id);
+            if (ui.Selected)
+                Selected = ui.Item;
+        }
+    }
+
+    /** Select the given item. */
     public void Select(Item item)
     {
+        Selected = default(Item);
         foreach (var ui in _uis)
+        {
             ui.Selected = Equals(ui.Item, item);
-
-        Selected = item;
+            if (ui.Selected)
+                Selected = ui.Item;
+        }
     }
 
     /** Handle the 'OK' button being pressed. */
     public void OK()
-        { Close(Result.OK); }
+    {
+        if (OnChosen != null)
+            OnChosen.Invoke(Selected);
+
+        Close(Result.OK);
+    }
 
     /** Handle the 'cancel' button being pressed. */
     public void Cancel()
