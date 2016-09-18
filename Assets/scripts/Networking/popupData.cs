@@ -183,7 +183,20 @@ public class popupData : NetworkBehaviour
 
         /** Whether popup's color can be changed. */
         public bool CanSetColor
-            { get { return Type == Type.Info || Type == Type.Warning; } }
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case Type.Info:
+                    case Type.Warning:
+                    case Type.Themed:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
 
         /** Whether popup's position can be changed. */
         public bool CanSetPosition
@@ -209,6 +222,10 @@ public class popupData : NetworkBehaviour
         /** Whether popup has a title. */
         public bool HasTitle
             { get { return !string.IsNullOrEmpty(Title); } }
+
+        /** Whether popup has a message. */
+        public bool HasMessage
+            { get { return !string.IsNullOrEmpty(Message); } }
 
     };
 
