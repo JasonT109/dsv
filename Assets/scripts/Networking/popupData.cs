@@ -22,20 +22,8 @@ public class popupData : NetworkBehaviour
 
     [Header("Prefabs")]
 
-    /** Prefab to use when instantiating info popups. */
-    public widgetPopup PopupInfoPrefab;
-
-    /** Prefab to use when instantiating warning popups. */
-    public widgetPopup PopupWarningPrefab;
-
-    /** Prefab to use when instantiating greenscreen popups. */
-    public widgetPopup PopupGreenPrefab;
-
-    /** Prefab to use for bootup popup. */
-    public widgetPopup PopupBoot;
-
-    /** Prefab to use for low power bootup popup. */
-    public widgetPopup PopupBootLowPower;
+    /** The set of available popup types. */
+    public PopupType[] Types;
 
     /** Prefab to use for glider bootup popup (left screen). */
     public widgetPopup PopupBootGliderLeft;
@@ -72,6 +60,16 @@ public class popupData : NetworkBehaviour
 
     // Structures
     // ------------------------------------------------------------
+
+    /** Structure defining a type of popup. */
+    [Serializable]
+    public struct PopupType
+    {
+        public Type Type;
+        public string Name;
+        public widgetPopup Prefab;
+    }
+
 
     /** Structure defining an on-screen popup. */
     [Serializable]
@@ -304,48 +302,17 @@ public class popupData : NetworkBehaviour
     public void UnregisterTarget(PopupTarget target)
         { _popupTargets.Remove(target.Id.ToLower()); }
 
-    /** Return a list of possible popups. */
-    public List<DialogList.Item> PopupListItems
-    {
-        get
-        {
-            return new List<DialogList.Item>(new []
-            {
-                new DialogList.Item { Name = "Info", Id = "Info" },
-                new DialogList.Item { Name = "Warning", Id = "Warning" },
-                new DialogList.Item { Name = "Greenscreen", Id = "GreenScreen" },
-                new DialogList.Item { Name = "Boot", Id = "Boot" },
-                new DialogList.Item { Name = "Boot (Low Power Mode)", Id = "BootLowPower" },
-            });
-        }
-    }
+    /** Return a popup type, given its name. */
+    public Type TypeForName(string name)
+        { return Types.FirstOrDefault(t => t.Name == name).Type; }
 
-    /** Return a popup type, given it's id. */
-    public static Type TypeForId(string id)
-    {
-        switch (id)
-        {
-            case "Info":
-                return Type.Info;
-            case "GreenScreen":
-                return Type.GreenScreen;
-            case "Boot":
-                return Type.Boot;
-            case "BootLowPower":
-                return Type.BootLowPower;
-            case "Warning":
-                return Type.Warning;
-            default:
-                return Type.Info;
-        }
-    }
+    /** Return a popup type, given its id. */
+    public Type TypeForId(string id)
+        { return Types.FirstOrDefault(t => t.Type.ToString() == id).Type; }
 
     /** Return string representation of the given screen content. */
-    public static string NameForType(Type type)
-    {
-        var result = Enum.GetName(typeof(Type), type);
-        return result ?? "";
-    }
+    public string NameForType(Type type)
+        { return Types.FirstOrDefault(t => t.Type == type).Name; }
 
 
     // Unity Methods
@@ -396,30 +363,11 @@ public class popupData : NetworkBehaviour
     /** Return a prefab to use for the given popup type. */
     private widgetPopup GetPrefabForPopup(Popup popup)
     {
-        switch (popup.Type)
-        {
-            case Type.Info:
-                return PopupInfoPrefab;
-            case Type.Warning:
-                return PopupWarningPrefab;
-            case Type.GreenScreen:
-                return PopupGreenPrefab;
-            case Type.Boot:
-                return GetPrefabForBoot(popup);
-            case Type.BootLowPower:
-                return PopupBootLowPower;
-            default:
-                return PopupInfoPrefab;
-        }
-    }
-
-    /** Determine the correct boot popup to use given current screen state. */
-    private widgetPopup GetPrefabForBoot(Popup popup)
-    {
-        if (serverUtils.IsGlider())
+        var type = popup.Type;
+        if (type == Type.Boot && serverUtils.IsGlider())
             return GetPrefabForGliderBoot(popup);
 
-        return PopupBoot;
+        return Types.FirstOrDefault(t => t.Type == type).Prefab;
     }
 
     private widgetPopup GetPrefabForGliderBoot(Popup popup)

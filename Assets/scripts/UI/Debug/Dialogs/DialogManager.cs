@@ -38,15 +38,15 @@ public class DialogManager : Singleton<DialogManager>
     }
 
     /** Display a list dialog. */
-    public DialogList ShowList(string title, string message, List<DialogList.Item> items)
+    public DialogList ShowList(string title, string message, IEnumerable<DialogList.Item> items)
         { return ShowList(title, message, items, null, null); }
 
     /** Display a list dialog. */
-    public DialogList ShowList(string title, string message, List<DialogList.Item> items, UnityAction<DialogList.Item> chosen)
+    public DialogList ShowList(string title, string message, IEnumerable<DialogList.Item> items, UnityAction<DialogList.Item> chosen)
         { return ShowList(title, message, items, null, chosen); }
 
     /** Display a list dialog. */
-    public DialogList ShowList(string title, string message, List<DialogList.Item> items, string selectedId, UnityAction<DialogList.Item> chosen = null)
+    public DialogList ShowList(string title, string message, IEnumerable<DialogList.Item> items, string selectedId, UnityAction<DialogList.Item> chosen = null)
     {
         if (Showing)
             return null;

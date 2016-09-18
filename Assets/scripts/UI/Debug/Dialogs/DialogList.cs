@@ -47,11 +47,11 @@ public class DialogList : Dialog
     private readonly List<DialogListItemUi> _uis = new List<DialogListItemUi>();
 
     /** Configure the dialog. */
-    public virtual void Configure(string title, string message, List<Item> items)
+    public virtual void Configure(string title, string message, IEnumerable<Item> items)
         { Configure(title, message, items, null); }
 
     /** Configure the dialog. */
-    public virtual void Configure(string title, string message, List<Item> items, string selectedId)
+    public virtual void Configure(string title, string message, IEnumerable<Item> items, string selectedId)
     {
         Title.text = title;
         Message.text = message;
@@ -69,8 +69,8 @@ public class DialogList : Dialog
 
         if (!string.IsNullOrEmpty(selectedId))
             Select(selectedId);
-        else if (items.Count > 0)
-            Select(items[0]);
+        else if (_uis.Count > 0)
+            Select(_uis[0].Item.Id);
     }
 
 
