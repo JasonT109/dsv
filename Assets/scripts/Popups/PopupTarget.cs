@@ -36,6 +36,9 @@ public class PopupTarget : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
+        if (string.IsNullOrEmpty(Id))
+            Id = name;
+
         if (PopupData)
             PopupData.RegisterTarget(this);
     }
