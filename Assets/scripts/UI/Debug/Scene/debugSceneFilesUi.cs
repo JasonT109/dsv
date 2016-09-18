@@ -134,7 +134,7 @@ public class debugSceneFilesUi : MonoBehaviour
             string.Format("Are you sure you wish to load the {0} file '{1}'?", FolderType.Name, info.Name),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 megSceneFile.LoadFromFile(info.FullName);

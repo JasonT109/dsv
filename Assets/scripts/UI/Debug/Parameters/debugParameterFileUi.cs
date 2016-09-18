@@ -169,7 +169,7 @@ public class debugParameterFileUi : MonoBehaviour
             string.Format("Do you wish to remove the group '{0}'?", group.id),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 _file.RemoveGroup(group);
@@ -213,7 +213,7 @@ public class debugParameterFileUi : MonoBehaviour
             string.Format("Are you sure you wish to remove the parameter '{0}'?", toRemove.name),
             result =>
             {
-                if (result == DialogYesNo.DialogResult.Yes)
+                if (result == DialogYesNo.Result.Yes)
                     toRemove.group.RemoveParameter(toRemove);
             });
     }
@@ -228,7 +228,7 @@ public class debugParameterFileUi : MonoBehaviour
             string.Format("Are you sure you wish to remove all parameters from the group '{0}'?", toClear.id),
             result =>
             {
-                if (result == DialogYesNo.DialogResult.Yes)
+                if (result == DialogYesNo.Result.Yes)
                     toClear.Clear();
             });
     }
@@ -243,7 +243,7 @@ public class debugParameterFileUi : MonoBehaviour
             "Are you sure you wish to remove all groups from view?",
             result =>
             {
-                if (result == DialogYesNo.DialogResult.Yes)
+                if (result == DialogYesNo.Result.Yes)
                     _file.Clear();
             });
     }

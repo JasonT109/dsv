@@ -197,7 +197,7 @@ public class debugEventFileUi : MonoBehaviour
             string.Format("Are you sure you wish to remove the group '{0}'?", group.id),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 File.RemoveGroup(group);
@@ -214,7 +214,7 @@ public class debugEventFileUi : MonoBehaviour
             "Are you sure you wish to remove all event groups from view?",
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 Properties.Group = null;

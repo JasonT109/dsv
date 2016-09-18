@@ -191,7 +191,7 @@ public class debugParameterGroupUi : MonoBehaviour
             string.Format("Do you wish to remove the parameter '{0}'?", toRemove.name), 
             result =>
         {
-            if (result == DialogYesNo.DialogResult.Yes)
+            if (result == DialogYesNo.Result.Yes)
                 _group.RemoveParameter(toRemove);
         });
     }
