@@ -45,7 +45,8 @@ public class popupData : NetworkBehaviour
         GreenScreen,
         Boot,
         BootLowPower,
-        Warning
+        Warning,
+        Themed
     }
 
     /** Possible popup icons. */
@@ -65,8 +66,9 @@ public class popupData : NetworkBehaviour
     [Serializable]
     public struct PopupType
     {
-        public Type Type;
         public string Name;
+        public Type Type;
+        public string Theme;
         public widgetPopup Prefab;
     }
 
@@ -76,6 +78,7 @@ public class popupData : NetworkBehaviour
     public struct Popup
     {
         public Type Type;
+        public string Theme;
         public string Title;
         public string Message;
         public string Target;
@@ -88,6 +91,7 @@ public class popupData : NetworkBehaviour
         public Popup(Popup popup)
         {
             Type = popup.Type;
+            Theme = popup.Theme;
             Title = popup.Title;
             Message = popup.Message;
             Target = popup.Target;
@@ -105,6 +109,7 @@ public class popupData : NetworkBehaviour
         public bool Equals(Popup other)
         {
             return Type.Equals(other.Type)
+                && string.Equals(Theme, other.Theme)
                 && string.Equals(Title, other.Title)
                 && string.Equals(Message, other.Message)
                 && string.Equals(Target, other.Target) 
@@ -120,6 +125,7 @@ public class popupData : NetworkBehaviour
             unchecked
             {
                 var hashCode = (int) Type;
+                hashCode = (hashCode * 397) ^ (Theme != null ? Theme.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Title != null ? Title.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Message != null ? Message.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (Target != null ? Target.GetHashCode() : 0);
@@ -143,6 +149,7 @@ public class popupData : NetworkBehaviour
                 case Type.Boot:
                 case Type.BootLowPower:
                 case Type.Warning:
+                case Type.Themed:
                     return false;
                 default:
                     return true;
@@ -160,6 +167,7 @@ public class popupData : NetworkBehaviour
                     case Type.Boot:
                     case Type.BootLowPower:
                     case Type.Warning:
+                    case Type.Themed:
                         return true;
                     case Type.GreenScreen:
                         return false;
@@ -187,6 +195,7 @@ public class popupData : NetworkBehaviour
                     case Type.Info:
                     case Type.GreenScreen:
                     case Type.Warning:
+                    case Type.Themed:
                         return true;
                     case Type.Boot:
                     case Type.BootLowPower:
@@ -302,17 +311,18 @@ public class popupData : NetworkBehaviour
     public void UnregisterTarget(PopupTarget target)
         { _popupTargets.Remove(target.Id.ToLower()); }
 
-    /** Return a popup type, given its name. */
-    public Type TypeForName(string name)
-        { return Types.FirstOrDefault(t => t.Name == name).Type; }
+    /** Return a type entry. */
+    public PopupType FindPopupType(Type type, string theme)
+    {
+        if (string.IsNullOrEmpty(theme))
+            return Types.FirstOrDefault(t => t.Type == type);
 
-    /** Return a popup type, given its id. */
-    public Type TypeForId(string id)
-        { return Types.FirstOrDefault(t => t.Type.ToString() == id).Type; }
+        return Types.FirstOrDefault(t => t.Type == type && t.Theme == theme);
+    }
 
-    /** Return string representation of the given screen content. */
-    public string NameForType(Type type)
-        { return Types.FirstOrDefault(t => t.Type == type).Name; }
+    /** Return a type entry. */
+    public PopupType PopupTypeForName(string name)
+        { return Types.FirstOrDefault(t => t.Name == name); }
 
 
     // Unity Methods
@@ -367,7 +377,11 @@ public class popupData : NetworkBehaviour
         if (type == Type.Boot && serverUtils.IsGlider())
             return GetPrefabForGliderBoot(popup);
 
-        return Types.FirstOrDefault(t => t.Type == type).Prefab;
+        if (string.IsNullOrEmpty(popup.Theme))
+            return Types.FirstOrDefault(t => t.Type == type).Prefab;
+
+        return Types.FirstOrDefault(t => t.Type == type 
+            && t.Theme == popup.Theme).Prefab;
     }
 
     private widgetPopup GetPrefabForGliderBoot(Popup popup)

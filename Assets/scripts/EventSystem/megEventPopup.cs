@@ -22,6 +22,7 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         public popupData.Type Type = popupData.Type.Info;
+        public string Theme = "";
         public string Title = "";
         public string Message = DefaultMessage;
         public string Target = "";
@@ -38,6 +39,7 @@ namespace Meg.EventSystem
                 return new popupData.Popup
                 {
                     Type = Type,
+                    Theme = Theme,
                     Title = Title,
                     Message = Message,
                     Target = Target,
@@ -88,6 +90,7 @@ namespace Meg.EventSystem
         {
             var json = base.Save();
             json.AddField("Type", (int) Type);
+            json.AddField("Theme", Theme);
             json.AddField("Title", Title);
             json.AddField("Message", Message);
             json.AddField("Target", Target);
@@ -108,6 +111,7 @@ namespace Meg.EventSystem
             json.GetField(ref type, "Type");
             Type = (popupData.Type) type;
 
+            json.GetField(ref Theme, "Theme");
             json.GetField(ref Title, "Title");
             json.GetField(ref Message, "Message");
             json.GetField(ref Target, "Target");
@@ -127,6 +131,9 @@ namespace Meg.EventSystem
                 return triggerLabel;
 
             var typeName = Enum.GetName(typeof(popupData.Type), Type);
+            if (!string.IsNullOrEmpty(Theme))
+                typeName += "." + Theme;
+
             var result = string.Format("Popup {0}", typeName);
             if (!string.IsNullOrEmpty(Title))
                 result += string.Format(" '{0}'", Title);

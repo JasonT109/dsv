@@ -1406,20 +1406,32 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupProperties()
     {
-        PopupTypeLabel.text = serverUtils.PopupData.NameForType(PopupEvent.Type);
+        var type = FindPopupType();
+        PopupTypeLabel.text = !string.IsNullOrEmpty(type.Name) ? type.Name : "";
     }
 
     private void PopupTypeSelectClicked()
     {
         var items = serverUtils.PopupData.Types.Select(
-            t => new DialogList.Item {Name = t.Name, Id = t.Type.ToString()} );
+            t => new DialogList.Item {Name = t.Name, Id = t.Name} );
 
         DialogManager.Instance.ShowList("SELECT POPUP TYPE",
             "Please select the type of popup you want to display:",
-            items, 
-            PopupEvent.Type.ToString(),
-            (item) => { PopupEvent.Type = serverUtils.PopupData.TypeForId(item.Id); });
+            items,
+            PopupTypeLabel.text,
+            (item) =>
+            {
+                var type = PopupTypeForName(item.Id);
+                PopupEvent.Type = type.Type;
+                PopupEvent.Theme = type.Theme;
+            });
     }
+
+    private popupData.PopupType FindPopupType()
+        { return serverUtils.PopupData.FindPopupType(PopupEvent.Type, PopupEvent.Theme); }
+
+    private static popupData.PopupType PopupTypeForName(string name)
+        { return serverUtils.PopupData.PopupTypeForName(name); }
 
     private void UpdatePopupTitleInput()
     {
