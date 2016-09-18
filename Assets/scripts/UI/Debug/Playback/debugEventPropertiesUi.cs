@@ -141,6 +141,8 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     public Transform PopupProperties;
     public Toggle[] PopupTypeToggles;
+    public Text PopupTypeLabel;
+    public Button PopupTypeSelect;
     public InputField PopupTitleInput;
     public InputField PopupMessageInput;
     public InputField PopupTargetInput;
@@ -149,6 +151,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField PopupZInput;
     public InputField PopupWidthInput;
     public InputField PopupHeightInput;
+    public InputField PopupScaleInput;
     public Toggle[] PopupIconToggles;
     public Toggle[] PopupColorToggles;
 
@@ -1355,6 +1358,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void ConfigurePopupProperties()
     {
         PopupTitleInput.onEndEdit.AddListener(PopupTitleInputChanged);
+        PopupTypeSelect.onClick.AddListener(PopupTypeSelectClicked);
         PopupMessageInput.onEndEdit.AddListener(PopupMessageInputChanged);
         PopupTargetInput.onEndEdit.AddListener(PopupTargetInputChanged);
         PopupXInput.onEndEdit.AddListener(PopupXInputChanged);
@@ -1362,6 +1366,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         PopupZInput.onEndEdit.AddListener(PopupZInputChanged);
         PopupWidthInput.onEndEdit.AddListener(PopupWidthInputChanged);
         PopupHeightInput.onEndEdit.AddListener(PopupHeightInputChanged);
+        PopupScaleInput.onEndEdit.AddListener(PopupScaleInputChanged);
 
         for (var i = 0; i < PopupIconToggles.Length; i++)
         {
@@ -1403,7 +1408,32 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdatePopupProperties()
     {
+        var type = FindPopupType();
+        PopupTypeLabel.text = !string.IsNullOrEmpty(type.Name) ? type.Name : "";
     }
+
+    private void PopupTypeSelectClicked()
+    {
+        var items = serverUtils.PopupData.Types.Select(
+            t => new DialogList.Item {Name = t.Name, Id = t.Name} );
+
+        DialogManager.Instance.ShowList("SELECT POPUP TYPE",
+            "Please select the type of popup you want to display:",
+            items,
+            PopupTypeLabel.text,
+            (item) =>
+            {
+                var type = PopupTypeForName(item.Id);
+                PopupEvent.Type = type.Type;
+                PopupEvent.Theme = type.Theme;
+            });
+    }
+
+    private popupData.PopupType FindPopupType()
+        { return serverUtils.PopupData.FindPopupType(PopupEvent.Type, PopupEvent.Theme); }
+
+    private static popupData.PopupType PopupTypeForName(string name)
+        { return serverUtils.PopupData.PopupTypeForName(name); }
 
     private void UpdatePopupTitleInput()
     {
@@ -1460,6 +1490,11 @@ public class debugEventPropertiesUi : MonoBehaviour
     {
         PopupWidthInput.text = string.Format("{0:N0}", PopupEvent.Size.x);
         PopupHeightInput.text = string.Format("{0:N0}", PopupEvent.Size.y);
+
+        if (Mathf.Approximately(PopupEvent.Scale.x, 0))
+            PopupScaleInput.text = "";
+        else
+            PopupScaleInput.text = string.Format("{0:N0}", PopupEvent.Scale.x);
     }
 
     public void PopupXInputChanged(string value)
@@ -1520,6 +1555,18 @@ public class debugEventPropertiesUi : MonoBehaviour
             return;
 
         PopupEvent.Size.y = result;
+    }
+
+    public void PopupScaleInputChanged(string value)
+    {
+        if (_initializing)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        PopupEvent.Scale = Vector3.one * result;
     }
 
     private void UpdatePopupIconToggles()

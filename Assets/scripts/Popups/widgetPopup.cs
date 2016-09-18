@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 using Meg.Networking;
+using TouchScript.Gestures;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -77,12 +79,33 @@ public class widgetPopup : MonoBehaviour
     /** Z-sorting bias (used in DCC). */
     private float _zBias = -1.9f;
 
+    /** Transform gesture, if any. */
+    private TransformGesture _gesture;
+
+    /** Whether user has moved this popup. */
+    private bool _moved;
+
+    /** Popup's root canvas. */
+    private Canvas _canvas;
+
 
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Initialization. */
+    protected virtual void Start()
+    {
+        _canvas = GetComponent<Canvas>();
+
+        if (Root)
+            _gesture = Root.GetComponent<TransformGesture>();
+
+        if (_gesture)
+            RegisterWithGesture();
+    }
+
     /** Updating. */
-    private void LateUpdate()
+    protected virtual void LateUpdate()
     {
         // Update popup's visibility and positioning.
         UpdatePopup();
@@ -139,6 +162,10 @@ public class widgetPopup : MonoBehaviour
             Destroy(gameObject);
     }
 
+    /** Request that this popup be removed from the scene. */
+    public void Remove()
+        { serverUtils.PostRemovePopup(Popup); }
+
 
     // Protected Methods
     // ------------------------------------------------------------
@@ -182,10 +209,7 @@ public class widgetPopup : MonoBehaviour
             PopupData.TryGetTarget(Popup.Target, out _target);
 
         // Update the popup's position.
-        if (_target)
-            PositionOverTarget(_target);
-        else
-            SetPosition(Popup.Position);
+        UpdatePosition();
 
         // Update the popup's visibility.
         if (!string.IsNullOrEmpty(Popup.Target))
@@ -236,6 +260,28 @@ public class widgetPopup : MonoBehaviour
         canvas.sortingLayerName = value ? "Top" : "Default";
     }
 
+    /** Update the popup's position. */
+    protected virtual void UpdatePosition()
+    {
+        // Update sorting order for topmost popups.
+        if (_canvas && _topmost)
+            _canvas.sortingOrder = 100 + transform.GetSiblingIndex();
+
+        // Only update if user hasn't moved the popup.
+        if (_moved)
+            return;
+
+        // Rescale the popup.
+        if (Popup.Scale.sqrMagnitude > 0)
+            Root.transform.localScale = Popup.Scale;
+
+        // Position the popup.
+        if (_target)
+            PositionOverTarget(_target);
+        else
+            SetPosition(Popup.Position);
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -278,6 +324,19 @@ public class widgetPopup : MonoBehaviour
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
         Destroy(gameObject);
+    }
+
+    /** Register for transform gesture events. */
+    private void RegisterWithGesture()
+        { _gesture.TransformStarted += OnTransformStarted; }
+
+    /** Handle user moving the popup. */
+    private void OnTransformStarted(object sender, EventArgs eventArgs)
+    {
+        _moved = true;
+
+        // Bump popup to the top of the render order.
+        transform.SetAsLastSibling();
     }
 
 }
