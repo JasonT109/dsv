@@ -98,6 +98,12 @@ public class widget3DMap : MonoBehaviour {
     private Material _waterMaterial;
     private Material _acidMaterial;
 
+    private float _waterAlpha = 1;
+    private float _waterSmoothVelocity;
+    private float _acidAlpha;
+    private float _acidSmoothVelocity;
+    private float _acidMaxRefraction;
+
     private Vector3 _cameraSmoothVelocity;
     private float _lastPressTime;
 
@@ -421,11 +427,29 @@ public class widget3DMap : MonoBehaviour {
         m.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
         m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
 
+        // Update water visibility.
+        var waterColor = Color.Lerp(WaterColor2d, WaterColor3d, t);
+        var waterTargetAlpha = serverUtils.GetServerData("waterLayer", 1);
+        _waterAlpha = Mathf.SmoothDamp(_waterAlpha, waterTargetAlpha, ref _waterSmoothVelocity, 0.25f);
+        waterColor.a *= _waterAlpha;
         if (_waterMaterial)
-            _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
+            _waterMaterial.SetColor("_MainColor", waterColor);
+        if (Water)
+            Water.gameObject.SetActive(_waterAlpha > 0.01f);
 
+        // Update acid visibility.
+        var acidColor = Color.Lerp(AcidColor2d, AcidColor3d, t);
+        var acidTargetAlpha = serverUtils.GetServerData("acidLayer", 0);
+        _acidAlpha = Mathf.SmoothDamp(_acidAlpha, acidTargetAlpha, ref _acidSmoothVelocity, 0.25f);
         if (_acidMaterial)
-            _acidMaterial.SetColor("_FogColor", Color.Lerp(AcidColor2d, AcidColor3d, t));
+        {
+            acidColor.a *= _acidAlpha;
+            _acidMaterial.SetColor("_FogColor", acidColor);
+            _acidMaterial.SetFloat("_Opacity", _acidAlpha);
+            _acidMaterial.SetFloat("_RefractionAmount", _acidMaxRefraction * _acidAlpha);
+        }
+        if (Acid)
+            Acid.gameObject.SetActive(_acidAlpha > 0.01f);
     }
 
     private void InitTerrain()
@@ -465,7 +489,10 @@ public class widget3DMap : MonoBehaviour {
         if (!Acid && Map.Instance)
             Acid = Map.Instance.Acid;
         if (Acid)
+        {
             _acidMaterial = Acid.GetComponent<Renderer>().material;
+            _acidMaxRefraction = _acidMaterial.GetFloat("_RefractionAmount");
+        }
 
         _terrainInitialized = true;
     }

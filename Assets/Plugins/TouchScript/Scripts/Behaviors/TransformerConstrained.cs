@@ -21,6 +21,8 @@ namespace TouchScript.Behaviors
         /** Zoom limits. */
         public Vector2 ZoomSoftLimits = new Vector2(0, float.MaxValue);
 
+        /** Zoom delta limits. */
+        public Vector2 ZoomDeltaLimits = new Vector2(0.9f, 1.1f);
 
         #endregion
 
