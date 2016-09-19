@@ -5,78 +5,349 @@
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"crewHeartRate1"
+					"serverParam":"crewheartrate1"
 				},
 				{
 					"type":"Value",
-					"serverParam":"crewBodyTemp1"
-				}
+					"serverParam":"crewheartpattern1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmin1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmax1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmin1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmax1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp1"
+				},
 			]
 		},
+
 		{
 			"id":"LORI TAYLOR",
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"crewHeartRate2"
+					"serverParam":"crewheartrate2"
 				},
 				{
 					"type":"Value",
-					"serverParam":"crewBodyTemp2"
-				}
+					"serverParam":"crewheartpattern2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmin2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmax2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmin2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmax2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp2"
+				},
 			]
-		},
+		},		
+
 		{
-			"id":"TOSHI",
+			"id":"TOSHI ISHIDA",
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"crewHeartRate3"
+					"serverParam":"crewheartrate3"
 				},
 				{
 					"type":"Value",
-					"serverParam":"crewBodyTemp3"
-				}
+					"serverParam":"crewheartpattern3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmin3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmax3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmin3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmax3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp3"
+				},
 			]
 		},
+
 		{
-			"id":"DJ",
+			"id":"SUYIN ZHANG",
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"crewHeartRate4"
+					"serverParam":"crewheartrate4"
 				},
 				{
 					"type":"Value",
-					"serverParam":"crewBodyTemp4"
-				}
+					"serverParam":"crewheartpattern4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmin4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmax4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmin4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmax4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp4"
+				},
 			]
 		},
+
 		{
-			"id":"SUYIN",
+			"id":"JONAS TAYLOR",
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"crewHeartRate6"
+					"serverParam":"crewheartrate5"
 				},
 				{
 					"type":"Value",
-					"serverParam":"crewBodyTemp6"
-				}
+					"serverParam":"crewheartpattern5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmin5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewheartstrengthmax5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmin5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewabpmax5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmin5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewpapmax5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewrespirationrate5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2min5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2max5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewetco2pattern5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2min5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2max5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewspo2pattern5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewbodytemp5"
+				},
 			]
 		},
-		{
-			"id":"THE WALL",
-			"parameters":[
-				{
-					"type":"Value",
-					"serverParam":"crewHeartRate5"
-				},
-				{
-					"type":"Value",
-					"serverParam":"crewBodyTemp5"
-				}
-			]
-		}
 	]
 }
