@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.DCC;
@@ -75,6 +76,12 @@ public class DCCWindow : MonoBehaviour
         var result = Enum.GetName(typeof(contentID), content);
         return result ?? "";
     }
+
+    public static contentID FirstContentId
+        { get { return Enum.GetValues(typeof(contentID)).Cast<contentID>().Min(); } }
+
+    public static contentID LastContentId
+        { get { return Enum.GetValues(typeof(contentID)).Cast<contentID>().Max(); } }
 
     /** Moves a window to a destination position. */
     public void MoveWindow(DCCScreenContentPositions.positionID destination)
