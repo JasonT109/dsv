@@ -77,6 +77,9 @@ public class DCCWindow : MonoBehaviour
         return result ?? "";
     }
 
+    public static contentID ContentForName(string name)
+        { return (contentID) Enum.Parse(typeof(contentID), name); }
+
     public static contentID FirstContentId
         { get { return Enum.GetValues(typeof(contentID)).Cast<contentID>().Min(); } }
 

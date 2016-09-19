@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Meg.DCC;
 using Meg.Networking;
 using UnityEngine.UI;
@@ -35,14 +36,14 @@ public class debugDCCStationUi : MonoBehaviour
 
     void Start()
     {
-        TopLeft.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen3));
-        TopMid.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen4));
-        TopRight.onClick.AddListener(() => NextScreenContent(DCCScreenID._screenID.screen5));
-        QuadTopLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topLeft));
-        QuadTopRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.topRight));
-        QuadBottomLeft.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomLeft));
-        QuadBottomRight.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.bottomRight));
-        QuadMiddle.onClick.AddListener(() => NextQuadContent(DCCScreenContentPositions.positionID.middle));
+        TopLeft.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen3));
+        TopMid.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen4));
+        TopRight.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen5));
+        QuadTopLeft.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.topLeft));
+        QuadTopRight.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.topRight));
+        QuadBottomLeft.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.bottomLeft));
+        QuadBottomRight.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.bottomRight));
+        QuadMiddle.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.middle));
     }
 
     void Update()
@@ -102,40 +103,47 @@ public class debugDCCStationUi : MonoBehaviour
         QuadMiddleOn.gameObject.SetActive(quadMiddle != DCCWindow.contentID.none);
     }
 
-    public void NextScreenContent(DCCScreenID._screenID id)
+    public void SelectScreenContent(DCCScreenID._screenID id)
     {
-        try
-        {
-            var current = serverUtils.GetScreenContent(id, StationId);
-            if (current >= DCCWindow.LastContentId)
-                current = DCCWindow.contentID.none;
-            else
-                current = (DCCWindow.contentID) ((int) current + 1);
+        var current = serverUtils.GetScreenContent(id, StationId);
+        var items = Enum.GetNames(typeof(DCCWindow.contentID))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t.ToUpper(), Id = t });
 
-            serverUtils.PostScreenContent(id, current, StationId);
-        }
-        catch (Exception)
-        {
-            Debug.LogWarning("Error setting screen content for id: " + id);
-        }
+        var message = string.Format("Please select content for {0} : {1}",
+            DCCScreenData.GetStationName(StationId), 
+            screenData.NameForType(DCCScreenID.TypeForScreenId(id)));
+
+        DialogManager.Instance.ShowList("SELECT SCREEN CONTENT",
+            message,
+            items,
+            current.ToString(),
+            (chosen) =>
+            {
+                var content = DCCWindow.ContentForName(chosen.Id);
+                serverUtils.PostScreenContent(id, content, StationId);
+            });   
     }
 
-    public void NextQuadContent(DCCScreenContentPositions.positionID id)
+    public void SelectQuadContent(DCCScreenContentPositions.positionID id)
     {
-        try
-        {
-            var current = serverUtils.GetQuadContent(id, StationId);
-            if (current >= DCCWindow.LastContentId)
-                current = DCCWindow.contentID.none;
-            else
-                current = (DCCWindow.contentID) ((int) current + 1);
+        var current = serverUtils.GetQuadContent(id, StationId);
+        var items = Enum.GetNames(typeof(DCCWindow.contentID))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t.ToUpper(), Id = t });
 
-            SetQuadContent(id, current);
-        }
-        catch (Exception)
-        {
-            Debug.LogWarning("Error setting quad content for position: " + id);
-        }
+        var message = string.Format("Please select quad content for {0} : {1}",
+            DCCScreenData.GetStationName(StationId), id);
+
+        DialogManager.Instance.ShowList("SELECT QUAD CONTENT",
+            message,
+            items,
+            current.ToString(),
+            (chosen) =>
+            {
+                var content = DCCWindow.ContentForName(chosen.Id);
+                SetQuadContent(id, content);
+            });
     }
 
     private void SetQuadContent(DCCScreenContentPositions.positionID position, DCCWindow.contentID content)
