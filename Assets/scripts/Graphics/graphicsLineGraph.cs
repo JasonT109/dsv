@@ -63,6 +63,10 @@ public class graphicsLineGraph : MonoBehaviour
 
     void Start()
     {
+        line.vectorLine.Resize(0);
+
+        line.vectorLine.Resize(numPoints);
+
         _depthCalculator = clientCalcValues.Instance;
         if (!_depthCalculator)
             return;
@@ -83,6 +87,8 @@ public class graphicsLineGraph : MonoBehaviour
                 graphHeights[i] = Random.Range(minHeight, maxHeight);
 
             line.vectorLine.points2[i] = new Vector2((graphWidth / numPoints) * i, graphHeights[i]);
+
+            
         }
 
         line.vectorLine.Draw();

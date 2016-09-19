@@ -115,6 +115,7 @@ public class MMBMonitorGraph : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
     {
+        InitLine();
     }
 
     /** Update the bar. */

@@ -53,6 +53,12 @@
 		"glider-header-03-parameter" : "velocity",
 		"glider-header-03-format" : "{0:n0}",
 
+		"patient-name-01" : "Carter Lewis",
+		"patient-name-02" : "Lori Taylor",
+		"patient-name-03" : "Toshi Ishida",
+		"patient-name-04" : "Suyin Zhang",
+		"patient-name-05" : "Jonas Taylor",
+
 		"vessels" : 
 		[
 			{ 
