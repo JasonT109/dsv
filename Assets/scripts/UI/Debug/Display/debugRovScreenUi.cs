@@ -56,7 +56,7 @@ public class debugRovScreenUi : MonoBehaviour
             return;
 
         var next = GetNextContent(current);
-        serverUtils.PostScreenStateContent(Player.netId, next);
+        serverUtils.PostScreenState(Player.netId, new screenData.State { Type = screenData.Type.Rov, Content = next });
     }
 
     private void OnPreviousClicked()
@@ -66,7 +66,7 @@ public class debugRovScreenUi : MonoBehaviour
             return;
 
         var next = GetPreviousContent(current);
-        serverUtils.PostScreenStateContent(Player.netId, next);
+        serverUtils.PostScreenState(Player.netId, new screenData.State { Type = screenData.Type.Rov, Content = next });
     }
 
     /** Given a content value, return the next valid value, cycling round to None. */
