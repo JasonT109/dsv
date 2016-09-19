@@ -339,16 +339,6 @@ public class serverData : NetworkBehaviour
         if (string.IsNullOrEmpty(valueName))
             return;
 
-        // Check if we're setting a vessel state value.
-        if (VesselData.IsVesselKey(valueName))
-        {
-            VesselData.SetServerData(valueName, newValue, add);
-            if (ValueChangedEvent != null)
-                ValueChangedEvent(valueName, newValue);
-
-            return;
-        }
-
         // Match the server data key against known data values.
         var key = valueName.ToLower();
         switch (key)
@@ -780,90 +770,6 @@ public class serverData : NetworkBehaviour
                 if (rb)
                     rb.velocity = transform.forward * newValue;
                 break;
-            case "crewheartrate1":
-                CrewData.crewHeartRate1 = newValue;
-                break;
-            case "crewheartrate2":
-                CrewData.crewHeartRate2 = newValue;
-                break;
-            case "crewheartrate3":
-                CrewData.crewHeartRate3 = newValue;
-                break;
-            case "crewheartrate4":
-                CrewData.crewHeartRate4 = newValue;
-                break;
-            case "crewheartrate5":
-                CrewData.crewHeartRate5 = newValue;
-                break;
-            case "crewheartrate6":
-                CrewData.crewHeartRate6 = newValue;
-                break;
-            case "crewbodytemp1":
-                CrewData.crewBodyTemp1 = newValue;
-                break;
-            case "crewbodytemp2":
-                CrewData.crewBodyTemp2 = newValue;
-                break;
-            case "crewbodytemp3":
-                CrewData.crewBodyTemp3 = newValue;
-                break;
-            case "crewbodytemp4":
-                CrewData.crewBodyTemp4 = newValue;
-                break;
-            case "crewbodytemp5":
-                CrewData.crewBodyTemp5 = newValue;
-                break;
-            case "crewbodytemp6":
-                CrewData.crewBodyTemp6 = newValue;
-                break;
-            case "crewheartpattern1":
-                CrewData.crewHeartPattern1 = newValue;
-                break;
-            case "crewheartstrengthmin1":
-                CrewData.crewHeartStrengthMin1 = newValue;
-                break;
-            case "crewheartstrengthmax1":
-                CrewData.crewHeartStrengthMax1 = newValue;
-                break;
-            case "crewrespirationrate1":
-                CrewData.crewRespirationRate1 = newValue;
-                break;
-            case "crewetco2min1":
-                CrewData.crewETCO2Min1 = newValue;
-                break;
-            case "crewetco2max1":
-                CrewData.crewETCO2Max1 = newValue;
-                break;
-            case "crewetco2pattern1":
-                CrewData.crewETCO2Pattern1 = newValue;
-                break;
-            case "crewspo2min1":
-                CrewData.crewSPO2Min1 = newValue;
-                break;
-            case "crewspo2max1":
-                CrewData.crewSPO2Max1 = newValue;
-                break;
-            case "crewspo2pattern1":
-                CrewData.crewSPO2Pattern1 = newValue;
-                break;
-            case "crewabpmin1":
-                CrewData.crewABPMin1 = newValue;
-                break;
-            case "crewabpmax1":
-                CrewData.crewABPMax1 = newValue;
-                break;
-            case "crewpapmin1":
-                CrewData.crewPAPMin1 = newValue;
-                break;
-            case "crewpapmax1":
-                CrewData.crewPAPMax1 = newValue;
-                break;
-            case "crewmonitorleds1":
-                CrewData.crewMonitorLeds1 = newValue > 0;
-                break;
-            case "crewmonitorgraphs1":
-                CrewData.crewMonitorGraphs1 = newValue > 0;
-                break;
             case "posx":
                 transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
                 break;
@@ -1264,7 +1170,12 @@ public class serverData : NetworkBehaviour
                 DCCScreenData.DCCschematicsToggle = (int)newValue;
                 break;
             default:
-                SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
+                if (VesselData.IsVesselKey(valueName))
+                    VesselData.SetServerData(valueName, newValue, add);
+                else if (CrewData.IsCrewKey(valueName))
+                    CrewData.SetServerData(valueName, newValue, add);
+                else
+                    SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;
         }
 
@@ -1356,10 +1267,11 @@ public class serverData : NetworkBehaviour
     {
         // Check if we're setting a vessel state value.
         if (VesselData.IsVesselKey(boolName))
-        {
-            VesselData.SetServerData(boolName, newValue ? 1 : 0);
-            return;
-        }
+            { VesselData.SetServerData(boolName, newValue ? 1 : 0); return; }
+
+        // Check if we're setting a vessel state value.
+        if (CrewData.IsCrewKey(boolName))
+            { CrewData.SetServerData(boolName, newValue ? 1 : 0); return; }
 
         // Match incoming key against known data values.
         switch (boolName.ToLower())
@@ -1438,12 +1350,6 @@ public class serverData : NetworkBehaviour
                 break;
             case "dcccommsusesliders":
                 DCCScreenData.DCCcommsUseSliders = newValue;
-                break;
-            case "crewmonitorleds1":
-                CrewData.crewMonitorLeds1 = newValue;
-                break;
-            case "crewmonitorgraphs1":
-                CrewData.crewMonitorGraphs1 = newValue;
                 break;
         }
     }
