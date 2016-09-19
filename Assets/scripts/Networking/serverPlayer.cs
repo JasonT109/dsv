@@ -819,6 +819,9 @@ public class serverPlayer : NetworkBehaviour
 
         // Initialize station id.
         PostStationId(netId, DCCScreenData.InitialStationId);
+
+        // Initialize screen state.
+        PostScreenState(netId, screenData.InitialState);
     }
 
     /** Network destruction notification. */

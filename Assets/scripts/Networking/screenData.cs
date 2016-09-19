@@ -7,6 +7,13 @@ using UnityEngine.Networking;
 public class screenData : NetworkBehaviour
 {
 
+    // Static Properties
+    // ------------------------------------------------------------
+
+    /** Initial screen state on local instance. */
+    public static State InitialState;
+
+
     // Synchronization
     // ------------------------------------------------------------
 
@@ -56,13 +63,19 @@ public class screenData : NetworkBehaviour
         DccScreen5,
         DccSurface,
         DccStrategy,
-        Rov
+        Rov,
+        EvacLeft,
+        EvacMid,
+        EvacRight,
+        EvacTop,
+        EvacMap
     }
 
 
     /** Possible screen content values. */
     public enum Content
     {
+        Any = -2,
         Debug = -1,
         None = 0,
         Instruments,
@@ -117,6 +130,14 @@ public class screenData : NetworkBehaviour
 
         public override int GetHashCode()
             { return Type.GetHashCode() ^ Content.GetHashCode(); }
+
+        public bool Matches(State s)
+        {
+            if (Content == Content.Any || s.Content == Content.Any)
+                return Type == s.Type;
+
+            return Equals(s, this);
+        }
 
         public bool HasContent
             { get { return Content != Content.None; } }
