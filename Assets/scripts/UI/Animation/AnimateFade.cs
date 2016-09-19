@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -14,19 +15,22 @@ public class AnimateFade : MonoBehaviour
     public float Duration = 1;
     public int Loops = 0;
     public LoopType LoopType = LoopType.Yoyo;
+    public bool From;
     public bool ActiveInEditor = true;
     public bool PlayOnStart = true;
     public bool PlayOnEnable;
     public bool PlayOnUpdate;
-    public bool From;
+
+    public bool PlayRandomly;
+    public Vector2 RandomInterval = new Vector2(1, 5);
 
     private void Start()
     {
-        if (!Group)
+        if (!Group && !Graphic && !Renderer)
             Group = GetComponent<CanvasGroup>();
-        if (!Graphic)
+        if (!Group && !Graphic && !Renderer)
             Graphic = GetComponent<Graphic>();
-        if (!Renderer)
+        if (!Group && !Graphic && !Renderer)
             Renderer = GetComponent<Renderer>();
 
         #if UNITY_EDITOR
@@ -36,12 +40,26 @@ public class AnimateFade : MonoBehaviour
 
         if (PlayOnStart)
             Fade();
+
     }
 
     private void OnEnable()
     {
         if (PlayOnEnable)
             Fade();
+
+        if (PlayRandomly)
+            StartCoroutine(PlayRandomlyRoutine());
+    }
+
+    private IEnumerator PlayRandomlyRoutine()
+    {
+        while (gameObject.activeSelf)
+        {
+            var t = Random.Range(RandomInterval.x, RandomInterval.y);
+            yield return new WaitForSeconds(t);
+            Fade();
+        }
     }
 
     private void Update()
@@ -64,29 +82,27 @@ public class AnimateFade : MonoBehaviour
         if (delay < -1)
             delay = Delay;
 
-        Tweener tween = null;
+        Tweener tweener = null;
         if (Group)
         {
-            Group.alpha = 1;
-            tween = Group.DOFade(MinAlpha, duration).SetDelay(delay);
-            if (Loops != 0)
-                tween.SetLoops(Loops, LoopType);
+            Group.alpha = (MinAlpha <= 0) ? 1 : 0;
+            tweener = Group.DOFade(MinAlpha, duration);
         }
         else if (Graphic)
-        {
-            tween = Graphic.DOFade(MinAlpha, duration).SetDelay(delay);
-            if (Loops != 0)
-                tween.SetLoops(Loops, LoopType);
-        }
+            tweener = Graphic.DOFade(MinAlpha, duration).SetDelay(delay);
         else if (Renderer)
-        {
-            tween = Renderer.material.DOFade(MinAlpha, "_TintColor", duration).SetDelay(delay);
-            if (Loops != 0)
-                tween.SetLoops(Loops, LoopType);
-        }
+            tweener = Renderer.material.DOFade(MinAlpha, "_TintColor", duration);
 
-        if (tween != null && From)
-            tween.From();
+        if (tweener == null)
+            return;
+
+        if (From)
+            tweener = tweener.From();
+
+        if (Loops != 0)
+            tweener.SetLoops(Loops, LoopType);
+        if (delay > 0)
+            tweener.SetDelay(delay);
     }
 
     public void Crossfade(float duration = -1, float delay = -1)

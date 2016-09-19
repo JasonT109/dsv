@@ -15,6 +15,9 @@ public class serverPlayer : NetworkBehaviour
     [SyncVar]
     public screenData.State ScreenState;
 
+    [SyncVar]
+    public int StationId;
+
 
     // Public Properties
     // ------------------------------------------------------------
@@ -46,6 +49,16 @@ public class serverPlayer : NetworkBehaviour
 
     // Public Methods
     // ------------------------------------------------------------
+
+    /** Expand out DCC information in the given string. */
+    public string Expanded(string value)
+    {
+        value = value.Replace("{player-id}", Id);
+        value = value.Replace("{screen-type}", screenData.NameForType(ScreenState.Type));
+        value = value.Replace("{screen-content}", screenData.NameForContent(ScreenState.Content));
+
+        return value;
+    }
 
     /** Set a numeric data value on the server. */
     public void PostServerData(string key, float value, bool add)
@@ -279,6 +292,21 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Post screen state for this player. */
+    public void PostScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+    {
+        if (isServer)
+            ServerSetScreenStateType(playerId, type);
+        else
+        {
+            var player = serverUtils.GetPlayer(playerId);
+            if (player)
+                player.ScreenState.Type = type;
+
+            CmdSetScreenStateType(playerId, type);
+        }
+    }
+
+    /** Post screen state for this player. */
     public void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
     {
         if (isServer)
@@ -290,6 +318,21 @@ public class serverPlayer : NetworkBehaviour
                 player.ScreenState.Content = content;
 
             CmdSetScreenStateContent(playerId, content);
+        }
+    }
+
+    /** Post station id for the given player. */
+    public void PostStationId(NetworkInstanceId playerId, int stationId)
+    {
+        if (isServer)
+            ServerSetStationId(playerId, stationId);
+        else
+        {
+            var player = serverUtils.GetPlayer(playerId);
+            if (player)
+                player.StationId = stationId;
+
+            CmdSetStationId(playerId, stationId);
         }
     }
 
@@ -493,10 +536,20 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetScreenState(NetworkInstanceId id, screenData.State state)
         { ServerSetScreenState(id, state); }
 
+    /** Set screen type for this player. */
+    [Command]
+    public void CmdSetScreenStateType(NetworkInstanceId id, screenData.Type type)
+        { ServerSetScreenStateType(id, type); }
+
     /** Set screen content for this player. */
     [Command]
     public void CmdSetScreenStateContent(NetworkInstanceId id, screenData.Content content)
         { ServerSetScreenStateContent(id, content); }
+
+    /** Set station id for this player. */
+    [Command]
+    public void CmdSetStationId(NetworkInstanceId id, int stationId)
+        { ServerSetStationId(id, stationId); }
 
     /** Set content for the specified DCC screen on the server. */
     [Command]
@@ -667,7 +720,27 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
     {
-        ServerSetScreenState(playerId, new screenData.State { Type = ScreenState.Type, Content = content }); 
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ScreenState = new screenData.State { Type = player.ScreenState.Type, Content = content }; 
+    }
+
+    /** Set station id for this player. */
+    [Server]
+    public void ServerSetStationId(NetworkInstanceId playerId, int stationId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.StationId = stationId;
+    }
+
+    /** Set screen type for this player. */
+    [Server]
+    public void ServerSetScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ScreenState = new screenData.State { Type = type, Content = player.ScreenState.Content };
     }
 
 
@@ -736,6 +809,19 @@ public class serverPlayer : NetworkBehaviour
     {
         base.OnStartServer();
         Debug.Log("serverPlayer.OnStartServer(): ID: " + serverUtils.Id);
+    }
+
+    /** Network startup notification for a server. */
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        Debug.Log("serverPlayer.OnStartLocalPlayer(): ID: " + serverUtils.Id);
+
+        // Initialize station id.
+        PostStationId(netId, DCCScreenData.InitialStationId);
+
+        // Initialize screen state.
+        PostScreenState(netId, screenData.InitialState);
     }
 
     /** Network destruction notification. */

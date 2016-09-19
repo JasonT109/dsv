@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Meg.Networking;
 using Meg.DCC;
 
-public class DCCScreenManager : MonoBehaviour
+public class DCCScreenManager : Singleton<DCCScreenManager>
 {
     [Header("Screen 1")]
     public GameObject controlScreen;
@@ -23,6 +24,9 @@ public class DCCScreenManager : MonoBehaviour
     [Header("Surface Pro Screen")]
     public GameObject surfaceScreen;
 
+    [Header("Strategy Table Screen")]
+    public GameObject strategyScreen;
+
     [Header("Registered non quad windows")]
     public DCCWindow[] nonQuadWindows;
 
@@ -40,6 +44,7 @@ public class DCCScreenManager : MonoBehaviour
     private float updateTimer = 0;
     private float updateTick = 0.3f;
     private bool canPress = true;
+
 
     void TestPattern()
     {
@@ -192,9 +197,34 @@ public class DCCScreenManager : MonoBehaviour
     /** Removes a window from the nonQuadWindows array. Called by a DCCWindow onDisable and ensures we don't have invisible windows in the sort order. */
     public void UnregisterWindow(DCCWindow oldWindow)
     {
-        int x = System.Array.IndexOf(nonQuadWindows, oldWindow);
+        var x = System.Array.IndexOf(nonQuadWindows, oldWindow);
+        if (x >= 0)
+            nonQuadWindows = RemoveAt(nonQuadWindows, x);
+    }
 
-        nonQuadWindows = RemoveAt(nonQuadWindows, x);
+    /** Whether a given piece of window content is currently visible on screen. */
+    public bool IsContentVisible(DCCWindow.contentID content)
+    {
+        // Check if content is visible on regular a DCC window.
+        for (var i = 0; i < nonQuadWindows.Length; i++)
+            if (nonQuadWindows[i].windowContent == content)
+                return true;
+        
+        // Check if content is visible in a quad window.
+        for (var i = 0; i < quadWindows.Length; i++)
+            if (quadWindows[i].windowContent == content)
+                if (quadWindows[i].quadPosition != DCCScreenContentPositions.positionID.hidden)
+                    return true;
+
+        // Nav content is always required on the strategy table.
+        if (content == DCCWindow.contentID.nav)
+        {
+            var player = serverUtils.LocalPlayer;
+            if (player && player.ScreenState.Type == screenData.Type.DccStrategy)
+                return true;
+        }
+
+        return false;
     }
 
     /** Removes a window from a specified array at index. */
@@ -261,55 +291,21 @@ public class DCCScreenManager : MonoBehaviour
     }
 
     /** Set the screen to its position on the DCC set. 1 left screen, 2 middle screen, 3 overhead left, 4 overhead middle, 5 overhead right.*/
-    void SetScreen(int ID)
+    void SetScreen(screenData.Type type)
     {
-        switch (ID)
-        {
-            case 0:
-                break;
-            case 1:
-                controlScreen.SetActive(true);
-                quadScreen.SetActive(false);
-                screen3.SetActive(false);
-                surfaceScreen.SetActive(false);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
-                break;
-            case 2:
-                controlScreen.SetActive(false);
-                quadScreen.SetActive(true);
-                screen3.SetActive(false);
-                surfaceScreen.SetActive(false);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
-                break;
-            case 3:
-                controlScreen.SetActive(false);
-                quadScreen.SetActive(false);
-                screen3.SetActive(true);
-                surfaceScreen.SetActive(false);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
-                break;
-            case 4:
-                controlScreen.SetActive(false);
-                quadScreen.SetActive(false);
-                screen3.SetActive(true);
-                surfaceScreen.SetActive(false);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen4;
-                break;
-            case 5:
-                controlScreen.SetActive(false);
-                quadScreen.SetActive(false);
-                screen3.SetActive(true);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen5;
-                surfaceScreen.SetActive(false);
-                break;
-            case 6:
-                controlScreen.SetActive(false);
-                quadScreen.SetActive(false);
-                screen3.SetActive(false);
-                screen3.GetComponent<DCCScreenID>().screenID = DCCScreenID._screenID.screen3;
-                surfaceScreen.SetActive(true);
-                break;
-        }
+        if (!screenData.IsDccScreen(type))
+            return;
+
+        controlScreen.SetActive(type == screenData.Type.DccControl);
+        quadScreen.SetActive(type == screenData.Type.DccQuad);
+        surfaceScreen.SetActive(type == screenData.Type.DccSurface);
+        strategyScreen.SetActive(type == screenData.Type.DccStrategy);
+        screen3.SetActive(type >= screenData.Type.DccScreen3 && type <= screenData.Type.DccScreen5);
+        screen3.GetComponent<DCCScreenID>().screenID = screen3.activeSelf
+            ? DCCScreenID.ScreenIdForType(type)
+            : DCCScreenID._screenID.screen3;
+
+        PostScreenType(type);
     }
 
     IEnumerator wait(float waitTime)
@@ -326,7 +322,7 @@ public class DCCScreenManager : MonoBehaviour
     void Start ()
     {
         //Debug.Log("Device = " + SystemInfo.deviceName);
-        SetScreen(1);
+        SetScreen(screenData.Type.DccControl);
     }
 
     void Update ()
@@ -356,37 +352,23 @@ public class DCCScreenManager : MonoBehaviour
             TestPattern();
         }
 
+        // Update DCC screen to match shared state.
+        UpdateScreenType();
+
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha1))
-        {
-            SetScreen(1);
-        }
-
+            SetScreen(screenData.Type.DccControl);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha2))
-        {
-            SetScreen(2);
-        }
-
+            SetScreen(screenData.Type.DccQuad);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha3))
-        {
-            SetScreen(3);
-        }
-
-
+            SetScreen(screenData.Type.DccScreen3);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha4))
-        {
-            SetScreen(4);
-        }
-
-
+            SetScreen(screenData.Type.DccScreen4);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
-        {
-            SetScreen(5);
-        }
-
+            SetScreen(screenData.Type.DccScreen5);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha6))
-        {
-            SetScreen(6);
-        }
+            SetScreen(screenData.Type.DccSurface);
+        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha7))
+            SetScreen(screenData.Type.DccStrategy);
 
         if (Time.time < updateTimer)
             return;
@@ -400,4 +382,25 @@ public class DCCScreenManager : MonoBehaviour
             serverUtils.PostQuadCycle(0, DCCScreenData.StationId);
         }
     }
+
+    private void PostScreenType(screenData.Type type)
+    {
+        if (!serverUtils.IsReady())
+            return;
+
+        var player = serverUtils.LocalPlayer;
+        if (player && !Equals(player.ScreenState.Type, type))
+            serverUtils.PostScreenStateType(player.netId, type);
+    }
+
+    private void UpdateScreenType()
+    {
+        if (!serverUtils.IsReady())
+            return;
+
+        var player = serverUtils.LocalPlayer;
+        if (player)
+            SetScreen(player.ScreenState.Type);
+    }
+
 }

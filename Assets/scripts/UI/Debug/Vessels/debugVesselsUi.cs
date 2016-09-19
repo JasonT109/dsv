@@ -138,7 +138,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
             string.Format("Are you sure you wish to remove the last vessel '{0}'?", vesselName),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 serverUtils.PostRemoveLastVessel();
@@ -156,7 +156,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
             "Are you sure you wish to remove all extra vessels from view?",
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 serverUtils.PostClearExtraVessels();
@@ -175,7 +175,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
             string.Format("Are you sure you wish to switch the player vessel to be '{0}'?", Selected.Name),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 VesselData.SetPlayerVessel(Selected.Id);

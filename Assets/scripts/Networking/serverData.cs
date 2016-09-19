@@ -1023,6 +1023,9 @@ public class serverData : NetworkBehaviour
             case "stabiliserspeed":
                 SubControl.StabiliserSpeed = newValue;
                 break;
+            case "motionstabiliserkicker":
+                MotionBaseData.MotionStabiliserKicker = newValue;
+                break;
             case "error_thruster_l":
                 GliderErrorData.error_thruster_l = newValue;
                 break;
@@ -1112,6 +1115,36 @@ public class serverData : NetworkBehaviour
                 break;
             case "acidlayer":
                 MapData.acidLayer = (int)newValue;
+                break;
+            case "waterlayer":
+                MapData.waterLayer = (int)newValue;
+                break;
+            case "mapmode":
+                MapData.mapMode = (mapData.Mode) newValue;
+                break;
+            case "maplayeralerts":
+                MapData.mapLayerAlerts = (int) newValue;
+                break;
+            case "maplayercontours":
+                MapData.mapLayerContours = (int) newValue;
+                break;
+            case "maplayerdepths":
+                MapData.mapLayerDepths = (int) newValue;
+                break;
+            case "maplayergrid":
+                MapData.mapLayerGrid = (int)newValue;
+                break;
+            case "maplayerlabels":
+                MapData.mapLayerLabels = (int) newValue;
+                break;
+            case "maplayersatellite":
+                MapData.mapLayerSatellite = (int)newValue;
+                break;
+            case "maplayershipping":
+                MapData.mapLayerShipping = (int) newValue;
+                break;
+            case "maplayertemperatures":
+                MapData.mapLayerTemperatures = (int) newValue;
                 break;
             case "maxwildlife":
                 SonarData.MaxWildlife = (int)newValue;
@@ -1227,7 +1260,9 @@ public class serverData : NetworkBehaviour
             case "descentmodevalue":
                 GLScreenData.descentModeValue = newValue;
                 break;
-
+            case "dccschematicstoggle":
+                DCCScreenData.DCCschematicsToggle = (int)newValue;
+                break;
             default:
                 SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
                 break;

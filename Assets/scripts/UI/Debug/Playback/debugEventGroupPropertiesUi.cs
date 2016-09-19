@@ -291,7 +291,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
             string.Format("Are you sure you wish to remove the event '{0}'?", toRemove),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 _group.RemoveEvent(toRemove);

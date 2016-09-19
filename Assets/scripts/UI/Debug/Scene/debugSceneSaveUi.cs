@@ -78,7 +78,7 @@ public class debugSceneSaveUi : MonoBehaviour
             string.Format("Are you sure you wish to save the scene to file '{0}'?", filename),
             result =>
             {
-                if (result != DialogYesNo.DialogResult.Yes)
+                if (result != DialogYesNo.Result.Yes)
                     return;
 
                 megSceneFile.SaveToFile(path);

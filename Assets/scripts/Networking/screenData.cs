@@ -7,6 +7,13 @@ using UnityEngine.Networking;
 public class screenData : NetworkBehaviour
 {
 
+    // Static Properties
+    // ------------------------------------------------------------
+
+    /** Initial screen state on local instance. */
+    public static State InitialState;
+
+
     // Synchronization
     // ------------------------------------------------------------
 
@@ -55,12 +62,20 @@ public class screenData : NetworkBehaviour
         DccScreen4,
         DccScreen5,
         DccSurface,
+        DccStrategy,
+        Rov,
+        EvacLeft,
+        EvacMid,
+        EvacRight,
+        EvacTop,
+        EvacMap
     }
 
 
     /** Possible screen content values. */
     public enum Content
     {
+        Any = -2,
         Debug = -1,
         None = 0,
         Instruments,
@@ -84,7 +99,8 @@ public class screenData : NetworkBehaviour
         Radar,
         Towing,
         Systems,
-        Map
+        Map,
+        Cameras,
     }
 
     // Structures
@@ -115,6 +131,14 @@ public class screenData : NetworkBehaviour
         public override int GetHashCode()
             { return Type.GetHashCode() ^ Content.GetHashCode(); }
 
+        public bool Matches(State s)
+        {
+            if (Content == Content.Any || s.Content == Content.Any)
+                return Type == s.Type;
+
+            return Equals(s, this);
+        }
+
         public bool HasContent
             { get { return Content != Content.None; } }
 
@@ -142,6 +166,24 @@ public class screenData : NetworkBehaviour
     // Static Methods
     // ------------------------------------------------------------
 
+    /** Determine if a given screen is a DCC screen. */
+    public static bool IsDccScreen(Type type)
+    {
+        switch (type)
+        {
+            case Type.DccControl:
+            case Type.DccQuad:
+            case Type.DccScreen3:
+            case Type.DccScreen4:
+            case Type.DccScreen5:
+            case Type.DccSurface:
+            case Type.DccStrategy:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /** Return a DCC screen type for the given screen state. */
     public static DCCScreenID._screenID GetDccScreenId(Type type)
     {
@@ -159,6 +201,8 @@ public class screenData : NetworkBehaviour
                 return DCCScreenID._screenID.screen5;
             case Type.DccSurface:
                 return DCCScreenID._screenID.surface;
+            case Type.DccStrategy:
+                return DCCScreenID._screenID.strategy;
             default:
                 return DCCScreenID._screenID.control;
         }
@@ -206,6 +250,30 @@ public class screenData : NetworkBehaviour
             default:
                 return DCCWindow.contentID.none;
         }
+    }
+
+    /** Return string representation of the given screen type. */
+    public static string NameForType(Type type)
+    {
+        switch (type)
+        {
+            case Type.DccScreen3:
+                return "DccTopLeft";
+            case Type.DccScreen4:
+                return "DccTopMid";
+            case Type.DccScreen5:
+                return "DccTopRight";
+            default:
+                var result = Enum.GetName(typeof(Type), type);
+                return result ?? "";
+        }
+    }
+
+    /** Return string representation of the given screen content. */
+    public static string NameForContent(Content content)
+    {
+        var result = Enum.GetName(typeof(Content), content);
+        return result ?? "";
     }
 
 }

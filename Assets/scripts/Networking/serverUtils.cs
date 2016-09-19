@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.2.0";
+        public const string Version = "1.2.4";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -496,6 +496,7 @@ namespace Meg.Networking
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
+            "dccschematicstoggle",
             "descentmodevalue",
             "depth",
             "depthdisplayed",
@@ -613,6 +614,15 @@ namespace Meg.Networking
             "lightarray9",
             "lightarray10",
             "longitude",
+            "maplayeralerts",
+            "maplayercontours",
+            "maplayerdepths",
+            "maplayergrid",
+            "maplayerlabels",
+            "maplayersatellite",
+            "maplayershipping",
+            "maplayertemperatures",
+            "mapmode",
             "mapscale",
             "maxwildlife",
             "maxspeed",
@@ -684,6 +694,7 @@ namespace Meg.Networking
             "rollangle",
             "rollspeed",
             "stabiliserspeed",
+            "motionstabiliserkicker",
             "stabiliserstability",
             "scene",
             "screenglitchamount",
@@ -776,6 +787,7 @@ namespace Meg.Networking
             "vessel6icon",
             "vessel6vis",
             "vesselmovementenabled",
+            "waterlayer",
             "watertemp",
             "watertempoverride",
             "watertempoverrideamount",
@@ -856,7 +868,7 @@ namespace Meg.Networking
         private static readonly Dictionary<string, ParameterInfo> ParameterData = new Dictionary<string, ParameterInfo>
         {
             { "acceleration", new ParameterInfo { description = "Sub's acceleration (scaling factor)."} },
-            { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Acid layer map visibility."} },
+            { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Acid layer map visibility."} },
             { "air", new ParameterInfo { readOnly = true } },
             { "airtank1", new ParameterInfo { description = "Main air tank 1 capacity (%)."} },
             { "airtank2", new ParameterInfo { description = "Main air tank 2 capacity (%)."} },
@@ -920,6 +932,7 @@ namespace Meg.Networking
             { "descentmodevalue", new ParameterInfo {minValue = -90, maxValue = 90, description = "Descent mode value."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
+            { "dccschematicstoggle", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Int, description = "Sub schematic (0) / glider schematic (1) toggle." } },
             { "dccvesselnameintitle", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display the current player vessel name in DCC window titles." } },
             { "depth", new ParameterInfo { maxValue = 12000, description = "Current depth (m)"} },
             { "depthdisplayed", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth is displayed in header area."} },
@@ -1023,7 +1036,7 @@ namespace Meg.Networking
             { "ispitchalsostabilised", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether sub pitch is also automatically stabilised."} },
             { "joystickoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether pilot input is overridden by joysticks attached to the server."} },
             { "joystickpilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether input updates from pilot's joysticks (turn off for manual input editing)."} },
-            { "latitude", new ParameterInfo { description = "Latitude at the map's origin (+N/-S, decimal degrees).", precision = 6 } },
+            { "latitude", new ParameterInfo { minValue = -90, maxValue = 90, description = "Latitude at the map's origin (+N/-S, decimal degrees).", precision = 6 } },
             { "lightarray1", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray2", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray3", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
@@ -1034,7 +1047,16 @@ namespace Meg.Networking
             { "lightarray8", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
-            { "longitude", new ParameterInfo { description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
+            { "longitude", new ParameterInfo { minValue = -180, maxValue = 180, description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
+            { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether ELB alerts are displayed on the map."} },
+            { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether contour lines are displayed on the map."} },
+            { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether depth soundings are displayed on the map."} },
+            { "maplayergrid", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether grid lines are displayed on the map."} },
+            { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether labels are displayed on the map."} },
+            { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether satellite imagery is displayed on the map."} },
+            { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether shipping lanes are displayed on the map."} },
+            { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether temperatures are displayed on the map."} },
+            { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
@@ -1120,7 +1142,8 @@ namespace Meg.Networking
             { "sonarshortrange", new ParameterInfo { minValue = 30, maxValue = 120, type = ParameterType.Int, description = "Range setting for front-scanning (short-range) sonar (m)." } },
             { "sonarshortsensitivity", new ParameterInfo { minValue = 0, maxValue = 110, description = "Sensitivity setting for front-scanning (short-range) sonar (%)."} },
             { "startimagesequence", new ParameterInfo { minValue = 0, maxValue = 20, type = ParameterType.Int, description = "Starts an image sequence playing."} },
-            { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "auto stabiliser speed."} },
+            { "stabiliserspeed", new ParameterInfo { minValue = 0, maxValue = 50, description = "input value where the stabiliser kicks out."} },
+            { "motionstabiliserkicker", new ParameterInfo { minValue = 0, maxValue = 1, description = "auto stabiliser speed."} },
             { "stabiliserstability", new ParameterInfo { minValue = 0, maxValue = 10, description = "auto stabiliser stability."} },
             { "taws_online", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "TAWS online status. Displays piloting aids on glider middle screens." } },
             { "take", new ParameterInfo { minValue = 1, maxValue = 20, type = ParameterType.Int, description = "Take number for the current shot." } },
@@ -1143,6 +1166,7 @@ namespace Meg.Networking
             { "version", new ParameterInfo { readOnly = true, description = "Current application version." } },
             { "verticalvelocity", new ParameterInfo { readOnly = true, description = "Sub's current velocity in the vertical direction (m/s)." } },
             { "vesselmovementenabled", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether vessel movement simulation is enabled during playback." } },
+            { "waterlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Water layer map visibility."} },
             { "watertemp", new ParameterInfo { readOnly = true, description = "Exterior water temperature (computed, degrees C)."} },
             { "watertempoverride", new ParameterInfo { description = "Override value for water temperature (C)"} },
             { "watertempoverrideamount", new ParameterInfo { maxValue = 1, description = "How much to override the displayed value for water temperature (C)"} },
@@ -1606,6 +1630,22 @@ namespace Meg.Networking
                     return MapData.latitude;
                 case "longitude":
                     return MapData.longitude;
+                case "maplayeralerts":
+                    return MapData.mapLayerAlerts;
+                case "maplayercontours":
+                    return MapData.mapLayerContours;
+                case "maplayerdepths":
+                    return MapData.mapLayerDepths;
+                case "maplayergrid":
+                    return MapData.mapLayerGrid;
+                case "maplayerlabels":
+                    return MapData.mapLayerLabels;
+                case "maplayersatellite":
+                    return MapData.mapLayerSatellite;
+                case "maplayershipping":
+                    return MapData.mapLayerShipping;
+                case "maplayertemperatures":
+                    return MapData.mapLayerTemperatures;
                 case "mapscale":
                     return MapData.mapScale;
                 case "towwinchload":
@@ -1692,6 +1732,8 @@ namespace Meg.Networking
                     return SonarData.ShortSensitivity;
                 case "stabiliserspeed":
                     return SubControl.StabiliserSpeed;
+                case "motionstabiliserkicker":
+                    return MotionBaseData.MotionStabiliserKicker;
                 case "stabiliserstability":
                     return SubControl.StabiliserStability;
                 case "dcccommscontent":
@@ -1700,6 +1742,8 @@ namespace Meg.Networking
                     return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
                 case "dcccommsusesliders":
                     return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
+                case "dccschematicstoggle":
+                    return DCCScreenData.DCCschematicsToggle;
                 case "domecenter":
                     return (float)DomeData.domeCenter;
                 case "domecornerbottomleft":
@@ -1746,6 +1790,10 @@ namespace Meg.Networking
                     return ScreenData.greenScreenBrightness;
                 case "acidlayer":
                     return MapData.acidLayer;
+                case "waterlayer":
+                    return MapData.waterLayer;
+                case "mapmode":
+                    return (int) MapData.mapMode;
                 case "lightarray1":
                     return LightData.lightArray1;
                 case "lightarray2":
@@ -2042,6 +2090,8 @@ namespace Meg.Networking
                     return SubControl.StabiliserStability.ToString("n1");
                 case "StabiliserSpeed":
                     return SubControl.StabiliserSpeed.ToString("n1");
+                case "motionstabiliserkicker":
+                    return MotionBaseData.MotionStabiliserKicker.ToString("n1");
                 case "maxgliderangle":
                     return SubControl.MaxGliderAngle.ToString("n1");
                 case "absolutemaxangularvel":
@@ -2396,6 +2446,10 @@ namespace Meg.Networking
         public static Vector3 GetVesselPosition(int vessel)
             { return VesselData.GetPosition(vessel); }
 
+        /** Return a vessel's current 3d map position (1-based index). */
+        public static Vector3 GetVesselMapPosition(int vessel)
+            { return VesselData.GetMapPosition(vessel); }
+
         /** Return a vessel's velocity (1-based index). */
         public static float GetVesselVelocity(int vessel)
             { return VesselData.GetSpeed(vessel); }
@@ -2625,11 +2679,25 @@ namespace Meg.Networking
                 LocalPlayer.PostScreenState(playerId, state);
         }
 
+        /** Post screen state for the given player. */
+        public static void PostScreenStateType(NetworkInstanceId playerId, screenData.Type type)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateType(playerId, type);
+        }
+
         /** Post screen state for this player. */
         public static void PostScreenStateContent(NetworkInstanceId playerId, screenData.Content content)
         {
             if (LocalPlayer)
                 LocalPlayer.PostScreenStateContent(playerId, content);
+        }
+
+        /** Post station id for the given player. */
+        public static void PostStationId(NetworkInstanceId playerId, int stationId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostStationId(playerId, stationId);
         }
 
         /** Return content ID for the specified DCC screen. */
@@ -2662,6 +2730,15 @@ namespace Meg.Networking
                 return 0;
 
             return DCCScreenData.GetQuadContent(id, stationId);
+        }
+
+        /** Return content ID for the specified DCC quad screen. */
+        public static DCCScreenContentPositions.positionID GetQuadPosition(DCCWindow.contentID content, int stationId)
+        {
+            if (!DCCScreenData)
+                return 0;
+
+            return DCCScreenData.GetQuadPosition(content, stationId);
         }
 
         /** Post cycle state for the specified quad screen. */
@@ -2730,7 +2807,11 @@ namespace Meg.Networking
 
             // Expand out local player values.
             if (LocalPlayer)
-                value = value.Replace("{player-id}", LocalPlayer.Id);
+                value = LocalPlayer.Expanded(value);
+
+            // Expand out DCC information.
+            if (DCCScreenData)
+                value = DCCScreenData.Expanded(value);
 
             // Lastly, Look for parameter references (e.g. '{o2}') and expand them.
             var matches = Regex.Matches(value, @"{([\w-]+)}");

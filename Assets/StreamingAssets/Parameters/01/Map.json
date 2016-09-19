@@ -5,6 +5,10 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"mapmode"
+				},
+				{
+					"type":"Value",
 					"serverParam":"latitude"
 				},
 				{
@@ -14,6 +18,51 @@
 				{
 					"type":"Value",
 					"serverParam":"mapscale"
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayer"
+				},
+				{
+					"type":"Value",
+					"serverParam":"waterlayer"
+				}
+			]
+		},
+		{
+			"id":"MAP LAYERS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"maplayeralerts"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayercontours"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayerdepths"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayergrid"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayerlabels"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayersatellite"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayershipping"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maplayertemperatures"
 				}
 			]
 		}

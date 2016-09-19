@@ -563,6 +563,10 @@ public class vesselData : NetworkBehaviour
     public Vector2 GetSonarPosition(int id, SonarData.Type type)
         { return VesselToSonarSpace(GetPosition(id), type); }
 
+    /** Return a vessel's position in 3d map space. */
+    public Vector3 GetMapPosition(int id)
+        { return VesselToMapSpace(GetPosition(id)); }
+
     /** Convert a point in vessel space to sub space. */
     public Vector3 VesselToWorldSpace(Vector3 p)
         { return new Vector3(p.x * VesselToWorldScale, -p.z, p.y * VesselToWorldScale); }
@@ -578,6 +582,14 @@ public class vesselData : NetworkBehaviour
     /** Convert a point in vessel space to the player vessel's local space. */
     public Vector3 PlayerToVesselSpace(Vector3 p)
         { return p + GetPosition(PlayerVessel); }
+
+    /** Convert a point in vessel space to 3d map space. */
+    public Vector3 VesselToMapSpace(Vector3 p)
+        { return Map.Instance.VesselToMapSpace(p); }
+
+    /** Convert a normalized map-space 3d position into world space. */
+    public Vector3 MapToVesselSpace(Vector3 p)
+        { return Map.Instance.MapToVesselSpace(p); }
 
     /** Convert a point in vessel space to sonar space (normalized to 0..1 according to maximum range). */
     public Vector2 VesselToSonarSpace(Vector3 p, SonarData.Type type)

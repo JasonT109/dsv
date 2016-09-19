@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TouchScript.Gestures;
 using TouchScript.Hit;
 using Meg.DCC;
@@ -23,14 +24,24 @@ public class DCCWindow : MonoBehaviour
         comms,
         power,
         oxygen,
-        batteries
+        batteries,
+        gliderpower,
+        gliderthrusters,
+        gliderdiagnostics,
+        glidersonar,
+        crew1,
+        crew2,
+        crew3,
+        crew4,
+        crew5
     }
-
+    public GameObject windowGlow;
     public contentID windowContent;
     public bool hasFocus;
     public bool isLerping = false;
     public float lerpTime = 0.6f;
-    public float minSwipeSpeed = 1f;
+    public bool canDropBucket = true;
+
     private Vector3 toPosition;
     private Vector3 fromPosition;
     private Vector2 toScale;
@@ -38,19 +49,15 @@ public class DCCWindow : MonoBehaviour
     private float lerpTimer = 0f;
     private graphicsDCCWindowSize window;
     private DCCScreenManager screenManager;
-    private float transformSpeed = 0;
-    private float[] transformSpeedHistory = new float[3];
-    private Vector3[] deltaHistory = new Vector3[3];
+    private float transformSpeed = 1f;
     private Vector2 transformDirection;
-    private DCCScreenID._screenID swipeScreenID;
-    private float pressTimer = 0;
-    private float colorLerpTimer = 0;
     private int _commsContent = 0;
     private bool transformOffscreen;
     private float offscreenLerpTimer = 0f;
     private Vector2 offscreenDirection;
     private float offscreenSpeed;
     private Vector3 offscreenInitPos;
+    private DCCDropBucketManager lastBucketManager;
 
     public int commsContent
     {
@@ -63,6 +70,21 @@ public class DCCWindow : MonoBehaviour
             _commsContent = value;
         }
     }
+
+    public static string NameForContent(contentID content)
+    {
+        var result = Enum.GetName(typeof(contentID), content);
+        return result ?? "";
+    }
+
+    public static contentID ContentForName(string name)
+        { return (contentID) Enum.Parse(typeof(contentID), name); }
+
+    public static contentID FirstContentId
+        { get { return Enum.GetValues(typeof(contentID)).Cast<contentID>().Min(); } }
+
+    public static contentID LastContentId
+        { get { return Enum.GetValues(typeof(contentID)).Cast<contentID>().Max(); } }
 
     /** Moves a window to a destination position. */
     public void MoveWindow(DCCScreenContentPositions.positionID destination)
@@ -118,6 +140,9 @@ public class DCCWindow : MonoBehaviour
             DCCScreenContentPositions.SetScreenScale(transform, quadPosition);
         }
 
+        if (windowGlow)
+            windowGlow.SetActive(false);
+
         Register();
     }
 
@@ -126,8 +151,6 @@ public class DCCWindow : MonoBehaviour
         var gesture = sender as PressGesture;
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
-
-        pressTimer += Time.deltaTime;
 
         hasFocus = true;
     }
@@ -140,37 +163,39 @@ public class DCCWindow : MonoBehaviour
 
         hasFocus = false;
 
-        if (transformSpeed > minSwipeSpeed)
+        if (canDropBucket)
         {
-            DCCScreenID._screenID screenDirection = DCCScreenID._screenID.control;
-
-            if (transformDirection.x < -0.2f && transformDirection.y > 0)
+            GameObject DropTargetObject = GetDropTarget();
+            if (DropTargetObject)
             {
-                screenDirection = DCCScreenID._screenID.screen3;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
+                DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
+                DCCScreenID._screenID targetScreen = DCCScreenID._screenID.control;
+
+                if (DropTarget == DCCDropBucket.dropBucket.left && HasScreen(screenData.Type.DccScreen3))
+                    targetScreen = DCCScreenID._screenID.screen3;
+
+                if (DropTarget == DCCDropBucket.dropBucket.middle && HasScreen(screenData.Type.DccScreen4))
+                    targetScreen = DCCScreenID._screenID.screen4;
+
+                if (DropTarget == DCCDropBucket.dropBucket.right && HasScreen(screenData.Type.DccScreen5))
+                    targetScreen = DCCScreenID._screenID.screen5;
+
+                if (targetScreen != DCCScreenID._screenID.control)
+                {
+                    TransformOffscreen(transformDirection, transformSpeed);
+                    screenManager.ActivateWindow(windowContent, targetScreen);
+                    if (lastBucketManager)
+                        lastBucketManager.highlightedBucket = null;
+                }
             }
-
-            if (transformDirection.x >= -0.2f &&  transformDirection.x <= 0.2f && transformDirection.y > 0)
-            {
-                screenDirection = DCCScreenID._screenID.screen4;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
-            }
-
-            if (transformDirection.x > 0.2f && transformDirection.y > 0)
-            {
-                screenDirection = DCCScreenID._screenID.screen5;
-                TransformOffscreen(transformDirection, Mathf.Clamp01(transformSpeed * 0.1f));
-            }
-
-            if (screenDirection != DCCScreenID._screenID.control)
-                screenManager.ActivateWindow(windowContent, screenDirection);
-
-            //Debug.Log("Swipe detected in direction of screen: " + screenDirection + " " + transformDirection + " at a speed of " + transformSpeed);
         }
+        if (windowGlow)
+            windowGlow.SetActive(false);
+    }
 
-        transformSpeedHistory = new float[8];
-        screenManager.swipeIndicator.SetActive(false);
-        pressTimer = 0;
+    private static bool HasScreen(screenData.Type type)
+    {
+        return DCCScreenData.GetStationHasScreen(DCCScreenData.StationId, type);
     }
 
     private void transformHandler(object sender, EventArgs e)
@@ -179,25 +204,27 @@ public class DCCWindow : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        if (transformSpeed > minSwipeSpeed)
+        if (canDropBucket)
         {
-            screenManager.swipeIndicator.SetActive(true);
+            GameObject DropTargetObject = GetDropTarget();
+            if (DropTargetObject)
+            {
+                if (windowGlow)
+                    windowGlow.SetActive(true);
+                DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
+                lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
+            }
+            else
+            {
+                if (windowGlow)
+                    windowGlow.SetActive(false);
+                if (lastBucketManager)
+                    lastBucketManager.highlightedBucket = null;
+            }
         }
-        else
-        {
-            screenManager.swipeIndicator.SetActive(false);
-        }
-
-        Renderer r = screenManager.swipeIndicator.GetComponentInChildren<Renderer>();
-
-        r.material.SetColor("_TintColor", Color.Lerp(new Color(1, 1, 1, 0), new Color(1, 1, 1, 0.5f), colorLerpTimer));
-
-        screenManager.swipeIndicator.transform.position = hit.Point;
-        Quaternion q = new Quaternion();    
-        q.SetLookRotation(-Vector3.forward, transformDirection);
-        screenManager.swipeIndicator.transform.rotation = q;
     }
 
+    /** Sets up data for sending content offscreen. */
     private void TransformOffscreen(Vector2 direction, float speed)
     {
         offscreenLerpTimer = 0;
@@ -233,34 +260,21 @@ public class DCCWindow : MonoBehaviour
         hasFocus = false;
     }
 
-    void StoreWindowMoveSpeed()
+    /** Returns a drop bucket target gameobject for sending content to other screens. */
+    private GameObject GetDropTarget()
     {
-        //calculate transform direction based on last few frames
-        Vector3 p = transform.position;
-
-        //copy array over itself moving it one index
-        Array.Copy(deltaHistory, 1, deltaHistory, 0, deltaHistory.Length - 1);
-        deltaHistory[deltaHistory.Length - 1] = p;
-
-        //get transform direction
-        transformDirection = (deltaHistory[1] - deltaHistory[0]).normalized;
-
-        //get distance travelled last frame
-        float t = Vector3.Distance(deltaHistory[0], deltaHistory[1]);
-
-        //copy array over itself moving it one index
-        Array.Copy(transformSpeedHistory, 1, transformSpeedHistory, 0, transformSpeedHistory.Length - 1);
-
-        //add distance we moved last frame to array
-        transformSpeedHistory[transformSpeedHistory.Length - 1] = t;
-
-        //add all the distances together
-        transformSpeed = 0;
-        for (int i = 0; i < transformSpeedHistory.Length; i++)
-            transformSpeed += transformSpeedHistory[i];
-
-        //get average distance travelled
-        transformSpeed /= transformSpeedHistory.Length;
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics.RaycastAll(ray);
+        foreach (var hit in hits)
+        {
+            var dropzone = hit.transform.GetComponent<DCCDropBucket>();
+            if (dropzone)
+            {
+                transformDirection = hit.transform.position - transform.position;
+                return hit.transform.gameObject;
+            }
+        }
+        return null;
     }
 
     void Awake ()
@@ -289,15 +303,6 @@ public class DCCWindow : MonoBehaviour
             }
         }
 
-        if (!isLerping)
-        {
-            StoreWindowMoveSpeed();
-            if (transformSpeed > minSwipeSpeed)
-                Mathf.Clamp01(colorLerpTimer += Time.deltaTime * 3f);
-            else
-                colorLerpTimer = 0;
-        }
-
         if (!quadWindow)
         {
             if (hasFocus)
@@ -309,9 +314,7 @@ public class DCCWindow : MonoBehaviour
         if (transformOffscreen)
         {
             offscreenLerpTimer += Time.deltaTime;
-            transform.localPosition = new Vector3 (transform.localPosition.x + (offscreenDirection.x * offscreenSpeed), transform.localPosition.y + (offscreenDirection.y * offscreenSpeed), transform.localPosition.z);
-            //GetComponent<graphicsDCCWindowSize>().windowWidth *= 1 - offscreenLerpTimer;
-            //GetComponent<graphicsDCCWindowSize>().windowHeight *= 1 - offscreenLerpTimer;
+            transform.localPosition = new Vector3 (transform.localPosition.x + (offscreenDirection.x * (offscreenSpeed * Time.deltaTime)), transform.localPosition.y + (offscreenDirection.y * (offscreenSpeed * Time.deltaTime)), transform.localPosition.z);
 
             if (offscreenLerpTimer > 1)
             {

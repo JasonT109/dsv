@@ -10,6 +10,21 @@ public class mapData : NetworkBehaviour
     /** Default floor depth to assume. */
     public const float DefaultFloorDepth = 11050;
 
+    /** Map modes. */
+    public enum Mode
+    {
+        None = -1,
+        Mode3D = 0,
+        Mode2D = 1,
+        ModeSubSchematic = 2   // Used in the DCC strategy table.
+    };
+
+
+    [Header("Mode")]
+
+    [SyncVar]
+    public Mode mapMode = Mode.Mode3D;
+
 
     [Header("Coordinates")]
 
@@ -23,7 +38,40 @@ public class mapData : NetworkBehaviour
     public float mapScale = 1f;
 
 
-    [Header("Map Events")]
+    [Header("Layers")]
+
+    [SyncVar]
+    public int acidLayer;
+
+    [SyncVar]
+    public int waterLayer = 1;
+
+    [SyncVar]
+    public int mapLayerAlerts = 1;
+
+    [SyncVar]
+    public int mapLayerContours = 1;
+
+    [SyncVar]
+    public int mapLayerGrid = 1;
+
+    [SyncVar]
+    public int mapLayerDepths = 1;
+
+    [SyncVar]
+    public int mapLayerLabels = 1;
+
+    [SyncVar]
+    public int mapLayerSatellite = 1;
+
+    [SyncVar]
+    public int mapLayerShipping = 1;
+
+    [SyncVar]
+    public int mapLayerTemperatures = 1;
+
+
+    [Header("Events")]
 
     [SyncVar]
     public float initiateMapEvent;
@@ -31,7 +79,14 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public string mapEventName;
 
-    [SyncVar]
-    public int acidLayer;
+
+    public bool IsMap2D
+        { get { return mapMode == Mode.Mode2D; } }
+
+    public bool IsMap3D
+        { get { return mapMode == Mode.Mode3D; } }
+
+    public bool IsSubSchematic
+        { get { return mapMode == Mode.ModeSubSchematic; } }
 
 }

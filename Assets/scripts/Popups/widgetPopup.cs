@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 using Meg.Networking;
+using TouchScript.Gestures;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -77,12 +79,33 @@ public class widgetPopup : MonoBehaviour
     /** Z-sorting bias (used in DCC). */
     private float _zBias = -1.9f;
 
+    /** Transform gesture, if any. */
+    private TransformGesture _gesture;
+
+    /** Whether user has moved this popup. */
+    private bool _moved;
+
+    /** Popup's root canvas. */
+    private Canvas _canvas;
+
 
     // Unity Methods
     // ------------------------------------------------------------
 
+    /** Initialization. */
+    protected virtual void Start()
+    {
+        _canvas = GetComponent<Canvas>();
+
+        if (Root)
+            _gesture = Root.GetComponent<TransformGesture>();
+
+        if (_gesture)
+            RegisterWithGesture();
+    }
+
     /** Updating. */
-    private void LateUpdate()
+    protected virtual void LateUpdate()
     {
         // Update popup's visibility and positioning.
         UpdatePopup();
@@ -107,25 +130,11 @@ public class widgetPopup : MonoBehaviour
 
         // Configure popup title.
         if (Title)
-        {
-            var title = serverUtils.Expanded(popup.Title);
-            var scrolling = Title.GetComponent<graphicsScrollingText>();
-            if (scrolling)
-                scrolling.Lines = title;
-            else
-                Title.text = title;
-        }
+            Title.text = serverUtils.Expanded(popup.Title);
 
         // Configure popup message.
         if (Message)
-        {
-            var message = serverUtils.Expanded(popup.Message);
-            var scrolling = Message.GetComponent<graphicsScrollingText>();
-            if (scrolling)
-                scrolling.Lines = message;
-            else
-                Message.text = message;
-        }
+            Message.text = serverUtils.Expanded(popup.Message);
 
         // Configure icons.
         var iconIndex = (int) popup.Icon;
@@ -152,6 +161,10 @@ public class widgetPopup : MonoBehaviour
         else
             Destroy(gameObject);
     }
+
+    /** Request that this popup be removed from the scene. */
+    public void Remove()
+        { serverUtils.PostRemovePopup(Popup); }
 
 
     // Protected Methods
@@ -196,16 +209,21 @@ public class widgetPopup : MonoBehaviour
             PopupData.TryGetTarget(Popup.Target, out _target);
 
         // Update the popup's position.
-        if (_target)
-            PositionOverTarget(_target);
-        else
-            SetPosition(Popup.Position);
+        UpdatePosition();
 
         // Update the popup's visibility.
         if (!string.IsNullOrEmpty(Popup.Target))
             SetActive(_target && _target.gameObject.activeInHierarchy);
         else
             SetActive(!serverUtils.IsInDebugScreen());
+
+        // Configure popup title.
+        if (Title)
+            Title.text = serverUtils.Expanded(Popup.Title);
+
+        // Configure popup message.
+        if (Message)
+            Message.text = serverUtils.Expanded(Popup.Message);
     }
 
     /** Set whether the popup is active. */
@@ -240,6 +258,28 @@ public class widgetPopup : MonoBehaviour
         var canvas = GetComponent<Canvas>();
         canvas.sortingOrder = value ? 100 : 0;
         canvas.sortingLayerName = value ? "Top" : "Default";
+    }
+
+    /** Update the popup's position. */
+    protected virtual void UpdatePosition()
+    {
+        // Update sorting order for topmost popups.
+        if (_canvas && _topmost)
+            _canvas.sortingOrder = 100 + transform.GetSiblingIndex();
+
+        // Only update if user hasn't moved the popup.
+        if (_moved)
+            return;
+
+        // Rescale the popup.
+        if (Popup.Scale.sqrMagnitude > 0)
+            Root.transform.localScale = Popup.Scale;
+
+        // Position the popup.
+        if (_target)
+            PositionOverTarget(_target);
+        else
+            SetPosition(Popup.Position);
     }
 
 
@@ -284,6 +324,19 @@ public class widgetPopup : MonoBehaviour
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
         Destroy(gameObject);
+    }
+
+    /** Register for transform gesture events. */
+    private void RegisterWithGesture()
+        { _gesture.TransformStarted += OnTransformStarted; }
+
+    /** Handle user moving the popup. */
+    private void OnTransformStarted(object sender, EventArgs eventArgs)
+    {
+        _moved = true;
+
+        // Bump popup to the top of the render order.
+        transform.SetAsLastSibling();
     }
 
 }

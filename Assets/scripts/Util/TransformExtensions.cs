@@ -4,6 +4,48 @@ using System.Text.RegularExpressions;
 
 public static class TransformExtensions
 {
+    /** Get a component in children, not including self. */
+    public static T GetComponentInChildrenNotMe<T>(this Component c, bool includeHidden) where T : Component
+    {
+        var ts = c.transform.GetComponentsInChildren<Transform>(includeHidden);
+        foreach (var child in ts)
+        {
+            if (child == c.transform)
+                continue;
+
+            var r = child.GetComponentInChildren<T>(includeHidden);
+            if (r != null)
+                return r;
+        }
+
+        return default(T);
+    }
+
+    /** Find an inactive child by name. */
+    public static Transform FindChildInactive(this Transform t, string name)
+    {
+        var ts = t.GetComponentsInChildren<Transform>(true);
+        foreach (var child in ts)
+        {
+            if (child.name == name)
+                return child;
+        }
+
+        return null;
+    }
+
+    /** Find an inactive child by name. */
+    public static GameObject FindChildInactive(this GameObject go, string name)
+    {
+        var ts = go.GetComponentsInChildren<Transform>(true);
+        foreach (var child in ts)
+        {
+            if (child.name == name)
+                return child.gameObject;
+        }
+
+        return null;
+    }
 
     /** Recursively search a transform's children for a named child. */
     public static Transform FindChildRecursive(this Transform transform, string name)

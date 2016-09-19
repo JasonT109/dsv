@@ -19,13 +19,13 @@
 
 		"dcc-window-title-prefix" : "DIVE CONTROL",
 		"dcc-station-id" : 0,
-		"dcc-station-names" : 
+		"dcc-stations" : 
 		[
-			"A - Server",
-			"B - Heller",
-			"C - Jaxx",
-			"D - Jones",
-			"E - DJ"
+			{ "name" : "A - Server" },
+			{ "name" : "B - Heller" },
+			{ "name" : "C - Jaxx", "dcctopmid-visible" : false },
+			{ "name" : "D - Jones" },
+			{ "name" : "E - DJ", "dcctopmid-visible" : false }
 		],
 
 		"header-01-title" : "OXYGEN",
@@ -53,13 +53,19 @@
 		"glider-header-03-parameter" : "velocity",
 		"glider-header-03-format" : "{0:n0}",
 
+		"patient-name-01" : "Carter Lewis",
+		"patient-name-02" : "Lori Taylor",
+		"patient-name-03" : "Toshi Ishida",
+		"patient-name-04" : "Suyin Zhang",
+		"patient-name-05" : "Jonas Taylor",
+
 		"vessels" : 
 		[
 			{ 
 				"name" : "Sub 2", 
 				"position" : [-1, -0.5, 2000],
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.647, 0.745, 0.706],
 				"coloronsonar" : [0.647, 0.745, 0.706],
 				"colorthemebackground": "0B0B0B",
@@ -69,8 +75,8 @@
 			{ 
 				"name" : "Sub 1", 
 				"position" : [-2, 2, 8900],
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.965, 0.533, 0.122], 
 				"coloronsonar" : [0.965, 0.533, 0.122], 
 				"colorthemebackground": "0B0B0B",
@@ -80,8 +86,8 @@
 			{ 
 				"name" : "Glider 1", 
 				"position" : [2, -2, 7300],
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.929, 0.878, 0.596],
 				"coloronsonar" : [0.929, 0.878, 0.596],
 				"colorthemebackground": "0B0B0B",
@@ -91,8 +97,8 @@
 			{ 
 				"name" : "Glider 2", 
 				"position" : [1, 0, 7700],
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.973, 0.635, 0.314],
 				"coloronsonar" : [0.973, 0.635, 0.314],
 				"colorthemebackground": "0B0B0B",
@@ -103,16 +109,16 @@
 				"name" : "Unknown", 
 				"position" : [0, -2.5, 8200],
 				"icon" : "warning",
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.745, 0.118, 0.176],
 				"coloronsonar" : [0.745, 0.118, 0.176],
 			},
 			{ 
 				"name" : "Target", 
 				"position" : [2, 2, 8200],
-				"onmap" : true, 
-				"onsonar" : true,
+				"onmap" : false, 
+				"onsonar" : false,
 				"coloronmap" : [0.8, 0.8, 0.8],
 			},
 		],

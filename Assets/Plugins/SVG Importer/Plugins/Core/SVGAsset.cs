@@ -416,10 +416,10 @@ namespace SVGImporter
 						}
 					}
 				}
+                return _atlasTextures;
 #else
                 return _atlasTextures = SVGAtlas.Instance.atlasTextures.ToArray();
 #endif
-                return _atlasTextures;
             }
         }
 

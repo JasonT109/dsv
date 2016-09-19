@@ -42,7 +42,7 @@ public class debugSubScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
-        _contentLabel.text = Enum.GetName(typeof(screenData.Content), Player.ScreenState.Content).ToUpper();
+        _contentLabel.text = screenData.NameForContent(Player.ScreenState.Content);
         ContentButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
         NextButton.interactable = !Player.isLocalPlayer;

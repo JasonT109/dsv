@@ -22,11 +22,7 @@ public class NavSubPins : Singleton<NavSubPins>
 
     [Header("Configuration")]
 
-    public float seaFloor = 10994f;
-    public float heightMul = 2.0f;
-    public float MapSize;
     public Vector2 imageSize = new Vector2(5, 5);
-    public float distanceScale = 0.01f;
     public float lineXOffset = -0.1f;
     public bool isGliderMap = false;
 
@@ -34,6 +30,8 @@ public class NavSubPins : Singleton<NavSubPins>
 
     public NavSubPin PinPrefab;
 
+    public Camera MapCamera
+        { get { return _mapCamera; } }
 
     // Members
     // ------------------------------------------------------------
@@ -58,8 +56,7 @@ public class NavSubPins : Singleton<NavSubPins>
             RegisterPin(pin);
 
         // Locate the map camera.
-        var mapRoot = GameObject.Find("MapRoot");
-        _mapCamera = mapRoot.GetComponentInChildren<Camera>(true);
+        ResolveMapCamera();
 
         // Check that we have everything configured properly.
         if (!VesselButtonRoot)
@@ -77,6 +74,9 @@ public class NavSubPins : Singleton<NavSubPins>
         for (var i = 0; i < _pins.Count; i++)
             _pins[i].ToggleLabel();
     }
+
+    public bool HasLabels
+        { get { return _pins.Exists(pin => pin.ShowLabel); } }
 
     /** Locate a pin by the vessel id it represents. */
     public NavSubPin GetVesselPin(int vessel)
@@ -100,24 +100,6 @@ public class NavSubPins : Singleton<NavSubPins>
         return p;
     }
 
-    public Vector3 ConvertVesselCoords(Vector3 position)
-    {
-        Vector3 p;
-
-        //"normalise" the coordinate system used in the crew data map
-        //hardcoded with the size of the crew map size
-        p.x = (position.x + 5.0f) / 10.0f;
-        p.y = ((seaFloor - position.z) / 1000.0f) * heightMul;
-        p.z = (position.y + 5.0f) / 10.0f;
-
-        //convert the normalised coordinates to map to the nav map
-        //hardcoded with a displacement to the nav map
-        p.x = p.x * MapSize + 130.0f;
-        p.z = p.z * MapSize + -25.0f;
-
-        return (p);
-    }
-
     public float GetVesselFloorDistance(int vessel)
     {
         if (_pins == null || vessel < 1 || vessel >= _pins.Count)
@@ -129,6 +111,19 @@ public class NavSubPins : Singleton<NavSubPins>
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Resolve map camera components. */
+    private void ResolveMapCamera()
+    {
+        if (_mapCamera)
+            return;
+
+        var root = GameObject.Find("MapRoot");
+        if (root)
+            _mapCamera = root.GetComponentInChildren<Camera>();
+        if (!_mapCamera && Map.Instance)
+            _mapCamera = Map.Instance.Camera;
+    }
 
     /** Create a new pin at runtime. */
     private NavSubPin CreatePin()

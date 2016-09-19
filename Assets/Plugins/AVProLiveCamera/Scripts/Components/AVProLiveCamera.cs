@@ -126,6 +126,13 @@ public class AVProLiveCamera : MonoBehaviour
 		}
 	}
 
+    public void Close(AVProLiveCameraDevice _deviceToClose)
+    {
+        if (_deviceToClose != null)
+            _deviceToClose.Close();
+        _deviceToClose = null;
+    }
+
 	void Update()
 	{
 		if (_device != null)

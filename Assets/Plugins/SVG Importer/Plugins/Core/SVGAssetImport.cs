@@ -3,6 +3,7 @@
 // A Copy of the EULA APPENDIX 1 is available at http://unity3d.com/company/legal/as_terms
 
 #define IGNORE_EXCEPTIONS
+#pragma warning disable 0414
 
 using UnityEngine;
 using System.Collections;
@@ -319,3 +320,5 @@ namespace SVGImporter
         }  
     }
 }
+
+#pragma warning restore 0414

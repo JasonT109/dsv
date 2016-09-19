@@ -57,6 +57,12 @@ public class widget3DMap : MonoBehaviour {
     public Color AcidColor2d;
     public Color AcidColor3d;
 
+    public bool Is3DMode
+        { get { return button3dMapping.active; } }
+
+    public bool IsContourMode
+        { get { return buttonContourMapping.active; } }
+
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
@@ -91,6 +97,12 @@ public class widget3DMap : MonoBehaviour {
 
     private Material _waterMaterial;
     private Material _acidMaterial;
+
+    private float _waterAlpha = 1;
+    private float _waterSmoothVelocity;
+    private float _acidAlpha;
+    private float _acidSmoothVelocity;
+    private float _acidMaxRefraction;
 
     private Vector3 _cameraSmoothVelocity;
     private float _lastPressTime;
@@ -191,9 +203,14 @@ public class widget3DMap : MonoBehaviour {
 
     void UpdateZoom()
     {
+        // Try to resolve map camera components.
+        ResolveMapCamera();
+
         // Get current zoom level from camera
         zoom = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ);
         var camZ = mapCamera.transform.localPosition.z;
+
+        // Update tilt-shift effect.
         if (tilt)
             tilt.focalPoint = Math.Abs(camZ);
 
@@ -203,8 +220,30 @@ public class widget3DMap : MonoBehaviour {
         mapCamera.GetComponent<Camera>().fieldOfView = currentFOV;
     }
 
+    private void ResolveMapCamera()
+    {
+        if (mapCameraRoot)
+            return;
+
+        var map = Map.Instance;
+        if (!map)
+            return;
+
+        mapCameraRoot = map.CameraRoot.gameObject;
+        mapCameraPitch = map.CameraPitch.gameObject;
+        mapCamera = map.Camera.gameObject;
+        tilt = map.Camera.GetComponent<TiltShift>();
+    }
+
     public void UpdateMap()
     {
+        // Try to resolve map camera components.
+        ResolveMapCamera();
+
+        // Ensure that camera exists.
+        if (!mapCameraRoot)
+            return;
+
         // Cap delta time to avoid jumps at low framerates.
         const float maxDeltaTime = 1 / 50.0f;
         var dt = Mathf.Min(maxDeltaTime, Time.deltaTime);
@@ -388,9 +427,29 @@ public class widget3DMap : MonoBehaviour {
         m.SetFloat("_Gradient", Mathf.Lerp(_gradient2D, _gradient3D, t));
         m.SetFloat("_LineDetail", Mathf.Lerp(_lineDetail2D, _lineDetail3D, t));
 
-        _waterMaterial.SetColor("_MainColor", Color.Lerp(WaterColor2d, WaterColor3d, t));
+        // Update water visibility.
+        var waterColor = Color.Lerp(WaterColor2d, WaterColor3d, t);
+        var waterTargetAlpha = serverUtils.GetServerData("waterLayer", 1);
+        _waterAlpha = Mathf.SmoothDamp(_waterAlpha, waterTargetAlpha, ref _waterSmoothVelocity, 0.25f);
+        waterColor.a *= _waterAlpha;
+        if (_waterMaterial)
+            _waterMaterial.SetColor("_MainColor", waterColor);
+        if (Water)
+            Water.gameObject.SetActive(_waterAlpha > 0.01f);
 
-        _acidMaterial.SetColor("_FogColor", Color.Lerp(AcidColor2d, AcidColor3d, t));
+        // Update acid visibility.
+        var acidColor = Color.Lerp(AcidColor2d, AcidColor3d, t);
+        var acidTargetAlpha = serverUtils.GetServerData("acidLayer", 0);
+        _acidAlpha = Mathf.SmoothDamp(_acidAlpha, acidTargetAlpha, ref _acidSmoothVelocity, 0.25f);
+        if (_acidMaterial)
+        {
+            acidColor.a *= _acidAlpha;
+            _acidMaterial.SetColor("_FogColor", acidColor);
+            _acidMaterial.SetFloat("_Opacity", _acidAlpha);
+            _acidMaterial.SetFloat("_RefractionAmount", _acidMaxRefraction * _acidAlpha);
+        }
+        if (Acid)
+            Acid.gameObject.SetActive(_acidAlpha > 0.01f);
     }
 
     private void InitTerrain()
@@ -422,10 +481,34 @@ public class widget3DMap : MonoBehaviour {
         terrain.materialTemplate = new Material(terrain.materialTemplate);
         terrain.basemapDistance = 10000;
 
-        _waterMaterial = Water.GetComponent<Renderer>().material;
+        if (!Water && Map.Instance)
+            Water = Map.Instance.Water;
+        if (Water)
+            _waterMaterial = Water.GetComponent<Renderer>().material;
 
-        _acidMaterial = Acid.GetComponent<Renderer>().material;
+        if (!Acid && Map.Instance)
+            Acid = Map.Instance.Acid;
+        if (Acid)
+        {
+            _acidMaterial = Acid.GetComponent<Renderer>().material;
+            _acidMaxRefraction = _acidMaterial.GetFloat("_RefractionAmount");
+        }
 
         _terrainInitialized = true;
     }
+
+    /** Toggle the acid layer. */
+    public void ToggleAcidLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("acidlayer");
+        serverUtils.PostServerData("acidlayer", wasOn ? 0 : 1);
+    }
+
+    /** Toggle the water layer. */
+    public void ToggleWaterLayer()
+    {
+        var wasOn = serverUtils.GetServerBool("waterlayer");
+        serverUtils.PostServerData("waterlayer", wasOn ? 0 : 1);
+    }
+
 }

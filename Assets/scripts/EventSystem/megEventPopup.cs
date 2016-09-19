@@ -22,11 +22,13 @@ namespace Meg.EventSystem
         // ------------------------------------------------------------
 
         public popupData.Type Type = popupData.Type.Info;
+        public string Theme = "";
         public string Title = "";
         public string Message = DefaultMessage;
         public string Target = "";
         public Vector3 Position = Vector3.zero;
         public Vector2 Size = Vector2.zero;
+        public Vector3 Scale = Vector3.one;
         public popupData.Icon Icon = popupData.Icon.Exclamation;
         public Color Color = Color.white;
 
@@ -38,11 +40,13 @@ namespace Meg.EventSystem
                 return new popupData.Popup
                 {
                     Type = Type,
+                    Theme = Theme,
                     Title = Title,
                     Message = Message,
                     Target = Target,
                     Position = Position,
                     Size = Size,
+                    Scale = Scale,
                     Icon = Icon,
                     Color = Color
                 };
@@ -88,11 +92,13 @@ namespace Meg.EventSystem
         {
             var json = base.Save();
             json.AddField("Type", (int) Type);
+            json.AddField("Theme", Theme);
             json.AddField("Title", Title);
             json.AddField("Message", Message);
             json.AddField("Target", Target);
             json.AddField("Position", Position);
             json.AddField("Size", Size);
+            json.AddField("Scale", Scale);
             json.AddField("Icon", (int) Icon);
             json.AddField("Color", Color);
 
@@ -108,11 +114,13 @@ namespace Meg.EventSystem
             json.GetField(ref type, "Type");
             Type = (popupData.Type) type;
 
+            json.GetField(ref Theme, "Theme");
             json.GetField(ref Title, "Title");
             json.GetField(ref Message, "Message");
             json.GetField(ref Target, "Target");
             json.GetField(ref Position, "Position");
             json.GetField(ref Size, "Size");
+            json.GetField(ref Scale, "Scale");
             json.GetField(ref Color, "Color");
 
             var icon = 0;
@@ -127,6 +135,9 @@ namespace Meg.EventSystem
                 return triggerLabel;
 
             var typeName = Enum.GetName(typeof(popupData.Type), Type);
+            if (!string.IsNullOrEmpty(Theme))
+                typeName += "." + Theme;
+
             var result = string.Format("Popup {0}", typeName);
             if (!string.IsNullOrEmpty(Title))
                 result += string.Format(" '{0}'", Title);

@@ -6,7 +6,7 @@ public class debugDisplaySettingsUi : MonoBehaviour
 {
 
     /** DCC Configuration interface. */
-    public debugDCCScreensUi DccSettings;
+    public debugDCCDisplayUi Dcc;
 
     /** Sub display settings. */
     public debugSubScreensUi SubSettings;
@@ -14,26 +14,33 @@ public class debugDisplaySettingsUi : MonoBehaviour
     /** Glider display settings. */
     public debugGliderScreensUi GliderSettings;
 
+    /** ROV display settings. */
+    public debugRovScreensUi RovSettings;
+
 
     /** Initialization. */
     private void Start()
     {
         // Activate the appropriate screen management interface.
-        DccSettings.gameObject.SetActive(false);
+        Dcc.gameObject.SetActive(false);
         SubSettings.gameObject.SetActive(false);
         GliderSettings.gameObject.SetActive(false);
+        RovSettings.gameObject.SetActive(false);
 
         var scene = SceneManager.GetActiveScene();
         switch (scene.name)
         {
             case NetworkManagerCustom.DccScene:
-                DccSettings.gameObject.SetActive(true);
+                Dcc.gameObject.SetActive(true);
                 break;
             case NetworkManagerCustom.BigSubScene:
                 SubSettings.gameObject.SetActive(true);
                 break;
             case NetworkManagerCustom.GliderScene:
                 GliderSettings.gameObject.SetActive(true);
+                break;
+            case NetworkManagerCustom.RovScene:
+                RovSettings.gameObject.SetActive(true);
                 break;
         }
 

@@ -3,11 +3,13 @@ using UnityEngine;
 using System.Collections;
 using TouchScript.Gestures;
 using TouchScript.Hit;
+using Meg.Networking;
 
 public class DCCCameraDragDrop : MonoBehaviour
 {
     public bool hovering;
     public DCCCameraFeed parent;
+    public bool canDropBucket = false;
 
     private Color fadecolor = new Color(0.1f, 0.1f, 0.1f, 0.5f);
     private Color hilightColor = new Color(0.8f, 0.8f, 0.8f, 0.5f);
@@ -16,17 +18,21 @@ public class DCCCameraDragDrop : MonoBehaviour
     private float lerpValue = 0;
     private Renderer r;
     private Transform child;
+    private DCCDropBucketManager lastBucketManager;
+    private DCCScreenManager screenManager;
 
     private void OnEnable()
     {
         GetComponent<PressGesture>().Pressed += pressedHandler;
         GetComponent<ReleaseGesture>().Released += releaseHandler;
+        GetComponent<TransformGesture>().Transformed += transformHandler;
     }
 
     private void OnDisable()
     {
         GetComponent<PressGesture>().Pressed -= pressedHandler;
         GetComponent<ReleaseGesture>().Released -= releaseHandler;
+        GetComponent<TransformGesture>().Transformed -= transformHandler;
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -44,14 +50,79 @@ public class DCCCameraDragDrop : MonoBehaviour
         TouchHit hit;
         gesture.GetTargetHitResult(out hit);
 
-        var droptarget = GetDropTarget();
-        if (droptarget && (droptarget.position == DCCCameraFeed.positions.midLeft || droptarget.position == DCCCameraFeed.positions.midRight) && droptarget != gameObject.GetComponent<DCCCameraFeed>())
+        bool droppedInBucket = false;
+
+        if (canDropBucket)
         {
-            //Debug.Log("Dropped camera on to: " + droptarget);
-            droptarget.materialID = parent.materialID;
+            GameObject DropTargetObject = GetDropBucket();
+            if (DropTargetObject)
+            {
+                DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
+                DCCScreenID._screenID targetScreen = DCCScreenID._screenID.control;
+
+                if (DropTarget == DCCDropBucket.dropBucket.left && HasScreen(screenData.Type.DccScreen3))
+                    targetScreen = DCCScreenID._screenID.screen3;
+
+                if (DropTarget == DCCDropBucket.dropBucket.middle && HasScreen(screenData.Type.DccScreen4))
+                    targetScreen = DCCScreenID._screenID.screen4;
+
+                if (DropTarget == DCCDropBucket.dropBucket.right && HasScreen(screenData.Type.DccScreen5))
+                    targetScreen = DCCScreenID._screenID.screen5;
+
+                if (targetScreen != DCCScreenID._screenID.control)
+                {
+                    screenManager.ActivateWindow(DCCWindow.contentID.comms, targetScreen);
+                    serverUtils.PostServerData("dcccommscontent", parent.materialID);
+                    if (lastBucketManager)
+                        lastBucketManager.highlightedBucket = null;
+
+                    droppedInBucket = true;
+                }
+            }
         }
+
+        if (!droppedInBucket)
+        {
+            var droptarget = GetDropTarget();
+            if (droptarget && (droptarget.position == DCCCameraFeed.positions.midLeft || droptarget.position == DCCCameraFeed.positions.midLeftLow || droptarget.position == DCCCameraFeed.positions.midRight) && droptarget != gameObject.GetComponent<DCCCameraFeed>())
+            {
+                //Debug.Log("Dropped camera on to: " + droptarget);
+                droptarget.materialID = parent.materialID;
+            }
+        }
+
         hovering = false;
     }
+
+    private static bool HasScreen(screenData.Type type)
+    {
+        return DCCScreenData.GetStationHasScreen(DCCScreenData.StationId, type);
+    }
+
+    private void transformHandler(object sender, EventArgs e)
+    {
+        var gesture = sender as TransformGesture;
+        TouchHit hit;
+        gesture.GetTargetHitResult(out hit);
+
+        if (canDropBucket)
+        {
+            GameObject DropTargetObject = GetDropBucket();
+            if (DropTargetObject)
+            {
+                //windowGlow.SetActive(true);
+                DropTargetObject.GetComponent<DCCDropBucket>().manager.highlightedBucket = DropTargetObject;
+                lastBucketManager = DropTargetObject.GetComponent<DCCDropBucket>().manager;
+            }
+            else
+            {
+                //windowGlow.SetActive(false);
+                if (lastBucketManager)
+                    lastBucketManager.highlightedBucket = null;
+            }
+        }
+    }
+
 
     private DCCCameraFeed GetDropTarget()
     {
@@ -68,6 +139,21 @@ public class DCCCameraDragDrop : MonoBehaviour
         return null;
     }
 
+    /** Returns a drop bucket target gameobject for sending content to other screens. */
+    private GameObject GetDropBucket()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics.RaycastAll(ray);
+        foreach (var hit in hits)
+        {
+            var dropzone = hit.transform.GetComponent<DCCDropBucket>();
+            if (dropzone)
+                return hit.transform.gameObject;
+        }
+        return null;
+    }
+
+
     private void SetMaterialColor()
     {
         r = gameObject.GetComponentInChildren<Renderer>();
@@ -80,7 +166,13 @@ public class DCCCameraDragDrop : MonoBehaviour
         child = gameObject.transform.GetChild(0);
     }
 
-	void Update ()
+    void Awake()
+    {
+        if (!screenManager)
+            screenManager = ObjectFinder.Find<DCCScreenManager>();
+    }
+
+    void Update ()
     {
         if (hovering)
         {

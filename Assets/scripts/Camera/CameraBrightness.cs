@@ -36,10 +36,13 @@ public class CameraBrightness : MonoBehaviour {
 
         _effectMaterial.SetFloat("_Brightness", b);
 
-        if (Input.GetKeyDown(KeyCode.Equals))
-            localBrightness += 0.05f;
-        if (Input.GetKeyDown(KeyCode.Minus))
-            localBrightness -= 0.05f;
+        if (!isDebug)
+        {
+            if (Input.GetKeyDown(KeyCode.Equals))
+                localBrightness += 0.05f;
+            if (Input.GetKeyDown(KeyCode.Minus))
+                localBrightness -= 0.05f;
+        }
 
         _effectMaterial.SetFloat("_LocalBrightness", Mathf.Clamp(localBrightness, 0, 2));
     }

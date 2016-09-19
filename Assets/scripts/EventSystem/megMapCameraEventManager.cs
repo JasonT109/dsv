@@ -72,6 +72,11 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     /** Update map camera events. */
     private void Update()
     {
+        // Ensure that camera exists.
+        ResolveMapCamera();
+        if (!mapCameraRoot)
+            return;
+
         // Check to see if the server wants to start an event
         if (Mathf.Approximately(serverUtils.GetServerData("initiateMapEvent"), 1))
         {
@@ -83,7 +88,8 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         // Trigger camera events on button presses.
         for (var i = 0; i < mapEventList.Length; i++)
         {
-            if (mapEventList[i].trigger.GetComponent<buttonControl>().pressed)
+            var trigger = mapEventList[i].trigger;
+            if (trigger && trigger.GetComponent<buttonControl>().pressed)
                 StartRunningEvent(mapEventList[i]);
         }
 
@@ -151,11 +157,31 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     // Private Methods
     // ------------------------------------------------------------
 
+    /** Resolve map camera components. */
+    private void ResolveMapCamera()
+    {
+        if (mapCameraRoot)
+            return;
+
+        var map = Map.Instance;
+        if (!map)
+            return;
+
+        mapCameraRoot = map.CameraRoot.gameObject;
+        mapCameraPitch = map.CameraPitch.gameObject;
+        mapCameraObject = map.Camera.gameObject;
+    }
+
     /** Start running the given camera event. */
     private void StartRunningEvent(megEventMapCamera e)
     {
         // Check if we are allowed to interrupt the current event.
         if (runningEvent != null && e.priority < runningEvent.priority)
+            return;
+
+        // Ensure that map camera exists.
+        ResolveMapCamera();
+        if (!mapCameraRoot)
             return;
 
         // start this event

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Meg.Networking;
+using UnityEngine.UI;
 
 public class ImageSequenceSingleTexture : MonoBehaviour
 {
@@ -20,13 +21,16 @@ public class ImageSequenceSingleTexture : MonoBehaviour
     private Material goMaterial;
 
     //An integer to advance frames  
-    public int frameCounter = 0;
+    public int frameCounter;
 
     //A string that holds the name of the folder which contains the image sequence  
     public string folderName;
 
     //The name of the image sequence  
     public string imageSequenceName;
+
+    //Starting frame for the animation.
+    public int startFrame;
 
     //The number of frames the animation has
     public int numberOfFrames;
@@ -47,14 +51,23 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
     void Awake()
     {
-        this.goMaterial = this.GetComponent<Renderer>().material;
-        this.baseName = this.folderName + "/" + this.imageSequenceName;
+        ResolveMaterial();
+
+        baseName = folderName + "/" + imageSequenceName;
         nFrames = numberOfFrames;
+    }
+
+    private void ResolveMaterial()
+    {
+        var r = GetComponent<Renderer>();
+        if (r)
+            { goMaterial = r.material; return; }
     }
 
     void Start()
     {
-        texture = (Texture)Resources.Load(baseName + "00000", typeof(Texture));
+        frameCounter = 0;
+        texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
     }
 
     void OnDisable ()
@@ -62,7 +75,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (type == playbackType.once || type == playbackType.hold)
         {
             frameCounter = 0;
-            texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
             goMaterial.mainTexture = texture;
             StopAllCoroutines();
         }
@@ -73,7 +86,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (type == playbackType.once || type == playbackType.hold)
         {
             frameCounter = 0;
-            texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
             goMaterial.mainTexture = texture;
         }
     }
@@ -89,12 +102,12 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
             if (warning)
             {
-                this.baseName = this.folderName2 + "/" + this.imageSequenceName2;
+                baseName = folderName2 + "/" + imageSequenceName2;
                 nFrames = numberOfFrames2;
             }
             else
             {
-                this.baseName = this.folderName + "/" + this.imageSequenceName;
+                baseName = folderName + "/" + imageSequenceName;
                 nFrames = numberOfFrames;
             }
         }
@@ -109,7 +122,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             {
                 StartCoroutine("Play", frameTime);
             }
-            goMaterial.mainTexture = this.texture;
+            goMaterial.mainTexture = texture;
         }
         else
         {
@@ -119,7 +132,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             }
             else
             {
-                goMaterial.mainTexture = (Texture)Resources.Load(baseName + (numberOfFrames -1), typeof(Texture));
+                goMaterial.mainTexture = (Texture)Resources.Load(GetFrameName(numberOfFrames -1), typeof(Texture));
             }
         }
         if (frameCounter >= nFrames)
@@ -144,7 +157,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         {
             frameCounter = (++frameCounter) % nFrames;
         }
-        this.texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+        texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
         StopCoroutine("PlayLoop");
     }
 
@@ -155,7 +168,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (frameCounter < nFrames - 1)
         {
             ++frameCounter;
-            this.texture = (Texture)Resources.Load(baseName + frameCounter.ToString("D5"), typeof(Texture));
+            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
         }
 
         if (type == playbackType.hold)
@@ -163,4 +176,14 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
         StopCoroutine("Play");
     }
+
+    private int GetFrameId(int i)
+        { return startFrame + i; }
+
+    private string GetFrameName(int i)
+        { return baseName + GetFrameId(i).ToString("D5"); }
+
+    private string CurrentFrame
+        { get { return GetFrameName(frameCounter); } }
+
 }
