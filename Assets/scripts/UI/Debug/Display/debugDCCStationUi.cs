@@ -107,7 +107,7 @@ public class debugDCCStationUi : MonoBehaviour
         try
         {
             var current = serverUtils.GetScreenContent(id, StationId);
-            if (current >= DCCWindow.contentID.batteries)
+            if (current >= DCCWindow.LastContentId)
                 current = DCCWindow.contentID.none;
             else
                 current = (DCCWindow.contentID) ((int) current + 1);
@@ -125,7 +125,7 @@ public class debugDCCStationUi : MonoBehaviour
         try
         {
             var current = serverUtils.GetQuadContent(id, StationId);
-            if (current >= DCCWindow.contentID.batteries)
+            if (current >= DCCWindow.LastContentId)
                 current = DCCWindow.contentID.none;
             else
                 current = (DCCWindow.contentID) ((int) current + 1);
