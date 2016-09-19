@@ -27,7 +27,12 @@ public class DCCWindow : MonoBehaviour
         gliderpower,
         gliderthrusters,
         gliderdiagnostics,
-        glidersonar
+        glidersonar,
+        crew1,
+        crew2,
+        crew3,
+        crew4,
+        crew5
     }
     public GameObject windowGlow;
     public contentID windowContent;
