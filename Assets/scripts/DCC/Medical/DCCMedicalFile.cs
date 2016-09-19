@@ -3,9 +3,11 @@ using System.Collections;
 
 public class DCCMedicalFile : MonoBehaviour
 {
+    [Header ("Patient Information")]
     public DCCMedicalInfo MedicalInfo;
     public Texture2D[] PhotoIDs;
 
+    [Header("Configuration")]
     public widgetText Gender;
     public widgetText DOB;
     public widgetText Height;
@@ -13,7 +15,6 @@ public class DCCMedicalFile : MonoBehaviour
     public widgetText BloodType;
     public Renderer PhotoRenderer;
     public widgetText[] NameFields;
-
 
     private Texture2D PhotoID;
 
@@ -32,26 +33,21 @@ public class DCCMedicalFile : MonoBehaviour
             switch (MedicalInfo.PatientName)
             {
                 case DCCMedicalInfo.PatientNames.Wall:
-                    n.Text = Configuration.Get("patient-name-01", "Mr Muppet");
+                    n.Text = Configuration.Get("patient-name-01", "Carter Lewis");
                     break;
                 case DCCMedicalInfo.PatientNames.Lori:
-                    n.Text = Configuration.Get("patient-name-02", "Mrs Muppet");
+                    n.Text = Configuration.Get("patient-name-02", "Lori Taylor");
                     break;
                 case DCCMedicalInfo.PatientNames.Toshi:
-                    n.Text = Configuration.Get("patient-name-03", "Little Muppet");
+                    n.Text = Configuration.Get("patient-name-03", "Toshi Ishida");
                     break;
                 case DCCMedicalInfo.PatientNames.Suyin:
-                    n.Text = Configuration.Get("patient-name-04", "Widget");
+                    n.Text = Configuration.Get("patient-name-04", "Suyin Zhang");
                     break;
                 case DCCMedicalInfo.PatientNames.Jonas:
-                    n.Text = Configuration.Get("patient-name-05", "Mega Muppet");
+                    n.Text = Configuration.Get("patient-name-05", "Jonas Taylor");
                     break;
             }
         }
-	}
-
-	void Update ()
-    {
-	    
 	}
 }
