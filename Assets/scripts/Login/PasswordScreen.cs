@@ -29,6 +29,7 @@ public class PasswordScreen : MonoBehaviour
     public Image MMBButtonImg;
     public Image EvacButtonImg;
     public Image StrategyButtonImg;
+    public Image ROVButtonImg;
 
     public GameObject StartButtonObj;
     public Text StartButtonText;
@@ -72,6 +73,7 @@ public class PasswordScreen : MonoBehaviour
         _sceneButtonImages.Add(MMBButtonImg);
         _sceneButtonImages.Add(EvacButtonImg);
         _sceneButtonImages.Add(StrategyButtonImg);
+        _sceneButtonImages.Add(ROVButtonImg);
 
         var scene = PlayerPrefs.GetString("DefaultScene", _manager.Scene);
         var host = PlayerPrefs.GetString("DefaultHost", _manager.Host);
@@ -98,6 +100,8 @@ public class PasswordScreen : MonoBehaviour
             ToggleEvac();
         else if (scene == NetworkManagerCustom.StrategyTableScene)
             ToggleStrategy();
+        else if (scene == NetworkManagerCustom.RovScene)
+            ToggleROV();
         else
             ToggleBigSub();
 
@@ -195,6 +199,14 @@ public class PasswordScreen : MonoBehaviour
         ResetSceneSelection();
         StrategyButtonImg.color = SelectedColor;
         SetScene(NetworkManagerCustom.StrategyTableScene);
+    }
+
+    public void ToggleROV()
+    {
+        Debug.Log("PasswordScreen.ToggleROV() - Configuring UI for ROV.");
+        ResetSceneSelection();
+        ROVButtonImg.color = SelectedColor;
+        SetScene(NetworkManagerCustom.RovScene);
     }
 
     private void ResetSceneSelection()

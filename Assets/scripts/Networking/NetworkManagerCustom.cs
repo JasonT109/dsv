@@ -39,6 +39,9 @@ public class NetworkManagerCustom : MonoBehaviour
     /** Name of the scene containing Strategy Table screens. */
     public const string StrategyTableScene = "screen_strategy";
 
+    /** Name of the scene containing Strategy Table screens. */
+    public const string RovScene = "screen_rov";
+
 
     // Properties
     // ------------------------------------------------------------

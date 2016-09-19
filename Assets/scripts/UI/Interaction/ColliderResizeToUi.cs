@@ -20,8 +20,8 @@ public class ColliderResizeToUi : MonoBehaviour
         if (!_collider || !_rectTransform)
             return;
 
-        var size = _rectTransform.sizeDelta;
-        _collider.size = new Vector3(size.x, size.y, _collider.size.z);
+        var rect = _rectTransform.rect;
+        _collider.size = new Vector3(rect.width, rect.height, _collider.size.z);
     }
 
 }

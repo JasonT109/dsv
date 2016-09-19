@@ -17,6 +17,21 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     public const float AspectRatio21By9 = 21 / 9f;
 
 
+    // Enumerations
+    // ------------------------------------------------------------
+
+    /** Possible screen aspect ratios. */
+    public enum ScreenMode
+    {
+        Mode16X9,
+        Mode16X10,
+        Mode21X9,
+        Mode21X9L,
+        Mode21X9C,
+        Mode21X9R,
+    }
+
+
     // Properties
     // ------------------------------------------------------------
 
@@ -43,13 +58,24 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     public GameObject panelLeftLarge;
     public GameObject panelRightLarge;
 
+    /** Current screen mode. */
+    private ScreenMode _mode = ScreenMode.Mode16X9;
+    public ScreenMode Mode
+    {
+        get { return _mode; }
+        private set { _mode = value; }
+    }
 
     /** Whether scaling is active. */
     public bool Scaled { get; private set; }
 
     /** The current scale factor in effect. */
-    public float Scale { get; private set; }
-
+    private float _scale = 1;
+    public float Scale
+    {
+        get { return _scale;}
+        private set { _scale = value; }
+    }
 
 
     // Unity Methods
@@ -103,6 +129,41 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     /** Set up the initial screen scaling state. */
     public void Initialize()
     {
+        var screenMode = NetworkManagerCustom.IsInGlider ? "16x10" : "16x9";
+        screenMode = Configuration.Get("screen-mode", screenMode).ToLower();
+        var ratio = ModeForName(screenMode);
+
+        var screenScaling = NetworkManagerCustom.IsInGlider;
+        screenScaling = Configuration.Get("screen-scaling", screenScaling);
+
+        Configure(ratio, screenScaling);
+    }
+
+    /** Returns an aspect ratio by name. */
+    public static ScreenMode ModeForName(string screenMode)
+    {
+        switch (screenMode.ToLower())
+        {
+            case "16x9":
+                return ScreenMode.Mode16X9;
+            case "16x10":
+                return ScreenMode.Mode16X10;
+            case "21x9":
+                return ScreenMode.Mode21X9;
+            case "21x9l":
+                return ScreenMode.Mode21X9L;
+            case "21x9c":
+                return ScreenMode.Mode21X9C;
+            case "21x9r":
+                return ScreenMode.Mode21X9R;
+            default:
+                return ScreenMode.Mode16X9;
+        }
+    }
+
+    /** Apply specific screen scaling settings. */
+    public void Configure(ScreenMode mode, bool scaling)
+    {
         if (!mainPanel)
             mainPanel = ObjectFinder.FindUiByName("Scene");
         if (!panelLeftSmall)
@@ -114,17 +175,12 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
         if (!panelRightLarge)
             panelRightLarge = ObjectFinder.FindUiByRegex(".*PanelRightLarge", "Panels_21x9");
 
-        var screenMode = NetworkManagerCustom.IsInGlider ? "16x10" : "16x9";
-        screenMode = Configuration.Get("screen-mode", screenMode).ToLower();
-        b16x9.GetComponent<buttonControl>().active = (screenMode == "16x9");
-        b16x10.GetComponent<buttonControl>().active = (screenMode == "16x10");
-        b21x9l.GetComponent<buttonControl>().active = (screenMode == "21x9l");
-        b21x9c.GetComponent<buttonControl>().active = (screenMode == "21x9c");
-        b21x9r.GetComponent<buttonControl>().active = (screenMode == "21x9r");
-
-        var screenScaling = NetworkManagerCustom.IsInGlider;
-        screenScaling = Configuration.Get("screen-scaling", screenScaling);
-        scaling.GetComponent<buttonControl>().active = screenScaling;
+        b16x9.GetComponent<buttonControl>().active = (mode == ScreenMode.Mode16X9);
+        b16x10.GetComponent<buttonControl>().active = (mode == ScreenMode.Mode16X10);
+        b21x9l.GetComponent<buttonControl>().active = (mode == ScreenMode.Mode21X9L);
+        b21x9c.GetComponent<buttonControl>().active = (mode == ScreenMode.Mode21X9C || mode == ScreenMode.Mode21X9);
+        b21x9r.GetComponent<buttonControl>().active = (mode == ScreenMode.Mode21X9R);
+        this.scaling.GetComponent<buttonControl>().active = scaling;
 
         // Perform an initial update to set things up.
         Update();
