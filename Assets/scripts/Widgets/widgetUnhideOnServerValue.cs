@@ -9,6 +9,8 @@ public class widgetUnhideOnServerValue : MonoBehaviour
     public float serverValue = 0;
     public bool greaterThanValue = false;
     public bool isEqualToValue = false;
+    public bool inRange = false;
+    public Vector2 range = new Vector2(0, 100);
 
     [Header("Objects to hide / show")]
     public GameObject[] objectsToUnhide;
@@ -49,6 +51,21 @@ public class widgetUnhideOnServerValue : MonoBehaviour
                 if (!isOn && alphaIn)
                     isLerping = true;
 
+                isOn = true;
+            }
+            else
+            {
+                visible = false;
+                isOn = false;
+            }
+        }
+        else if (inRange)
+        {
+            if (serverUtils.GetServerData(serverString) >= range.x && serverUtils.GetServerData(serverString) <= range.y)
+            {
+                visible = true;
+                if (!isOn && alphaIn)
+                    isLerping = true;
                 isOn = true;
             }
             else
