@@ -9,6 +9,8 @@ public class graphicsDisplayScaling : MonoBehaviour
     private graphicsDisplaySettings.ScreenMode _oldMode;
     private bool _oldScaled;
 
+    private bool _quitting;
+
     private static graphicsDisplaySettings Settings
         { get { return graphicsDisplaySettings.Instance; } }
 
@@ -23,9 +25,12 @@ public class graphicsDisplayScaling : MonoBehaviour
         Settings.Configure(Mode, Scaled);
     }
 
+    void OnApplicationQuit()
+        { _quitting = true; }
+
     private void OnDisable()
     {
-        if (Settings)
+        if (!_quitting && Settings)
             Settings.Configure(_oldMode, _oldScaled);
     }
 
