@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -15,7 +15,6 @@ public class Stage
 public class PNGSeqSprite : MonoBehaviour
 {
     public Image Destination;
-    int iFrame = 0;
     public int iStage = 0;
     private int iLastStage = 0;
 
@@ -28,19 +27,13 @@ public class PNGSeqSprite : MonoBehaviour
     int iIndex;
     int iLastIndex = 99999;
 
-    float AnimationTimer = 0;
-
     float Timer = 0;
 
     // Use this for initialization
     void Start()
     {
         for (int i = 0; i < stages.Length; ++i)
-        {
             stages[i].sprites = Resources.LoadAll<Sprite>(stages[i].FolderName);
-        }
-
-        iFrame = 0;
     }
 
     // Update is called once per frame
@@ -90,7 +83,6 @@ public class PNGSeqSprite : MonoBehaviour
         }
 
         iStage = _iStage;
-        iFrame = 0;
         Timer = 0f;
 
         iLastStage = iStage;
