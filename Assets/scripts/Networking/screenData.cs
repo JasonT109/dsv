@@ -55,7 +55,8 @@ public class screenData : NetworkBehaviour
         DccScreen4,
         DccScreen5,
         DccSurface,
-        DccStrategy
+        DccStrategy,
+        Rov
     }
 
 
@@ -85,7 +86,8 @@ public class screenData : NetworkBehaviour
         Radar,
         Towing,
         Systems,
-        Map
+        Map,
+        Cameras,
     }
 
     // Structures

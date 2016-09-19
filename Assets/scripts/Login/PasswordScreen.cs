@@ -73,6 +73,7 @@ public class PasswordScreen : MonoBehaviour
         _sceneButtonImages.Add(MMBButtonImg);
         _sceneButtonImages.Add(EvacButtonImg);
         _sceneButtonImages.Add(StrategyButtonImg);
+        _sceneButtonImages.Add(ROVButtonImg);
 
         var scene = PlayerPrefs.GetString("DefaultScene", _manager.Scene);
         var host = PlayerPrefs.GetString("DefaultHost", _manager.Host);
@@ -99,6 +100,8 @@ public class PasswordScreen : MonoBehaviour
             ToggleEvac();
         else if (scene == NetworkManagerCustom.StrategyTableScene)
             ToggleStrategy();
+        else if (scene == NetworkManagerCustom.RovScene)
+            ToggleROV();
         else
             ToggleBigSub();
 
