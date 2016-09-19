@@ -51,7 +51,7 @@ public class ScreenStateButtons : MonoBehaviour
 
         var state = serverUtils.LocalScreenState;
         foreach (var b in Buttons)
-            if (Equals(b.State, state) && !b.Button.active)
+            if (state.Matches(b.State) && !b.Button.active)
                 ToggleOn(b);
 	}
 
