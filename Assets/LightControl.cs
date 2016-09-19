@@ -56,7 +56,7 @@ public class LightControl : MonoBehaviour
     {
         iStage = PngSeqSys.iStage;
 
-        if (iStage > 2)
+        if (iStage > 1)
         {
             Warning.SetActive(true);
         }
@@ -68,16 +68,49 @@ public class LightControl : MonoBehaviour
 
     public void ToggleSBoard()
     {
+        SBoardActive = !SBoardActive;
 
+        if(SBoardActive)
+        {
+            SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 1f);
+            SBoardLights.SetActive(true);
+        }
+        else
+        {
+            SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0f);
+            SBoardLights.SetActive(false);
+        }
     }
 
     public void TogglePort()
     {
+        PortActive = !PortActive;
 
+        if (PortActive)
+        {
+            PortButton.color = new Color(PortButton.color.r, PortButton.color.g, PortButton.color.b, 1f);
+            PortLights.SetActive(true);
+        }
+        else
+        {
+            PortButton.color = new Color(PortButton.color.r, PortButton.color.g, PortButton.color.b, 0f);
+            PortLights.SetActive(false);
+        }
     }
 
     public void ToggleBow()
     {
+        BowActive = !BowActive;
 
+        if (BowActive)
+        {
+            BowButton.color = new Color(BowButton.color.r, BowButton.color.g, BowButton.color.b, 1f);
+            BowLights.SetActive(true);
+        }
+        else
+        {
+            BowButton.color = new Color(BowButton.color.r, BowButton.color.g, BowButton.color.b, 0f);
+            BowLights.SetActive(false);
+        }
     }
 }
