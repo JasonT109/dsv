@@ -59,6 +59,15 @@
 		"patient-name-04" : "Suyin Zhang",
 		"patient-name-05" : "Jonas Taylor",
 
+		"crew" :
+		[
+			{ "Name" : "Carter Lewis", },
+			{ "Name" : "Lori Taylor", },
+			{ "Name" : "Toshi Ishida", },
+			{ "Name" : "Suyin Zhang", },
+			{ "Name" : "Jonas Taylor", },
+		],
+
 		"vessels" : 
 		[
 			{ 

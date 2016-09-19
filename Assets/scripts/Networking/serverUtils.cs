@@ -465,34 +465,6 @@ namespace Meg.Networking
             "co2",
             "co2ppm",
             "commssignalstrength",
-            "crewabpmin1",
-            "crewabpmax1",
-            "crewbodytemp1",
-            "crewbodytemp2",
-            "crewbodytemp3",
-            "crewbodytemp4",
-            "crewbodytemp5",
-            "crewbodytemp6",
-            "crewetco2min1",
-            "crewetco2max1",
-            "crewetco2pattern1",
-            "crewheartpattern1",
-            "crewheartrate1",
-            "crewheartrate2",
-            "crewheartrate3",
-            "crewheartrate4",
-            "crewheartrate5",
-            "crewheartrate6",
-            "crewheartstrengthmin1",
-            "crewheartstrengthmax1",
-            "crewmonitorleds1",
-            "crewmonitorgraphs1",
-            "crewpapmin1",
-            "crewpapmax1",
-            "crewrespirationrate1",
-            "crewspo2min1",
-            "crewspo2max1",
-            "crewspo2pattern1",
             "dcccommsusesliders",
             "dcccommscontent",
             "dccvesselnameintitle",
@@ -911,24 +883,6 @@ namespace Meg.Networking
             { "co2", new ParameterInfo { maxValue = 5, description = "CO2% in cabin atmosphere." } },
             { "co2ppm", new ParameterInfo { readOnly = true, description = "CO2 in cabin atmosphere (ppm)." } },
             { "commssignalstrength", new ParameterInfo { description = "Communications signal strength (0..100%)."} },
-            { "crewabpmin1", new ParameterInfo { description = "Minimum ambulatory blood pressure."} },
-            { "crewabpmax1", new ParameterInfo { maxValue = 200, description = "Maximum ambulatory blood pressure."} },
-            { "crewbodytemp1", new ParameterInfo { description = "Current body temperaturefor crew member 1."} },
-            { "crewetco2min1", new ParameterInfo { description = "Minimum end-tidal CO2 level."} },
-            { "crewetco2max1", new ParameterInfo { description = "Maximum end-tidal CO2 level."} },
-            { "crewetco2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for end-tidal CO2 graph."} },
-            { "crewheartpattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for heartrate graph."} },
-            { "crewheartrate1", new ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1."} },
-            { "crewheartstrengthmin1", new ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)."} },
-            { "crewheartstrengthmax1", new ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)."} },
-            { "crewmonitorleds1", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether LEDs are on in the Medical bay monitor screen."} },
-            { "crewmonitorgraphs1", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether graphs are on in the Medical bay monitor screen."} },
-            { "crewpapmin1", new ParameterInfo { description = "Minimum pulmonary arterial pressure."} },
-            { "crewpapmax1", new ParameterInfo { description = "Maximum pulmonary arterial pressure."} },
-            { "crewrespirationrate1", new ParameterInfo { description = "Current resipiration rate for crew member 1"} },
-            { "crewspo2min1", new ParameterInfo { description = "Minimum Oxygen saturation level."} },
-            { "crewspo2max1", new ParameterInfo { description = "Maximum Oxygen saturation level."} },
-            { "crewspo2pattern", new ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph."} },
             { "descentmodevalue", new ParameterInfo {minValue = -90, maxValue = 90, description = "Descent mode value."} },
             { "dcccommsusesliders", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to display an alternate comms UI (sliders instead of live feed)." } },
             { "dcccommscontent", new ParameterInfo { minValue = 0, maxValue = 9, type = ParameterType.Int, description = "Contents for DCC comms screen on overhead displays." } },
@@ -1210,10 +1164,6 @@ namespace Meg.Networking
         {
             if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
-
-            // Check if we're looking for a vessel state value.
-            if (VesselData.IsVesselKey(valueName))
-                return VesselData.GetServerData(valueName, defaultValue);
 
             switch (valueName.ToLower())
             {
@@ -1564,64 +1514,6 @@ namespace Meg.Networking
                     return ServerData.verticalVelocity;
                 case "horizontalvelocity":
                     return ServerData.horizontalVelocity;
-                case "crewheartpattern1":
-                    return CrewData.crewHeartPattern1;
-                case "crewheartrate1":
-                    return CrewData.crewHeartRate1;
-                case "crewheartrate2":
-                    return CrewData.crewHeartRate2;
-                case "crewheartrate3":
-                    return CrewData.crewHeartRate3;
-                case "crewheartrate4":
-                    return CrewData.crewHeartRate4;
-                case "crewheartrate5":
-                    return CrewData.crewHeartRate5;
-                case "crewheartrate6":
-                    return CrewData.crewHeartRate6;
-                case "crewbodytemp1":
-                    return CrewData.crewBodyTemp1;
-                case "crewbodytempdecimals1":
-                    return CrewData.crewBodyTemp1 - Mathf.FloorToInt(CrewData.crewBodyTemp1);
-                case "crewbodytemp2":
-                    return CrewData.crewBodyTemp2;
-                case "crewbodytemp3":
-                    return CrewData.crewBodyTemp3;
-                case "crewbodytemp4":
-                    return CrewData.crewBodyTemp4;
-                case "crewbodytemp5":
-                    return CrewData.crewBodyTemp5;
-                case "crewbodytemp6":
-                    return CrewData.crewBodyTemp6;
-                case "crewheartstrengthmin1":
-                    return CrewData.crewHeartStrengthMin1;
-                case "crewheartstrengthmax1":
-                    return CrewData.crewHeartStrengthMax1;
-                case "crewrespirationrate1":
-                    return CrewData.crewRespirationRate1;
-                case "crewetco2min1":
-                    return CrewData.crewETCO2Min1;
-                case "crewetco2max1":
-                    return CrewData.crewETCO2Max1;
-                case "crewetco2pattern1":
-                    return CrewData.crewETCO2Pattern1;
-                case "crewspo2min1":
-                    return CrewData.crewSPO2Min1;
-                case "crewspo2max1":
-                    return CrewData.crewSPO2Max1;
-                case "crewspo2pattern1":
-                    return CrewData.crewSPO2Pattern1;
-                case "crewabpmin1":
-                    return CrewData.crewABPMin1;
-                case "crewabpmax1":
-                    return CrewData.crewABPMax1;
-                case "crewpapmin1":
-                    return CrewData.crewPAPMin1;
-                case "crewpapmax1":
-                    return CrewData.crewPAPMax1;
-                case "crewmonitorleds1":
-                    return CrewData.crewMonitorLeds1 ? 1 : 0;
-                case "crewmonitorgraphs1":
-                    return CrewData.crewMonitorGraphs1 ? 1 : 0;
                 case "playervessel":
                     return VesselData.PlayerVessel;
                 case "initiatemapevent":
@@ -1871,6 +1763,11 @@ namespace Meg.Networking
                 case "descentmodevalue":
                     return GLScreenData.descentModeValue;
                 default:
+                    if (VesselData.IsVesselKey(valueName))
+                        return VesselData.GetServerData(valueName, defaultValue);
+                    if (CrewData.IsCrewKey(valueName))
+                        return CrewData.GetServerData(valueName, defaultValue);
+
                     return GetDynamicValue(valueName, defaultValue);
             }
         }
@@ -1881,13 +1778,14 @@ namespace Meg.Networking
             if (string.IsNullOrEmpty(valueName))
                 return "";
 
+            valueName = valueName.ToLower();
             if (valueName == "version")
                 return Version;
 
             if (!ServerObject)
                 return "no value";
 
-            switch (valueName.ToLower())
+            switch (valueName)
             {
                 case "playervesselname":
                     return VesselData.PlayerVesselName;
@@ -1988,30 +1886,6 @@ namespace Meg.Networking
                     return SubControl.inputXaxis2.ToString("n1");
                 case "inputyaxis2":
                     return SubControl.inputYaxis2.ToString("n1");
-                case "crewheartrate1":
-                    return CrewData.crewHeartRate1.ToString("n1");
-                case "crewheartrate2":
-                    return CrewData.crewHeartRate2.ToString("n1");
-                case "crewheartrate3":
-                    return CrewData.crewHeartRate3.ToString("n1");
-                case "crewheartrate4":
-                    return CrewData.crewHeartRate4.ToString("n1");
-                case "crewheartrate5":
-                    return CrewData.crewHeartRate5.ToString("n1");
-                case "crewheartrate6":
-                    return CrewData.crewHeartRate6.ToString("n1");
-                case "crewbodytemp1":
-                    return CrewData.crewBodyTemp1.ToString("n1");
-                case "crewbodytemp2":
-                    return CrewData.crewBodyTemp2.ToString("n1");
-                case "crewbodytemp3":
-                    return CrewData.crewBodyTemp3.ToString("n1");
-                case "crewbodytemp4":
-                    return CrewData.crewBodyTemp4.ToString("n1");
-                case "crewbodytemp5":
-                    return CrewData.crewBodyTemp5.ToString("n1");
-                case "crewbodytemp6":
-                    return CrewData.crewBodyTemp6.ToString("n1");
                 case "mapeventname":
                     return MapData.mapEventName;
                 case "latitude":
@@ -2129,6 +2003,9 @@ namespace Meg.Networking
                 case "version":
                     return Version;
                 default:
+                    if (CrewData.IsCrewKey(valueName))
+                        return CrewData.GetServerDataAsText(valueName);
+
                     var value = GetServerDataRaw(valueName);
                     return (value == Unknown) ? "no value" : value.ToString("n1");
             }
@@ -2138,13 +2015,9 @@ namespace Meg.Networking
         public static void SetServerBool(string boolName, bool value)
         {
             if (ServerObject == null)
-            {
                 Debug.Log("Server object missing");
-            }
             else
-            {
                 ServerData.OnChangeBool(boolName, value);
-            }
         }
 
         /** Return the current value of a shared boolean state value by name. */
@@ -2153,10 +2026,6 @@ namespace Meg.Networking
             // Check whether server object is ready.
             if (ServerObject == null)
                 return defaultValue;
-
-            // Check if we're looking for a vessel state value.
-            if (VesselData.IsVesselKey(boolName))
-                return VesselData.GetServerData(boolName, Unknown) > 0;
 
             // Match server data key against known values.
             switch (boolName.ToLower())
@@ -2206,6 +2075,11 @@ namespace Meg.Networking
                 case "motioncomportopen":
                     return MotionBaseData.MotionComPortOpen;
                 default:
+                    if (VesselData.IsVesselKey(boolName))
+                        return VesselData.GetServerData(boolName, Unknown) > 0;
+                    if (CrewData.IsCrewKey(boolName))
+                        return CrewData.GetServerData(boolName, Unknown) > 0;
+
                     // As a last resort, interpret numeric values as booleans.
                     var value = GetServerData(boolName, defaultValue ? 1 : 0);
                     return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
