@@ -28,24 +28,31 @@ public class DCCMedicalFile : MonoBehaviour
         BloodType.Text = MedicalInfo.BloodType;
         PhotoRenderer.material.mainTexture = PhotoID;
 
-        foreach (widgetText n in NameFields)
+        string vitalsText = " VITALS";
+
+        for (int i = 0; i < NameFields.Length; i++)
         {
+            if (i == 1)
+                vitalsText = " VITALS";
+            else
+                vitalsText = "";
+
             switch (MedicalInfo.PatientName)
             {
                 case DCCMedicalInfo.PatientNames.Wall:
-                    n.Text = Configuration.Get("patient-name-01", "Carter Lewis");
+                    NameFields[i].Text = Configuration.Get("patient-name-01", "Carter Lewis").ToUpper() + vitalsText;
                     break;
                 case DCCMedicalInfo.PatientNames.Lori:
-                    n.Text = Configuration.Get("patient-name-02", "Lori Taylor");
+                    NameFields[i].Text = Configuration.Get("patient-name-02", "Lori Taylor").ToUpper() + vitalsText;
                     break;
                 case DCCMedicalInfo.PatientNames.Toshi:
-                    n.Text = Configuration.Get("patient-name-03", "Toshi Ishida");
+                    NameFields[i].Text = Configuration.Get("patient-name-03", "Toshi Ishida").ToUpper() + vitalsText;
                     break;
                 case DCCMedicalInfo.PatientNames.Suyin:
-                    n.Text = Configuration.Get("patient-name-04", "Suyin Zhang");
+                    NameFields[i].Text = Configuration.Get("patient-name-04", "Suyin Zhang").ToUpper() + vitalsText;
                     break;
                 case DCCMedicalInfo.PatientNames.Jonas:
-                    n.Text = Configuration.Get("patient-name-05", "Jonas Taylor");
+                    NameFields[i].Text = Configuration.Get("patient-name-05", "Jonas Taylor").ToUpper() + vitalsText;
                     break;
             }
         }
