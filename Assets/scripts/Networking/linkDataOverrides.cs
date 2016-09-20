@@ -37,6 +37,7 @@ public class linkDataOverrides : MonoBehaviour
     public bool MMBMonitorGraph = true;
     public bool graphicsAnimateWarningColor = true;
     public bool widgetUnhideOnServerValue = true;
+    public bool imageSequenceSingleTexture = true;
 
     /** Initialization. */
     private void Awake()
@@ -89,6 +90,10 @@ public class linkDataOverrides : MonoBehaviour
         if (widgetUnhideOnServerValue)
             foreach (var c in transform.GetComponentsInChildren<widgetUnhideOnServerValue>(true))
                 c.serverString = GetLinkDataString(c.serverString);
+
+        if (imageSequenceSingleTexture)
+            foreach (var c in transform.GetComponentsInChildren<ImageSequenceSingleTexture>(true))
+                c.serverParam = GetLinkDataString(c.serverParam);
     }
 
     /** Return an overridden link data string. */
