@@ -180,22 +180,22 @@ public class widgetThrusterControl : MonoBehaviour
             mainRPMTextSide3R.Text = (Mathf.Abs(thrusterSideR3 * 50f)).ToString("n0") + " rpm";
 
         if (mainPowerTextL)
-            mainPowerTextL.Text = (Mathf.Abs(thrusterMainL * 1f)).ToString("n0") + " %";
+            mainPowerTextL.Text = (Mathf.Abs(thrusterMainL * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide1L)
-            mainPowerTextSide1L.Text = (Mathf.Abs(thrusterSideL1 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide1L.Text = (Mathf.Abs(thrusterSideL1 * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide2L)
-            mainPowerTextSide2L.Text = (Mathf.Abs(thrusterSideL2 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide2L.Text = (Mathf.Abs(thrusterSideL2 * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide3L)
-            mainPowerTextSide3L.Text = (Mathf.Abs(thrusterSideL3 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide3L.Text = (Mathf.Abs(thrusterSideL3 * 1f)).ToString("n0") + "%";
 
         if (mainPowerTextR)
-            mainPowerTextR.Text = (Mathf.Abs(thrusterMainR * 1f)).ToString("n0") + " %";
+            mainPowerTextR.Text = (Mathf.Abs(thrusterMainR * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide1R)
-            mainPowerTextSide1R.Text = (Mathf.Abs(thrusterSideR1 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide1R.Text = (Mathf.Abs(thrusterSideR1 * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide2R)
-            mainPowerTextSide2R.Text = (Mathf.Abs(thrusterSideR2 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide2R.Text = (Mathf.Abs(thrusterSideR2 * 1f)).ToString("n0") + "%";
         if (mainPowerTextSide3R)
-            mainPowerTextSide3R.Text = (Mathf.Abs(thrusterSideR3 * 1f)).ToString("n0") + " %";
+            mainPowerTextSide3R.Text = (Mathf.Abs(thrusterSideR3 * 1f)).ToString("n0") + "%";
 
         if (thrusterMainL >= 0)
         {
