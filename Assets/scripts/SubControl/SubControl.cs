@@ -97,6 +97,9 @@ public class SubControl : NetworkBehaviour
     public AnimationCurve RollLimitCurve;
     public AnimationCurve PitchLimitCurve;
     public AnimationCurve YawLimitCurve;
+    public AnimationCurve AngleLimitCurve;
+
+    public AnimationCurve StabiliseCurve;
 
     public bool TripPitch = false;
     public bool TripRoll = false;
@@ -110,6 +113,9 @@ public class SubControl : NetworkBehaviour
 
     public GameObject FakeMotionBase;
     public GameObject YawElement;
+
+    public bool NerfStabiliser = true;
+    public float currentStabiliseSpeed;
     //public float ScaleRoll;
 
 
@@ -236,7 +242,7 @@ public class SubControl : NetworkBehaviour
         rollSpeed = 400f;
         yawSpeed = 400;
 
-        StabiliserSpeed = 25f;
+        StabiliserSpeed = 15f;
         StabiliserStability = 1f;
 
         _motionRigidBody.centerOfMass = Vector3.zero;
@@ -284,6 +290,8 @@ public class SubControl : NetworkBehaviour
         GliderRollLogic();
 
         GliderPitchLogic();
+
+        GliderStabiliserSpeedNerf();
 
         if (serverUtils.MotionBaseData.DecoupleMotionBase)
         {
@@ -367,44 +375,59 @@ public class SubControl : NetworkBehaviour
         var ScaleRoll = 0f;
         if (MotionBaseSub.transform.localRotation.z > 0)
         {
-            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderRoll);
+            ScaleRoll = AngleLimitCurve.Evaluate(currentRoll / MaxGliderRoll);
         }
         else
         {
-            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MinGliderRoll);
+            ScaleRoll = AngleLimitCurve.Evaluate(currentRoll / MinGliderRoll);
         }
         ScaleRoll = Mathf.Abs(ScaleRoll);
 
         //roll logiic
         if (inputXaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 180f && MotionBaseSub.transform.rotation.eulerAngles.z < 360f)
         {
+            // rolling to the right, while the sub's current orientation is already to the right
             if(serverUtils.MotionBaseData.DecoupleMotionBase)
             {
                 //motion base is decoupled. Different physics is happening
             }
             else
             {
-                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+                //old code use to clamp the overall velocity to coushin the user into max angles, and prevent max angles from being hit.
+
+                //this code is usually active
+                //_rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+               // _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+
+                if(_rigidbody.angularVelocity.z > _rigidbody.angularVelocity.z * ScaleRoll)
+                {
+                    _rigidbody.angularVelocity = new Vector3(_rigidbody.angularVelocity.x, _rigidbody.angularVelocity.y, _rigidbody.angularVelocity.z * ScaleRoll);
+                }
             }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
         else if (inputXaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 0f && MotionBaseSub.transform.rotation.eulerAngles.z < 180f)
         {
+            // rolling to the left, while the sub's current orientation is already to the left
             if (serverUtils.MotionBaseData.DecoupleMotionBase)
             {
                 //motion base is decoupled. Different physics is happening
             }
             else
             {
-                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+                //this code is usually active
+                //_rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+                //_rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+                if (_rigidbody.angularVelocity.z > _rigidbody.angularVelocity.z * ScaleRoll)
+                {
+                    _rigidbody.angularVelocity = new Vector3(_rigidbody.angularVelocity.x, _rigidbody.angularVelocity.y, _rigidbody.angularVelocity.z * ScaleRoll);
+                }
             }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
-            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
         else
         {
@@ -437,18 +460,41 @@ public class SubControl : NetworkBehaviour
         {
             currentPitch = Mathf.Abs(currentPitch - 360f);
         }
+        
+        //var ScalePitch = 0f;
+        //if (MotionBaseSub.transform.localRotation.x > 0)
+        //{          
+        //    ScalePitch = AngleLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        //}
+        //else
+        //{
+        //    ScalePitch = AngleLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MinGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        //}
 
         var ScalePitch = 0f;
         if (MotionBaseSub.transform.localRotation.x > 0)
-        {          
-            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        {
+            ScalePitch = AngleLimitCurve.Evaluate(currentPitch / MaxGliderPitch);
         }
         else
         {
-            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MinGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+            ScalePitch = AngleLimitCurve.Evaluate(currentPitch / MinGliderPitch);
         }
+
+
         //var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f, (90f - MaxAngularVelocity * 1f)));
         ScalePitch = Mathf.Abs(ScalePitch);
+
+        //var ScalePitch = 0f;
+        //if (MotionBaseSub.transform.localRotation.z > 0)
+        //{
+        //    ScalePitch = AngleLimitCurve.Evaluate(currentPitch / MaxGliderPitch);
+        //}
+        //else
+        //{
+        //    ScalePitch = AngleLimitCurve.Evaluate(currentPitch / MaxGliderPitch);
+        //}
+        //ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
         if (inputYaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 180f && MotionBaseSub.transform.rotation.eulerAngles.x < 360f)
@@ -459,13 +505,17 @@ public class SubControl : NetworkBehaviour
             }
             else
             {
-                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+                //_rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                //_rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+                if (_rigidbody.angularVelocity.x > _rigidbody.angularVelocity.x * ScalePitch)
+                {
+                    _rigidbody.angularVelocity = new Vector3(_rigidbody.angularVelocity.x * ScalePitch, _rigidbody.angularVelocity.y, _rigidbody.angularVelocity.z);
+                }
             }
 
 
             _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else if (inputYaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 0f && MotionBaseSub.transform.rotation.eulerAngles.x < 180f)
         {
@@ -475,12 +525,16 @@ public class SubControl : NetworkBehaviour
             }
             else
             {
-                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+                //_rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                //_rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+                if (_rigidbody.angularVelocity.x > _rigidbody.angularVelocity.x * ScalePitch)
+                {
+                    _rigidbody.angularVelocity = new Vector3(_rigidbody.angularVelocity.x * ScalePitch, _rigidbody.angularVelocity.y, _rigidbody.angularVelocity.z);
+                }
             }
 
             _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
-            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
         }
         else
         {
@@ -515,6 +569,24 @@ public class SubControl : NetworkBehaviour
             //Quaternion SubYawQ;
             //SubYawQ = Quaternion.Euler(new Vector3(transform.rotation.x, YawElement.transform.rotation.y, transform.rotation.z));
             //this.transform.rotation = SubYawQ;
+        }
+    }
+
+    private void GliderStabiliserSpeedNerf()
+    {
+        //StabiliseCurve
+
+        //if nerf stabiliser is enabled we wwill nerf the stabiliser based on the input put through an animation curve
+        if (NerfStabiliser)
+        {
+            //calculate the most significant input, this is the one to nerf by
+            var SignificantInput = Mathf.Max(Mathf.Abs(inputYaxis), Mathf.Abs(inputXaxis));
+
+            currentStabiliseSpeed = StabiliseCurve.Evaluate(SignificantInput) * StabiliserSpeed;
+        }
+        else
+        {
+            currentStabiliseSpeed = StabiliserSpeed;
         }
     }
 
@@ -563,9 +635,14 @@ public class SubControl : NetworkBehaviour
             motionRoll = MotionBaseSub.transform.eulerAngles.z;
             motionPitch = MotionBaseSub.transform.eulerAngles.x;
         }
+        else
+        {
+            currentStabiliseSpeed = StabiliserSpeed;
+        }
 
-        // If roll is almost right, stop adjusting (PID dampening todo here?)
-        if (roll > MinRoll && roll < MaxRoll)
+
+            // If roll is almost right, stop adjusting (PID dampening todo here?)
+            if (roll > MinRoll && roll < MaxRoll)
             AutoStabilize();
         else if (pitch > MinPitch && roll < MaxRoll)
             AutoStabilize();
@@ -585,14 +662,14 @@ public class SubControl : NetworkBehaviour
         // TODO: Factor these numbers into constants.
         //const float stability = 0.3f * 10f;
         //const float speed = 2.0f * 10f;
-        var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * StabiliserStability / StabiliserSpeed,
+        var predictedUp = Quaternion.AngleAxis(_rigidbody.angularVelocity.magnitude * Mathf.Rad2Deg * StabiliserStability / currentStabiliseSpeed,
             _rigidbody.angularVelocity) * transform.up;
 
         var torqueVector = Vector3.Cross(predictedUp, Vector3.up);
         if (!IsPitchAlsoStabilised && !isControlDecentMode)
             torqueVector = Vector3.Project(torqueVector, transform.forward);
 
-        _rigidbody.AddTorque(torqueVector * StabiliserSpeed * StabiliserSpeed);
+        _rigidbody.AddTorque(torqueVector * currentStabiliseSpeed * currentStabiliseSpeed);
     }
 
     /** Apply autostabilization to the sub's rigidbody. */
@@ -601,14 +678,14 @@ public class SubControl : NetworkBehaviour
         // TODO: Factor these numbers into constants.
         //const float stability = 0.3f * 10f;
         //const float speed = 2.0f * 10f;
-        var predictedUp = Quaternion.AngleAxis(_motionRigidBody.angularVelocity.magnitude * Mathf.Rad2Deg * StabiliserStability / StabiliserSpeed,
+        var predictedUp = Quaternion.AngleAxis(_motionRigidBody.angularVelocity.magnitude * Mathf.Rad2Deg * StabiliserStability / currentStabiliseSpeed,
             _motionRigidBody.angularVelocity) * MotionBaseSub.transform.up;
 
         var torqueVector = Vector3.Cross(predictedUp, Vector3.up);
         if (!IsPitchAlsoStabilised && !isControlDecentMode)
             torqueVector = Vector3.Project(torqueVector, MotionBaseSub.transform.forward);
 
-        _motionRigidBody.AddTorque(torqueVector * StabiliserSpeed * StabiliserSpeed);
+        _motionRigidBody.AddTorque(torqueVector * currentStabiliseSpeed * currentStabiliseSpeed);
     }
 
     /** Apply thrust forces to the sub's rigidbody. */
