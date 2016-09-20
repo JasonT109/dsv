@@ -1762,6 +1762,8 @@ namespace Meg.Networking
                     return GLScreenData.header05Override ? 1 : 0;
                 case "descentmodevalue":
                     return GLScreenData.descentModeValue;
+                case "dccstationid":
+                    return DCCScreenData.StationId;
                 default:
                     if (VesselData.IsVesselKey(valueName))
                         return VesselData.GetServerData(valueName, defaultValue);
@@ -2074,6 +2076,7 @@ namespace Meg.Networking
                     return SonarData.HeadingUp;
                 case "motioncomportopen":
                     return MotionBaseData.MotionComPortOpen;
+
                 default:
                     if (VesselData.IsVesselKey(boolName))
                         return VesselData.GetServerData(boolName, Unknown) > 0;
