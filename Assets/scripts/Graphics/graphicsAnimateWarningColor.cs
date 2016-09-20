@@ -162,6 +162,9 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 
 	void Update ()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         if (materialIndex.Length > 0 && !isDynamicText)
         {
             for (int i = 0; i < materialIndex.Length; i++)
