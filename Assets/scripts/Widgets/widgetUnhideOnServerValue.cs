@@ -9,6 +9,7 @@ public class widgetUnhideOnServerValue : MonoBehaviour
     public float serverValue = 0;
     public bool greaterThanValue = false;
     public bool isEqualToValue = false;
+    public bool notEqualToValue = false;
     public bool inRange = false;
     public Vector2 range = new Vector2(0, 100);
 
@@ -46,6 +47,22 @@ public class widgetUnhideOnServerValue : MonoBehaviour
         else if (isEqualToValue)
         {
             if (serverUtils.GetServerData(serverString) == serverValue)
+            {
+                visible = true;
+                if (!isOn && alphaIn)
+                    isLerping = true;
+
+                isOn = true;
+            }
+            else
+            {
+                visible = false;
+                isOn = false;
+            }
+        }
+        else if (notEqualToValue)
+        {
+            if (serverUtils.GetServerData(serverString) != serverValue)
             {
                 visible = true;
                 if (!isOn && alphaIn)
