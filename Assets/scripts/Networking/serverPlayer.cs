@@ -44,7 +44,7 @@ public class serverPlayer : NetworkBehaviour
 
     /** The map camera event manager. */
     private megMapCameraEventManager MapCamera
-        { get { return megEventManager.Instance.GetMapCameraEventManager(); } }
+        { get { return megMapCameraEventManager.Instance; } }
 
 
     // Public Methods

@@ -1055,6 +1055,9 @@ public class serverData : NetworkBehaviour
             case "maplayertemperatures":
                 MapData.mapLayerTemperatures = (int) newValue;
                 break;
+            case "maptopdown":
+                MapData.mapTopDown= newValue > 0;
+                break;
             case "maxwildlife":
                 SonarData.MaxWildlife = (int)newValue;
                 break;

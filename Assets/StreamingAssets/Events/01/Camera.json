@@ -1,0 +1,48 @@
+{
+	"metadata":{
+		"utc":"20/09/16 05:21:03.4",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"CAMERA VIEWS",
+			"events":[
+				{
+					"type":"MapCamera",
+					"completeTime":2,
+					"triggerLabel":"0",
+					"triggerHotKey":"0",
+					"toPosition":[
+						98.22165,
+						44,
+						1.019512
+					],
+					"toOrientation":[
+						0,
+						356.7969,
+						0
+					],
+					"toZoom":-595.1849
+				},
+				{
+					"type":"MapCamera",
+					"completeTime":2,
+					"triggerLabel":"1",
+					"triggerHotKey":"1",
+					"toPosition":[
+						233.8739,
+						44,
+						194.563
+					],
+					"toOrientation":[
+						0,
+						1.334597,
+						0
+					],
+					"toZoom":-1088.577
+				}
+			]
+		}
+	]
+}

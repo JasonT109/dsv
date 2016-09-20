@@ -13,9 +13,6 @@ namespace Meg.EventSystem
         /** The sonar event manager. */
         public megSonarEventManager Sonar { get { return GetSonarEventManager(); } }
 
-        /** The camera event manager. */
-        public megMapCameraEventManager MapCamera { get { return GetMapCameraEventManager(); } }
-
         /** The current event file (if any). */
         public megEventFile File { get { return _file; } }
 
@@ -91,15 +88,6 @@ namespace Meg.EventSystem
                 _sonar = ObjectFinder.Find<megSonarEventManager>();
 
             return _sonar;
-        }
-
-        /** Look up the map camera event manager. */
-        public megMapCameraEventManager GetMapCameraEventManager()
-        {
-            if (!_mapCamera)
-                _mapCamera = megMapCameraEventManager.Instance;
-
-            return _mapCamera;
         }
 
     }

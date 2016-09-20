@@ -79,8 +79,8 @@ public class DCCMap3dOptions : MonoBehaviour
         WaterLayerButton.gameObject.SetActive(isMap3D);
         RecenterVesselButton.gameObject.SetActive(isMap3D);
 
-        _mapContoursOn.gameObject.SetActive(Map3D.IsContourMode);
-        _map3DOn.gameObject.SetActive(Map3D.Is3DMode);
+        _mapContoursOn.gameObject.SetActive(Map3D.IsTopDown);
+        _map3DOn.gameObject.SetActive(Map3D.Is3D);
         _vesselLabelsOn.gameObject.SetActive(NavSubPins.Instance.HasLabels);
         _acidLayerOn.gameObject.SetActive(serverUtils.GetServerBool("acidlayer"));
         _waterLayerOn.gameObject.SetActive(serverUtils.GetServerBool("waterlayer"));

@@ -15,9 +15,9 @@ public class widget3DMap : MonoBehaviour {
 
     [Header("Components")]
     public GameObject viewAngleSlider;
+    public TiltShift tilt;
     public buttonControl button3dMapping;
     public buttonControl buttonContourMapping;
-    public TiltShift tilt;
 
     [Header("Configuration")]
     public float rootMaxX = 225f;
@@ -58,11 +58,11 @@ public class widget3DMap : MonoBehaviour {
     public Color AcidColor2d;
     public Color AcidColor3d;
 
-    public bool Is3DMode
-        { get { return !button3dMapping || button3dMapping.active; } }
+    public bool Is3D
+        { get { return !IsTopDown; } }
 
-    public bool IsContourMode
-        { get { return buttonContourMapping && buttonContourMapping.active; } }
+    public bool IsTopDown
+        { get { return megMapCameraEventManager.Instance.IsTopDown; } }
 
     private const float MaxRotationDelta = 10f;
     private const float MinRotationDistance = 0;
@@ -273,8 +273,8 @@ public class widget3DMap : MonoBehaviour {
 
         // Enable or disable slider based on current camera mapping mode (3d / contours).
         var interactive = serverUtils.GetServerBool("mapInteractive");
-        slider.SetInputEnabled(Is3DMode && interactive);
-        slider.SetVisible(Is3DMode && interactive);
+        slider.SetInputEnabled(Is3D && interactive);
+        slider.SetVisible(Is3D && interactive);
 
         // Update terrain material based on view angle.
         UpdateTerrain();
@@ -329,7 +329,7 @@ public class widget3DMap : MonoBehaviour {
                 }
             }
 
-            if (touches >= 3 && !IsContourMode)
+            if (touches >= 3 && !IsTopDown)
             {
                 // Adjust view angle as gesture moves up and down the screen.
                 viewAngle = Mathf.Clamp(viewAngle + touchDelta.y * pitchSpeed * Time.deltaTime, slider.minValue, slider.maxValue);
@@ -386,6 +386,16 @@ public class widget3DMap : MonoBehaviour {
 	void Update()
     {
         UpdateMap();
+	    UpdateButtons();
+    }
+
+    private void UpdateButtons()
+    {
+        var isTopDown = serverUtils.GetServerBool("mapTopDown");
+        if (button3dMapping)
+            button3dMapping.active = !isTopDown;
+        if (buttonContourMapping)
+            buttonContourMapping.active = isTopDown;
     }
 
     private void UpdateCameraSnapping()
@@ -426,13 +436,9 @@ public class widget3DMap : MonoBehaviour {
 
         // Don't allow crossfade in 3d mode (unless transitioning).
         var cameraEventManager = GetComponent<megMapCameraEventManager>();
-        var force3D = button3dMapping.active && !cameraEventManager.running;
+        var force3D = Is3D && !cameraEventManager.running;
         if (force3D)
             target3DAmount = 1;
-
-        // Inform event manager whether map is in contour mode.
-        if (cameraEventManager)
-            cameraEventManager.isContourModeActive = buttonContourMapping.active;
 
         // Smooth terrain 3d fade amount over time.
         _terrain3DAmount = Mathf.SmoothDamp(_terrain3DAmount, target3DAmount, ref _terrain3DVelocity, 0.5f);

@@ -592,7 +592,7 @@ namespace Meg.EventSystem
 
         /** The camera event manager. */
         private megMapCameraEventManager MapCamera
-            { get { return megEventManager.Instance.MapCamera; } }
+            { get { return megMapCameraEventManager.Instance; } }
 
     }
 }

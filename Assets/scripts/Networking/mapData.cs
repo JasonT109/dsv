@@ -28,6 +28,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool mapInteractive = true;
 
+    [SyncVar]
+    public bool mapTopDown = true;
+
 
     [Header("Coordinates")]
 
@@ -91,5 +94,24 @@ public class mapData : NetworkBehaviour
 
     public bool IsSubSchematic
         { get { return mapMode == Mode.ModeSubSchematic; } }
+
+
+    // Unity Methods
+    // ------------------------------------------------------------
+
+    #region UnityMethods
+
+    /** Serverside initialization logic. */
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        // Default to top-down map in the gliders.
+        if (serverUtils.IsGlider())
+            mapTopDown = true;
+    }
+
+    #endregion
+
 
 }

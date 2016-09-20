@@ -13,6 +13,10 @@
 				},
 				{
 					"type":"Value",
+					"serverParam":"maptopdown"
+				},
+				{
+					"type":"Value",
 					"serverParam":"latitude"
 				},
 				{

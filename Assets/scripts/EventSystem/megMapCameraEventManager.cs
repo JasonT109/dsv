@@ -36,8 +36,8 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     public bool running;
     public float completePercentage;
 
-    public bool isContourModeActive { get; set; }
-
+    public bool IsTopDown
+        { get { return serverUtils.GetServerBool("mapTopDown"); } }
 
     private megEventMapCamera runningEvent;
     private buttonControl runningEventButton;
@@ -46,9 +46,14 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     private float initialOrientationY;
     private float initialZoom;
 
+    private const float TopDownAngleThreshold = 89f;
+    private const string EventNameTopDown = "MapContours";
+    private const string EventName3d = "Map3d";
+    
     private widget3DMap _map;
 
     private bool _started;
+    private bool _wasTopDown;
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -57,6 +62,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     private void Awake()
     {
         // Immediately update the camera when manager is started.
+        SetInstance(this);
         UpdateMap();
         _started = true;
     }
@@ -90,7 +96,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         {
             var trigger = mapEventList[i].trigger;
             if (trigger && trigger.GetComponent<buttonControl>().pressed)
-                StartRunningEvent(mapEventList[i]);
+                triggerByName(mapEventList[i].eventName);
         }
 
         // Update the current running event (if any).
@@ -102,6 +108,12 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
             else
                 UpdateRunningEvent();
         }
+
+        // Check if we need to kick off a transition to top-down view.
+        if (IsTopDown && !_wasTopDown && runningEvent == null)
+            triggerByName(EventNameTopDown);
+
+        _wasTopDown = IsTopDown;
     }
 
 
@@ -123,17 +135,26 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
                     b.RemoteToggle();
             }
         }
+
+        // Update map's view mode.
+        var isTopDownEvent = eventName == EventNameTopDown;
+        var is3dEvent = eventName == EventName3d;
+        if (isTopDownEvent && !IsTopDown)
+            SetTopDown(true);
+        else if (is3dEvent && IsTopDown)
+            SetTopDown(false);
     }
 
     /** Trigger a custom camera state. */
     public void triggerEventFromState(State state)
     {
-        // Ignore state events while in contour mode.
-        if (isContourModeActive)
-            return;
-
         var e = new megEventMapCamera(state);
         StartRunningEvent(e);
+
+        // Pull map out of top-down mode if a oblique viewpoint is selected.
+        var shouldBeTopDown = state.toOrientation.x >= TopDownAngleThreshold;
+        if (IsTopDown && !shouldBeTopDown)
+            SetTopDown(shouldBeTopDown);
     }
 
     /** Capture the map camera's current state into a camera event.  */
@@ -143,20 +164,24 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         if (!mapCameraRoot)
             return false;
 
-        state.toPosition = mapCameraRoot.transform.localPosition;
-
+        var camZ = mapCameraObject.transform.localPosition.z;
         var camY = mapCameraRoot.transform.rotation.eulerAngles.y;
         var camX = mapPitchSliderButton.GetComponent<sliderWidget>().returnValue;
-        state.toOrientation = new Vector3(camX, camY);
 
-        var camZ = mapCameraObject.transform.localPosition.z;
+        state.toPosition = mapCameraRoot.transform.localPosition;
+        state.toOrientation = new Vector3(camX, camY);
         state.toZoom = camZ;
+
         return true;
     }
 
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Place the map into top-down mode (or not). */
+    private void SetTopDown(bool value)
+        { serverUtils.PostServerData("mapTopDown", value ? 1 : 0); }
 
     /** Resolve map camera components. */
     private void ResolveMapCamera()
@@ -239,15 +264,14 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         var currentY = Mathf.Repeat(initialOrientationY, 360);
         var targetY = Mathf.Repeat(runningEvent.toOrientation.y, 360);
         var camY = Mathf.LerpAngle(currentY, targetY, completePercentage);
+        mapCameraRoot.transform.rotation = Quaternion.Euler(0, camY, 0);
 
         // Lerp the camera pitch
         var camX = Mathf.Lerp(initialOrientationX, runningEvent.toOrientation.x, completePercentage);
-
-        // Set the root rotation
-        mapCameraRoot.transform.rotation = Quaternion.Euler(0, camY, 0);
+        var slider = mapPitchSliderButton.GetComponent<sliderWidget>();
 
         // Set the pitch
-        mapPitchSliderButton.GetComponent<sliderWidget>().SetValue(camX);
+        slider.SetValue(camX);
 
         // Lerp the camera zoom
         mapCameraObject.transform.localPosition = Vector3.Lerp(new Vector3(0, 0, initialZoom), new Vector3(0, 0, runningEvent.toZoom), completePercentage);
@@ -276,13 +300,14 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     /** Set a given state on the camera. */
     private void SetState(State state)
     {
-        mapCameraRoot.transform.localPosition = state.toPosition;
-        var camY = Mathf.Repeat(state.toOrientation.y, 360);
         var camX = state.toOrientation.x;
+        var camY = Mathf.Repeat(state.toOrientation.y, 360);
 
+        mapCameraRoot.transform.localPosition = state.toPosition;
         mapCameraRoot.transform.rotation = Quaternion.Euler(0, camY, 0);
 
-        mapPitchSliderButton.GetComponent<sliderWidget>().SetValue(camX);
+        var slider = mapPitchSliderButton.GetComponent<sliderWidget>();
+        slider.SetValue(camX);
 
         mapCameraObject.transform.localPosition = new Vector3(0, 0, state.toZoom);
     }

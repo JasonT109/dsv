@@ -597,6 +597,7 @@ namespace Meg.Networking
             "maplayertemperatures",
             "mapmode",
             "mapscale",
+            "maptopdown",
             "maxwildlife",
             "maxspeed",
             "meg1posx",
@@ -1014,6 +1015,7 @@ namespace Meg.Networking
             { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
+            { "maptopdown", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether 3d map is in top-down (contour) mode."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
@@ -1544,6 +1546,8 @@ namespace Meg.Networking
                     return MapData.mapLayerTemperatures;
                 case "mapscale":
                     return MapData.mapScale;
+                case "maptopdown":
+                    return MapData.mapTopDown ? 1 : 0;
                 case "towwinchload":
                     return OperatingData.towWinchLoad;
                 case "hydraulictemp":

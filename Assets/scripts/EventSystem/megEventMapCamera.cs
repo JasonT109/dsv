@@ -36,7 +36,7 @@ namespace Meg.EventSystem
 
         /** The camera event manager. */
         private megMapCameraEventManager Manager
-            { get { return megEventManager.Instance.MapCamera; } }
+            { get { return megMapCameraEventManager.Instance; } }
 
         /** Whether camera event has a custom state applied. */
         private bool hasState
