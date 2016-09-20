@@ -1,15 +1,30 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.Networking;
+using Meg.Networking;
 
-public class OSRov : MonoBehaviour {
+public class OSRov : NetworkBehaviour
+{
+    [SyncVar]
+    public float RovLightSBoard;
+    [SyncVar]
+    public float RovLightPort;
+    [SyncVar]
+    public float RovLightBow;
 
-	// Use this for initialization
-	void Start () {
+    [SyncVar]
+    public bool RoVBootUp;
+    [SyncVar]
+    public bool RovLostSignal;
+
+    // Use this for initialization
+    void Start ()
+    {
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 	
 	}
 }
