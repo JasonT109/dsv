@@ -8,6 +8,13 @@ public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 {
     bool isPointerDown = false;
     public float value;
+    public Camera RayCam;
+    public bool isTouch = false;
+    
+
+    public Vector2 DebugTouchPos;
+    public float debugDist;
+    public bool TouchDetected = false;
 
     //public GraphicRaycaster ray;
 
@@ -37,13 +44,41 @@ public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         //Debug.Log("mousedown");
     }
 
+    void Update()
+    {
+        if (Input.touchCount > 0)
+        {
+            TouchDetected = true;
+
+            Vector2 localPos; // Mouse position  
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, Input.GetTouch(0).position, RayCam, out localPos);
+
+            var Dist = Vector2.Distance(localPos, new Vector2(transform.localPosition.x, transform.localPosition.y));
+            debugDist = Dist;
+            if (Dist < 1f && Dist > 0.3f)
+            {
+                isPointerDown = true;
+                isTouch = true;
+            }
+            else
+            {
+                isPointerDown = false;
+                isTouch = false;
+            }
+        }
+        else
+        {
+            TouchDetected = false;
+        }
+    }
+
     // mainloop
     IEnumerator TrackPointer()
     {
         var ray = GetComponentInParent<GraphicRaycaster>();
-        var input = FindObjectOfType<StandaloneInputModule>();
+        //var input = FindObjectOfType<StandaloneInputModule>();
 
-        if (ray != null && input != null)
+        //if (input != null)//ray != null)// && input != null)
         {
             while (Application.isPlaying)
             {
@@ -53,7 +88,15 @@ public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 {
 
                     Vector2 localPos; // Mouse position  
-                    RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, Input.mousePosition, ray.eventCamera, out localPos);
+                    if(isTouch)
+                    {
+                        RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, Input.GetTouch(0).position, RayCam, out localPos);
+                        DebugTouchPos = Input.GetTouch(0).position;
+                    }
+                    else
+                    {
+                        RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, Input.mousePosition, ray.eventCamera, out localPos);
+                    }
 
                     // local pos is the mouse position.
                     float angle = (Mathf.Atan2(-localPos.y, localPos.x) * 180f / Mathf.PI + 180f) / 360f;
@@ -108,10 +151,6 @@ public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
                 yield return 0;
             }
-        }
-        else
-        {
-            //do nothing
         }
     }
 
