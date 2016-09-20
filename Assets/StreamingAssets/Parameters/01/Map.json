@@ -5,6 +5,10 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"mapinteractive"
+				},
+				{
+					"type":"Value",
 					"serverParam":"mapmode"
 				},
 				{

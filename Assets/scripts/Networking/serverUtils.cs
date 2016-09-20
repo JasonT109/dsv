@@ -586,6 +586,7 @@ namespace Meg.Networking
             "lightarray9",
             "lightarray10",
             "longitude",
+            "mapinteractive",
             "maplayeralerts",
             "maplayercontours",
             "maplayerdepths",
@@ -1002,14 +1003,15 @@ namespace Meg.Networking
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { minValue = -180, maxValue = 180, description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
-            { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether ELB alerts are displayed on the map."} },
-            { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether contour lines are displayed on the map."} },
-            { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether depth soundings are displayed on the map."} },
-            { "maplayergrid", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether grid lines are displayed on the map."} },
-            { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether labels are displayed on the map."} },
-            { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether satellite imagery is displayed on the map."} },
-            { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether shipping lanes are displayed on the map."} },
-            { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Int, description = "Whether temperatures are displayed on the map."} },
+            { "mapinteractive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be interacted with."} },
+            { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether ELB alerts are displayed on the map."} },
+            { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether contour lines are displayed on the map."} },
+            { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth soundings are displayed on the map."} },
+            { "maplayergrid", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether grid lines are displayed on the map."} },
+            { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether labels are displayed on the map."} },
+            { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether satellite imagery is displayed on the map."} },
+            { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether shipping lanes are displayed on the map."} },
+            { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
@@ -1522,6 +1524,8 @@ namespace Meg.Networking
                     return MapData.latitude;
                 case "longitude":
                     return MapData.longitude;
+                case "mapinteractive":
+                    return MapData.mapInteractive ? 1 : 0;
                 case "maplayeralerts":
                     return MapData.mapLayerAlerts;
                 case "maplayercontours":

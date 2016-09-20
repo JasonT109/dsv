@@ -33,6 +33,7 @@ public class widget3DMap : MonoBehaviour {
     public float mapMaxOffset = -9f;
     public float scrollSpeed = 1.0f;
     public float rotateSpeed = 0.2f;
+    public float pitchSpeed = 30f;
     public float scaleSpeed = 0.2f;
     public float scaleAmount;
     public float maxScroll;
@@ -58,17 +59,22 @@ public class widget3DMap : MonoBehaviour {
     public Color AcidColor3d;
 
     public bool Is3DMode
-        { get { return button3dMapping.active; } }
+        { get { return !button3dMapping || button3dMapping.active; } }
 
     public bool IsContourMode
-        { get { return buttonContourMapping.active; } }
+        { get { return buttonContourMapping && buttonContourMapping.active; } }
+
+    private const float MaxRotationDelta = 10f;
+    private const float MinRotationDistance = 0;
+    private const float MaxRotationDistance = 200;
+    private const float RotationDistanceRange = MaxRotationDistance - MinRotationDistance;
 
     private float zoom;
     private float rotDelta;
     private TouchHit currentHit;
     private TouchHit previousHit;
     private bool pressed = false;
-    private bool multiTouch = false;
+    private int touches;
     private float rotateAmount = 0f;
 
     private bool _terrainInitialized;
@@ -107,6 +113,10 @@ public class widget3DMap : MonoBehaviour {
     private Vector3 _cameraSmoothVelocity;
     private float _lastPressTime;
 
+    private PressGesture _pressGesture;
+    private ReleaseGesture _releaseGesture;
+    private TransformGesture _transformGesture;
+
     float easeOutCustom(float t, float b = 0.0f, float c = 1.0f, float d = 1.0f)
     {
         float ts = (t /= d) * t;
@@ -116,18 +126,22 @@ public class widget3DMap : MonoBehaviour {
 
     private void OnEnable()
     {
-        GetComponent<PressGesture>().Pressed += pressedHandler;
-        GetComponent<ReleaseGesture>().Released += releaseHandler;
-        GetComponent<TransformGesture>().Transformed += transformHandler;
+        _pressGesture = GetComponent<PressGesture>();
+        _releaseGesture = GetComponent<ReleaseGesture>();
+        _transformGesture = GetComponent<TransformGesture>();
+
+        _pressGesture.Pressed += pressedHandler;
+        _releaseGesture.Released += releaseHandler;
+        _transformGesture.Transformed += transformHandler;
 
         UpdateZoom();
     }
 
     private void OnDisable()
     {
-        GetComponent<PressGesture>().Pressed -= pressedHandler;
-        GetComponent<ReleaseGesture>().Released -= releaseHandler;
-        GetComponent<TransformGesture>().Transformed -= transformHandler;
+        _pressGesture.Pressed -= pressedHandler;
+        _releaseGesture.Released -= releaseHandler;
+        _transformGesture.Transformed -= transformHandler;
     }
 
     private void pressedHandler(object sender, EventArgs e)
@@ -156,18 +170,22 @@ public class widget3DMap : MonoBehaviour {
         pressed = true;
 
         //if we have more than one touch
-        if (gesture.NumTouches > 1)
+        touches = gesture.NumTouches;
+        if (touches == 2)
         {
-            multiTouch = true;
-            //get scale of gesture
-            scaleDelta = Mathf.Clamp( gesture.DeltaScale, 0.9f, 1.1f );
-            rotDelta = gesture.DeltaRotation;
+            // Limit scale delta to reasonable values.
+            scaleDelta = Mathf.Clamp(gesture.DeltaScale, 0.9f, 1.1f);
+
+            // Reduce rotation rate as fingers get close together.
+            var t = _transformGesture.ActiveTouches;
+            var distance = Vector3.Distance(t[0].Position, t[1].Position);
+            var rotScale = Mathf.Clamp01((distance - MinRotationDistance) / RotationDistanceRange);
+            rotDelta = Mathf.Clamp(gesture.DeltaRotation * rotScale, -MaxRotationDelta, MaxRotationDelta);
         }
         else
         {
             scaleDelta = 1f;
             rotDelta = 0f;
-            multiTouch = false;
         }
 
         if (deactivateChildrenOnScroll)
@@ -248,15 +266,15 @@ public class widget3DMap : MonoBehaviour {
         const float maxDeltaTime = 1 / 50.0f;
         var dt = Mathf.Min(maxDeltaTime, Time.deltaTime);
 
-        //get the view angle slider value
+        // Get the view angle slider value.
         var slider = viewAngleSlider.GetComponent<sliderWidget>();
         var viewAngle = Mathf.Clamp(slider.returnValue, slider.minValue, slider.maxValue);
         mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
 
         // Enable or disable slider based on current camera mapping mode (3d / contours).
-        var is3D = !button3dMapping || button3dMapping.active;
-        slider.SetInputEnabled(is3D);
-        slider.SetVisible(is3D);
+        var interactive = serverUtils.GetServerBool("mapInteractive");
+        slider.SetInputEnabled(Is3DMode && interactive);
+        slider.SetVisible(Is3DMode && interactive);
 
         // Update terrain material based on view angle.
         UpdateTerrain();
@@ -267,12 +285,20 @@ public class widget3DMap : MonoBehaviour {
         // Scale and pan speed should be adjusted to how far out we are zoomed, 100% speed at zoomed out, 10% speed at zoomed in
         float zoomeSpeedMultiplier = graphicsMaths.remapValue(zoom, 0f, 1f, 0.1f, 1f);
 
-        if (pressed)
+        if (pressed && interactive)
         {
             _lastPressTime = Time.time;
 
+            // Get difference from this touch position and last.
+            // If we've not yet touched the screen the delta can't be reliably calculated.
+            if (previousHit.Point == Vector3.zero)
+                { previousHit = currentHit; return; }
+
+            var touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
+            previousHit = currentHit;
+
             //scale or rotate the camera
-            if (multiTouch)
+            if (touches == 2)
             {
                 //slowly increase the rotate amount so we don't get jittery rotations when fingers are close together
                 rotateAmount = Mathf.Lerp(rotateAmount, rotDelta, dt * rotateSpeed);
@@ -303,23 +329,21 @@ public class widget3DMap : MonoBehaviour {
                 }
             }
 
+            if (touches >= 3 && !IsContourMode)
+            {
+                // Adjust view angle as gesture moves up and down the screen.
+                viewAngle = Mathf.Clamp(viewAngle + touchDelta.y * pitchSpeed * Time.deltaTime, slider.minValue, slider.maxValue);
+                slider.SetValue(viewAngle);
+                mapCameraPitch.transform.localRotation = Quaternion.Euler(viewAngle, 0, 0);
+            }
+
             //inverse scale the local position constraints so we can't scroll when zoomed out
             maxScroll = (mapCamera.transform.localPosition.z - camMinZ) / (camMaxZ - camMinZ) * (rootMaxX - -rootMaxX) + -rootMaxX;
             maxScroll = Mathf.Abs(maxScroll);
 
             //pan the camera
-            if (!multiTouch)
+            if (touches == 1)
             {
-                //if we've not yet touched the screen the delta can't be reliably calculated
-                if (previousHit.Point == Vector3.zero)
-                {
-                    previousHit = currentHit;
-                    return;
-                }
-
-                //get difference from this touch position and last
-                Vector2 touchDelta = new Vector2(previousHit.Point.x - currentHit.Point.x, previousHit.Point.y - currentHit.Point.y);
-
                 //z translate is normalised view angle * touchDelta.y
                 float zTrans = graphicsMaths.remapValue(viewAngle, viewAngleSlider.GetComponent<sliderWidget>().minValue, viewAngleSlider.GetComponent<sliderWidget>().maxValue, 0, 1) * touchDelta.y;
 
@@ -344,10 +368,8 @@ public class widget3DMap : MonoBehaviour {
                 //rootPos = new Vector3(Mathf.Clamp(rootPos.x, -maxScroll, maxScroll), rootPos.y, Mathf.Clamp(rootPos.z, -maxScroll, maxScroll));
 
                 mapCameraRoot.transform.localPosition = Vector3.Lerp(mapCameraRoot.transform.localPosition, rootPos, dt);
-
-                //set previous hit point so we can reference it next frame to calculate the delta
-                previousHit = currentHit;
             }
+
         }
 
         // Snap camera to player vessel if desired.

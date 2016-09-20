@@ -139,6 +139,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
     /** Capture the map camera's current state into a camera event.  */
     public bool Capture(ref State state)
     {
+        ResolveMapCamera();
         if (!mapCameraRoot)
             return false;
 

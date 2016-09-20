@@ -1025,6 +1025,9 @@ public class serverData : NetworkBehaviour
             case "waterlayer":
                 MapData.waterLayer = (int)newValue;
                 break;
+            case "mapinteractive":
+                MapData.mapInteractive = newValue > 0;
+                break;
             case "mapmode":
                 MapData.mapMode = (mapData.Mode) newValue;
                 break;

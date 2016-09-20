@@ -25,6 +25,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public Mode mapMode = Mode.Mode3D;
 
+    [SyncVar]
+    public bool mapInteractive = true;
+
 
     [Header("Coordinates")]
 
