@@ -67,9 +67,12 @@
 					"type":"Value",
 					"serverParam":"crewbodytemp1"
 				},
+				{
+					"type":"Value",
+					"serverParam":"crewphoto1"
+				}
 			]
 		},
-
 		{
 			"id":"LORI TAYLOR",
 			"parameters":[
@@ -137,9 +140,12 @@
 					"type":"Value",
 					"serverParam":"crewbodytemp2"
 				},
+				{
+					"type":"Value",
+					"serverParam":"crewphoto2"
+				}
 			]
-		},		
-
+		},
 		{
 			"id":"TOSHI ISHIDA",
 			"parameters":[
@@ -207,9 +213,12 @@
 					"type":"Value",
 					"serverParam":"crewbodytemp3"
 				},
+				{
+					"type":"Value",
+					"serverParam":"crewphoto3"
+				}
 			]
 		},
-
 		{
 			"id":"SUYIN ZHANG",
 			"parameters":[
@@ -277,9 +286,12 @@
 					"type":"Value",
 					"serverParam":"crewbodytemp4"
 				},
+				{
+					"type":"Value",
+					"serverParam":"crewphoto4"
+				}
 			]
 		},
-
 		{
 			"id":"JONAS TAYLOR",
 			"parameters":[
@@ -347,7 +359,11 @@
 					"type":"Value",
 					"serverParam":"crewbodytemp5"
 				},
+				{
+					"type":"Value",
+					"serverParam":"crewphoto5"
+				}
 			]
-		},
+		}
 	]
 }
