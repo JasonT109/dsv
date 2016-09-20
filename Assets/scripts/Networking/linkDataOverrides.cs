@@ -36,6 +36,7 @@ public class linkDataOverrides : MonoBehaviour
     public bool widgetFillBar = true;
     public bool MMBMonitorGraph = true;
     public bool graphicsAnimateWarningColor = true;
+    public bool widgetUnhideOnServerValue = true;
 
     /** Initialization. */
     private void Awake()
@@ -84,6 +85,10 @@ public class linkDataOverrides : MonoBehaviour
         if (graphicsAnimateWarningColor)
             foreach (var c in transform.GetComponentsInChildren<graphicsAnimateWarningColor>(true))
                 c.autoWarningServerName = GetLinkDataString(c.autoWarningServerName);
+
+        if (widgetUnhideOnServerValue)
+            foreach (var c in transform.GetComponentsInChildren<widgetUnhideOnServerValue>(true))
+                c.serverString = GetLinkDataString(c.serverString);
     }
 
     /** Return an overridden link data string. */

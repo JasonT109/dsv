@@ -160,7 +160,6 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
             syncNode = GameObject.FindWithTag("WarningSync");
     }
 
-
 	void Update ()
     {
         if (materialIndex.Length > 0 && !isDynamicText)
