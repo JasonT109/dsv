@@ -169,6 +169,10 @@ public class NetworkManagerCustom : MonoBehaviour
     public static bool IsInMmb
         { get { return IsInScene(MmbScene); } }
 
+    /** Whether we're in the ROV scene. */
+    public static bool IsInRov
+        { get { return IsInScene(RovScene); } }
+
     /** Whether we're in a given scene. */
     public static bool IsInScene(string scene)
         { return SceneManager.GetActiveScene().name == scene; }

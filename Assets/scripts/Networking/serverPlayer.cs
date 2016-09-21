@@ -13,11 +13,16 @@ public class serverPlayer : NetworkBehaviour
     // Synchronization
     // ------------------------------------------------------------
 
+    /** The player's current screen state. */
     [SyncVar]
     public screenData.State ScreenState;
 
+    /** The player's current DCC station id. */
     [SyncVar]
     public int StationId;
+
+    /** The player's set of active windows. */
+    public screenData.SyncListWindowIds WindowIds = new screenData.SyncListWindowIds();
 
 
     // Public Properties
@@ -401,6 +406,33 @@ public class serverPlayer : NetworkBehaviour
             CmdRemoveNoise(parameter);
     }
 
+    /** Add a window to this player's screen. */
+    public void PostAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+    {
+        if (isServer)
+            ServerAddWindow(playerId, windowId);
+        else
+            CmdAddWindow(playerId, windowId);
+    }
+
+    /** Remove a window from this player's screen. */
+    public void PostRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+    {
+        if (isServer)
+            ServerRemoveWindow(playerId, windowId);
+        else
+            CmdRemoveWindow(playerId, windowId);
+    }
+
+    /** Clear all windows from this player's screen. */
+    public void PostClearWindows(NetworkInstanceId playerId)
+    {
+        if (isServer)
+            ServerClearWindows(playerId);
+        else
+            CmdClearWindows(playerId);
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -592,6 +624,21 @@ public class serverPlayer : NetworkBehaviour
     public void CmdRemoveNoise(string parameter)
         { serverUtils.NoiseData.RemoveNoise(parameter); }
 
+    /** Add a window to this player's screen. */
+    [Command]
+    public void CmdAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        { ServerAddWindow(playerId, windowId); }
+
+    /** Remove a window from this player's screen. */
+    [Command]
+    public void CmdRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        { ServerRemoveWindow(playerId, windowId); }
+
+    /** Clear all windows from this player's screen. */
+    [Command]
+    public void CmdClearWindows(NetworkInstanceId playerId)
+        { ServerClearWindows(playerId); }
+
 
 
     // Private Methods
@@ -754,6 +801,34 @@ public class serverPlayer : NetworkBehaviour
             player.ScreenState = new screenData.State { Type = type, Content = player.ScreenState.Content };
     }
 
+    /** Add a window to this player's screen. */
+    [Server]
+    public void ServerAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.AddWindow(windowId);
+    }
+
+    /** Remove a window from this player's screen. */
+    [Server]
+    public void ServerRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.RemoveWindow(windowId);
+    }
+
+    /** Clear all windows from this player's screen. */
+    [Server]
+    public void ServerClearWindows(NetworkInstanceId playerId)
+    {
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.ClearWindows();
+    }
+
+
 
     // Client Methods
     // ------------------------------------------------------------
@@ -847,5 +922,45 @@ public class serverPlayer : NetworkBehaviour
     {
         Debug.Log("serverPlayer.Start(): Client ID: " + serverUtils.Id);
     }
+
+
+    // Window Management
+    // ------------------------------------------------------------
+
+    /** Add a window to this player's screen. */
+    [Server]
+    private void AddWindow(screenData.WindowId windowId)
+    {
+        if (windowId.State.Type == screenData.Type.Default)
+            windowId.State.Type = ScreenState.Type;
+
+        if (!HasWindow(windowId))
+            WindowIds.Add(windowId);
+    }
+    
+    /** Remove a window from this player's screen. */
+    [Server]
+    private void RemoveWindow(screenData.WindowId windowId)
+    {
+        if (windowId.State.Type == screenData.Type.Default)
+            windowId.State.Type = ScreenState.Type;
+
+        WindowIds.Remove(windowId);
+    }
+
+    /** Clear all windows from this player's screen. */
+    [Server]
+    private void ClearWindows()
+        { WindowIds.Clear(); }
+
+    /** Whether a window is active for this player. */
+    public bool HasWindow(screenData.WindowId windowId)
+    {
+        if (windowId.State.Type == screenData.Type.Default)
+            windowId.State.Type = ScreenState.Type;
+
+        return WindowIds.Contains(windowId);
+    }
+
 
 }

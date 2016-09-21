@@ -2502,13 +2502,13 @@ namespace Meg.Networking
             ServerObject.GetComponent<mapData>().mapEventName = eventName;
         }
 
-        /** Whether player is in a glider sub. */
+        /** Whether player is in the glider scene. */
         public static bool IsGlider()
             { return NetworkManagerCustom.IsInGlider; }
 
-        /** Whether player is in a glider sub. */
+        /** Whether player is in the ROV scene. */
         public static bool IsRov()
-        { return NetworkManagerCustom.IsInScene("screen_rov"); }
+            { return NetworkManagerCustom.IsInRov; }
 
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
@@ -2603,6 +2603,27 @@ namespace Meg.Networking
         {
             if (LocalPlayer)
                 LocalPlayer.PostScreenStateForType(state);
+        }
+
+        /** Add a window to this player's screen. */
+        public static void PostAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddWindow(playerId, windowId);
+        }
+
+        /** Remove a window from this player's screen. */
+        public static void PostRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveWindow(playerId, windowId);
+        }
+
+        /** Clear all windows from this player's screen. */
+        public static void PostClearWindows(NetworkInstanceId playerId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearWindows(playerId);
         }
 
         /** Post content for the specified DCC screen. */
