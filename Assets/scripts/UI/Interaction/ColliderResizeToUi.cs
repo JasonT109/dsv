@@ -4,24 +4,27 @@ using System.Collections;
 public class ColliderResizeToUi : MonoBehaviour
 {
 
-    private RectTransform _rectTransform;
-    private BoxCollider _collider;
+    public RectTransform Transform;
+    public BoxCollider Collider;
 
 	private void Start()
 	{
-	    _rectTransform = GetComponent<RectTransform>();
-        _collider = GetComponent<BoxCollider>();
+        if (!Transform)
+	        Transform = GetComponent<RectTransform>();
+
+        if (!Collider)
+            Collider = GetComponent<BoxCollider>();
 
 	    Update();
 	}
 	
 	private void Update()
     {
-        if (!_collider || !_rectTransform)
+        if (!Collider || !Transform)
             return;
 
-        var rect = _rectTransform.rect;
-        _collider.size = new Vector3(rect.width, rect.height, _collider.size.z);
+        var rect = Transform.rect;
+        Collider.size = new Vector3(rect.width, rect.height, Collider.size.z);
     }
 
 }
