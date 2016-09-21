@@ -101,6 +101,8 @@ public class SubControl : NetworkBehaviour
 
     public AnimationCurve StabiliseCurve;
 
+    //Vector3 localAngularVelocity;
+
     public bool TripPitch = false;
     public bool TripRoll = false;
 
@@ -294,6 +296,16 @@ public class SubControl : NetworkBehaviour
 
     private void ApplyGliderForces()
     {
+
+        //localAngularVelocity = MotionBaseSub.transform.InverseTransformDirection(_motionRigidBody.angularVelocity);
+
+        //Quaternion YawlessMotionBaseQ;
+        //YawlessMotionBaseQ.eulerAngles = new Vector3(MotionBaseSub.transform.rotation.x, 0f, MotionBaseSub.transform.rotation.z);
+        //
+        //MotionBaseSub.transform.rotation = YawlessMotionBaseQ;
+
+        //MotionBaseSub.transform.rotation = 
+
         // Apply the orientation forces.
         //_rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
 
