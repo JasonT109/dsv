@@ -2601,6 +2601,27 @@ namespace Meg.Networking
                 LocalPlayer.PostScreenStateForType(state);
         }
 
+        /** Add a window to this player's screen. */
+        public static void PostAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddWindow(playerId, windowId);
+        }
+
+        /** Remove a window from this player's screen. */
+        public static void PostRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveWindow(playerId, windowId);
+        }
+
+        /** Clear all windows from this player's screen. */
+        public static void PostClearWindows(NetworkInstanceId playerId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearWindows(playerId);
+        }
+
         /** Post content for the specified DCC screen. */
         public static void PostScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
         {
