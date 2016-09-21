@@ -34,6 +34,7 @@ public class OSRov : NetworkBehaviour
         {
             RovState = 1;
             //launched state
+            this.transform.localPosition = new Vector3(this.transform.localPosition.x, -876.2f, this.transform.localPosition.z);
         }
     }
 }
