@@ -358,6 +358,9 @@ public class buttonControl : MonoBehaviour
         }
     }
 
+    public void setButtonActive(bool value)
+        { toggleButton(value ? gameObject : null, true); }
+
     public void toggleButton(GameObject b, bool forceOn = false)
     {
         if (b == gameObject) //quick check to see if this is the button being pressed, this function can be called by a button group
@@ -392,14 +395,10 @@ public class buttonControl : MonoBehaviour
 
     public void toggleVisGroup()
     {
-        if (visGroup && !active)
-        {
+        if (visGroup && !active && visGroup.activeSelf)
             visGroup.SetActive(false);
-        }
-        else if (visGroup && active)
-        {
+        else if (visGroup && active && !visGroup.activeSelf)
             visGroup.SetActive(true);
-        }
     }
 
     public void updateColor()

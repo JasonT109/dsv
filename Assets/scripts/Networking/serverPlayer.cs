@@ -409,6 +409,12 @@ public class serverPlayer : NetworkBehaviour
     /** Add a window to this player's screen. */
     public void PostAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
     {
+        // Perform operation locally (non-authoritative).
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.AddWindow(windowId);
+
+        // Ask server to also perform the operation.
         if (isServer)
             ServerAddWindow(playerId, windowId);
         else
@@ -418,6 +424,12 @@ public class serverPlayer : NetworkBehaviour
     /** Remove a window from this player's screen. */
     public void PostRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
     {
+        // Perform operation locally (non-authoritative).
+        var player = serverUtils.GetPlayer(playerId);
+        if (player)
+            player.RemoveWindow(windowId);
+
+        // Ask server to also perform the operation.
         if (isServer)
             ServerRemoveWindow(playerId, windowId);
         else
@@ -928,7 +940,6 @@ public class serverPlayer : NetworkBehaviour
     // ------------------------------------------------------------
 
     /** Add a window to this player's screen. */
-    [Server]
     private void AddWindow(screenData.WindowId windowId)
     {
         if (windowId.State.Type == screenData.Type.Default)
@@ -939,7 +950,6 @@ public class serverPlayer : NetworkBehaviour
     }
     
     /** Remove a window from this player's screen. */
-    [Server]
     private void RemoveWindow(screenData.WindowId windowId)
     {
         if (windowId.State.Type == screenData.Type.Default)
@@ -949,7 +959,6 @@ public class serverPlayer : NetworkBehaviour
     }
 
     /** Clear all windows from this player's screen. */
-    [Server]
     private void ClearWindows()
         { WindowIds.Clear(); }
 

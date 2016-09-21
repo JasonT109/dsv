@@ -11,6 +11,9 @@ public class WindowStateButton : MonoBehaviour
     /** Whether to apply only to the local player's screen. */
     public bool Local;
 
+    /** Window that button is associated with. */
+    public GameObject Window;
+
     /** Associated button control. */
     private buttonControl _button;
 
@@ -23,8 +26,12 @@ public class WindowStateButton : MonoBehaviour
 
     private void Update()
     {
-        _button.active = HasWindow();
-        _button.toggleVisGroup();
+        var active = HasWindow();
+        if (_button.active != active)
+            _button.setButtonActive(active);
+
+        if (Window && Window.activeSelf != active)
+            Window.SetActive(active);
     }
 
     /** Apply window visibility to matching screens. */
