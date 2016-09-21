@@ -17,6 +17,10 @@ public class debugDisplaySettingsUi : MonoBehaviour
     /** ROV display settings. */
     public debugRovScreensUi RovSettings;
 
+    /** Evac display settings. */
+    public debugEvacScreensUi EvacSettings;
+
+
 
     /** Initialization. */
     private void Start()
@@ -26,6 +30,7 @@ public class debugDisplaySettingsUi : MonoBehaviour
         SubSettings.gameObject.SetActive(false);
         GliderSettings.gameObject.SetActive(false);
         RovSettings.gameObject.SetActive(false);
+        EvacSettings.gameObject.SetActive(false);
 
         var scene = SceneManager.GetActiveScene();
         switch (scene.name)
@@ -41,6 +46,9 @@ public class debugDisplaySettingsUi : MonoBehaviour
                 break;
             case NetworkManagerCustom.RovScene:
                 RovSettings.gameObject.SetActive(true);
+                break;
+            case NetworkManagerCustom.EvacScene:
+                EvacSettings.gameObject.SetActive(true);
                 break;
         }
 
