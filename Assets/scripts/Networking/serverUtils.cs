@@ -2594,6 +2594,13 @@ namespace Meg.Networking
             return DCCScreenData.GetScreenContent(id, stationId);
         }
 
+        /** Post content on all screens of a given type. */
+        public static void PostScreenStateForType(screenData.State state)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateForType(state);
+        }
+
         /** Post content for the specified DCC screen. */
         public static void PostScreenContent(DCCScreenID._screenID id, DCCWindow.contentID value, int stationId)
         {

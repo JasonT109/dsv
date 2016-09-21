@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Meg.DCC;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -274,6 +275,16 @@ public class serverPlayer : NetworkBehaviour
             ServerSetGliderScreenContentId(playerId, contentId);
         else
             CmdSetGliderScreenContentId(playerId, contentId);
+    }
+
+    /** Post content on all screens of a given type. */
+    public void PostScreenStateForType(screenData.State state)
+    {
+        var players = serverUtils.GetPlayers()
+            .Where(player => player.ScreenState.Type == state.Type);
+
+        foreach (var player in players)
+            PostScreenState(player.netId, state);
     }
 
     /** Post screen state for this player. */
