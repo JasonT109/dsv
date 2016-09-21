@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.2.4";
+        public const string Version = "1.2.5";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -597,6 +597,7 @@ namespace Meg.Networking
             "maplayertemperatures",
             "mapmode",
             "mapscale",
+            "maptopdown",
             "maxwildlife",
             "maxspeed",
             "meg1posx",
@@ -1014,6 +1015,7 @@ namespace Meg.Networking
             { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
+            { "maptopdown", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether 3d map is in top-down (contour) mode."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
@@ -1544,6 +1546,8 @@ namespace Meg.Networking
                     return MapData.mapLayerTemperatures;
                 case "mapscale":
                     return MapData.mapScale;
+                case "maptopdown":
+                    return MapData.mapTopDown ? 1 : 0;
                 case "towwinchload":
                     return OperatingData.towWinchLoad;
                 case "hydraulictemp":
@@ -2482,7 +2486,7 @@ namespace Meg.Networking
         public static string FormatLongitude(float value, int precision = 4)
             { return FormatDegreeMinuteSecond(Mathf.Abs(value), precision) + (value >= 0 ? "E" : "W"); }
 
-        /** Format a angular value into a readable string (e.g. 85°20'10.5). *
+        /** Format a angular value into a readable string (e.g. 85°20'10.5). */
         public static string FormatDegreeMinuteSecond(float value, int precision = 4)
         {
             var degrees = Mathf.FloorToInt(value);
@@ -2498,13 +2502,13 @@ namespace Meg.Networking
             ServerObject.GetComponent<mapData>().mapEventName = eventName;
         }
 
-        /** Whether player is in a glider sub. */
+        /** Whether player is in the glider scene. */
         public static bool IsGlider()
             { return NetworkManagerCustom.IsInGlider; }
 
-        /** Whether player is in a glider sub. */
+        /** Whether player is in the ROV scene. */
         public static bool IsRov()
-        { return NetworkManagerCustom.IsInScene("screen_rov"); }
+            { return NetworkManagerCustom.IsInRov; }
 
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
@@ -2592,6 +2596,34 @@ namespace Meg.Networking
                 return 0;
 
             return DCCScreenData.GetScreenContent(id, stationId);
+        }
+
+        /** Post content on all screens of a given type. */
+        public static void PostScreenStateForType(screenData.State state)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostScreenStateForType(state);
+        }
+
+        /** Add a window to this player's screen. */
+        public static void PostAddWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddWindow(playerId, windowId);
+        }
+
+        /** Remove a window from this player's screen. */
+        public static void PostRemoveWindow(NetworkInstanceId playerId, screenData.WindowId windowId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveWindow(playerId, windowId);
+        }
+
+        /** Clear all windows from this player's screen. */
+        public static void PostClearWindows(NetworkInstanceId playerId)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearWindows(playerId);
         }
 
         /** Post content for the specified DCC screen. */

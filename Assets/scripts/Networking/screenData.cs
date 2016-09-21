@@ -3,6 +3,7 @@ using Meg.Networking;
 using System;
 using System.Collections;
 using UnityEngine.Networking;
+using System.Collections.Generic;
 
 public class screenData : NetworkBehaviour
 {
@@ -161,6 +162,31 @@ public class screenData : NetworkBehaviour
         }
 
     }
+
+    /** Structure identifying an on-screen window. */
+    [Serializable]
+    public struct WindowId
+    {
+        /** Type of screen this window appears on, and content that this window represents. */
+        public State State;
+
+        public override bool Equals(object o)
+        {
+            if (!(o is WindowId))
+                return false;
+
+            var window = (WindowId) o;
+            return Equals(State, window.State);
+        }
+
+        public override int GetHashCode()
+            { return State.GetHashCode(); }
+    }
+
+
+    /** A synchronized list of screen windows. */
+    public class SyncListWindowIds : SyncListStruct<WindowId> { }
+
 
 
     // Static Methods
