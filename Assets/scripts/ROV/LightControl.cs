@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Meg.Networking;
 
 public class LightControl : MonoBehaviour
 {
@@ -40,6 +41,8 @@ public class LightControl : MonoBehaviour
     private bool PortActive = false;
     private bool BowActive = false;
 
+    public bool DebugMode = true;
+
     // Use this for initialization
     void Start()
     {
@@ -49,7 +52,11 @@ public class LightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DebugStuff();
+        if(DebugMode)
+        {
+            DebugStuff();
+        }
+
         LightStuff();
     }
 
@@ -81,6 +88,10 @@ public class LightControl : MonoBehaviour
 
                 BowButton.color = new Color(BowButton.color.r, BowButton.color.g, BowButton.color.b, 0f);
                 BowLights.SetActive(false);
+
+                SBoardButton.gameObject.SetActive(false);
+                PortButton.gameObject.SetActive(false);
+                BowButton.gameObject.SetActive(false);
             }
 
             if (PngSeqSys.iStage == 1)
@@ -93,6 +104,10 @@ public class LightControl : MonoBehaviour
 
                 BowButton.color = new Color(BowButton.color.r, BowButton.color.g, BowButton.color.b, 0.5f);
                 BowLights.SetActive(false);
+
+                SBoardButton.gameObject.SetActive(true);
+                PortButton.gameObject.SetActive(true);
+                BowButton.gameObject.SetActive(true);
             }
 
         }
