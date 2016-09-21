@@ -2506,6 +2506,10 @@ namespace Meg.Networking
         public static bool IsGlider()
             { return NetworkManagerCustom.IsInGlider; }
 
+        /** Whether player is in a glider sub. */
+        public static bool IsRov()
+        { return NetworkManagerCustom.IsInScene("screen_rov"); }
+
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
         {
