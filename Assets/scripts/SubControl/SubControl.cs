@@ -128,6 +128,8 @@ public class SubControl : NetworkBehaviour
 
     public bool Collision = false;
 
+    public bool oldPhysics = true;
+
     //public float ScaleRoll;
 
 
@@ -331,13 +333,27 @@ public class SubControl : NetworkBehaviour
 
         CalculateMaxAngles();
 
-        GliderYawLogic();
+        if(oldPhysics == true)
+        {
+            GliderYawLogic();
 
-        GliderRollLogic();
+            OldGliderRollLogic();
 
-        GliderPitchLogic();
+            OldGliderPitchLogic();
 
-        GliderStabiliserSpeedNerf();
+            GliderStabiliserSpeedNerf();
+        }
+        else
+        {
+            GliderYawLogic();
+
+            GliderRollLogic();
+
+            GliderPitchLogic();
+
+            GliderStabiliserSpeedNerf();
+        }
+
 
         //if(_motionRigidBody.detectCollisions)
         //{
@@ -423,6 +439,82 @@ public class SubControl : NetworkBehaviour
         MaxGliderRoll = Mathf.Abs(serverUtils.MotionBaseData.MotionRollMax * ratio);
         MinGliderRoll = Mathf.Abs(serverUtils.MotionBaseData.MotionRollMin * ratio);
 
+    }
+
+    /* Roll with constraints */
+    private void OldGliderRollLogic()
+    {
+        //test for bowtie deadzone
+        if (inputXaxis < BowtieDeadzone * Mathf.Abs(inputYaxis) && inputXaxis > -BowtieDeadzone * Mathf.Abs(inputYaxis))
+        {
+            //fallin within deadzone. Go directly to jail, do not pass go.
+            return;
+        }
+
+        //roll curve value
+        var currentRoll = MotionBaseSub.transform.rotation.eulerAngles.z;
+        if (currentRoll > 180f)
+        {
+            currentRoll = Mathf.Abs(currentRoll - 360f);
+        }
+        //var ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderAngle);
+        //ScaleRoll = Mathf.Abs(ScaleRoll);
+
+        var ScaleRoll = 0f;
+        if (MotionBaseSub.transform.localRotation.z > 0)
+        {
+            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MaxGliderRoll);
+        }
+        else
+        {
+            ScaleRoll = RollLimitCurve.Evaluate(currentRoll / MinGliderRoll);
+        }
+        ScaleRoll = Mathf.Abs(ScaleRoll);
+
+        //roll logiic
+        if (inputXaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 180f && MotionBaseSub.transform.rotation.eulerAngles.z < 360f)
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            }
+
+            _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+        }
+        else if (inputXaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.z > 0f && MotionBaseSub.transform.rotation.eulerAngles.z < 180f)
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            }
+
+            _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
+            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+        }
+        else
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            }
+
+            _motionRigidBody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+        }
     }
 
     /* Roll with constraints */
@@ -525,6 +617,81 @@ public class SubControl : NetworkBehaviour
             }
 
             _motionRigidBody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+        }
+    }
+
+    private void OldGliderPitchLogic()
+    {
+        //test for bowtie deadzone
+        if (inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis))
+        {
+            //fallin within deadzone. Go directly to jail, do not pass go.
+            return;
+        }
+
+        //pitch curve value
+        var currentPitch = MotionBaseSub.transform.rotation.eulerAngles.x;
+        if (currentPitch > 180f)
+        {
+            currentPitch = Mathf.Abs(currentPitch - 360f);
+        }
+
+        var ScalePitch = 0f;
+        if (MotionBaseSub.transform.localRotation.x > 0)
+        {
+            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        }
+        else
+        {
+            ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MinGliderPitch, 0f, (90f - MaxAngularVelocity * 1f)));
+        }
+        //var ScalePitch = PitchLimitCurve.Evaluate(currentPitch / Mathf.Clamp(MaxGliderAngle, 0f, (90f - MaxAngularVelocity * 1f)));
+        ScalePitch = Mathf.Abs(ScalePitch);
+
+        //pitch logic
+        if (inputYaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 180f && MotionBaseSub.transform.rotation.eulerAngles.x < 360f)
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            }
+
+
+            _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+        }
+        else if (inputYaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 0f && MotionBaseSub.transform.rotation.eulerAngles.x < 180f)
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+                _rigidbody.angularVelocity = Vector3.ClampMagnitude(_rigidbody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+            }
+
+            _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
+            _motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
+        }
+        else
+        {
+            if (serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                //motion base is decoupled. Different physics is happening
+            }
+            else
+            {
+                _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+            }
+
+            _motionRigidBody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
         }
     }
 
