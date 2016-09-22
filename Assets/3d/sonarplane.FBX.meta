@@ -1,22 +1,16 @@
 fileFormatVersion: 2
-guid: 9f04e28e6a8294440be5eb35c3190d4f
-timeCreated: 1463352318
+guid: 2d6778fc7bb73cc4296f1d5da30c22fa
+timeCreated: 1474510160
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: bend1Handle
-    100004: pPlane1
     400000: //RootNode
-    400002: bend1Handle
-    400004: pPlane1
     2300000: //RootNode
-    2300002: pPlane1
     3300000: //RootNode
-    3300002: pPlane1
-    4300000: sonar_plane
-    4300002: pPlane1
+    4300000: Plane001
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -75,7 +69,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
