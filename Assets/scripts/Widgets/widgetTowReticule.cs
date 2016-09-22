@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 using Meg.Networking;
 using Meg.Maths;
 using Meg.Graphics;
@@ -14,6 +15,11 @@ public class widgetTowReticule : MonoBehaviour
     public GameObject targetLockText;
     public widgetText targetText;
     public Transform initPosIndicator;
+    public Transform lookatTarget;
+    public GameObject targetDirectionIndicator;
+    public GameObject horizonRingLeft;
+    public GameObject horizonRingRight;
+    public GameObject lockedOnRing;
 
     [Header("Target Configuration")]
     public Color targetColor;
@@ -121,10 +127,23 @@ public class widgetTowReticule : MonoBehaviour
         target.GetComponent<Renderer>().material.SetColor("_TintColor", targetColor);
         lockRing1.GetComponent<Renderer>().material.SetColor("_TintColor", ringColor);
 
+        if (horizonRingLeft)
+            horizonRingLeft.GetComponent<Renderer>().material.SetColor("_TintColor", ringColor);
+        if (horizonRingRight)
+            horizonRingRight.GetComponent<Renderer>().material.SetColor("_TintColor", ringColor);
+
+        if (lockedOnRing)
+            lockedOnRing.SetActive(locked);
+
         if (serverUtils.GetServerData("towFiringStatus") != 3)
             targetText.Color = textColor;
-        //else
-            //targetText.Color = textFiredColor;
+
+        if (lookatTarget)
+        {
+            var p = lookatTarget.position;
+            lookatTarget.position = new Vector3(p.x, p.y, target.position.z);
+            lookatTarget.LookAt(target, Vector3.up);
+        }
     }
 
     /** Set the targets color. */
@@ -250,6 +269,18 @@ public class widgetTowReticule : MonoBehaviour
 
             if (serverUtils.GetServerData("towfiringstatus") != 3 && serverUtils.GetServerData("towfiringstatus") != 0)
                 serverUtils.PostServerData("towfiringstatus", 0);
+        }
+
+        if (targetDirectionIndicator)
+        {
+            targetDirectionIndicator.SetActive(!locked);
+            var r = targetDirectionIndicator.GetComponent<Renderer>();
+            var c = r.material.GetColor("_TintColor");
+            var a = Mathf.Clamp01(distanceLerp);
+            r.material.SetColor("_TintColor", new Color(c.r, c.g, c.b, a));
+
+            lockedOnRing.GetComponent<Renderer>()
+                .material.SetColor("_TintColor", new Color(c.r, c.g, c.b, 1 - a));
         }
 
         SetTargetText();
