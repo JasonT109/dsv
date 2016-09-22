@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.IO;
 using Meg.Networking;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
     public int startFrame;
     public float frameTime = 0.04f;
     public Texture notPlaying;
-
+    
     [Header ("Sequence 1")]
     public string folderName;
     public string imageSequenceName;
@@ -38,7 +39,6 @@ public class ImageSequenceSingleTexture : MonoBehaviour
     public string serverParam = "inputZaxis";
     public float switchSequenceThreshold = 0.5f;
 
-    private Texture texture;
     private Material goMaterial;
     private int nFrames;
     private int direction = 1;
@@ -62,7 +62,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
     void Start()
     {
         frameCounter = 0;
-        texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
+        UpdateFrame(frameCounter);
     }
 
     void OnDisable ()
@@ -70,8 +70,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (type == playbackType.once || type == playbackType.hold)
         {
             frameCounter = 0;
-            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
-            goMaterial.mainTexture = texture;
+            UpdateFrame(frameCounter);
             StopAllCoroutines();
         }
     }
@@ -81,8 +80,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (type == playbackType.once || type == playbackType.hold)
         {
             frameCounter = 0;
-            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
-            goMaterial.mainTexture = texture;
+            UpdateFrame(frameCounter);
         }
     }
 
@@ -113,17 +111,24 @@ public class ImageSequenceSingleTexture : MonoBehaviour
                 StartCoroutine("PlayLoop", frameTime);
             else
                 StartCoroutine("Play", frameTime);
-            goMaterial.mainTexture = texture;
         }
         else
         {
             if (notPlaying)
                 goMaterial.mainTexture = notPlaying;
             else
-                goMaterial.mainTexture = (Texture)Resources.Load(GetFrameName(numberOfFrames -1), typeof(Texture));
+                UpdateFrame(numberOfFrames -1);
         }
         if (frameCounter >= nFrames)
             frameCounter = 0;
+    }
+
+    private void UpdateFrame(int i)
+    {
+        var frameName = GetFrameName(i);
+        var texture = Resources.Load(frameName, typeof(Texture)) as Texture;
+        if (texture)
+            goMaterial.mainTexture = texture;
     }
 
     IEnumerator PlayLoop(float delay)
@@ -136,7 +141,8 @@ public class ImageSequenceSingleTexture : MonoBehaviour
             frameCounter = nFrames - 1;
         else
             frameCounter = (++frameCounter) % nFrames;
-        texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
+
+        UpdateFrame(frameCounter);
         StopCoroutine("PlayLoop");
     }
 
@@ -147,7 +153,7 @@ public class ImageSequenceSingleTexture : MonoBehaviour
         if (frameCounter < nFrames - 1)
         {
             ++frameCounter;
-            texture = (Texture)Resources.Load(CurrentFrame, typeof(Texture));
+            UpdateFrame(frameCounter);
         }
 
         if (type == playbackType.hold)
@@ -161,8 +167,5 @@ public class ImageSequenceSingleTexture : MonoBehaviour
 
     private string GetFrameName(int i)
         { return baseName + GetFrameId(i).ToString("D5"); }
-
-    private string CurrentFrame
-        { get { return GetFrameName(frameCounter); } }
 
 }
