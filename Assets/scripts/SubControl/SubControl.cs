@@ -43,6 +43,10 @@ public class SubControl : NetworkBehaviour
     [SyncVar]
     public float inputYaxis2;
     [SyncVar]
+    public float inputXaxis3;
+    [SyncVar]
+    public float inputYaxis3;
+    [SyncVar]
     public bool isAutoStabilised;
     [SyncVar]
     public bool IsPitchAlsoStabilised;

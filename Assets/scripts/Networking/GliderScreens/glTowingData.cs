@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Networking;
 
 /** Glider towing target position and behaviour data. */
@@ -37,6 +37,9 @@ public class glTowingData : NetworkBehaviour
 
     [SyncVar]
     public float towTargetDistance = 20;
+
+    [SyncVar]
+    public bool towUseHat;
 
     [SyncVar]
     public int glpowerupprogress;

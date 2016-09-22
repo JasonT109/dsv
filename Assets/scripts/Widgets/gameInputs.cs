@@ -41,6 +41,10 @@ public class gameInputs : NetworkBehaviour
     public float outputX2 = 0.0f;
     [SyncVar]
     public float outputY2 = 0.0f;
+    [SyncVar]
+    public float outputX3 = 0.0f;
+    [SyncVar]
+    public float outputY3 = 0.0f;
 
     /** Whether this player is regarded as a 'pilot' (has an active joystick). */
     [SyncVar]
@@ -139,13 +143,15 @@ public class gameInputs : NetworkBehaviour
 
     /** Updates this player's syncvars from the current input state. */
     [Command]
-    void CmdChangeInput(bool state, float xAxis1, float yAxis1, float zAxis1, float xAxis2, float yAxis2)
+    void CmdChangeInput(bool state, float xAxis1, float yAxis1, float zAxis1, float xAxis2, float yAxis2, float xAxis3, float yAxis3)
     {
         output = zAxis1;
         outputX = xAxis1;
         outputY = yAxis1;
         outputX2 = xAxis2;
         outputY2 = yAxis2;
+        outputX3 = xAxis3;
+        outputY3 = yAxis3;
 
         if (state)
         {
@@ -221,6 +227,8 @@ public class gameInputs : NetworkBehaviour
             var y1 = _input.GetAxis("Vertical");
             var x2 = _input.GetAxis("X2");
             var y2 = _input.GetAxis("Y2");
+            var x3 = _input.GetAxis("X3");
+            var y3 = _input.GetAxis("Y3");
 
             // Apply throttle response curve to determine final output.
             z1 = ThrottleResponse.Evaluate(z1);
@@ -230,7 +238,7 @@ public class gameInputs : NetworkBehaviour
                 return;
 
             // Send data to the server.
-            CmdChangeInput(true, x1, y1, z1, x2, y2);
+            CmdChangeInput(true, x1, y1, z1, x2, y2, x3, y3);
 
             // Schedule next server send.
             _nextSendTime = Time.realtimeSinceStartup + ServerSendInterval;

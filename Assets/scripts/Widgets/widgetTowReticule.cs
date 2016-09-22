@@ -279,8 +279,18 @@ public class widgetTowReticule : MonoBehaviour
         if (serverUtils.GetServerData("towfiringstatus") != 3 && fired)
             ResetTorpedo();
 
-        moveDir.y = -serverUtils.GetServerData("inputYaxis");
-        moveDir.x = serverUtils.GetServerData("inputXaxis");
+        if (serverUtils.GetServerBool("towUseHat"))
+        {
+            // Use the joystick hat input to control tow reticule.
+            moveDir.y = -serverUtils.GetServerData("inputYaxis3", 0);
+            moveDir.x = serverUtils.GetServerData("inputXaxis3", 0);
+        }
+        else
+        {
+            moveDir.y = -serverUtils.GetServerData("inputYaxis", 0);
+            moveDir.x = serverUtils.GetServerData("inputXaxis", 0);
+        }
+
         moveDir *= moveSpeed;
         initialPos = new Vector3(initialPos.x + moveDir.x, initialPos.y + moveDir.y, initialPos.z);
 
