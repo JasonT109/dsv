@@ -87,7 +87,7 @@ public class widgetTowReticule : MonoBehaviour
                 targetText.Text = "NO TARGET";
                 break;
             case 1:
-                targetText.Text = "AQUIRING...";
+                targetText.Text = "ACQUIRING...";
                 break;
             case 2:
                 targetText.Text = "LOCKED";
