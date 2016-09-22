@@ -403,6 +403,9 @@ public class widget3DMap : MonoBehaviour {
         if (Time.time < (_lastPressTime + CameraSnapDelay))
             return;
 
+        if (megMapCameraEventManager.Instance.running)
+            return;
+
         var player = serverUtils.GetPlayerVessel();
         var pin = NavSubPins.Instance.GetVesselPin(player);
         if (!pin)

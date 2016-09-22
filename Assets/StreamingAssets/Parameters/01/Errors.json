@@ -5,6 +5,10 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"genericError"
+				},
+				{
+					"type":"Value",
 					"serverParam":"error_ballasttank"
 				},
 				{

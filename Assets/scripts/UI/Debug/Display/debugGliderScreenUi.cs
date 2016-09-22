@@ -54,8 +54,8 @@ public class debugGliderScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
-        _screenLabel.text = GetScreenName(Player);
-        Content.text = GetScreenContentName(Player);
+        _screenLabel.text = GetScreenLabel();
+        Content.text = screenData.NameForContent(Player.ScreenState.Content);
 
         ScreenButton.interactable = !Player.isLocalPlayer;
         PreviousButton.interactable = !Player.isLocalPlayer;
@@ -67,84 +67,45 @@ public class debugGliderScreenUi : MonoBehaviour
         PreviousContentButton.gameObject.SetActive(canSetContent);
     }
 
+    private string GetScreenLabel()
+    {
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return "DEBUG";
+
+        return screenData.NameForType(Player.ScreenState.Type).ToUpper();
+    }
+
     private bool CanSetContent()
     {
         if (Player.isLocalPlayer)
             return false;
-
         if (Player.ScreenState.Content == screenData.Content.Debug)
             return false;
 
-        var screenId = Player.GameInputs.glScreenID;
-        return screenId == glScreenManager.RightScreenId
-            || screenId == glScreenManager.LeftScreenId;
-    }
-
-    private static string GetScreenName(serverPlayer player)
-    {
-        if (player.isLocalPlayer)
-            return "Debug";
-
-        var id = player.GameInputs.glScreenID;
-        switch (id)
-        {
-            case 2:
-                return "Left";
-            case 1:
-                return "Mid";
-            case 0:
-                return "Right";
-            default:
-                return "";
-        }
-    }
-
-    private static screenData.Type GetScreenType(serverPlayer player)
-    {
-        if (player.isLocalPlayer)
-            return screenData.Type.Default;
-
-        var id = player.GameInputs.glScreenID;
-        switch (id)
-        {
-            case 2:
-                return screenData.Type.GliderLeft;
-            case 1:
-                return screenData.Type.GliderMid;
-            case 0:
-                return screenData.Type.GliderRight;
-            default:
-                return screenData.Type.Default;
-        }
-    }
-
-    private static string GetScreenContentName(serverPlayer player)
-    {
-        if (player.isLocalPlayer)
-            return "";
-
-        return screenData.NameForContent(player.ScreenState.Content).ToUpper();
-
-        // var screenId = player.GameInputs.activeScreen;
-        // return glScreenManager.GetScreenName(screenId);
+        return true;
     }
 
     private void OnNextClicked()
     {
-        var next = Player.GameInputs.glScreenID - 1;
-        if (next < 0)
-            next = 2;
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return;
 
-        serverUtils.PostGliderScreenId(Player.netId, next);
+        var current = Player.ScreenState.Type;
+        var next = GetNextType(current);
+        serverUtils.PostScreenStateType(Player.netId, next);
     }
 
     private void OnPreviousClicked()
     {
-        var prev = Player.GameInputs.glScreenID + 1;
-        if (prev > 2)
-            prev = 0;
+        var content = Player.ScreenState.Content;
+        if (content == screenData.Content.Debug)
+            return;
 
-        serverUtils.PostGliderScreenId(Player.netId, prev);
+        var current = Player.ScreenState.Type;
+        var next = GetPreviousType(current);
+        serverUtils.PostScreenStateType(Player.netId, next);
     }
 
     private void OnNextContentClicked()
@@ -153,9 +114,9 @@ public class debugGliderScreenUi : MonoBehaviour
             return;
 
         var current = Player.ScreenState.Content;
-        var type = GetScreenType(Player);
+        var type = Player.ScreenState.Type;
         var next = GetNextContent(type, current);
-        serverUtils.PostScreenState(Player.netId, GetScreenState(next));
+        serverUtils.PostScreenStateContent(Player.netId, next);
     }
 
     private void OnPreviousContentClicked()
@@ -164,16 +125,40 @@ public class debugGliderScreenUi : MonoBehaviour
             return;
 
         var current = Player.ScreenState.Content;
-        var type = GetScreenType(Player);
+        var type = Player.ScreenState.Type;
         var next = GetPreviousContent(type, current);
-        serverUtils.PostScreenState(Player.netId, GetScreenState(next));
+        serverUtils.PostScreenStateContent(Player.netId, next);
     }
 
-    /** Given a content value, return the next valid value, cycling round to None. */
-    private screenData.State GetScreenState(screenData.Content content)
-        { return new screenData.State { Type = Player.ScreenState.Type, Content = content }; }
+    /** Given a type value, return the next valid value. */
+    private screenData.Type GetNextType(screenData.Type current)
+    {
+        switch (current)
+        {
+            case screenData.Type.GliderLeft:
+                return screenData.Type.GliderRight;
+            case screenData.Type.GliderRight:
+                return screenData.Type.GliderLeft;
+            default:
+                return screenData.Type.GliderRight;
+        }
+    }
 
-    /** Given a content value, return the next valid value, cycling round to None. */
+    /** Given a type value, return the previous valid value. */
+    private screenData.Type GetPreviousType(screenData.Type current)
+    {
+        switch (current)
+        {
+            case screenData.Type.GliderLeft:
+                return screenData.Type.GliderRight;
+            case screenData.Type.GliderRight:
+                return screenData.Type.GliderLeft;
+            default:
+                return screenData.Type.GliderRight;
+        }
+    }
+
+    /** Given a content value, return the next valid value. */
     private static screenData.Content GetNextContent(screenData.Type type, screenData.Content current)
     {
         switch (type)
@@ -187,7 +172,7 @@ public class debugGliderScreenUi : MonoBehaviour
         }
     }
 
-    /** Given a content value, return the previous valid value, cycling round to None. */
+    /** Given a content value, return the previous valid value. */
     private static screenData.Content GetPreviousContent(screenData.Type type, screenData.Content current)
     {
         switch (type)
@@ -201,7 +186,7 @@ public class debugGliderScreenUi : MonoBehaviour
         }
     }
 
-    /** Given a content value, return the next valid value, cycling round to None. */
+    /** Given a content value, return the next valid value. */
     private static screenData.Content GetNextLeftScreenContent(screenData.Content current)
     {
         switch (current)
@@ -217,7 +202,7 @@ public class debugGliderScreenUi : MonoBehaviour
         }
     }
 
-    /** Given a content value, return the previous valid value, cycling round to None. */
+    /** Given a content value, return the previous valid value. */
     private static screenData.Content GetPreviousLeftScreenContent(screenData.Content current)
     {
         switch (current)
@@ -233,25 +218,48 @@ public class debugGliderScreenUi : MonoBehaviour
         }
     }
 
-    /** Given a content value, return the next valid value, cycling round to None. */
+    /** Given a content value, return the next valid value. */
     private static screenData.Content GetNextRightScreenContent(screenData.Content current)
     {
-        var id = glScreenManager.GetMatrixIdForContent(current) + 1;
-        if (id > 7)
-            id = 0;
-
-        return glScreenManager.GetContentForId(id);
+        switch (current)
+        {
+            case screenData.Content.Controls:
+                return screenData.Content.Nav;
+            case screenData.Content.Nav:
+                return screenData.Content.SonarLong;
+            case screenData.Content.SonarLong:
+                return screenData.Content.Towing;
+            case screenData.Content.Towing:
+                return screenData.Content.Comms;
+            case screenData.Content.Comms:
+                return screenData.Content.Systems;
+            case screenData.Content.Systems:
+                return screenData.Content.Controls;
+            default:
+                return screenData.Content.Controls;
+        }
     }
 
-    /** Given a content value, return the previous valid value, cycling round to None. */
+    /** Given a content value, return the previous valid value. */
     private static screenData.Content GetPreviousRightScreenContent(screenData.Content current)
     {
-        var id = glScreenManager.GetMatrixIdForContent(current) - 1;
-        if (id < 0)
-            id = 7;
-
-        return glScreenManager.GetContentForId(id);
-
+        switch (current)
+        {
+            case screenData.Content.Controls:
+                return screenData.Content.Systems;
+            case screenData.Content.Nav:
+                return screenData.Content.Controls;
+            case screenData.Content.SonarLong:
+                return screenData.Content.Nav;
+            case screenData.Content.Towing:
+                return screenData.Content.SonarLong;
+            case screenData.Content.Comms:
+                return screenData.Content.Towing;
+            case screenData.Content.Systems:
+                return screenData.Content.Comms;
+            default:
+                return screenData.Content.Controls;
+        }
     }
 
 }

@@ -314,21 +314,24 @@ public class gameInputs : NetworkBehaviour
         }
 
         //if map 3d state has changed
-        if (glScreenManager.Instance.map3dButton.pressed != prev3dState)
+        var map3DButton = glScreenManager.Instance.map3dButton;
+        if (map3DButton && map3DButton.pressed != prev3dState)
         {
             prev3dState = glScreenManager.Instance.map3dButton.pressed;
             CmdSetMap3dState(prev3dState);
         }
 
         //if centre button pressed
-        if (glScreenManager.Instance.mapCenterButton.pressed != prevCentreState)
+        var mapCenterButton = glScreenManager.Instance.mapCenterButton;
+        if (mapCenterButton && mapCenterButton.pressed != prevCentreState)
         {
             prevCentreState = glScreenManager.Instance.mapCenterButton.pressed;
             CmdSetMapCenterState(prevCentreState);
         }
 
         //labels toggled
-        if (glScreenManager.Instance.mapLabelButton.pressed != prevLabelState)
+        var mapLabelsButton = glScreenManager.Instance.mapLabelButton;
+        if (mapLabelsButton && mapLabelsButton.pressed != prevLabelState)
         {
             prevLabelState = glScreenManager.Instance.mapLabelButton.pressed;
             CmdSetMapLabelState(prevLabelState);
