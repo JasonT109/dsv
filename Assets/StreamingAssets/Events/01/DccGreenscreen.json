@@ -1,18 +1,18 @@
 {
 	"metadata":{
-		"utc":"31/08/16 09:10:41.5",
-		"startedTimestamp":"31/08/16 09:10:29.8",
-		"stoppedTimestamp":"31/08/16 09:10:34.2"
+		"utc":"22/09/16 08:57:07.7",
+		"startedTimestamp":"22/09/16 08:56:30.4",
+		"stoppedTimestamp":"22/09/16 08:56:49.9"
 	},
 	"groups":[
 		{
 			"id":"DCC COMMS GREENSCREEN",
-			"paused":true,
 			"minimized":true,
 			"events":[
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedMidLeft",
@@ -25,6 +25,11 @@
 						665,
 						375
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -36,6 +41,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedMidRight",
@@ -48,6 +54,11 @@
 						665,
 						375
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -59,6 +70,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall1",
@@ -71,6 +83,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -82,6 +99,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall2",
@@ -94,6 +112,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -105,6 +128,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall3",
@@ -117,6 +141,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -128,6 +157,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall4",
@@ -140,6 +170,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -151,6 +186,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall5",
@@ -163,6 +199,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -174,6 +215,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall6",
@@ -186,6 +228,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -197,6 +244,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall7",
@@ -209,6 +257,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -220,6 +273,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall8",
@@ -232,6 +286,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -243,6 +302,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall9",
@@ -255,6 +315,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -266,6 +331,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CameraFeedSmall10",
@@ -278,6 +344,11 @@
 						218,
 						122
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -289,6 +360,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CommsLarge",
@@ -301,6 +373,11 @@
 						1450,
 						765
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -308,30 +385,29 @@
 						1,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"DCC COMMS GREENSCREEN DOTS",
-			"paused":true,
-			"minimized":true,
-			"events":[
+				},
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedMidLeft",
+					"Message":"",
+					"Target":"CameraFeed1",
 					"Position":[
 						0,
 						0,
 						0
 					],
 					"Size":[
-						665,
-						375
+						640,
+						360
 					],
-					"Icon":4,
+					"Scale":[
+						1,
+						1,
+						1
+					],
+					"Icon":2,
 					"Color":[
 						1,
 						1,
@@ -342,19 +418,25 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedMidRight",
+					"Message":"",
+					"Target":"CameraFeed2",
 					"Position":[
 						0,
 						0,
 						0
 					],
 					"Size":[
-						665,
-						375
+						640,
+						360
 					],
-					"Icon":4,
+					"Scale":[
+						1,
+						1,
+						1
+					],
+					"Icon":2,
 					"Color":[
 						1,
 						1,
@@ -365,249 +447,25 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall1",
+					"Message":"",
+					"Target":"CameraFeed3",
 					"Position":[
 						0,
 						0,
 						0
 					],
 					"Size":[
-						218,
-						122
+						640,
+						360
 					],
-					"Icon":4,
-					"Color":[
-						1,
+					"Scale":[
 						1,
 						1,
 						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall2",
-					"Position":[
-						0,
-						0,
-						0
 					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall3",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall4",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall5",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall6",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall7",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall8",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall9",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CameraFeedSmall10",
-					"Position":[
-						0,
-						0,
-						0
-					],
-					"Size":[
-						218,
-						122
-					],
-					"Icon":4,
-					"Color":[
-						1,
-						1,
-						1,
-						1
-					]
-				},
-				{
-					"type":"Popup",
-					"Type":1,
-					"Title":"",
-					"Message":"ERROR 31: Unknown Error",
-					"Target":"CommsLarge",
-					"Position":[
-						0,
-						-15,
-						0
-					],
-					"Size":[
-						1450,
-						765
-					],
-					"Icon":4,
+					"Icon":2,
 					"Color":[
 						1,
 						1,
@@ -624,6 +482,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"Comms",
@@ -636,6 +495,11 @@
 						1500,
 						800
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -647,6 +511,7 @@
 				{
 					"type":"Popup",
 					"Type":1,
+					"Theme":"",
 					"Title":"",
 					"Message":"ERROR 31: Unknown Error",
 					"Target":"CommsLarge",
@@ -659,6 +524,11 @@
 						1590,
 						825
 					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
 					"Icon":0,
 					"Color":[
 						1,
@@ -666,24 +536,6 @@
 						1,
 						1
 					]
-				}
-			]
-		},
-		{
-			"id":"GREENSCREEN COLOR",
-			"hideTimeline":true,
-			"events":[
-				{
-					"type":"Value",
-					"triggerLabel":"GREEN",
-					"serverParam":"greenScreenBrightness",
-					"serverValue":100
-				},
-				{
-					"type":"Value",
-					"triggerLabel":"BLACK",
-					"serverParam":"greenScreenBrightness",
-					"serverValue":0
 				}
 			]
 		}
