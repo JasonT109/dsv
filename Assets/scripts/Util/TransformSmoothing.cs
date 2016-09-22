@@ -40,19 +40,19 @@ public class TransformSmoothing : MonoBehaviour
         if (ApplyPosition)
         {
             _position = Vector3.SmoothDamp(_position, Source.position, ref _positionSmoothVelocity, PositionSmoothTime);
-            transform.position = _position;
+            Target.position = _position;
         }
 
         if (ApplyScale)
         {
             _scale = Vector3.SmoothDamp(_scale, Source.localScale, ref _scaleSmoothVelocity, ScaleSmoothTime);
-            transform.localScale = _scale;
+            Target.localScale = _scale;
         }
 
         if (ApplyRotation)
         {
-            _rotation = Quaternion.Slerp(_rotation, Source.rotation, RotationSmoothTime*Time.deltaTime);
-            transform.rotation = _rotation;
+            _rotation = Quaternion.Slerp(_rotation, Source.rotation, RotationSmoothTime * Time.deltaTime);
+            Target.rotation = _rotation;
         }
 
     }
