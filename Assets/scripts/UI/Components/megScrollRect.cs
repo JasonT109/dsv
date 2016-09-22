@@ -19,12 +19,14 @@ namespace Meg.UI
         private RectTransform _rectTransform;
         private float _lastScrollPos;
 
-        protected override void Start()
+        protected override void Awake()
         {
-            base.Start();
+            base.Awake();
             _lastScrollPos = verticalNormalizedPosition;
             _rectTransform = GetComponent<RectTransform>();
-            _maskTransform = content.parent.GetComponent<RectTransform>();
+
+            if (content)
+                _maskTransform = content.parent.GetComponent<RectTransform>();
         }
 
         protected virtual void Update()

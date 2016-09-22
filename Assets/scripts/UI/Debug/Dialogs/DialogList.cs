@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Meg.UI;
 using UnityEngine.Events;
 
 public class DialogList : Dialog
@@ -19,6 +20,9 @@ public class DialogList : Dialog
 
     /** Prefab for list items. */
     public DialogListItemUi ItemUiPrefab;
+
+    /** Scrolling view. */
+    public megScrollRect ScrollRect;
 
     /** Structure for items. */
     public struct Item
@@ -68,9 +72,9 @@ public class DialogList : Dialog
         }
 
         if (!string.IsNullOrEmpty(selectedId))
-            Select(selectedId);
+            Select(selectedId, true);
         else if (_uis.Count > 0)
-            Select(_uis[0].Item.Id);
+            Select(_uis[0].Item.Id, true);
     }
 
 
@@ -83,7 +87,7 @@ public class DialogList : Dialog
     }
 
     /** Select the given item. */
-    public void Select(string id)
+    public void Select(string id, bool centerOnSelected = false)
     {
         Selected = default(Item);
 
@@ -92,11 +96,14 @@ public class DialogList : Dialog
             ui.Selected = Equals(ui.Item.Id, id);
             if (ui.Selected)
                 Selected = ui.Item;
+
+            if (centerOnSelected && ScrollRect && ui.Selected)
+                StartCoroutine(CenterOnItem(ui));
         }
     }
 
     /** Select the given item. */
-    public void Select(Item item)
+    public void Select(Item item, bool centerOnSelected = false)
     {
         Selected = default(Item);
         foreach (var ui in _uis)
@@ -104,6 +111,9 @@ public class DialogList : Dialog
             ui.Selected = Equals(ui.Item, item);
             if (ui.Selected)
                 Selected = ui.Item;
+
+            if (centerOnSelected && ScrollRect && ui.Selected)
+                StartCoroutine(CenterOnItem(ui));
         }
     }
 
@@ -120,4 +130,10 @@ public class DialogList : Dialog
     public void Cancel()
         { Close();}
 
+
+    private IEnumerator CenterOnItem(DialogListItemUi ui)
+    {
+        yield return new WaitForSeconds(0.1f);
+        ScrollRect.CenterOnItem(ui.GetComponent<RectTransform>());
+    }
 }
