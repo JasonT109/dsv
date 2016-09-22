@@ -124,6 +124,8 @@ public class SubControl : NetworkBehaviour
     public float currentStabiliseSpeed;
     public Vector3 AngularVel;
 
+    public bool LaunchROV = false;
+
     public bool Collision = false;
 
     //public float ScaleRoll;
@@ -280,6 +282,8 @@ public class SubControl : NetworkBehaviour
         StabiliserStability = 1f;
 
         serverUtils.ServerData.isControlDecentModeOnJoystick = true;
+
+        Physics.gravity = new Vector3(0, -0.3F, 0);
     }
 
     /** Apply control forces to pilot a big sub. */
@@ -398,7 +402,7 @@ public class SubControl : NetworkBehaviour
         // Apply thrust to move the sub forward or backwards.
         ApplyROVThrustForce();
 
-        if (isControlDecentMode)
+        if (LaunchROV)
         {
             _rigidbody.useGravity = true;
             StabiliserSpeed = 65f;

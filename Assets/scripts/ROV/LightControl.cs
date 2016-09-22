@@ -52,7 +52,7 @@ public class LightControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(DebugMode)
+        if (DebugMode)
         {
             DebugStuff();
         }
@@ -78,7 +78,7 @@ public class LightControl : MonoBehaviour
         if (PngSeqSys.iStage != iStage)
         {
             // the stage has changed. Initialise the current stage
-            if(PngSeqSys.iStage == 0)
+            if (PngSeqSys.iStage == 0)
             {
                 SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0f);
                 SBoardLights.SetActive(false);
@@ -134,7 +134,7 @@ public class LightControl : MonoBehaviour
     {
         SBoardActive = !SBoardActive;
 
-        if(SBoardActive)
+        if (SBoardActive)
         {
             SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 1f);
             SBoardLights.SetActive(true);
@@ -183,7 +183,7 @@ public class LightControl : MonoBehaviour
         LightAmountBow = BowSlider.GetComponent<RadialSlider>().value;
 
         BowSlider.fillAmount = LightAmountBow;
-        BowSlider.color = new Color(BowSlider.color.r, BowSlider.color.g, BowSlider.color.b, Mathf.Clamp(LightAmountBow, 0.3f, 1f ));
+        BowSlider.color = new Color(BowSlider.color.r, BowSlider.color.g, BowSlider.color.b, Mathf.Clamp(LightAmountBow, 0.3f, 1f));
         BowBeam.color = new Color(BowBeam.color.r, BowBeam.color.g, BowBeam.color.b, LightAmountBow);
         BowText.text = (LightAmountBow * 100f).ToString("N0");
     }
@@ -205,6 +205,16 @@ public class LightControl : MonoBehaviour
         PortSlider.fillAmount = LightAmountPort;
         PortSlider.color = new Color(PortSlider.color.r, PortSlider.color.g, PortSlider.color.b, Mathf.Clamp(LightAmountPort, 0.3f, 1f));
         PortBeam.color = new Color(PortBeam.color.r, PortBeam.color.g, PortBeam.color.b, LightAmountPort);
-        PortText.text = (LightAmountPort*100f).ToString("N0");
+        PortText.text = (LightAmountPort * 100f).ToString("N0");
+    }
+
+    public void SetState(int _iState)
+    {
+        PngSeqSys.setStage(_iState);
+    }
+
+    public int getPNGStage()
+    {
+        return (PngSeqSys.iStage);
     }
 }
