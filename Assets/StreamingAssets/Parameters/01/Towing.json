@@ -5,6 +5,10 @@
 			"parameters":[
 				{
 					"type":"Value",
+					"serverParam":"towusehat"
+				},
+				{
+					"type":"Value",
 					"serverParam":"towtargetx"
 				},
 				{

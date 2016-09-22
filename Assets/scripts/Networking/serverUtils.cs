@@ -559,8 +559,10 @@ namespace Meg.Networking
             "inputsource",
             "inputxaxis",
             "inputxaxis2",
+            "inputxaxis3",
             "inputyaxis",
             "inputyaxis2",
+            "inputyaxis3",
             "inputzaxis",
 			"iscontroldecentmode",
             "iscontroldecentmodeonjoystick",
@@ -706,6 +708,7 @@ namespace Meg.Networking
             "towlinelength",
             "towlineremaining",
             "towtargetdistance",
+            "towusehat",
             "towwinchload",
             "v1depth",
             "v1posx",
@@ -979,8 +982,10 @@ namespace Meg.Networking
             { "inputsource", new ParameterInfo { minValue = 0, maxValue = 2, readOnly = true, description = "Where input is coming from (0:None, 1:Client, 2:Server)" } },
             { "inputxaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X input axis (yaw)." } },
             { "inputxaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X2 input axis." } },
+            { "inputxaxis3", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick X3 input axis." } },
             { "inputyaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y input axis (pitch)." } },
             { "inputyaxis2", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y2 input axis."  } },
+            { "inputyaxis3", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y3 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
 			{ "isautopilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control auto pilot toggle. does nothing but change a button light." } },
 			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Controls whether sub is in auto-descent mode." } },
@@ -1117,6 +1122,7 @@ namespace Meg.Networking
             { "towlinelength", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Total tow line length in metres."} },
             { "towlineremaining", new ParameterInfo { minValue = 0, maxValue = 1000, description = "Line remaining in metres."} },
             { "towtargetdistance", new ParameterInfo { minValue = 0, maxValue = 100, description = "Tow target distance in metres."} },
+            { "towusehat", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Whether to use joystick hat stick to control towing (if not enabled, uses main stick for input)."} },
             { "towwinchload", new ParameterInfo { description = "Tow winch load (kg)."} },
             { "variableballastpressure", new ParameterInfo { description = "Variable ballast pressure (psi)."} },
             { "variableballasttemp", new ParameterInfo { description = "Variable ballast temp (°c)."} },
@@ -1466,8 +1472,12 @@ namespace Meg.Networking
                     return SubControl.inputZaxis;
                 case "inputxaxis2":
                     return SubControl.inputXaxis2;
+                case "inputxaxis3":
+                    return SubControl.inputXaxis3;
                 case "inputyaxis2":
 					return SubControl.inputYaxis2;
+                case "inputyaxis3":
+                    return SubControl.inputYaxis3;
                 case "inputsource":
                     return ServerData.inputSource;
 				case "isautopilot":
@@ -1754,6 +1764,8 @@ namespace Meg.Networking
                     return GLTowingData.towLineRemaining;
                 case "towtargetdistance":
                     return GLTowingData.towTargetDistance;
+                case "towusehat":
+                    return GLTowingData.towUseHat ? 1 : 0;
                 case "glpowerupprogress":
                     return GLTowingData.glpowerupprogress;
                 case "taws_online":

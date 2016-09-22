@@ -716,6 +716,12 @@ public class serverData : NetworkBehaviour
             case "inputyaxis2":
                 SubControl.inputYaxis2 = newValue;
                 break;
+            case "inputxaxis3":
+                SubControl.inputXaxis3 = newValue;
+                break;
+            case "inputyaxis3":
+                SubControl.inputYaxis3 = newValue;
+                break;
             case "inputsource":
                 inputSource = newValue;
                 break;
@@ -1147,6 +1153,9 @@ public class serverData : NetworkBehaviour
                 break;
             case "towtargetdistance":
                 GLTowingData.towTargetDistance = newValue;
+                break;
+            case "towusehat":
+                GLTowingData.towUseHat = newValue > 0;
                 break;
             case "glpowerupprogress":
                 GLTowingData.glpowerupprogress = (int)newValue;

@@ -26,6 +26,8 @@ public class serverListener : NetworkBehaviour
         public float zinput;
         public float xinput2;
         public float yinput2;
+        public float xinput3;
+        public float yinput3;
         public InputSource source;
     }
 
@@ -65,7 +67,9 @@ public class serverListener : NetworkBehaviour
             yinput = inputs.outputY,
             zinput = inputs.output,
             xinput2 = inputs.outputX2,
-            yinput2 = inputs.outputX2,
+            yinput2 = inputs.outputY2,
+            xinput3 = inputs.outputX3,
+            yinput3 = inputs.outputY3,
             source = inputs.isLocalPlayer ? InputSource.Server : InputSource.Client
         };
 
@@ -138,12 +142,15 @@ public class serverListener : NetworkBehaviour
     [Server]
     void UpdateInputFrom(Pilot p)
     {
-        sData.GetComponent<serverData>().OnValueChanged("inputXaxis", p.xinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputYaxis", p.yinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputZaxis", p.zinput);
-        sData.GetComponent<serverData>().OnValueChanged("inputXaxis2", p.xinput2);
-        sData.GetComponent<serverData>().OnValueChanged("inputYaxis2", p.yinput2);
-        sData.GetComponent<serverData>().OnValueChanged("inputSource", (float) p.source);
+        var serverData = sData.GetComponent<serverData>();
+        serverData.OnValueChanged("inputXaxis", p.xinput);
+        serverData.OnValueChanged("inputYaxis", p.yinput);
+        serverData.OnValueChanged("inputZaxis", p.zinput);
+        serverData.OnValueChanged("inputXaxis2", p.xinput2);
+        serverData.OnValueChanged("inputYaxis2", p.yinput2);
+        serverData.OnValueChanged("inputXaxis3", p.xinput3);
+        serverData.OnValueChanged("inputYaxis3", p.yinput3);
+        serverData.OnValueChanged("inputSource", (float) p.source);
     }
 
 }
