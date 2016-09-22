@@ -1,0 +1,45 @@
+{
+	"metadata":{
+		"utc":"22/09/16 04:13:05.5",
+		"startedTimestamp":"22/09/16 04:12:40.2",
+		"stoppedTimestamp":"22/09/16 04:12:02.2"
+	},
+	"groups":[
+		{
+			"id":"VIDEO FEED LOST",
+			"events":[
+				{
+					"type":"Popup",
+					"triggerLabel":"ON",
+					"triggerHotKey":"0",
+					"Type":5,
+					"Theme":"WarningFeed",
+					"Title":"VIDEO FEED LOST",
+					"Message":"PLEASE CHECK CONNECTION",
+					"Target":"",
+					"Position":[
+						0,
+						0,
+						0
+					],
+					"Size":[
+						0,
+						0
+					],
+					"Scale":[
+						1,
+						1,
+						1
+					],
+					"Icon":2,
+					"Color":[
+						1,
+						1,
+						1,
+						1
+					]
+				}
+			]
+		}
+	]
+}
