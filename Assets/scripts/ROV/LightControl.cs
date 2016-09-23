@@ -12,6 +12,7 @@ public class LightControl : MonoBehaviour
     public float LightAmountPort;
 
     public PNGSeqSprite PngSeqSys;
+    public PNGSeqRaw PngSeqSysR;
     public GameObject Warning;
 
     public Image SBoardButton;
@@ -64,21 +65,21 @@ public class LightControl : MonoBehaviour
     {
         if (Input.GetKeyDown("space"))
         {
-            PngSeqSys.setStage(iStage + 1);
+            PngSeqSysR.setStage(iStage + 1);
         }
 
         if (Input.GetKeyDown("escape"))
         {
-            PngSeqSys.setStage(0);
+            PngSeqSysR.setStage(0);
         }
     }
 
     void LightStuff()
     {
-        if (PngSeqSys.iStage != iStage)
+        if (PngSeqSysR.iStage != iStage)
         {
             // the stage has changed. Initialise the current stage
-            if (PngSeqSys.iStage == 0)
+            if (PngSeqSysR.iStage == 0)
             {
                 SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0f);
                 SBoardLights.SetActive(false);
@@ -94,7 +95,7 @@ public class LightControl : MonoBehaviour
                 BowButton.gameObject.SetActive(false);
             }
 
-            if (PngSeqSys.iStage == 1)
+            if (PngSeqSysR.iStage == 1)
             {
                 SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0.5f);
                 SBoardLights.SetActive(false);
@@ -118,7 +119,7 @@ public class LightControl : MonoBehaviour
 
         UpdateSboardLights();
 
-        iStage = PngSeqSys.iStage;
+        iStage = PngSeqSysR.iStage;
 
         if (iStage > 1)
         {
@@ -210,11 +211,11 @@ public class LightControl : MonoBehaviour
 
     public void SetState(int _iState)
     {
-        PngSeqSys.setStage(_iState);
+        PngSeqSysR.setStage(_iState);
     }
 
     public int getPNGStage()
     {
-        return (PngSeqSys.iStage);
+        return (PngSeqSysR.iStage);
     }
 }
