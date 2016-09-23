@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -38,9 +38,6 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
 
     void SetColor()
     {
-        if (warning != prevState)
-            stateChanged = true;
-
         Color c = Color.black;
 
         if (autoWarning)
@@ -60,6 +57,9 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
                     warning = false;
             }
         }
+
+        if (warning != prevState)
+            stateChanged = true;
 
         if (warning)
         {
