@@ -40,15 +40,35 @@ public class OSRov : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         if (!serverUtils.IsRov())
             return;
 
         StartPos = this.transform.localPosition;
     }
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        if (!serverUtils.IsReady())
+            return;
+
+        if (!serverUtils.IsRov())
+            return;
+
+        StartPos = this.transform.localPosition;
+        ResetRov();
+
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!serverUtils.IsReady())
+            return;
+
         if (!serverUtils.IsRov())
             return;
 
