@@ -54,32 +54,18 @@ public class debugDCCScreenUi : MonoBehaviour
             return;
 
         Title.text = Player.Id;
-        StationButton.interactable = !Player.isLocalPlayer;
         StationName.text = DCCScreenData.GetStationName(Player.StationId);
         _typeLabel.text = GetScreenLabel();
-        TypeButton.interactable = !Player.isLocalPlayer;
-        PreviousButton.interactable = !Player.isLocalPlayer;
-        NextButton.interactable = !Player.isLocalPlayer;
-        PreviousStationButton.interactable = !Player.isLocalPlayer;
-        NextStationButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
     }
 
     private string GetScreenLabel()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return "DEBUG";
-
         return screenData.NameForType(Player.ScreenState.Type).ToUpper();
     }
 
     private void OnNextClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         var current = Player.ScreenState.Type;
         var next = GetNextType(current);
         serverUtils.PostScreenStateType(Player.netId, next);
@@ -87,10 +73,6 @@ public class debugDCCScreenUi : MonoBehaviour
 
     private void OnPreviousClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         var current = Player.ScreenState.Type;
         var next = GetPreviousType(current);
         serverUtils.PostScreenStateType(Player.netId, next);
@@ -98,19 +80,11 @@ public class debugDCCScreenUi : MonoBehaviour
 
     private void OnNextStationClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         serverUtils.PostStationId(Player.netId, Player.StationId + 1);
     }
 
     private void OnPreviousStationClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         serverUtils.PostStationId(Player.netId, Player.StationId - 1);
     }
 
