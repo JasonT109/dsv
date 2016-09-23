@@ -326,11 +326,11 @@ public class popupData : NetworkBehaviour
     
     /** Register a popup target. */
     public void RegisterTarget(PopupTarget target)
-        { _popupTargets[target.Id.ToLower()] = target; }
+        { _popupTargets[target.PopupId.ToLower()] = target; }
 
     /** Unregister a popup target. */
     public void UnregisterTarget(PopupTarget target)
-        { _popupTargets.Remove(target.Id.ToLower()); }
+        { _popupTargets.Remove(target.PopupId.ToLower()); }
 
     /** Return a type entry. */
     public PopupType FindPopupType(Type type, string theme)

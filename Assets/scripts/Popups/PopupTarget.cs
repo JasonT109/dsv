@@ -29,6 +29,18 @@ public class PopupTarget : MonoBehaviour
     /** Popup shared data. */
     public popupData PopupData { get { return serverUtils.PopupData; } }
 
+    /** Popup's target id. */
+    public string PopupId
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Id))
+                return name;
+
+            return Id;
+        }
+    }
+
 
     // Unity Methods
     // ------------------------------------------------------------

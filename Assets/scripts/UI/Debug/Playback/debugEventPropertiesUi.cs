@@ -1483,8 +1483,8 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void PopupTargetSelectClicked()
     {
         var targets = ObjectFinder.FindAll<PopupTarget>()
-            .OrderBy(target => target.Id)
-            .Select(target => target.Id)
+            .OrderBy(target => target.PopupId)
+            .Select(target => target.PopupId)
             .Distinct()
             .Select(id => new DialogList.Item { Id = id, Name = id});
 
