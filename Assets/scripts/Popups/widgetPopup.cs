@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Text.RegularExpressions;
 using DG.Tweening;
 using Meg.Networking;
 using TouchScript.Gestures;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class widgetPopup : MonoBehaviour
@@ -67,6 +67,12 @@ public class widgetPopup : MonoBehaviour
     // Members
     // ------------------------------------------------------------
 
+    /** Popup target id. */
+    private string _targetId;
+
+    /** Optional station id restriction. */
+    private int _stationId = -1;
+
     /** Popup's target. */
     private PopupTarget _target;
 
@@ -119,6 +125,10 @@ public class widgetPopup : MonoBehaviour
     public virtual void Show(popupData.Popup popup)
     {
         Popup = popup;
+
+        // Parse popup target info.
+        _stationId = ParseStationIdFromTarget(popup.Target);
+        _targetId = ParseTargetId(popup.Target);
 
         // Configure the popup.
         Configure();
@@ -205,17 +215,14 @@ public class widgetPopup : MonoBehaviour
     protected virtual void UpdatePopup()
     {
         // Try to locate popup target (if any)
-        if (!_target && !string.IsNullOrEmpty(Popup.Target))
-            PopupData.TryGetTarget(Popup.Target, out _target);
+        if (!_target && !string.IsNullOrEmpty(_targetId))
+            PopupData.TryGetTarget(_targetId, out _target);
 
         // Update the popup's position.
         UpdatePosition();
 
         // Update the popup's visibility.
-        if (!string.IsNullOrEmpty(Popup.Target))
-            SetActive(_target && _target.gameObject.activeInHierarchy);
-        else
-            SetActive(!serverUtils.IsInDebugScreen());
+        SetActive(ShouldBeActive());
 
         // Configure popup title.
         if (Title)
@@ -224,6 +231,32 @@ public class widgetPopup : MonoBehaviour
         // Configure popup message.
         if (Message)
             Message.text = serverUtils.Expanded(Popup.Message);
+    }
+
+    /** Convert the raw popup target string into a target id. */
+    protected virtual string ParseTargetId(string target)
+    {
+        if (string.IsNullOrEmpty(target))
+            return target;
+
+        // Strip out station id from target.
+        return Regex.Replace(target, @"\s*Station\s*[A-Z0-9]\s*", "");
+    }
+
+    /** Determine if popup should be active. */
+    protected virtual bool ShouldBeActive()
+    {
+        // Optionally check that popup is on the right station.
+        if (_stationId >= 0 && DCCScreenData.StationId != _stationId)
+            return false;
+
+        // Check if we're in the debug screen.
+        // Don't show global popups there.
+        if (string.IsNullOrEmpty(_targetId))
+            return !serverUtils.IsInDebugScreen();
+
+        // Otherwise, check if target is active.
+        return _target && _target.gameObject.activeInHierarchy;
     }
 
     /** Set whether the popup is active. */
@@ -285,6 +318,26 @@ public class widgetPopup : MonoBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Look for a station ID in the popup's target. */
+    private int ParseStationIdFromTarget(string target)
+    {
+        if (string.IsNullOrEmpty(target))
+            return -1;
+
+        var match = Regex.Match(target, @"Station\s*([0-9])");
+        if (match.Success)
+            return int.Parse(match.Groups[1].Value);
+
+        match = Regex.Match(target, @"Station\s*([A-Z])");
+        if (match.Success)
+        {
+            var id = match.Groups[1].Value[0];
+            return (id - 'A');
+        }
+
+        return -1;
+    }
 
     /** Position this popup over the target. */
     private void PositionOverTarget(PopupTarget target)
