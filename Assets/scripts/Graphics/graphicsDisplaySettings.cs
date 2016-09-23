@@ -77,6 +77,9 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
         private set { _scale = value; }
     }
 
+    /** Whether scaling has been locally overridden via debug menu. */
+    public bool Overridden { get; private set; }
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -86,8 +89,20 @@ public class graphicsDisplaySettings : Singleton<graphicsDisplaySettings>
     {
         Scaled = false;
         Scale = 1;
+
+        // Listen for clicks on the debug menu buttons.
+        b16x9.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+        b16x10.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+        b21x9l.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+        b21x9c.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+        b21x9r.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+        scaling.GetComponent<buttonControl>().onPress.AddListener(OnButtonPressed);
+
         Initialize();
     }
+
+    private void OnButtonPressed()
+        { Overridden = true; }
 
     /** Updating. */
     private void Update()

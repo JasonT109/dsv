@@ -16,7 +16,7 @@ public class graphicsDisplayScaling : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!Settings)
+        if (!Settings || Settings.Overridden)
             return;
 
         _oldMode = Settings.Mode;
@@ -30,8 +30,10 @@ public class graphicsDisplayScaling : MonoBehaviour
 
     private void OnDisable()
     {
-        if (!_quitting && Settings)
-            Settings.Configure(_oldMode, _oldScaled);
+        if (_quitting || !Settings || Settings.Overridden)
+            return;
+
+        Settings.Configure(_oldMode, _oldScaled);
     }
 
 }
