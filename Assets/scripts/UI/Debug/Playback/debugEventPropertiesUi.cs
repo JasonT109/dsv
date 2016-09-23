@@ -1416,8 +1416,10 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void PopupTypeSelectClicked()
     {
-        var items = serverUtils.PopupData.Types.Select(
-            t => new DialogList.Item {Name = t.Name, Id = t.Name} );
+        var items = serverUtils.PopupData.Types
+            .OrderBy(t => t.Name)
+            .Distinct()
+            .Select(t => new DialogList.Item {Name = t.Name, Id = t.Name} );
 
         DialogManager.Instance.ShowList("SELECT POPUP TYPE",
             "Please select the type of popup you want to display:",

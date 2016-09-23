@@ -3,9 +3,9 @@ using System.Collections;
 using Meg.Networking;
 using UnityEngine.UI;
 
-public class ImageSequenceUi : MonoBehaviour
+public class ImageSequenceRawUi : MonoBehaviour
 {
-    public Image Image;
+    public RawImage Image;
 
     public enum playbackType
     {
@@ -22,7 +22,7 @@ public class ImageSequenceUi : MonoBehaviour
     public playbackType type = playbackType.loop;
     public int startFrame;
     public float frameTime = 0.04f;
-    public Sprite notPlaying;
+    public Texture notPlaying;
 
     [Header("Sequence 1")]
     public string folderName;
@@ -47,7 +47,7 @@ public class ImageSequenceUi : MonoBehaviour
     void Awake()
     {
         if (!Image)
-            Image = GetComponent<Image>();
+            Image = GetComponent<RawImage>();
 
         baseName = folderName + "/" + imageSequenceName;
         nFrames = numberOfFrames;
@@ -109,7 +109,7 @@ public class ImageSequenceUi : MonoBehaviour
         else
         {
             if (notPlaying && Image)
-                Image.sprite = notPlaying;
+                Image.texture = notPlaying;
             else
                 UpdateFrame(numberOfFrames - 1);
         }
@@ -171,7 +171,7 @@ public class ImageSequenceUi : MonoBehaviour
     {
         var frameName = GetFrameName(i);
         if (Image)
-            Image.sprite = Resources.Load<Sprite>(frameName);
+            Image.texture = Resources.Load<Texture>(frameName);
     }
 
 }
