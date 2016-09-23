@@ -59,6 +59,9 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Updating. */
     private void Update()
     {
+        if (!serverUtils.MapData)
+            return;
+
         _diveMapOn.gameObject.SetActive(StrategyMap.IsMap3D);
         _nauticalMapOn.gameObject.SetActive(StrategyMap.IsMap2D);
         _subSchematicOn.gameObject.SetActive(StrategyMap.IsSubSchematic);

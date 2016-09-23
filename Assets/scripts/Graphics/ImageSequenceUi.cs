@@ -14,33 +14,32 @@ public class ImageSequenceUi : MonoBehaviour
         hold
     }
 
-    public playbackType type = playbackType.loop;
-
-    //An integer to advance frames  
+    [Header("Debug")]
     public int frameCounter;
+    public bool playing = true;
 
-    //A string that holds the name of the folder which contains the image sequence  
-    public string folderName;
-
-    //The name of the image sequence  
-    public string imageSequenceName;
-
-    //Starting frame for the animation.
+    [Header("Configuration:")]
+    public playbackType type = playbackType.loop;
     public int startFrame;
+    public float frameTime = 0.04f;
+    public Sprite notPlaying;
 
-    //The number of frames the animation has
+    [Header("Sequence 1")]
+    public string folderName;
+    public string imageSequenceName;
     public int numberOfFrames;
 
+    [Header("Sequence 2")]
     public string folderName2;
     public string imageSequenceName2;
     public int numberOfFrames2;
-    public bool playing = true;
-    public float switchSequenceThreshold = 0.5f;
-    public float frameTime = 0.04f;
-    public Sprite notPlaying;
+
+    [Header("Server Switching Configuration")]
     public bool switchOnWarning = false;
     public bool switchGreaterThan = false;
-    public string serverParam = "";
+    public string serverParam = "inputZaxis";
+    public float switchSequenceThreshold = 0.5f;
+
     private int nFrames;
     private int direction = 1;
     private string baseName;
