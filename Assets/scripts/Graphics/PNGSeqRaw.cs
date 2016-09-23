@@ -1,26 +1,26 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
 [System.Serializable]
-public class Stage
+public class StageR
 {
-    public Sprite[] sprites;
+    public Texture[] textures;
     public bool looping = false;
     public bool FallThrough = false;
     public string FolderName;
 }
 
 
-public class PNGSeqSprite : MonoBehaviour
+public class PNGSeqRaw : MonoBehaviour
 {
-    public Image Destination;
+    public RawImage Destination;
     public int iStage = 0;
     private int iLastStage = 0;
 
     public bool DebugMode = false;
 
-    public Stage[] stages;
+    public StageR[] stages;
 
 
     public float FramesPerSecond = 30f;
@@ -33,13 +33,13 @@ public class PNGSeqSprite : MonoBehaviour
     void Start()
     {
         for (int i = 0; i < stages.Length; ++i)
-            stages[i].sprites = Resources.LoadAll<Sprite>(stages[i].FolderName);
+            stages[i].textures = Resources.LoadAll<Texture>(stages[i].FolderName);
 
-        if(!Destination)
+        if (!Destination)
         {
-            if(this.GetComponent<Image>())
+            if (this.GetComponent<RawImage>())
             {
-                Destination = this.GetComponent<Image>();
+                Destination = this.GetComponent<RawImage>();
             }
         }
     }
@@ -62,13 +62,13 @@ public class PNGSeqSprite : MonoBehaviour
 
         if (stages[iStage].looping)
         {
-            iIndex = iIndex % stages[iStage].sprites.Length;
+            iIndex = iIndex % stages[iStage].textures.Length;
         }
         else
         {
-            if (iIndex > stages[iStage].sprites.Length - 1)
+            if (iIndex > stages[iStage].textures.Length - 1)
             {
-                iIndex = stages[iStage].sprites.Length - 1;
+                iIndex = stages[iStage].textures.Length - 1;
                 if (stages[iStage].FallThrough)
                 {
                     setStage(iStage + 1);
@@ -78,7 +78,7 @@ public class PNGSeqSprite : MonoBehaviour
 
         if (iIndex != iLastIndex)
         {
-            Destination.sprite = stages[iStage].sprites[iIndex];
+            Destination.texture = stages[iStage].textures[iIndex];
         }
         iLastIndex = iIndex;
     }
