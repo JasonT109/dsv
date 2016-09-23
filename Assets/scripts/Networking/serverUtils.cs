@@ -251,6 +251,18 @@ namespace Meg.Networking
             }
         }
 
+        /** Return the motion base data object. */
+        private static OSRov _OSRov;
+        public static OSRov OSRov
+        {
+            get
+            {
+                if (!_OSRov && ServerObject)
+                    _OSRov = ServerObject.GetComponent<OSRov>();
+                return _OSRov;
+            }
+        }
+
         /** Return the DCC screens data object. */
         private static DCCScreenData _DCCScreenControl;
         public static DCCScreenData DCCScreenData
@@ -670,6 +682,10 @@ namespace Meg.Networking
             "reserveoxygentank6",
             "rollangle",
             "rollspeed",
+            "rovstate",
+            "rovlightbow",
+            "rovlightsboard",
+            "rovlightport",
             "stabiliserspeed",
             "motionstabiliserkicker",
             "stabiliserstability",
@@ -1087,6 +1103,10 @@ namespace Meg.Networking
             { "reserveoxygentank6", new ParameterInfo { description = "Oxygen reserve tank 6 capacity (%)."} },
             { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current roll angle (degrees)." } },
             { "rollspeed", new ParameterInfo { description = "Sub's rolling speed."} },
+            { "rovstate", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int,  description = "rov screen state (start, launch, alert."} },
+            { "rovlightbow", new ParameterInfo { description = "rov light amount."} },
+            { "rovlightsboard", new ParameterInfo { description = "rov light amount."} },
+            { "rovlightport", new ParameterInfo { description = "rov light amount."} },
             { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int, description = "The scene currently being filmed." } },
             { "screenglitchamount", new ParameterInfo { description = "Amount of screen glitch across all screens."} },
             { "screenglitchautodecay", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether screen glitch automatically decays over time."} },
@@ -1346,6 +1366,14 @@ namespace Meg.Networking
                     return AirData.reserveAirTank8;
                 case "reserveairtank9":
                     return AirData.reserveAirTank9;
+                case "rovstate":
+                    return OSRov.RovState;
+                case "rovlightbow":
+                    return OSRov.RovLightBow;
+                case "rovlightsboard":
+                    return OSRov.RovLightSBoard;
+                case "rovlightport":
+                    return OSRov.RovLightPort;
                 case "co2":
                     return CabinData.Co2;
                 case "co2ppm":
@@ -2028,6 +2056,14 @@ namespace Meg.Networking
                     return DomeData.domeSquareRight.ToString();
                 case "domesquaretop":
                     return DomeData.domeSquareTop.ToString();
+                case "rovstate":
+                    return OSRov.RovState.ToString();
+                case "rovlightbow":
+                    return OSRov.RovLightBow.ToString();
+                case "rovlightsboard":
+                    return OSRov.RovLightSBoard.ToString();
+                case "rovlightport":
+                    return OSRov.RovLightPort.ToString();
                 case "version":
                     return Version;
                 default:

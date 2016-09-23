@@ -222,6 +222,17 @@ public class serverData : NetworkBehaviour
         }
     }
 
+    private OSRov _OSRov;
+    public OSRov OSRov
+    {
+        get
+        {
+            if (!_OSRov)
+                _OSRov = GetComponent<OSRov>();
+            return _OSRov;
+        }
+    }
+
     private DCCScreenData _DCCScreenControl;
     public DCCScreenData DCCScreenData
     {
@@ -584,6 +595,20 @@ public class serverData : NetworkBehaviour
             case "reserveairtank9":
                 AirData.reserveAirTank9 = newValue;
                 break;
+
+            case "rovstate":
+                OSRov.RovState = Mathf.RoundToInt(newValue);
+                break;
+            case "rovlightbow":
+                OSRov.RovLightBow = newValue;
+                break;
+            case "rovlightsboard":
+                OSRov.RovLightSBoard = newValue;
+                break;
+            case "rovlightport":
+                OSRov.RovLightPort = newValue;
+                break;
+
             case "co2":
                 CabinData.Co2 = newValue;
                 break;
