@@ -269,10 +269,15 @@ public class widgetPopup : MonoBehaviour
     /** Configure popup for DCC mode. */
     protected virtual void ConfigureForDcc()
     {
+        // Check if popup has a particular target.
+        // If not, default to topmost behavior.
+        if (string.IsNullOrEmpty(_targetId))
+            return;
+
         // Set a z-sorting bias that works with the DCC window setup.
         _zBias = DccZSortBias;
 
-        // In DCC, sort certain popups in with other elements.
+        // In DCC, sort targetted popups in with other elements.
         switch (Popup.Type)
         {
             case popupData.Type.Info:
