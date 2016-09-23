@@ -1165,6 +1165,9 @@ namespace Meg.Networking
         /** Return information about a given parameter. */
         public static ParameterInfo GetServerDataInfo(string valueName)
         {
+            if (string.IsNullOrEmpty(valueName))
+                return DefaultParameterInfo;
+
             var key = valueName.ToLower();
             if (ParameterInfos.ContainsKey(key))
                 return ParameterInfos[key];
@@ -1176,19 +1179,6 @@ namespace Meg.Networking
         public static float GetServerData(string valueName, float defaultValue = Unknown)
         {
             return GetServerDataRaw(valueName, defaultValue);
-
-            /*
-            // Bypass 'noisy data' logic for now, as we're concerned it might
-            // be causing some stability issues.
-             
-            if (!ServerObject || string.IsNullOrEmpty(valueName))
-                return defaultValue;
-
-            var value = GetServerDataRaw(valueName, defaultValue);
-            var noise = NoiseData.Sample(valueName);
-
-            return value + noise;
-            */
         }
 
         /** Return the current value of a shared state value, indexed by name. */
@@ -1197,881 +1187,897 @@ namespace Meg.Networking
             if (!ServerObject || string.IsNullOrEmpty(valueName))
                 return defaultValue;
 
-            switch (valueName.ToLower())
+            try
             {
-                case "scene":
-                    return ServerData.scene;
-                case "shot":
-                    return ServerData.shot;
-                case "take":
-                    return ServerData.take;
-                case "depth":
-                    return ServerData.GetDepth();
-                case "depthdisplayed":
-                    return ServerData.depthDisplayed ? 1 : 0;
-                case "depthoverride":
-                    return ServerData.depthOverride;
-                case "depthoverrideamount":
-                    return ServerData.depthOverrideAmount;
-                case "floordistancedisplayed":
-                    return ServerData.floorDistanceDisplayed ? 1 : 0;
-                case "xpos":
-                    return ServerObject.transform.position.x;
-                case "zpos":
-                    return ServerObject.transform.position.z;
-                case "heading":
-                    return ServerData.heading;
-                case "pitchangle":
-                    return ServerData.pitchAngle;
-                case "yawangle":
-                    return ServerData.yawAngle;
-                case "rollangle":
-                    return ServerData.rollAngle;
-                case "velocity":
-                    return ServerData.velocity;
-                case "floordepth":
-                    return ServerData.floorDepth;
-                case "floordistance":
-                    return ServerData.floorDistance;
-                case "divetime":
-                    return ServerData.diveTime;
-                case "divetimeactive":
-                    return ServerData.diveTimeActive ? 1 : 0;
-                case "duetime":
-                    return ServerData.dueTime;
-                case "duetimeactive":
-                    return ServerData.dueTimeActive ? 1 : 0;
-                case "pressure":
-                    return ClientCalcValues.pressureResult;
-                case "watertemp":
-                    return ClientCalcValues.waterTempResult;
-                case "battery":
-                    return BatteryData.battery;
-                case "batterycurrent":
-                    return BatteryData.batteryCurrent;
-                case "batterydrain":
-                    return BatteryData.batteryDrain;
-                case "batteryerrorthreshold":
-                    return BatteryData.batteryErrorThreshold;
-                case "batterylife":
-                    return BatteryData.batteryLife;
-                case "batterylifemax":
-                    return BatteryData.batteryLifeMax;
-                case "batterylifeenabled":
-                    return BatteryData.batteryLifeEnabled ? 1 : 0;
-                case "batterytemp":
-                    return BatteryData.batteryTemp;
-                case "batterytimeremaining":
-                    return BatteryData.batteryTimeRemaining;
-                case "batterytimeenabled":
-                    return BatteryData.batteryTimeEnabled ? 1 : 0;
-                case "b1":
-                    return BatteryData.bank1;
-                case "b2":
-                    return BatteryData.bank2;
-                case "b3":
-                    return BatteryData.bank3;
-                case "b4":
-                    return BatteryData.bank4;
-                case "b5":
-                    return BatteryData.bank5;
-                case "b6":
-                    return BatteryData.bank6;
-                case "b7":
-                    return BatteryData.bank7;
-                case "b1error":
-                    return BatteryData.bank1Error;
-                case "b2error":
-                    return BatteryData.bank2Error;
-                case "b3error":
-                    return BatteryData.bank3Error;
-                case "b4error":
-                    return BatteryData.bank4Error;
-                case "b5error":
-                    return BatteryData.bank5Error;
-                case "b6error":
-                    return BatteryData.bank6Error;
-                case "b7error":
-                    return BatteryData.bank7Error;
-                case "bowtiedeadzone":
-                    return SubControl.BowtieDeadzone;
-                case "oxygen":
-                    return OxygenData.oxygen;
-                case "oxygenlitres":
-                    return OxygenData.oxygenLitres;
-                case "o1":
-                case "oxygentank1":
-                    return OxygenData.oxygenTank1;
-                case "o2":
-                case "oxygentank2":
-                    return OxygenData.oxygenTank2;
-                case "o3":
-                case "oxygentank3":
-                    return OxygenData.oxygenTank3;
-                case "reserveoxygen":
-                    return OxygenData.reserveOxygen;
-                case "reserveoxygenlitres":
-                    return OxygenData.reserveOxygenLitres;
-                case "o4":
-                case "reserveoxygentank1":
-                    return OxygenData.reserveOxygenTank1;
-                case "o5":
-                case "reserveoxygentank2":
-                    return OxygenData.reserveOxygenTank2;
-                case "o6":
-                case "reserveoxygentank3":
-                    return OxygenData.reserveOxygenTank3;
-                case "o7":
-                case "reserveoxygentank4":
-                    return OxygenData.reserveOxygenTank4;
-                case "o8":
-                case "reserveoxygentank5":
-                    return OxygenData.reserveOxygenTank5;
-                case "o9":
-                case "reserveoxygentank6":
-                    return OxygenData.reserveOxygenTank6;
-                case "oxygenflow":
-                    return OxygenData.oxygenFlow;
-                case "air":
-                    return AirData.air;
-                case "airlitres":
-                    return AirData.airLitres;
-                case "airtank1":
-                    return AirData.airTank1;
-                case "airtank2":
-                    return AirData.airTank2;
-                case "airtank3":
-                    return AirData.airTank3;
-                case "airtank4":
-                    return AirData.airTank4;
-                case "reserveair":
-                    return AirData.reserveAir;
-                case "reserveairlitres":
-                    return AirData.reserveAirLitres;
-                case "reserveairtank1":
-                    return AirData.reserveAirTank1;
-                case "reserveairtank2":
-                    return AirData.reserveAirTank2;
-                case "reserveairtank3":
-                    return AirData.reserveAirTank3;
-                case "reserveairtank4":
-                    return AirData.reserveAirTank4;
-                case "reserveairtank5":
-                    return AirData.reserveAirTank5;
-                case "reserveairtank6":
-                    return AirData.reserveAirTank6;
-                case "reserveairtank7":
-                    return AirData.reserveAirTank7;
-                case "reserveairtank8":
-                    return AirData.reserveAirTank8;
-                case "reserveairtank9":
-                    return AirData.reserveAirTank9;
-                case "rovstate":
-                    return OSRov.RovState;
-                case "rovlightbow":
-                    return OSRov.RovLightBow;
-                case "rovlightsboard":
-                    return OSRov.RovLightSBoard;
-                case "rovlightport":
-                    return OSRov.RovLightPort;
-                case "co2":
-                    return CabinData.Co2;
-                case "co2ppm":
-                    return CabinData.Co2 * Conversions.PercentToPartsPerMillion;
-                case "cabinpressure":
-                    return CabinData.cabinPressure;
-                case "cabinpressurepsi":
-                    return CabinData.cabinPressure * Conversions.BarToPsi;
-                case "cabinoxygen":
-                    return CabinData.cabinOxygen;
-                case "cabintemp":
-                    return CabinData.cabinTemp;
-                case "cabinhumidity":
-                    return CabinData.cabinHumidity;
-                case "scrubbedco2":
-                    return CabinData.scrubbedCo2;
-                case "scrubbedhumidity":
-                    return CabinData.scrubbedHumidity;
-                case "scrubbedoxygen":
-                    return CabinData.scrubbedOxygen;
-                case "pressureoverride":
-                    return CabinData.pressureOverride;
-                case "pressureoverrideamount":
-                    return CabinData.pressureOverrideAmount;
-                case "watertempoverride":
-                    return CabinData.waterTempOverride;
-                case "watertempoverrideamount":
-                    return CabinData.waterTempOverrideAmount;
-                case "error_bilgeleak":
-                    return ErrorData.error_bilgeLeak;
-                case "error_batteryleak":
-                    return ErrorData.error_batteryLeak;
-                case "error_electricleak":
-                    return ErrorData.error_electricLeak;
-                case "error_oxygenext":
-                    return ErrorData.error_oxygenExt;
-                case "error_vhf":
-                    return ErrorData.error_vhf;
-                case "error_forwardsonar":
-                    return ErrorData.error_forwardSonar;
-                case "error_depthsonar":
-                    return ErrorData.error_depthSonar;
-                case "error_doppler":
-                    return ErrorData.error_doppler;
-                case "error_gps":
-                    return ErrorData.error_gps;
-                case "error_cpu":
-                    return ErrorData.error_cpu;
-                case "error_vidhd":
-                    return ErrorData.error_vidhd;
-                case "error_datahd":
-                    return ErrorData.error_datahd;
-                case "error_diagnostics":
-                    return ErrorData.error_diagnostics;
-                case "error_tow":
-                    return ErrorData.error_tow;
-                case "error_radar":
-                    return ErrorData.error_radar;
-                case "error_sternlights":
-                    return ErrorData.error_sternLights;
-                case "error_bowlights":
-                    return ErrorData.error_bowLights;
-                case "error_portlights":
-                    return ErrorData.error_portLights;
-                case "error_bowthruster":
-                    return ErrorData.error_bowThruster;
-                case "error_hatch":
-                    return ErrorData.error_hatch;
-                case "error_hyrdaulicres":
-                    return ErrorData.error_hyrdaulicRes;
-                case "error_starboardlights":
-                    return ErrorData.error_starboardLights;
-                case "error_runninglights":
-                    return ErrorData.error_runningLights;
-                case "error_ballasttank":
-                    return ErrorData.error_ballastTank;
-                case "error_hydraulicpump":
-                    return ErrorData.error_hydraulicPump;
-                case "error_oxygenpump":
-                    return ErrorData.error_oxygenPump;
-                case "genericerror":
-                    return ErrorData.genericerror;
-                case "error_thruster_l":
-                    return GliderErrorData.error_thruster_l;
-                case "error_thruster_r":
-                    return GliderErrorData.error_thruster_r;
-                case "error_vertran_l":
-                    return GliderErrorData.error_vertran_l;
-                case "error_vertran_r":
-                    return GliderErrorData.error_vertran_r;
-                case "error_jet_l":
-                    return GliderErrorData.error_jet_l;
-                case "error_jet_r":
-                    return GliderErrorData.error_jet_r;
-                case "thruster_heat_l":
-                    return GliderErrorData.thruster_heat_l;
-                case "thruster_heat_r":
-                    return GliderErrorData.thruster_heat_r;
-                case "vertran_heat_l":
-                    return GliderErrorData.vertran_heat_l;
-                case "vertran_heat_r":
-                    return GliderErrorData.vertran_heat_r;
-                case "jet_heat_l":
-                    return GliderErrorData.jet_heat_l;
-                case "jet_heat_r":
-                    return GliderErrorData.jet_heat_r;
-                case "error_panel_l":
-                    return GliderErrorData.error_panel_l;
-                case "error_panel_r":
-                    return GliderErrorData.error_panel_r;
-                case "error_pressure":
-                    return GliderErrorData.error_pressure;
-                case "error_structural":
-                    return GliderErrorData.error_structural;
-                case "error_grapple":
-                    return GliderErrorData.error_grapple;
-                case "error_system":
-                    return GliderErrorData.error_system;
-                case "disableinput":
-                    return SubControl.disableInput ? 1 : 0;
-                case "inputxaxis":
-                    return SubControl.inputXaxis;
-                case "inputyaxis":
-                    return SubControl.inputYaxis;
-                case "inputzaxis":
-                    return SubControl.inputZaxis;
-                case "inputxaxis2":
-                    return SubControl.inputXaxis2;
-                case "inputxaxis3":
-                    return SubControl.inputXaxis3;
-                case "inputyaxis2":
-					return SubControl.inputYaxis2;
-                case "inputyaxis3":
-                    return SubControl.inputYaxis3;
-                case "inputsource":
-                    return ServerData.inputSource;
-				case "isautopilot":
-					return SubControl.isAutoPilot ? 1 : 0;
-                case "decouplemotionbase":
-                    return MotionBaseData.DecoupleMotionBase ? 1 : 0;
-                case "iscontroldecentmode":
-					return SubControl.isControlDecentMode ? 1 : 0;
-                case "oldphysics":
-                    return SubControl.oldPhysics ? 1 : 0;
-                case "iscontrolmodeoverride":
-					return SubControl.isControlModeOverride ? 1 : 0;
-				case "iscontroloverridestandard":
-					return SubControl.isControlOverrideStandard ? 1 : 0;
-                case "isautostabilised":
-                    return SubControl.isAutoStabilised ? 1 : 0;
-                case "ispitchalsostabilised":
-                    return SubControl.IsPitchAlsoStabilised ? 1 : 0;
-                case "joystickoverride":
-                    return SubControl.JoystickOverride ? 1 : 0;
-                case "joystickpilot":
-                    return SubControl.JoystickPilot ? 1 : 0;
-                case "acceleration":
-                    return SubControl.Acceleration;
-                case "yawspeed":
-                    return SubControl.yawSpeed;
-                case "pitchspeed":
-                    return SubControl.pitchSpeed;
-                case "rollspeed":
-                    return SubControl.rollSpeed;
-                case "maxspeed":
-                    return SubControl.MaxSpeed;
-                case "minspeed":
-                    return SubControl.MinSpeed;
-                case "maxgliderangle":
-                    return SubControl.MaxGliderAngle;
-                case "absolutemaxangularvel":
-                    return SubControl.AbsoluteMaxAngularVel;
-				case "isAutoPilot":
-					return SubControl.isAutoPilot ? 1 : 0;
-                case "isControlDecentMode":
-                    return SubControl.isControlDecentMode ? 1 : 0;
-                case "OldPhysics":
-                    return SubControl.oldPhysics ? 1 : 0;
-                case "iscontroldecentmodeonjoystick":
-                    return ServerData.isControlDecentModeOnJoystick ? 1 : 0;
-                case "isControlModeOverride":
-                    return SubControl.isControlModeOverride ? 1 : 0;
-                case "isControlOverrideStandard":
-                    return SubControl.isControlOverrideStandard ? 1 : 0;
-                case "verticalvelocity":
-                    return ServerData.verticalVelocity;
-                case "horizontalvelocity":
-                    return ServerData.horizontalVelocity;
-                case "playervessel":
-                    return VesselData.PlayerVessel;
-                case "initiatemapevent":
-                    return MapData.initiateMapEvent;
-                case "latitude":
-                    return MapData.latitude;
-                case "longitude":
-                    return MapData.longitude;
-                case "mapinteractive":
-                    return MapData.mapInteractive ? 1 : 0;
-                case "maplayeralerts":
-                    return MapData.mapLayerAlerts;
-                case "maplayercontours":
-                    return MapData.mapLayerContours;
-                case "maplayerdepths":
-                    return MapData.mapLayerDepths;
-                case "maplayergrid":
-                    return MapData.mapLayerGrid;
-                case "maplayerlabels":
-                    return MapData.mapLayerLabels;
-                case "maplayersatellite":
-                    return MapData.mapLayerSatellite;
-                case "maplayershipping":
-                    return MapData.mapLayerShipping;
-                case "maplayertemperatures":
-                    return MapData.mapLayerTemperatures;
-                case "mapscale":
-                    return MapData.mapScale;
-                case "maptopdown":
-                    return MapData.mapTopDown ? 1 : 0;
-                case "towwinchload":
-                    return OperatingData.towWinchLoad;
-                case "hydraulictemp":
-                    return OperatingData.hydraulicTemp;
-                case "hydraulicpressure":
-                    return OperatingData.hydraulicPressure;
-                case "ballastpressure":
-                    return OperatingData.ballastPressure;
-                case "variableballasttemp":
-                    return OperatingData.variableBallastTemp;
-                case "variableballastpressure":
-                    return OperatingData.variableBallastPressure;
-                case "commssignalstrength":
-                    return OperatingData.commsSignalStrength;
-                case "divertpowertothrusters":
-                    return OperatingData.divertPowerToThrusters;
-                case "dockingbuttonenabled":
-                    return OperatingData.dockingButtonEnabled ? 1 : 0;
-                case "pilotbuttonenabled":
-                    return OperatingData.pilotButtonEnabled ? 1 : 0;
-                case "vesselmovementenabled":
-                    return VesselMovements.Enabled ? 1 : 0;
-                case "timetointercept":
-                    return VesselMovements.TimeToIntercept;
-                case "megspeed":
-                    return SonarData.MegSpeed;
-                case "megturnspeed":
-                    return SonarData.MegTurnSpeed;
-				case "motionsafety":
-					return MotionBaseData.MotionSafety ? 1 : 0;
-				case "motionhazard":
-					return MotionBaseData.MotionHazard ? 1 : 0;
-				case "motionhazardenabled":
-					return MotionBaseData.MotionHazardEnabled ? 1 : 0;
-				case "motionbasepitch":
-					return MotionBaseData.MotionBasePitch;
-				case "motionbaseyaw":
-					return MotionBaseData.MotionBaseYaw;
-				case "motionbaseroll":
-					return MotionBaseData.MotionBaseRoll;
-                case "motioncomport":
-                    return MotionBaseData.MotionComPort;
-                case "motionslerpspeed":
-					return MotionBaseData.MotionSlerpSpeed;
-                case "motioncomportopen":
-                    return MotionBaseData.MotionComPortOpen ? 1 : 0;
-                case "motionscaleimpacts":
-					return SubControl.MotionScaleImpacts;
-				case "motionminimpactinterval":
-					return SubControl.MotionMinImpactInterval;
-				case "motionhazardsensitivity":
-					return MotionBaseData.MotionHazardSensitivity;
-                case "motionpitchmax":
-                    return MotionBaseData.MotionPitchMax;
-                case "motionpitchmin":
-                    return MotionBaseData.MotionPitchMin;
-                case "motionyawmax":
-                    return MotionBaseData.MotionYawMax;
-                case "motionrollmax":
-                    return MotionBaseData.MotionRollMax;
-                case "motionrollmin":
-                    return MotionBaseData.MotionRollMin;
-                case "sonarheadingup":
-                    return SonarData.HeadingUp ? 1 : 0;
-                case "sonarlongfrequency":
-                    return SonarData.LongFrequency;
-                case "sonarlonggain":
-                    return SonarData.LongGain;
-                case "sonarlongrange":
-                    return SonarData.LongRange;
-                case "sonarlongsensitivity":
-                    return SonarData.LongSensitivity;
-                case "sonarproximity":
-                    return SonarData.Proximity;
-                case "sonarshortfrequency":
-                    return SonarData.ShortFrequency;
-                case "sonarshortgain":
-                    return SonarData.ShortGain;
-                case "sonarshortrange":
-                    return SonarData.ShortRange;
-                case "sonarshortsensitivity":
-                    return SonarData.ShortSensitivity;
-                case "stabiliserspeed":
-                    return SubControl.StabiliserSpeed;
-                case "motionstabiliserkicker":
-                    return MotionBaseData.MotionStabiliserKicker;
-                case "stabiliserstability":
-                    return SubControl.StabiliserStability;
-                case "dcccommscontent":
-                    return DCCScreenData.DCCcommsContent;
-                case "dccvesselnameintitle":
-                    return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
-                case "dcccommsusesliders":
-                    return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
-                case "dccschematicstoggle":
-                    return DCCScreenData.DCCschematicsToggle;
-                case "domecenter":
-                    return (float)DomeData.domeCenter;
-                case "domecornerbottomleft":
-                    return (float)DomeData.domeCornerBottomLeft;
-                case "domecornerbottomright":
-                    return (float)DomeData.domeCornerBottomRight;
-                case "domecornertopleft":
-                    return (float)DomeData.domeCornerTopLeft;
-                case "domecornertopright":
-                    return (float)DomeData.domeCornerTopRight;
-                case "domeleft":
-                    return (float)DomeData.domeLeft;
-                case "domehexbottomleft":
-                    return (float)DomeData.domeHexBottomLeft;
-                case "domehexbottomright":
-                    return (float)DomeData.domeHexBottomRight;
-                case "domehextopleft":
-                    return (float)DomeData.domeHexTopLeft;
-                case "domehextopright":
-                    return (float)DomeData.domeHexTopRight;
-                case "domeright":
-                    return (float)DomeData.domeRight;
-                case "domesquarebottom":
-                    return (float)DomeData.domeSquareBottom;
-                case "domesquareleft":
-                    return (float)DomeData.domeSquareLeft;
-                case "domesquareright":
-                    return (float)DomeData.domeSquareRight;
-                case "domesquaretop":
-                    return (float) DomeData.domeSquareTop;
-                case "screenglitchamount":
-                    return ScreenData.screenGlitch;
-                case "screenglitchautodecay":
-                    return ScreenData.screenGlitchAutoDecay ? 1 : 0;
-                case "screenglitchautodecaytime":
-                    return ScreenData.screenGlitchAutoDecayTime;
-                case "screenglitchmaxdelay":
-                    return ScreenData.screenGlitchMaxDelay;
-                case "camerabrightness":
-                    return ScreenData.cameraBrightness;
-                case "startimagesequence":
-                    return ScreenData.startImageSequence;
-                case "greenscreenbrightness":
-                    return ScreenData.greenScreenBrightness;
-                case "acidlayer":
-                    return MapData.acidLayer;
-                case "waterlayer":
-                    return MapData.waterLayer;
-                case "mapmode":
-                    return (int) MapData.mapMode;
-                case "lightarray1":
-                    return LightData.lightArray1;
-                case "lightarray2":
-                    return LightData.lightArray2;
-                case "lightarray3":
-                    return LightData.lightArray3;
-                case "lightarray4":
-                    return LightData.lightArray4;
-                case "lightarray5":
-                    return LightData.lightArray5;
-                case "lightarray6":
-                    return LightData.lightArray6;
-                case "lightarray7":
-                    return LightData.lightArray7;
-                case "lightarray8":
-                    return LightData.lightArray8;
-                case "lightarray9":
-                    return LightData.lightArray9;
-                case "lightarray10":
-                    return LightData.lightArray10;
-                case "maxwildlife":
-                    return SonarData.MaxWildlife;
-                case "docking1":
-                    return DockingData.docking1;
-                case "docking2":
-                    return DockingData.docking2;
-                case "docking3":
-                    return DockingData.docking3;
-                case "docking4":
-                    return DockingData.docking4;
-                case "dockinggaugeon":
-                    return DockingData.dockinggaugeon ? 1 : 0;
-                case "dockinggaugevalue":
-                    return DockingData.dockinggaugevalue;
-                case "bootcodeduration":
-                    return PopupData.bootCodeDuration;
-                case "bootprogress":
-                    return PopupData.bootProgress;
-                case "towtargetx":
-                    return GLTowingData.towTargetX;
-                case "towtargety":
-                    return GLTowingData.towTargetY;
-                case "towtargetspeed":
-                    return GLTowingData.towTargetSpeed;
-                case "towtargetvisible":
-                    return GLTowingData.towTargetVisible ? 1 : 0;
-                case "towfiringpressure":
-                    return GLTowingData.towFiringPressure;
-                case "towfiringpower":
-                    return GLTowingData.towFiringPower;
-                case "towfiringstatus":
-                    return GLTowingData.towFiringStatus;
-                case "towlinespeed":
-                    return GLTowingData.towLineSpeed;
-                case "towlinelength":
-                    return GLTowingData.towLineLength;
-                case "towlineremaining":
-                    return GLTowingData.towLineRemaining;
-                case "towtargetdistance":
-                    return GLTowingData.towTargetDistance;
-                case "towusehat":
-                    return GLTowingData.towUseHat ? 1 : 0;
-                case "glpowerupprogress":
-                    return GLTowingData.glpowerupprogress;
-                case "taws_online":
-                    return GLScreenData.taws_online ? 1 : 0;
-                case "header01override":
-                    return GLScreenData.header01Override ? 1 : 0;
-                case "header02override":
-                    return GLScreenData.header02Override ? 1 : 0;
-                case "header03override":
-                    return GLScreenData.header03Override ? 1 : 0;
-                case "header04override":
-                    return GLScreenData.header04Override ? 1 : 0;
-                case "header05override":
-                    return GLScreenData.header05Override ? 1 : 0;
-                case "descentmodevalue":
-                    return GLScreenData.descentModeValue;
-                case "dccstationid":
-                    return DCCScreenData.StationId;
-                default:
-                    if (VesselData.IsVesselKey(valueName))
-                        return VesselData.GetServerData(valueName, defaultValue);
-                    if (CrewData.IsCrewKey(valueName))
-                        return CrewData.GetServerData(valueName, defaultValue);
+                switch (valueName.ToLower())
+                {
+                    case "scene":
+                        return ServerData.scene;
+                    case "shot":
+                        return ServerData.shot;
+                    case "take":
+                        return ServerData.take;
+                    case "depth":
+                        return ServerData.GetDepth();
+                    case "depthdisplayed":
+                        return ServerData.depthDisplayed ? 1 : 0;
+                    case "depthoverride":
+                        return ServerData.depthOverride;
+                    case "depthoverrideamount":
+                        return ServerData.depthOverrideAmount;
+                    case "floordistancedisplayed":
+                        return ServerData.floorDistanceDisplayed ? 1 : 0;
+                    case "xpos":
+                        return ServerObject.transform.position.x;
+                    case "zpos":
+                        return ServerObject.transform.position.z;
+                    case "heading":
+                        return ServerData.heading;
+                    case "pitchangle":
+                        return ServerData.pitchAngle;
+                    case "yawangle":
+                        return ServerData.yawAngle;
+                    case "rollangle":
+                        return ServerData.rollAngle;
+                    case "velocity":
+                        return ServerData.velocity;
+                    case "floordepth":
+                        return ServerData.floorDepth;
+                    case "floordistance":
+                        return ServerData.floorDistance;
+                    case "divetime":
+                        return ServerData.diveTime;
+                    case "divetimeactive":
+                        return ServerData.diveTimeActive ? 1 : 0;
+                    case "duetime":
+                        return ServerData.dueTime;
+                    case "duetimeactive":
+                        return ServerData.dueTimeActive ? 1 : 0;
+                    case "pressure":
+                        return ClientCalcValues.pressureResult;
+                    case "watertemp":
+                        return ClientCalcValues.waterTempResult;
+                    case "battery":
+                        return BatteryData.battery;
+                    case "batterycurrent":
+                        return BatteryData.batteryCurrent;
+                    case "batterydrain":
+                        return BatteryData.batteryDrain;
+                    case "batteryerrorthreshold":
+                        return BatteryData.batteryErrorThreshold;
+                    case "batterylife":
+                        return BatteryData.batteryLife;
+                    case "batterylifemax":
+                        return BatteryData.batteryLifeMax;
+                    case "batterylifeenabled":
+                        return BatteryData.batteryLifeEnabled ? 1 : 0;
+                    case "batterytemp":
+                        return BatteryData.batteryTemp;
+                    case "batterytimeremaining":
+                        return BatteryData.batteryTimeRemaining;
+                    case "batterytimeenabled":
+                        return BatteryData.batteryTimeEnabled ? 1 : 0;
+                    case "b1":
+                        return BatteryData.bank1;
+                    case "b2":
+                        return BatteryData.bank2;
+                    case "b3":
+                        return BatteryData.bank3;
+                    case "b4":
+                        return BatteryData.bank4;
+                    case "b5":
+                        return BatteryData.bank5;
+                    case "b6":
+                        return BatteryData.bank6;
+                    case "b7":
+                        return BatteryData.bank7;
+                    case "b1error":
+                        return BatteryData.bank1Error;
+                    case "b2error":
+                        return BatteryData.bank2Error;
+                    case "b3error":
+                        return BatteryData.bank3Error;
+                    case "b4error":
+                        return BatteryData.bank4Error;
+                    case "b5error":
+                        return BatteryData.bank5Error;
+                    case "b6error":
+                        return BatteryData.bank6Error;
+                    case "b7error":
+                        return BatteryData.bank7Error;
+                    case "bowtiedeadzone":
+                        return SubControl.BowtieDeadzone;
+                    case "oxygen":
+                        return OxygenData.oxygen;
+                    case "oxygenlitres":
+                        return OxygenData.oxygenLitres;
+                    case "o1":
+                    case "oxygentank1":
+                        return OxygenData.oxygenTank1;
+                    case "o2":
+                    case "oxygentank2":
+                        return OxygenData.oxygenTank2;
+                    case "o3":
+                    case "oxygentank3":
+                        return OxygenData.oxygenTank3;
+                    case "reserveoxygen":
+                        return OxygenData.reserveOxygen;
+                    case "reserveoxygenlitres":
+                        return OxygenData.reserveOxygenLitres;
+                    case "o4":
+                    case "reserveoxygentank1":
+                        return OxygenData.reserveOxygenTank1;
+                    case "o5":
+                    case "reserveoxygentank2":
+                        return OxygenData.reserveOxygenTank2;
+                    case "o6":
+                    case "reserveoxygentank3":
+                        return OxygenData.reserveOxygenTank3;
+                    case "o7":
+                    case "reserveoxygentank4":
+                        return OxygenData.reserveOxygenTank4;
+                    case "o8":
+                    case "reserveoxygentank5":
+                        return OxygenData.reserveOxygenTank5;
+                    case "o9":
+                    case "reserveoxygentank6":
+                        return OxygenData.reserveOxygenTank6;
+                    case "oxygenflow":
+                        return OxygenData.oxygenFlow;
+                    case "air":
+                        return AirData.air;
+                    case "airlitres":
+                        return AirData.airLitres;
+                    case "airtank1":
+                        return AirData.airTank1;
+                    case "airtank2":
+                        return AirData.airTank2;
+                    case "airtank3":
+                        return AirData.airTank3;
+                    case "airtank4":
+                        return AirData.airTank4;
+                    case "reserveair":
+                        return AirData.reserveAir;
+                    case "reserveairlitres":
+                        return AirData.reserveAirLitres;
+                    case "reserveairtank1":
+                        return AirData.reserveAirTank1;
+                    case "reserveairtank2":
+                        return AirData.reserveAirTank2;
+                    case "reserveairtank3":
+                        return AirData.reserveAirTank3;
+                    case "reserveairtank4":
+                        return AirData.reserveAirTank4;
+                    case "reserveairtank5":
+                        return AirData.reserveAirTank5;
+                    case "reserveairtank6":
+                        return AirData.reserveAirTank6;
+                    case "reserveairtank7":
+                        return AirData.reserveAirTank7;
+                    case "reserveairtank8":
+                        return AirData.reserveAirTank8;
+                    case "reserveairtank9":
+                        return AirData.reserveAirTank9;
+                    case "rovstate":
+                        return OSRov.RovState;
+                    case "rovlightbow":
+                        return OSRov.RovLightBow;
+                    case "rovlightsboard":
+                        return OSRov.RovLightSBoard;
+                    case "rovlightport":
+                        return OSRov.RovLightPort;
+                    case "co2":
+                        return CabinData.Co2;
+                    case "co2ppm":
+                        return CabinData.Co2*Conversions.PercentToPartsPerMillion;
+                    case "cabinpressure":
+                        return CabinData.cabinPressure;
+                    case "cabinpressurepsi":
+                        return CabinData.cabinPressure*Conversions.BarToPsi;
+                    case "cabinoxygen":
+                        return CabinData.cabinOxygen;
+                    case "cabintemp":
+                        return CabinData.cabinTemp;
+                    case "cabinhumidity":
+                        return CabinData.cabinHumidity;
+                    case "scrubbedco2":
+                        return CabinData.scrubbedCo2;
+                    case "scrubbedhumidity":
+                        return CabinData.scrubbedHumidity;
+                    case "scrubbedoxygen":
+                        return CabinData.scrubbedOxygen;
+                    case "pressureoverride":
+                        return CabinData.pressureOverride;
+                    case "pressureoverrideamount":
+                        return CabinData.pressureOverrideAmount;
+                    case "watertempoverride":
+                        return CabinData.waterTempOverride;
+                    case "watertempoverrideamount":
+                        return CabinData.waterTempOverrideAmount;
+                    case "error_bilgeleak":
+                        return ErrorData.error_bilgeLeak;
+                    case "error_batteryleak":
+                        return ErrorData.error_batteryLeak;
+                    case "error_electricleak":
+                        return ErrorData.error_electricLeak;
+                    case "error_oxygenext":
+                        return ErrorData.error_oxygenExt;
+                    case "error_vhf":
+                        return ErrorData.error_vhf;
+                    case "error_forwardsonar":
+                        return ErrorData.error_forwardSonar;
+                    case "error_depthsonar":
+                        return ErrorData.error_depthSonar;
+                    case "error_doppler":
+                        return ErrorData.error_doppler;
+                    case "error_gps":
+                        return ErrorData.error_gps;
+                    case "error_cpu":
+                        return ErrorData.error_cpu;
+                    case "error_vidhd":
+                        return ErrorData.error_vidhd;
+                    case "error_datahd":
+                        return ErrorData.error_datahd;
+                    case "error_diagnostics":
+                        return ErrorData.error_diagnostics;
+                    case "error_tow":
+                        return ErrorData.error_tow;
+                    case "error_radar":
+                        return ErrorData.error_radar;
+                    case "error_sternlights":
+                        return ErrorData.error_sternLights;
+                    case "error_bowlights":
+                        return ErrorData.error_bowLights;
+                    case "error_portlights":
+                        return ErrorData.error_portLights;
+                    case "error_bowthruster":
+                        return ErrorData.error_bowThruster;
+                    case "error_hatch":
+                        return ErrorData.error_hatch;
+                    case "error_hyrdaulicres":
+                        return ErrorData.error_hyrdaulicRes;
+                    case "error_starboardlights":
+                        return ErrorData.error_starboardLights;
+                    case "error_runninglights":
+                        return ErrorData.error_runningLights;
+                    case "error_ballasttank":
+                        return ErrorData.error_ballastTank;
+                    case "error_hydraulicpump":
+                        return ErrorData.error_hydraulicPump;
+                    case "error_oxygenpump":
+                        return ErrorData.error_oxygenPump;
+                    case "genericerror":
+                        return ErrorData.genericerror;
+                    case "error_thruster_l":
+                        return GliderErrorData.error_thruster_l;
+                    case "error_thruster_r":
+                        return GliderErrorData.error_thruster_r;
+                    case "error_vertran_l":
+                        return GliderErrorData.error_vertran_l;
+                    case "error_vertran_r":
+                        return GliderErrorData.error_vertran_r;
+                    case "error_jet_l":
+                        return GliderErrorData.error_jet_l;
+                    case "error_jet_r":
+                        return GliderErrorData.error_jet_r;
+                    case "thruster_heat_l":
+                        return GliderErrorData.thruster_heat_l;
+                    case "thruster_heat_r":
+                        return GliderErrorData.thruster_heat_r;
+                    case "vertran_heat_l":
+                        return GliderErrorData.vertran_heat_l;
+                    case "vertran_heat_r":
+                        return GliderErrorData.vertran_heat_r;
+                    case "jet_heat_l":
+                        return GliderErrorData.jet_heat_l;
+                    case "jet_heat_r":
+                        return GliderErrorData.jet_heat_r;
+                    case "error_panel_l":
+                        return GliderErrorData.error_panel_l;
+                    case "error_panel_r":
+                        return GliderErrorData.error_panel_r;
+                    case "error_pressure":
+                        return GliderErrorData.error_pressure;
+                    case "error_structural":
+                        return GliderErrorData.error_structural;
+                    case "error_grapple":
+                        return GliderErrorData.error_grapple;
+                    case "error_system":
+                        return GliderErrorData.error_system;
+                    case "disableinput":
+                        return SubControl.disableInput ? 1 : 0;
+                    case "inputxaxis":
+                        return SubControl.inputXaxis;
+                    case "inputyaxis":
+                        return SubControl.inputYaxis;
+                    case "inputzaxis":
+                        return SubControl.inputZaxis;
+                    case "inputxaxis2":
+                        return SubControl.inputXaxis2;
+                    case "inputxaxis3":
+                        return SubControl.inputXaxis3;
+                    case "inputyaxis2":
+                        return SubControl.inputYaxis2;
+                    case "inputyaxis3":
+                        return SubControl.inputYaxis3;
+                    case "inputsource":
+                        return ServerData.inputSource;
+                    case "isautopilot":
+                        return SubControl.isAutoPilot ? 1 : 0;
+                    case "decouplemotionbase":
+                        return MotionBaseData.DecoupleMotionBase ? 1 : 0;
+                    case "iscontroldecentmode":
+                        return SubControl.isControlDecentMode ? 1 : 0;
+                    case "oldphysics":
+                        return SubControl.oldPhysics ? 1 : 0;
+                    case "iscontrolmodeoverride":
+                        return SubControl.isControlModeOverride ? 1 : 0;
+                    case "iscontroloverridestandard":
+                        return SubControl.isControlOverrideStandard ? 1 : 0;
+                    case "isautostabilised":
+                        return SubControl.isAutoStabilised ? 1 : 0;
+                    case "ispitchalsostabilised":
+                        return SubControl.IsPitchAlsoStabilised ? 1 : 0;
+                    case "joystickoverride":
+                        return SubControl.JoystickOverride ? 1 : 0;
+                    case "joystickpilot":
+                        return SubControl.JoystickPilot ? 1 : 0;
+                    case "acceleration":
+                        return SubControl.Acceleration;
+                    case "yawspeed":
+                        return SubControl.yawSpeed;
+                    case "pitchspeed":
+                        return SubControl.pitchSpeed;
+                    case "rollspeed":
+                        return SubControl.rollSpeed;
+                    case "maxspeed":
+                        return SubControl.MaxSpeed;
+                    case "minspeed":
+                        return SubControl.MinSpeed;
+                    case "maxgliderangle":
+                        return SubControl.MaxGliderAngle;
+                    case "absolutemaxangularvel":
+                        return SubControl.AbsoluteMaxAngularVel;
+                    case "isAutoPilot":
+                        return SubControl.isAutoPilot ? 1 : 0;
+                    case "isControlDecentMode":
+                        return SubControl.isControlDecentMode ? 1 : 0;
+                    case "OldPhysics":
+                        return SubControl.oldPhysics ? 1 : 0;
+                    case "iscontroldecentmodeonjoystick":
+                        return ServerData.isControlDecentModeOnJoystick ? 1 : 0;
+                    case "isControlModeOverride":
+                        return SubControl.isControlModeOverride ? 1 : 0;
+                    case "isControlOverrideStandard":
+                        return SubControl.isControlOverrideStandard ? 1 : 0;
+                    case "verticalvelocity":
+                        return ServerData.verticalVelocity;
+                    case "horizontalvelocity":
+                        return ServerData.horizontalVelocity;
+                    case "playervessel":
+                        return VesselData.PlayerVessel;
+                    case "initiatemapevent":
+                        return MapData.initiateMapEvent;
+                    case "latitude":
+                        return MapData.latitude;
+                    case "longitude":
+                        return MapData.longitude;
+                    case "mapinteractive":
+                        return MapData.mapInteractive ? 1 : 0;
+                    case "maplayeralerts":
+                        return MapData.mapLayerAlerts;
+                    case "maplayercontours":
+                        return MapData.mapLayerContours;
+                    case "maplayerdepths":
+                        return MapData.mapLayerDepths;
+                    case "maplayergrid":
+                        return MapData.mapLayerGrid;
+                    case "maplayerlabels":
+                        return MapData.mapLayerLabels;
+                    case "maplayersatellite":
+                        return MapData.mapLayerSatellite;
+                    case "maplayershipping":
+                        return MapData.mapLayerShipping;
+                    case "maplayertemperatures":
+                        return MapData.mapLayerTemperatures;
+                    case "mapscale":
+                        return MapData.mapScale;
+                    case "maptopdown":
+                        return MapData.mapTopDown ? 1 : 0;
+                    case "towwinchload":
+                        return OperatingData.towWinchLoad;
+                    case "hydraulictemp":
+                        return OperatingData.hydraulicTemp;
+                    case "hydraulicpressure":
+                        return OperatingData.hydraulicPressure;
+                    case "ballastpressure":
+                        return OperatingData.ballastPressure;
+                    case "variableballasttemp":
+                        return OperatingData.variableBallastTemp;
+                    case "variableballastpressure":
+                        return OperatingData.variableBallastPressure;
+                    case "commssignalstrength":
+                        return OperatingData.commsSignalStrength;
+                    case "divertpowertothrusters":
+                        return OperatingData.divertPowerToThrusters;
+                    case "dockingbuttonenabled":
+                        return OperatingData.dockingButtonEnabled ? 1 : 0;
+                    case "pilotbuttonenabled":
+                        return OperatingData.pilotButtonEnabled ? 1 : 0;
+                    case "vesselmovementenabled":
+                        return VesselMovements.Enabled ? 1 : 0;
+                    case "timetointercept":
+                        return VesselMovements.TimeToIntercept;
+                    case "megspeed":
+                        return SonarData.MegSpeed;
+                    case "megturnspeed":
+                        return SonarData.MegTurnSpeed;
+                    case "motionsafety":
+                        return MotionBaseData.MotionSafety ? 1 : 0;
+                    case "motionhazard":
+                        return MotionBaseData.MotionHazard ? 1 : 0;
+                    case "motionhazardenabled":
+                        return MotionBaseData.MotionHazardEnabled ? 1 : 0;
+                    case "motionbasepitch":
+                        return MotionBaseData.MotionBasePitch;
+                    case "motionbaseyaw":
+                        return MotionBaseData.MotionBaseYaw;
+                    case "motionbaseroll":
+                        return MotionBaseData.MotionBaseRoll;
+                    case "motioncomport":
+                        return MotionBaseData.MotionComPort;
+                    case "motionslerpspeed":
+                        return MotionBaseData.MotionSlerpSpeed;
+                    case "motioncomportopen":
+                        return MotionBaseData.MotionComPortOpen ? 1 : 0;
+                    case "motionscaleimpacts":
+                        return SubControl.MotionScaleImpacts;
+                    case "motionminimpactinterval":
+                        return SubControl.MotionMinImpactInterval;
+                    case "motionhazardsensitivity":
+                        return MotionBaseData.MotionHazardSensitivity;
+                    case "motionpitchmax":
+                        return MotionBaseData.MotionPitchMax;
+                    case "motionpitchmin":
+                        return MotionBaseData.MotionPitchMin;
+                    case "motionyawmax":
+                        return MotionBaseData.MotionYawMax;
+                    case "motionrollmax":
+                        return MotionBaseData.MotionRollMax;
+                    case "motionrollmin":
+                        return MotionBaseData.MotionRollMin;
+                    case "sonarheadingup":
+                        return SonarData.HeadingUp ? 1 : 0;
+                    case "sonarlongfrequency":
+                        return SonarData.LongFrequency;
+                    case "sonarlonggain":
+                        return SonarData.LongGain;
+                    case "sonarlongrange":
+                        return SonarData.LongRange;
+                    case "sonarlongsensitivity":
+                        return SonarData.LongSensitivity;
+                    case "sonarproximity":
+                        return SonarData.Proximity;
+                    case "sonarshortfrequency":
+                        return SonarData.ShortFrequency;
+                    case "sonarshortgain":
+                        return SonarData.ShortGain;
+                    case "sonarshortrange":
+                        return SonarData.ShortRange;
+                    case "sonarshortsensitivity":
+                        return SonarData.ShortSensitivity;
+                    case "stabiliserspeed":
+                        return SubControl.StabiliserSpeed;
+                    case "motionstabiliserkicker":
+                        return MotionBaseData.MotionStabiliserKicker;
+                    case "stabiliserstability":
+                        return SubControl.StabiliserStability;
+                    case "dcccommscontent":
+                        return DCCScreenData.DCCcommsContent;
+                    case "dccvesselnameintitle":
+                        return DCCScreenData.DCCvesselNameInTitle ? 1 : 0;
+                    case "dcccommsusesliders":
+                        return DCCScreenData.DCCcommsUseSliders ? 1 : 0;
+                    case "dccschematicstoggle":
+                        return DCCScreenData.DCCschematicsToggle;
+                    case "domecenter":
+                        return (float) DomeData.domeCenter;
+                    case "domecornerbottomleft":
+                        return (float) DomeData.domeCornerBottomLeft;
+                    case "domecornerbottomright":
+                        return (float) DomeData.domeCornerBottomRight;
+                    case "domecornertopleft":
+                        return (float) DomeData.domeCornerTopLeft;
+                    case "domecornertopright":
+                        return (float) DomeData.domeCornerTopRight;
+                    case "domeleft":
+                        return (float) DomeData.domeLeft;
+                    case "domehexbottomleft":
+                        return (float) DomeData.domeHexBottomLeft;
+                    case "domehexbottomright":
+                        return (float) DomeData.domeHexBottomRight;
+                    case "domehextopleft":
+                        return (float) DomeData.domeHexTopLeft;
+                    case "domehextopright":
+                        return (float) DomeData.domeHexTopRight;
+                    case "domeright":
+                        return (float) DomeData.domeRight;
+                    case "domesquarebottom":
+                        return (float) DomeData.domeSquareBottom;
+                    case "domesquareleft":
+                        return (float) DomeData.domeSquareLeft;
+                    case "domesquareright":
+                        return (float) DomeData.domeSquareRight;
+                    case "domesquaretop":
+                        return (float) DomeData.domeSquareTop;
+                    case "screenglitchamount":
+                        return ScreenData.screenGlitch;
+                    case "screenglitchautodecay":
+                        return ScreenData.screenGlitchAutoDecay ? 1 : 0;
+                    case "screenglitchautodecaytime":
+                        return ScreenData.screenGlitchAutoDecayTime;
+                    case "screenglitchmaxdelay":
+                        return ScreenData.screenGlitchMaxDelay;
+                    case "camerabrightness":
+                        return ScreenData.cameraBrightness;
+                    case "startimagesequence":
+                        return ScreenData.startImageSequence;
+                    case "greenscreenbrightness":
+                        return ScreenData.greenScreenBrightness;
+                    case "acidlayer":
+                        return MapData.acidLayer;
+                    case "waterlayer":
+                        return MapData.waterLayer;
+                    case "mapmode":
+                        return (int) MapData.mapMode;
+                    case "lightarray1":
+                        return LightData.lightArray1;
+                    case "lightarray2":
+                        return LightData.lightArray2;
+                    case "lightarray3":
+                        return LightData.lightArray3;
+                    case "lightarray4":
+                        return LightData.lightArray4;
+                    case "lightarray5":
+                        return LightData.lightArray5;
+                    case "lightarray6":
+                        return LightData.lightArray6;
+                    case "lightarray7":
+                        return LightData.lightArray7;
+                    case "lightarray8":
+                        return LightData.lightArray8;
+                    case "lightarray9":
+                        return LightData.lightArray9;
+                    case "lightarray10":
+                        return LightData.lightArray10;
+                    case "maxwildlife":
+                        return SonarData.MaxWildlife;
+                    case "docking1":
+                        return DockingData.docking1;
+                    case "docking2":
+                        return DockingData.docking2;
+                    case "docking3":
+                        return DockingData.docking3;
+                    case "docking4":
+                        return DockingData.docking4;
+                    case "dockinggaugeon":
+                        return DockingData.dockinggaugeon ? 1 : 0;
+                    case "dockinggaugevalue":
+                        return DockingData.dockinggaugevalue;
+                    case "bootcodeduration":
+                        return PopupData.bootCodeDuration;
+                    case "bootprogress":
+                        return PopupData.bootProgress;
+                    case "towtargetx":
+                        return GLTowingData.towTargetX;
+                    case "towtargety":
+                        return GLTowingData.towTargetY;
+                    case "towtargetspeed":
+                        return GLTowingData.towTargetSpeed;
+                    case "towtargetvisible":
+                        return GLTowingData.towTargetVisible ? 1 : 0;
+                    case "towfiringpressure":
+                        return GLTowingData.towFiringPressure;
+                    case "towfiringpower":
+                        return GLTowingData.towFiringPower;
+                    case "towfiringstatus":
+                        return GLTowingData.towFiringStatus;
+                    case "towlinespeed":
+                        return GLTowingData.towLineSpeed;
+                    case "towlinelength":
+                        return GLTowingData.towLineLength;
+                    case "towlineremaining":
+                        return GLTowingData.towLineRemaining;
+                    case "towtargetdistance":
+                        return GLTowingData.towTargetDistance;
+                    case "towusehat":
+                        return GLTowingData.towUseHat ? 1 : 0;
+                    case "glpowerupprogress":
+                        return GLTowingData.glpowerupprogress;
+                    case "taws_online":
+                        return GLScreenData.taws_online ? 1 : 0;
+                    case "header01override":
+                        return GLScreenData.header01Override ? 1 : 0;
+                    case "header02override":
+                        return GLScreenData.header02Override ? 1 : 0;
+                    case "header03override":
+                        return GLScreenData.header03Override ? 1 : 0;
+                    case "header04override":
+                        return GLScreenData.header04Override ? 1 : 0;
+                    case "header05override":
+                        return GLScreenData.header05Override ? 1 : 0;
+                    case "descentmodevalue":
+                        return GLScreenData.descentModeValue;
+                    case "dccstationid":
+                        return DCCScreenData.StationId;
+                    default:
+                        if (VesselData.IsVesselKey(valueName))
+                            return VesselData.GetServerData(valueName, defaultValue);
+                        if (CrewData.IsCrewKey(valueName))
+                            return CrewData.GetServerData(valueName, defaultValue);
 
-                    return GetDynamicValue(valueName, defaultValue);
+                        return GetDynamicValue(valueName, defaultValue);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("serverUtils.GetServerDataRaw(): Failed to get server value: '" + valueName + "' - " + ex);
+                return defaultValue;
             }
         }
 
         /** Return a string representation of a shared state value, indexed by name. */
-        public static string GetServerDataAsText(string valueName)
+        public static string GetServerDataAsText(string valueName, string defaultValue = "")
         {
             if (string.IsNullOrEmpty(valueName))
-                return "";
+                return defaultValue;
 
             valueName = valueName.ToLower();
             if (valueName == "version")
                 return Version;
 
             if (!ServerObject)
-                return "no value";
+                return defaultValue;
 
-            switch (valueName)
+            try
             {
-                case "playervesselname":
-                    return VesselData.PlayerVesselName;
-                case "scene":
-                    return ServerData.scene.ToString();
-                case "shot":
-                    return ServerData.shot.ToString();
-                case "take":
-                    return ServerData.take.ToString();
-                case "depth":
-                    var dInt = (int) ServerData.GetDepth();
-                    return dInt.ToString();
-                case "heading":
-                    return (ServerData.heading.ToString("n1") + "°");
-                case "pitchangle":
-                    return (ServerData.pitchAngle.ToString("n1") + "°");
-                case "yawangle":
-                    return (ServerData.yawAngle.ToString("n1") + "°");
-                case "rollangle":
-                    return (ServerData.rollAngle.ToString("n1") + "°");
-                case "velocity":
-                    return ServerData.velocity.ToString("n1");
-                case "floordepth":
-                    return Mathf.RoundToInt(ServerData.floorDepth).ToString();
-                case "floordistance":
-                    return Mathf.RoundToInt(ServerData.floorDistance).ToString();
-                case "divetime":
-                    var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
-                    return string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
-                case "divetimeactive":
-                    return ServerData.diveTimeActive.ToString();
-                case "duetime":
-                    var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
-                    return string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
-                case "duetimeactive":
-                    return ServerData.dueTimeActive.ToString();
-                case "b1":
-                    return BatteryData.bank1.ToString("n1");
-                case "b2":
-                    return BatteryData.bank2.ToString("n1");
-                case "b3":
-                    return BatteryData.bank3.ToString("n1");
-                case "b4":
-                    return BatteryData.bank4.ToString("n1");
-                case "b5":
-                    return BatteryData.bank5.ToString("n1");
-                case "b6":
-                    return BatteryData.bank6.ToString("n1");
-                case "b7":
-                    return BatteryData.bank7.ToString("n1");
-                case "bowtiedeadzone":
-                    return SubControl.BowtieDeadzone.ToString("n1");
-                case "o1":
-                case "oxygentank1":
-                    return OxygenData.oxygenTank1.ToString("n1");
-                case "o2":
-                case "oxygentank2":
-                    return OxygenData.oxygenTank2.ToString("n1");
-                case "o3":
-                case "oxygentank3":
-                    return OxygenData.oxygenTank3.ToString("n1");
-                case "oxygen":
-                    return (OxygenData.oxygen.ToString("n1") + "%");
-                case "oxygenflow":
-                    return (OxygenData.oxygenFlow.ToString("n0") + "lpm");
-                case "co2":
-                    return (CabinData.Co2 + "%");
-                case "cabinpressure":
-                    return CabinData.cabinPressure.ToString();
-                case "cabinoxygen":
-                    return (CabinData.cabinOxygen.ToString("n0") + "lpm");
-                case "cabinhumidity":
-                    return (CabinData.cabinHumidity.ToString("n1") + "%");
-                case "cabintemp":
-                    return CabinData.cabinTemp.ToString();
-                case "battery":
-                    return (BatteryData.battery.ToString("n1") + "%");
-                case "batterytemp":
-                    return (BatteryData.batteryTemp.ToString("n1") + "°c");
-                case "batterycurrent":
-                    return (BatteryData.batteryTemp.ToString("n1"));
-                case "batterytimeremaining":
-                    var span = TimeSpan.FromSeconds(BatteryData.batteryTimeRemaining);
-                    return string.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
-                case "pilot":
-                    return ServerData.pilot;
-                case "verticalvelocity":
-                    return ServerData.verticalVelocity.ToString("n1");
-                case "horizontalvelocity":
-                    return ServerData.horizontalVelocity.ToString("n1");
-                case "inputxaxis":
-                    return SubControl.inputXaxis.ToString("n1");
-                case "inputyaxis":
-                    return SubControl.inputYaxis.ToString("n1");
-                case "inputzaxis":
-                    return SubControl.inputZaxis.ToString("n1");
-                case "inputxaxis2":
-                    return SubControl.inputXaxis2.ToString("n1");
-                case "inputyaxis2":
-                    return SubControl.inputYaxis2.ToString("n1");
-                case "mapeventname":
-                    return MapData.mapEventName;
-                case "latitude":
-                    return FormatLatitude(MapData.latitude);
-                case "longitude":
-                    return FormatLongitude(MapData.longitude);
-                case "towwinchload":
-                    return OperatingData.towWinchLoad.ToString("n0");
-                case "hydraulictemp":
-                    return OperatingData.hydraulicTemp.ToString("n1") + "°c";
-                case "hydraulicpressure":
-                    return OperatingData.hydraulicPressure.ToString("n1");
-                case "ballastpressure":
-                    return OperatingData.ballastPressure.ToString("n1") + "°c";
-                case "variableballasttemp":
-                    return OperatingData.variableBallastTemp.ToString("n1") + "°c";
-                case "variableballastpressure":
-                    return OperatingData.variableBallastPressure.ToString("n1");
-                case "commssignalstrength":
-                    return OperatingData.commsSignalStrength.ToString("n1");
-                case "divertpowertothrusters":
-                    return OperatingData.divertPowerToThrusters.ToString("n1");
-                case "thruster_heat_l":
-                    return GliderErrorData.thruster_heat_l.ToString("n1") + "°c";
-                case "thruster_heat_r":
-                    return GliderErrorData.thruster_heat_r.ToString("n1") + "°c";
-                case "vertran_heat_l":
-                    return GliderErrorData.vertran_heat_l.ToString("n1") + "°c";
-                case "vertran_heat_r":
-                    return GliderErrorData.vertran_heat_r.ToString("n1") + "°c";
-                case "thruster_l_status":
-                    return (GliderErrorData.thruster_heat_l > 85) ? "WARNING" : "OK";
-                case "thruster_r_status":
-                    return (GliderErrorData.thruster_heat_r > 85) ? "WARNING" : "OK";
-                case "vertran_l_status":
-                    return (GliderErrorData.vertran_heat_l > 85) ? "WARNING" : "OK";
-                case "vertran_r_status":
-                    return (GliderErrorData.vertran_heat_r > 85) ? "WARNING" : "OK";
-                case "jet_l_status":
-                    return (GliderErrorData.jet_heat_l > 85) ? "WARNING" : "OK";
-                case "jet_r_status":
-                    return (GliderErrorData.jet_heat_r > 85) ? "WARNING" : "OK";
-                case "vesselmovementenabled":
-                    return VesselMovements.Enabled.ToString();
-                case "timetointercept":
-                    return VesselMovements.TimeToIntercept.ToString();
-                case "megspeed":
-                    return SonarData.MegSpeed.ToString("n1");
-                case "megturnspeed":
-                    return SonarData.MegTurnSpeed.ToString("n1");
-				case "motionbasepitch":
-					return MotionBaseData.MotionBasePitch.ToString("n1");
-				case "motionbaseyaw":
-					return MotionBaseData.MotionBaseYaw.ToString("n1");
-				case "motionbaseroll":
-					return MotionBaseData.MotionBaseRoll.ToString("n1");
-				case "motionslerpspeed":
-					return MotionBaseData.MotionSlerpSpeed.ToString("n1");
-				case "motionhazardsensitivity":
-					return MotionBaseData.MotionHazardSensitivity.ToString("n1");
-				case "motionscaleimpacts":
-					return SubControl.MotionScaleImpacts.ToString("n1");
-				case "motionminimpactinterval":
-					return SubControl.MotionMinImpactInterval.ToString("n1");
-                case "motionpitchmax":
-                    return MotionBaseData.MotionPitchMax.ToString("n1");
-                case "motionpitchmin":
-                    return MotionBaseData.MotionPitchMin.ToString("n1");
-                case "motionyawmax":
-                    return MotionBaseData.MotionYawMax.ToString("n1");
-                case "motionrollmax":
-                    return MotionBaseData.MotionRollMax.ToString("n1");
-                case "motionrollmin":
-                    return MotionBaseData.MotionRollMin.ToString("n1");
-                case "StabiliserStability":
-                    return SubControl.StabiliserStability.ToString("n1");
-                case "StabiliserSpeed":
-                    return SubControl.StabiliserSpeed.ToString("n1");
-                case "motionstabiliserkicker":
-                    return MotionBaseData.MotionStabiliserKicker.ToString("n1");
-                case "maxgliderangle":
-                    return SubControl.MaxGliderAngle.ToString("n1");
-                case "absolutemaxangularvel":
-                    return SubControl.AbsoluteMaxAngularVel.ToString("n1");
-                case "domecenter":
-                    return DomeData.domeCenter.ToString();
-                case "domecornerbottomleft":
-                    return DomeData.domeCornerBottomLeft.ToString();
-                case "domecornerbottomright":
-                    return DomeData.domeCornerBottomRight.ToString();
-                case "domecornertopleft":
-                    return DomeData.domeCornerTopLeft.ToString();
-                case "domecornertopright":
-                    return DomeData.domeCornerTopRight.ToString();
-                case "domeleft":
-                    return DomeData.domeLeft.ToString();
-                case "domehexbottomleft":
-                    return DomeData.domeHexBottomLeft.ToString();
-                case "domehexbottomright":
-                    return DomeData.domeHexBottomRight.ToString();
-                case "domehextopleft":
-                    return DomeData.domeHexTopLeft.ToString();
-                case "domehextopright":
-                    return DomeData.domeHexTopRight.ToString();
-                case "domeright":
-                    return DomeData.domeRight.ToString();
-                case "domesquarebottom":
-                    return DomeData.domeSquareBottom.ToString();
-                case "domesquareleft":
-                    return DomeData.domeSquareLeft.ToString();
-                case "domesquareright":
-                    return DomeData.domeSquareRight.ToString();
-                case "domesquaretop":
-                    return DomeData.domeSquareTop.ToString();
-                case "rovstate":
-                    return OSRov.RovState.ToString();
-                case "rovlightbow":
-                    return OSRov.RovLightBow.ToString();
-                case "rovlightsboard":
-                    return OSRov.RovLightSBoard.ToString();
-                case "rovlightport":
-                    return OSRov.RovLightPort.ToString();
-                case "version":
-                    return Version;
-                default:
-                    if (CrewData.IsCrewKey(valueName))
-                        return CrewData.GetServerDataAsText(valueName);
+                switch (valueName)
+                {
+                    case "playervesselname":
+                        return VesselData.PlayerVesselName;
+                    case "scene":
+                        return ServerData.scene.ToString();
+                    case "shot":
+                        return ServerData.shot.ToString();
+                    case "take":
+                        return ServerData.take.ToString();
+                    case "depth":
+                        var dInt = (int) ServerData.GetDepth();
+                        return dInt.ToString();
+                    case "heading":
+                        return (ServerData.heading.ToString("n1") + "°");
+                    case "pitchangle":
+                        return (ServerData.pitchAngle.ToString("n1") + "°");
+                    case "yawangle":
+                        return (ServerData.yawAngle.ToString("n1") + "°");
+                    case "rollangle":
+                        return (ServerData.rollAngle.ToString("n1") + "°");
+                    case "velocity":
+                        return ServerData.velocity.ToString("n1");
+                    case "floordepth":
+                        return Mathf.RoundToInt(ServerData.floorDepth).ToString();
+                    case "floordistance":
+                        return Mathf.RoundToInt(ServerData.floorDistance).ToString();
+                    case "divetime":
+                        var diveSpan = TimeSpan.FromSeconds(ServerData.diveTime);
+                        return string.Format("{0:00}:{1:00}:{2:00}", diveSpan.Hours, diveSpan.Minutes, diveSpan.Seconds);
+                    case "divetimeactive":
+                        return ServerData.diveTimeActive.ToString();
+                    case "duetime":
+                        var dueSpan = TimeSpan.FromSeconds(ServerData.dueTime);
+                        return string.Format("{0:00}:{1:00}:{2:00}", dueSpan.Hours, dueSpan.Minutes, dueSpan.Seconds);
+                    case "duetimeactive":
+                        return ServerData.dueTimeActive.ToString();
+                    case "b1":
+                        return BatteryData.bank1.ToString("n1");
+                    case "b2":
+                        return BatteryData.bank2.ToString("n1");
+                    case "b3":
+                        return BatteryData.bank3.ToString("n1");
+                    case "b4":
+                        return BatteryData.bank4.ToString("n1");
+                    case "b5":
+                        return BatteryData.bank5.ToString("n1");
+                    case "b6":
+                        return BatteryData.bank6.ToString("n1");
+                    case "b7":
+                        return BatteryData.bank7.ToString("n1");
+                    case "bowtiedeadzone":
+                        return SubControl.BowtieDeadzone.ToString("n1");
+                    case "o1":
+                    case "oxygentank1":
+                        return OxygenData.oxygenTank1.ToString("n1");
+                    case "o2":
+                    case "oxygentank2":
+                        return OxygenData.oxygenTank2.ToString("n1");
+                    case "o3":
+                    case "oxygentank3":
+                        return OxygenData.oxygenTank3.ToString("n1");
+                    case "oxygen":
+                        return (OxygenData.oxygen.ToString("n1") + "%");
+                    case "oxygenflow":
+                        return (OxygenData.oxygenFlow.ToString("n0") + "lpm");
+                    case "co2":
+                        return (CabinData.Co2 + "%");
+                    case "cabinpressure":
+                        return CabinData.cabinPressure.ToString();
+                    case "cabinoxygen":
+                        return (CabinData.cabinOxygen.ToString("n0") + "lpm");
+                    case "cabinhumidity":
+                        return (CabinData.cabinHumidity.ToString("n1") + "%");
+                    case "cabintemp":
+                        return CabinData.cabinTemp.ToString();
+                    case "battery":
+                        return (BatteryData.battery.ToString("n1") + "%");
+                    case "batterytemp":
+                        return (BatteryData.batteryTemp.ToString("n1") + "°c");
+                    case "batterycurrent":
+                        return (BatteryData.batteryTemp.ToString("n1"));
+                    case "batterytimeremaining":
+                        var span = TimeSpan.FromSeconds(BatteryData.batteryTimeRemaining);
+                        return string.Format("{0:00}:{1:00}", span.Hours, span.Minutes);
+                    case "pilot":
+                        return ServerData.pilot;
+                    case "verticalvelocity":
+                        return ServerData.verticalVelocity.ToString("n1");
+                    case "horizontalvelocity":
+                        return ServerData.horizontalVelocity.ToString("n1");
+                    case "inputxaxis":
+                        return SubControl.inputXaxis.ToString("n1");
+                    case "inputyaxis":
+                        return SubControl.inputYaxis.ToString("n1");
+                    case "inputzaxis":
+                        return SubControl.inputZaxis.ToString("n1");
+                    case "inputxaxis2":
+                        return SubControl.inputXaxis2.ToString("n1");
+                    case "inputyaxis2":
+                        return SubControl.inputYaxis2.ToString("n1");
+                    case "mapeventname":
+                        return MapData.mapEventName;
+                    case "latitude":
+                        return FormatLatitude(MapData.latitude);
+                    case "longitude":
+                        return FormatLongitude(MapData.longitude);
+                    case "towwinchload":
+                        return OperatingData.towWinchLoad.ToString("n0");
+                    case "hydraulictemp":
+                        return OperatingData.hydraulicTemp.ToString("n1") + "°c";
+                    case "hydraulicpressure":
+                        return OperatingData.hydraulicPressure.ToString("n1");
+                    case "ballastpressure":
+                        return OperatingData.ballastPressure.ToString("n1") + "°c";
+                    case "variableballasttemp":
+                        return OperatingData.variableBallastTemp.ToString("n1") + "°c";
+                    case "variableballastpressure":
+                        return OperatingData.variableBallastPressure.ToString("n1");
+                    case "commssignalstrength":
+                        return OperatingData.commsSignalStrength.ToString("n1");
+                    case "divertpowertothrusters":
+                        return OperatingData.divertPowerToThrusters.ToString("n1");
+                    case "thruster_heat_l":
+                        return GliderErrorData.thruster_heat_l.ToString("n1") + "°c";
+                    case "thruster_heat_r":
+                        return GliderErrorData.thruster_heat_r.ToString("n1") + "°c";
+                    case "vertran_heat_l":
+                        return GliderErrorData.vertran_heat_l.ToString("n1") + "°c";
+                    case "vertran_heat_r":
+                        return GliderErrorData.vertran_heat_r.ToString("n1") + "°c";
+                    case "thruster_l_status":
+                        return (GliderErrorData.thruster_heat_l > 85) ? "WARNING" : "OK";
+                    case "thruster_r_status":
+                        return (GliderErrorData.thruster_heat_r > 85) ? "WARNING" : "OK";
+                    case "vertran_l_status":
+                        return (GliderErrorData.vertran_heat_l > 85) ? "WARNING" : "OK";
+                    case "vertran_r_status":
+                        return (GliderErrorData.vertran_heat_r > 85) ? "WARNING" : "OK";
+                    case "jet_l_status":
+                        return (GliderErrorData.jet_heat_l > 85) ? "WARNING" : "OK";
+                    case "jet_r_status":
+                        return (GliderErrorData.jet_heat_r > 85) ? "WARNING" : "OK";
+                    case "vesselmovementenabled":
+                        return VesselMovements.Enabled.ToString();
+                    case "timetointercept":
+                        return VesselMovements.TimeToIntercept.ToString();
+                    case "megspeed":
+                        return SonarData.MegSpeed.ToString("n1");
+                    case "megturnspeed":
+                        return SonarData.MegTurnSpeed.ToString("n1");
+                    case "motionbasepitch":
+                        return MotionBaseData.MotionBasePitch.ToString("n1");
+                    case "motionbaseyaw":
+                        return MotionBaseData.MotionBaseYaw.ToString("n1");
+                    case "motionbaseroll":
+                        return MotionBaseData.MotionBaseRoll.ToString("n1");
+                    case "motionslerpspeed":
+                        return MotionBaseData.MotionSlerpSpeed.ToString("n1");
+                    case "motionhazardsensitivity":
+                        return MotionBaseData.MotionHazardSensitivity.ToString("n1");
+                    case "motionscaleimpacts":
+                        return SubControl.MotionScaleImpacts.ToString("n1");
+                    case "motionminimpactinterval":
+                        return SubControl.MotionMinImpactInterval.ToString("n1");
+                    case "motionpitchmax":
+                        return MotionBaseData.MotionPitchMax.ToString("n1");
+                    case "motionpitchmin":
+                        return MotionBaseData.MotionPitchMin.ToString("n1");
+                    case "motionyawmax":
+                        return MotionBaseData.MotionYawMax.ToString("n1");
+                    case "motionrollmax":
+                        return MotionBaseData.MotionRollMax.ToString("n1");
+                    case "motionrollmin":
+                        return MotionBaseData.MotionRollMin.ToString("n1");
+                    case "StabiliserStability":
+                        return SubControl.StabiliserStability.ToString("n1");
+                    case "StabiliserSpeed":
+                        return SubControl.StabiliserSpeed.ToString("n1");
+                    case "motionstabiliserkicker":
+                        return MotionBaseData.MotionStabiliserKicker.ToString("n1");
+                    case "maxgliderangle":
+                        return SubControl.MaxGliderAngle.ToString("n1");
+                    case "absolutemaxangularvel":
+                        return SubControl.AbsoluteMaxAngularVel.ToString("n1");
+                    case "domecenter":
+                        return DomeData.domeCenter.ToString();
+                    case "domecornerbottomleft":
+                        return DomeData.domeCornerBottomLeft.ToString();
+                    case "domecornerbottomright":
+                        return DomeData.domeCornerBottomRight.ToString();
+                    case "domecornertopleft":
+                        return DomeData.domeCornerTopLeft.ToString();
+                    case "domecornertopright":
+                        return DomeData.domeCornerTopRight.ToString();
+                    case "domeleft":
+                        return DomeData.domeLeft.ToString();
+                    case "domehexbottomleft":
+                        return DomeData.domeHexBottomLeft.ToString();
+                    case "domehexbottomright":
+                        return DomeData.domeHexBottomRight.ToString();
+                    case "domehextopleft":
+                        return DomeData.domeHexTopLeft.ToString();
+                    case "domehextopright":
+                        return DomeData.domeHexTopRight.ToString();
+                    case "domeright":
+                        return DomeData.domeRight.ToString();
+                    case "domesquarebottom":
+                        return DomeData.domeSquareBottom.ToString();
+                    case "domesquareleft":
+                        return DomeData.domeSquareLeft.ToString();
+                    case "domesquareright":
+                        return DomeData.domeSquareRight.ToString();
+                    case "domesquaretop":
+                        return DomeData.domeSquareTop.ToString();
+                    case "rovstate":
+                        return OSRov.RovState.ToString();
+                    case "rovlightbow":
+                        return OSRov.RovLightBow.ToString();
+                    case "rovlightsboard":
+                        return OSRov.RovLightSBoard.ToString();
+                    case "rovlightport":
+                        return OSRov.RovLightPort.ToString();
+                    case "version":
+                        return Version;
+                    default:
+                        if (CrewData.IsCrewKey(valueName))
+                            return CrewData.GetServerDataAsText(valueName);
 
-                    var value = GetServerDataRaw(valueName);
-                    return (value == Unknown) ? "no value" : value.ToString("n1");
+                        var value = GetServerDataRaw(valueName);
+                        return (value == Unknown) ? defaultValue : value.ToString("n1");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("serverUtils.GetServerDataAsText(): Failed to get server value: '" + valueName + "' - " + ex);
+                return defaultValue;
             }
         }
 
@@ -2091,65 +2097,73 @@ namespace Meg.Networking
             if (ServerObject == null)
                 return defaultValue;
 
-            // Match server data key against known values.
-            switch (boolName.ToLower())
+            try
             {
-                case "divetimeactive":
-                    return ServerData.diveTimeActive;
-                case "duetimeactive":
-                    return ServerData.dueTimeActive;
-                case "vesselmovementenabled":
-                    return VesselMovements.Enabled;
-                case "disableinput":
-                    return SubControl.disableInput;
-				case "isautopilot":
-					return SubControl.isAutoPilot;
-				case "iscontroldecentmode":
-					return SubControl.isControlDecentMode;
-                case "oldphysics":
-                    return SubControl.oldPhysics;
-                case "iscontroldecentmodeonjoystick":
-                    return ServerData.isControlDecentModeOnJoystick;
-                case "iscontrolmodeoverride":
-					return SubControl.isControlModeOverride;
-				case "iscontroloverridestandard":
-					return SubControl.isControlOverrideStandard;
-                case "isautostabilised":
-                    return SubControl.isAutoStabilised;
-                case "decouplemotionbase":
-                    return MotionBaseData.DecoupleMotionBase;
-                case "ispitchalsostabilised":
-                    return SubControl.IsPitchAlsoStabilised;
-                case "joystickoverride":
-                    return SubControl.JoystickOverride;
-                case "joystickpilot":
-                    return SubControl.JoystickPilot;
-                case "screenglitchautodecay":
-                    return ScreenData.screenGlitchAutoDecay;
-				case "motionsafety":
-					return MotionBaseData.MotionSafety;
-				case "motionhazard":
-					return MotionBaseData.MotionHazard;
-				case "motionhazardenabled":
-					return MotionBaseData.MotionHazardEnabled;
-                case "dccvesselnameintitle":
-                    return DCCScreenData.DCCvesselNameInTitle;
-                case "dcccommsusesliders":
-                    return DCCScreenData.DCCcommsUseSliders;
-                case "sonarheadingup":
-                    return SonarData.HeadingUp;
-                case "motioncomportopen":
-                    return MotionBaseData.MotionComPortOpen;
+                // Match server data key against known values.
+                switch (boolName.ToLower())
+                {
+                    case "divetimeactive":
+                        return ServerData.diveTimeActive;
+                    case "duetimeactive":
+                        return ServerData.dueTimeActive;
+                    case "vesselmovementenabled":
+                        return VesselMovements.Enabled;
+                    case "disableinput":
+                        return SubControl.disableInput;
+                    case "isautopilot":
+                        return SubControl.isAutoPilot;
+                    case "iscontroldecentmode":
+                        return SubControl.isControlDecentMode;
+                    case "oldphysics":
+                        return SubControl.oldPhysics;
+                    case "iscontroldecentmodeonjoystick":
+                        return ServerData.isControlDecentModeOnJoystick;
+                    case "iscontrolmodeoverride":
+                        return SubControl.isControlModeOverride;
+                    case "iscontroloverridestandard":
+                        return SubControl.isControlOverrideStandard;
+                    case "isautostabilised":
+                        return SubControl.isAutoStabilised;
+                    case "decouplemotionbase":
+                        return MotionBaseData.DecoupleMotionBase;
+                    case "ispitchalsostabilised":
+                        return SubControl.IsPitchAlsoStabilised;
+                    case "joystickoverride":
+                        return SubControl.JoystickOverride;
+                    case "joystickpilot":
+                        return SubControl.JoystickPilot;
+                    case "screenglitchautodecay":
+                        return ScreenData.screenGlitchAutoDecay;
+                    case "motionsafety":
+                        return MotionBaseData.MotionSafety;
+                    case "motionhazard":
+                        return MotionBaseData.MotionHazard;
+                    case "motionhazardenabled":
+                        return MotionBaseData.MotionHazardEnabled;
+                    case "dccvesselnameintitle":
+                        return DCCScreenData.DCCvesselNameInTitle;
+                    case "dcccommsusesliders":
+                        return DCCScreenData.DCCcommsUseSliders;
+                    case "sonarheadingup":
+                        return SonarData.HeadingUp;
+                    case "motioncomportopen":
+                        return MotionBaseData.MotionComPortOpen;
 
-                default:
-                    if (VesselData.IsVesselKey(boolName))
-                        return VesselData.GetServerData(boolName, Unknown) > 0;
-                    if (CrewData.IsCrewKey(boolName))
-                        return CrewData.GetServerData(boolName, Unknown) > 0;
+                    default:
+                        if (VesselData.IsVesselKey(boolName))
+                            return VesselData.GetServerData(boolName, Unknown) > 0;
+                        if (CrewData.IsCrewKey(boolName))
+                            return CrewData.GetServerData(boolName, Unknown) > 0;
 
-                    // As a last resort, interpret numeric values as booleans.
-                    var value = GetServerData(boolName, defaultValue ? 1 : 0);
-                    return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
+                        // As a last resort, interpret numeric values as booleans.
+                        var value = GetServerData(boolName, defaultValue ? 1 : 0);
+                        return !Mathf.Approximately(value, 0) && !Mathf.Approximately(value, Unknown);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("serverUtils.GetServerDataAsText(): Failed to get server value: '" + boolName + "' - " + ex);
+                return defaultValue;
             }
         }
 

@@ -8,6 +8,13 @@ using System.Collections.Generic;
 public class screenData : NetworkBehaviour
 {
 
+    // Constants
+    // ------------------------------------------------------------
+
+    /** State that represents 'no state'. */
+    public static readonly State NoState = new State { Type = Type.Default, Content = Content.None };
+
+
     // Static Properties
     // ------------------------------------------------------------
 
@@ -102,6 +109,7 @@ public class screenData : NetworkBehaviour
         Systems,
         Map,
         Cameras,
+        Vitals
     }
 
     // Structures

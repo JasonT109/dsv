@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using Meg.Networking;
@@ -350,880 +351,891 @@ public class serverData : NetworkBehaviour
         if (string.IsNullOrEmpty(valueName))
             return;
 
-        // Match the server data key against known data values.
-        var key = valueName.ToLower();
-        switch (key)
+        try
         {
-            case "scene":
-                scene = Mathf.RoundToInt(newValue);
-                break;
-            case "shot":
-                shot = Mathf.RoundToInt(newValue);
-                break;
-            case "take":
-                take = Mathf.RoundToInt(newValue);
-                break;
-            case "depth":
-                transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
-                depth = newValue;
-                break;
-            case "depthoverride":
-                depthOverride = newValue;
-                break;
-            case "depthoverrideamount":
-                depthOverrideAmount = newValue;
-                break;
-            case "depthdisplayed":
-                depthDisplayed = newValue > 0;
-                break;
-            case "floordepth":
-                floorDepth = newValue;
-                break;
-            case "floordistancedisplayed":
-                floorDistanceDisplayed = newValue > 0;
-                break;
-            case "domecenter":
-                DomeData.domeCenter = (domeData.OverlayId) newValue;
-                break;
-            case "domecornerbottomleft":
-                DomeData.domeCornerBottomLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domecornerbottomright":
-                DomeData.domeCornerBottomRight = (domeData.OverlayId) newValue;
-                break;
-            case "domecornertopleft":
-                DomeData.domeCornerTopLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domecornertopright":
-                DomeData.domeCornerTopRight = (domeData.OverlayId) newValue;
-                break;
-            case "domeleft":
-                DomeData.domeLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domehexbottomleft":
-                DomeData.domeHexBottomLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domehexbottomright":
-                DomeData.domeHexBottomRight = (domeData.OverlayId) newValue;
-                break;
-            case "domehextopleft":
-                DomeData.domeHexTopLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domehextopright":
-                DomeData.domeHexTopRight = (domeData.OverlayId) newValue;
-                break;
-            case "domeright":
-                DomeData.domeRight = (domeData.OverlayId) newValue;
-                break;
-            case "domesquarebottom":
-                DomeData.domeSquareBottom = (domeData.OverlayId) newValue;
-                break;
-            case "domesquareleft":
-                DomeData.domeSquareLeft = (domeData.OverlayId) newValue;
-                break;
-            case "domesquareright":
-                DomeData.domeSquareRight = (domeData.OverlayId) newValue;
-                break;
-            case "domesquaretop":
-                DomeData.domeSquareTop = (domeData.OverlayId) newValue;
-                break;
-            case "duetime":
-                dueTime = newValue;
-                break;
-            case "duetimeactive":
-                dueTimeActive = newValue > 0;
-                break;
-            case "divetime":
-                diveTime = newValue;
-                break;
-            case "divetimeactive":
-                diveTimeActive = newValue > 0;
-                break;
-            case "disableinput":
-                SubControl.disableInput = newValue > 0;
-                break;
-            case "battery":
-                BatteryData.battery = newValue;
-                break;
-            case "batterytemp":
-                BatteryData.batteryTemp = newValue;
-                break;
-            case "batterycurrent":
-                BatteryData.batteryCurrent = newValue;
-                break;
-            case "batterydrain":
-                BatteryData.batteryDrain = newValue;
-                break;
-            case "batterylife":
-                BatteryData.batteryLife = newValue;
-                break;
-            case "batterylifeenabled":
-                BatteryData.batteryLifeEnabled = newValue > 0;
-                break;
-            case "batterylifemax":
-                BatteryData.batteryLifeMax = newValue;
-                break;
-            case "batterytimeremaining":
-                BatteryData.batteryTimeRemaining = newValue;
-                break;
-            case "batterytimeenabled":
-                BatteryData.batteryTimeEnabled = newValue > 0;
-                break;
-            case "b1":
-                BatteryData.bank1 = newValue;
-                break;
-            case "b2":
-                BatteryData.bank2 = newValue;
-                break;
-            case "b3":
-                BatteryData.bank3 = newValue;
-                break;
-            case "b4":
-                BatteryData.bank4 = newValue;
-                break;
-            case "b5":
-                BatteryData.bank5 = newValue;
-                break;
-            case "b6":
-                BatteryData.bank6 = newValue;
-                break;
-            case "b7":
-                BatteryData.bank7 = newValue;
-                break;
-            case "bowtiedeadzone":
-                SubControl.BowtieDeadzone = newValue;
-                break;
-            case "batteryerrorthreshold":
-                BatteryData.batteryErrorThreshold = newValue;
-                break;
-            case "b1error":
-                BatteryData.bank1Error = newValue;
-                break;
-            case "b2error":
-                BatteryData.bank2Error = newValue;
-                break;
-            case "b3error":
-                BatteryData.bank3Error = newValue;
-                break;
-            case "b4error":
-                BatteryData.bank4Error = newValue;
-                break;
-            case "b5error":
-                BatteryData.bank5Error = newValue;
-                break;
-            case "b6error":
-                BatteryData.bank6Error = newValue;
-                break;
-            case "b7error":
-                BatteryData.bank7Error = newValue;
-                break;
-            case "o1":
-            case "oxygentank1":
-                OxygenData.oxygenTank1 = newValue;
-                break;
-            case "o2":
-            case "oxygentank2":
-                OxygenData.oxygenTank2 = newValue;
-                break;
-            case "o3":
-            case "oxygentank3":
-                OxygenData.oxygenTank3 = newValue;
-                break;
-            case "o4":
-            case "reserveoxygentank1":
-                OxygenData.reserveOxygenTank1 = newValue;
-                break;
-            case "o5":
-            case "reserveoxygentank2":
-                OxygenData.reserveOxygenTank2 = newValue;
-                break;
-            case "o6":
-            case "reserveoxygentank3":
-                OxygenData.reserveOxygenTank3 = newValue;
-                break;
-            case "o7":
-            case "reserveoxygentank4":
-                OxygenData.reserveOxygenTank4 = newValue;
-                break;
-            case "o8":
-            case "reserveoxygentank5":
-                OxygenData.reserveOxygenTank5 = newValue;
-                break;
-            case "o9":
-            case "reserveoxygentank6":
-                OxygenData.reserveOxygenTank6 = newValue;
-                break;
-            case "oxygenflow":
-                OxygenData.oxygenFlow = newValue;
-                break;
-            case "airtank1":
-                AirData.airTank1 = newValue;
-                break;
-            case "airtank2":
-                AirData.airTank2 = newValue;
-                break;
-            case "airtank3":
-                AirData.airTank3 = newValue;
-                break;
-            case "airtank4":
-                AirData.airTank4 = newValue;
-                break;
-            case "reserveairtank1":
-                AirData.reserveAirTank1 = newValue;
-                break;
-            case "reserveairtank2":
-                AirData.reserveAirTank2 = newValue;
-                break;
-            case "reserveairtank3":
-                AirData.reserveAirTank3 = newValue;
-                break;
-            case "reserveairtank4":
-                AirData.reserveAirTank4 = newValue;
-                break;
-            case "reserveairtank5":
-                AirData.reserveAirTank5 = newValue;
-                break;
-            case "reserveairtank6":
-                AirData.reserveAirTank6 = newValue;
-                break;
-            case "reserveairtank7":
-                AirData.reserveAirTank7 = newValue;
-                break;
-            case "reserveairtank8":
-                AirData.reserveAirTank8 = newValue;
-                break;
-            case "reserveairtank9":
-                AirData.reserveAirTank9 = newValue;
-                break;
+            // Match the server data key against known data values.
+            var key = valueName.ToLower();
+            switch (key)
+            {
+                case "scene":
+                    scene = Mathf.RoundToInt(newValue);
+                    break;
+                case "shot":
+                    shot = Mathf.RoundToInt(newValue);
+                    break;
+                case "take":
+                    take = Mathf.RoundToInt(newValue);
+                    break;
+                case "depth":
+                    transform.position = new Vector3(transform.position.x, -newValue, transform.position.z);
+                    depth = newValue;
+                    break;
+                case "depthoverride":
+                    depthOverride = newValue;
+                    break;
+                case "depthoverrideamount":
+                    depthOverrideAmount = newValue;
+                    break;
+                case "depthdisplayed":
+                    depthDisplayed = newValue > 0;
+                    break;
+                case "floordepth":
+                    floorDepth = newValue;
+                    break;
+                case "floordistancedisplayed":
+                    floorDistanceDisplayed = newValue > 0;
+                    break;
+                case "domecenter":
+                    DomeData.domeCenter = (domeData.OverlayId) newValue;
+                    break;
+                case "domecornerbottomleft":
+                    DomeData.domeCornerBottomLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domecornerbottomright":
+                    DomeData.domeCornerBottomRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domecornertopleft":
+                    DomeData.domeCornerTopLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domecornertopright":
+                    DomeData.domeCornerTopRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domeleft":
+                    DomeData.domeLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domehexbottomleft":
+                    DomeData.domeHexBottomLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domehexbottomright":
+                    DomeData.domeHexBottomRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domehextopleft":
+                    DomeData.domeHexTopLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domehextopright":
+                    DomeData.domeHexTopRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domeright":
+                    DomeData.domeRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domesquarebottom":
+                    DomeData.domeSquareBottom = (domeData.OverlayId) newValue;
+                    break;
+                case "domesquareleft":
+                    DomeData.domeSquareLeft = (domeData.OverlayId) newValue;
+                    break;
+                case "domesquareright":
+                    DomeData.domeSquareRight = (domeData.OverlayId) newValue;
+                    break;
+                case "domesquaretop":
+                    DomeData.domeSquareTop = (domeData.OverlayId) newValue;
+                    break;
+                case "duetime":
+                    dueTime = newValue;
+                    break;
+                case "duetimeactive":
+                    dueTimeActive = newValue > 0;
+                    break;
+                case "divetime":
+                    diveTime = newValue;
+                    break;
+                case "divetimeactive":
+                    diveTimeActive = newValue > 0;
+                    break;
+                case "disableinput":
+                    SubControl.disableInput = newValue > 0;
+                    break;
+                case "battery":
+                    BatteryData.battery = newValue;
+                    break;
+                case "batterytemp":
+                    BatteryData.batteryTemp = newValue;
+                    break;
+                case "batterycurrent":
+                    BatteryData.batteryCurrent = newValue;
+                    break;
+                case "batterydrain":
+                    BatteryData.batteryDrain = newValue;
+                    break;
+                case "batterylife":
+                    BatteryData.batteryLife = newValue;
+                    break;
+                case "batterylifeenabled":
+                    BatteryData.batteryLifeEnabled = newValue > 0;
+                    break;
+                case "batterylifemax":
+                    BatteryData.batteryLifeMax = newValue;
+                    break;
+                case "batterytimeremaining":
+                    BatteryData.batteryTimeRemaining = newValue;
+                    break;
+                case "batterytimeenabled":
+                    BatteryData.batteryTimeEnabled = newValue > 0;
+                    break;
+                case "b1":
+                    BatteryData.bank1 = newValue;
+                    break;
+                case "b2":
+                    BatteryData.bank2 = newValue;
+                    break;
+                case "b3":
+                    BatteryData.bank3 = newValue;
+                    break;
+                case "b4":
+                    BatteryData.bank4 = newValue;
+                    break;
+                case "b5":
+                    BatteryData.bank5 = newValue;
+                    break;
+                case "b6":
+                    BatteryData.bank6 = newValue;
+                    break;
+                case "b7":
+                    BatteryData.bank7 = newValue;
+                    break;
+                case "bowtiedeadzone":
+                    SubControl.BowtieDeadzone = newValue;
+                    break;
+                case "batteryerrorthreshold":
+                    BatteryData.batteryErrorThreshold = newValue;
+                    break;
+                case "b1error":
+                    BatteryData.bank1Error = newValue;
+                    break;
+                case "b2error":
+                    BatteryData.bank2Error = newValue;
+                    break;
+                case "b3error":
+                    BatteryData.bank3Error = newValue;
+                    break;
+                case "b4error":
+                    BatteryData.bank4Error = newValue;
+                    break;
+                case "b5error":
+                    BatteryData.bank5Error = newValue;
+                    break;
+                case "b6error":
+                    BatteryData.bank6Error = newValue;
+                    break;
+                case "b7error":
+                    BatteryData.bank7Error = newValue;
+                    break;
+                case "o1":
+                case "oxygentank1":
+                    OxygenData.oxygenTank1 = newValue;
+                    break;
+                case "o2":
+                case "oxygentank2":
+                    OxygenData.oxygenTank2 = newValue;
+                    break;
+                case "o3":
+                case "oxygentank3":
+                    OxygenData.oxygenTank3 = newValue;
+                    break;
+                case "o4":
+                case "reserveoxygentank1":
+                    OxygenData.reserveOxygenTank1 = newValue;
+                    break;
+                case "o5":
+                case "reserveoxygentank2":
+                    OxygenData.reserveOxygenTank2 = newValue;
+                    break;
+                case "o6":
+                case "reserveoxygentank3":
+                    OxygenData.reserveOxygenTank3 = newValue;
+                    break;
+                case "o7":
+                case "reserveoxygentank4":
+                    OxygenData.reserveOxygenTank4 = newValue;
+                    break;
+                case "o8":
+                case "reserveoxygentank5":
+                    OxygenData.reserveOxygenTank5 = newValue;
+                    break;
+                case "o9":
+                case "reserveoxygentank6":
+                    OxygenData.reserveOxygenTank6 = newValue;
+                    break;
+                case "oxygenflow":
+                    OxygenData.oxygenFlow = newValue;
+                    break;
+                case "airtank1":
+                    AirData.airTank1 = newValue;
+                    break;
+                case "airtank2":
+                    AirData.airTank2 = newValue;
+                    break;
+                case "airtank3":
+                    AirData.airTank3 = newValue;
+                    break;
+                case "airtank4":
+                    AirData.airTank4 = newValue;
+                    break;
+                case "reserveairtank1":
+                    AirData.reserveAirTank1 = newValue;
+                    break;
+                case "reserveairtank2":
+                    AirData.reserveAirTank2 = newValue;
+                    break;
+                case "reserveairtank3":
+                    AirData.reserveAirTank3 = newValue;
+                    break;
+                case "reserveairtank4":
+                    AirData.reserveAirTank4 = newValue;
+                    break;
+                case "reserveairtank5":
+                    AirData.reserveAirTank5 = newValue;
+                    break;
+                case "reserveairtank6":
+                    AirData.reserveAirTank6 = newValue;
+                    break;
+                case "reserveairtank7":
+                    AirData.reserveAirTank7 = newValue;
+                    break;
+                case "reserveairtank8":
+                    AirData.reserveAirTank8 = newValue;
+                    break;
+                case "reserveairtank9":
+                    AirData.reserveAirTank9 = newValue;
+                    break;
 
-            case "rovstate":
-                OSRov.RovState = Mathf.RoundToInt(newValue);
-                break;
-            case "rovlightbow":
-                OSRov.RovLightBow = newValue;
-                break;
-            case "rovlightsboard":
-                OSRov.RovLightSBoard = newValue;
-                break;
-            case "rovlightport":
-                OSRov.RovLightPort = newValue;
-                break;
+                case "rovstate":
+                    OSRov.RovState = Mathf.RoundToInt(newValue);
+                    break;
+                case "rovlightbow":
+                    OSRov.RovLightBow = newValue;
+                    break;
+                case "rovlightsboard":
+                    OSRov.RovLightSBoard = newValue;
+                    break;
+                case "rovlightport":
+                    OSRov.RovLightPort = newValue;
+                    break;
 
-            case "co2":
-                CabinData.Co2 = newValue;
-                break;
-            case "cabinpressure":
-                CabinData.cabinPressure = newValue;
-                break;
-            case "cabintemp":
-                CabinData.cabinTemp = newValue;
-                break;
-            case "cabinhumidity":
-                CabinData.cabinHumidity = newValue;
-                break;
-            case "cabinoxygen":
-                CabinData.cabinOxygen = newValue;
-                break;
-            case "scrubbedco2":
-                CabinData.scrubbedCo2 = newValue;
-                break;
-            case "scrubbedhumidity":
-                CabinData.scrubbedHumidity = newValue;
-                break;
-            case "scrubbedoxygen":
-                CabinData.scrubbedOxygen = newValue;
-                break;
-            case "pressureoverride":
-                CabinData.pressureOverride = newValue;
-                break;
-            case "pressureoverrideamount":
-                CabinData.pressureOverrideAmount = newValue;
-                break;
-            case "watertempoverride":
-                CabinData.waterTempOverride = newValue;
-                break;
-            case "watertempoverrideamount":
-                CabinData.waterTempOverrideAmount = newValue;
-                break;
-            case "error_bilgeleak":
-                ErrorData.error_bilgeLeak = newValue;
-                break;
-            case "error_batteryleak":
-                ErrorData.error_batteryLeak = newValue;
-                break;
-            case "error_electricleak":
-                ErrorData.error_electricLeak = newValue;
-                break;
-            case "error_oxygenext":
-                ErrorData.error_oxygenExt = newValue;
-                break;
-            case "error_vhf":
-                ErrorData.error_vhf = newValue;
-                break;
-            case "error_forwardsonar":
-                ErrorData.error_forwardSonar = newValue;
-                break;
-            case "error_depthsonar":
-                ErrorData.error_depthSonar = newValue;
-                break;
-            case "error_doppler":
-                ErrorData.error_doppler = newValue;
-                break;
-            case "error_gps":
-                ErrorData.error_gps = newValue;
-                break;
-            case "error_cpu":
-                ErrorData.error_cpu = newValue;
-                break;
-            case "error_vidhd":
-                ErrorData.error_vidhd = newValue;
-                break;
-            case "error_datahd":
-                ErrorData.error_datahd = newValue;
-                break;
-            case "error_tow":
-                ErrorData.error_tow = newValue;
-                break;
-            case "error_radar":
-                ErrorData.error_radar = newValue;
-                break;
-            case "error_sternlights":
-                ErrorData.error_sternLights = newValue;
-                break;
-            case "error_bowlights":
-                ErrorData.error_bowLights = newValue;
-                break;
-            case "error_portlights":
-                ErrorData.error_portLights = newValue;
-                break;
-            case "error_bowthruster":
-                ErrorData.error_bowThruster = newValue;
-                break;
-            case "error_hatch":
-                ErrorData.error_hatch = newValue;
-                break;
-            case "error_hyrdaulicres":
-                ErrorData.error_hyrdaulicRes = newValue;
-                break;
-            case "error_starboardlights":
-                ErrorData.error_starboardLights = newValue;
-                break;
-            case "error_runninglights":
-                ErrorData.error_runningLights = newValue;
-                break;
-            case "error_ballasttank":
-                ErrorData.error_ballastTank = newValue;
-                break;
-            case "error_hydraulicpump":
-                ErrorData.error_hydraulicPump = newValue;
-                break;
-            case "error_oxygenpump":
-                ErrorData.error_oxygenPump = newValue;
-                break;
-            case "error_diagnostics":
-                ErrorData.error_diagnostics = newValue;
-                break;
-            case "genericerror":
-                ErrorData.genericerror = newValue;
-                break;
-            case "inputxaxis":
-                SubControl.inputXaxis = newValue;
-                break;
-            case "inputyaxis":
-                SubControl.inputYaxis = newValue;
-                break;
-            case "inputzaxis":
-                SubControl.inputZaxis = newValue;
-                break;
-            case "inputxaxis2":
-                SubControl.inputXaxis2 = newValue;
-                break;
-            case "inputyaxis2":
-                SubControl.inputYaxis2 = newValue;
-                break;
-            case "inputxaxis3":
-                SubControl.inputXaxis3 = newValue;
-                break;
-            case "inputyaxis3":
-                SubControl.inputYaxis3 = newValue;
-                break;
-            case "inputsource":
-                inputSource = newValue;
-                break;
-            case "isautostabilised":
-                SubControl.isAutoStabilised = newValue > 0;
-                break;
-            case "decouplemotionbase":
-                MotionBaseData.DecoupleMotionBase = newValue > 0;
-                break;
-            case "ispitchalsostabilised":
-                SubControl.IsPitchAlsoStabilised = newValue > 0;
-                break;
-            case "joystickoverride":
-                SubControl.JoystickOverride = newValue > 0;
-                break;
-            case "joystickpilot":
-                SubControl.JoystickPilot = newValue > 0;
-                break;
-            case "acceleration":
-                SubControl.Acceleration = newValue;
-                break;
-            case "yawspeed":
-                SubControl.yawSpeed = newValue;
-                break;
-            case "pitchspeed":
-                SubControl.pitchSpeed = newValue;
-                break;
-            case "rollspeed":
-                SubControl.rollSpeed = newValue;
-                break;
-            case "maxspeed":
-                SubControl.MaxSpeed = newValue;
-                break;
-            case "minspeed":
-                SubControl.MinSpeed = newValue;
-                break;
-            case "pitchangle":
-                Quaternion qPitch = Quaternion.Euler(newValue, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                transform.rotation = qPitch;
-                break;
-            case "heading":
-            case "yawangle":
-                Quaternion qYaw = Quaternion.Euler(transform.rotation.eulerAngles.x, newValue, transform.rotation.eulerAngles.z);
-                transform.rotation = qYaw;
-                break;
-            case "rollangle":
-                Quaternion qRoll = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, newValue);
-                transform.rotation = qRoll;
-                break;
-            case "velocity":
-                velocity = newValue;
-                if (rb)
-                    rb.velocity = transform.forward * newValue;
-                break;
-            case "posx":
-                transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
-                break;
-            case "posy":
-                transform.position = new Vector3(transform.position.x, newValue, transform.position.z);
-                break;
-            case "posz":
-                transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
-                break;
-            case "playervessel":
-                VesselData.SetPlayerVessel(Mathf.RoundToInt(newValue));
-                break;
-            case "latitude":
-                MapData.latitude = newValue;
-                break;
-            case "longitude":
-                MapData.longitude = newValue;
-                break;
-            case "mapscale":
-                MapData.mapScale = newValue;
-                break;
-            case "initiatemapevent":
-                MapData.initiateMapEvent = newValue;
-                break;
-            case "towwinchload":
-                OperatingData.towWinchLoad = newValue;
-                break;
-            case "hydraulictemp":
-                OperatingData.hydraulicTemp = newValue;
-                break;
-            case "hydraulicpressure":
-                OperatingData.hydraulicPressure = newValue;
-                break;
-            case "ballastpressure":
-                OperatingData.ballastPressure = newValue;
-                break;
-            case "variableballasttemp":
-                OperatingData.variableBallastTemp = newValue;
-                break;
-            case "variableballastpressure":
-                OperatingData.variableBallastPressure = newValue;
-                break;
-            case "commssignalstrength":
-                OperatingData.commsSignalStrength = newValue;
-                break;
-            case "divertpowertothrusters":
-                OperatingData.divertPowerToThrusters = newValue;
-                break;
-            case "pilotbuttonenabled":
-                OperatingData.pilotButtonEnabled = newValue > 0;
-                break;
-            case "dockingbuttonenabled":
-                OperatingData.dockingButtonEnabled = newValue > 0;
-                break;
-            case "screenglitchamount":
-                ScreenData.screenGlitch = newValue;
-                break;
-            case "screenglitchautodecay":
-                ScreenData.screenGlitchAutoDecay = newValue > 0;
-                break;
-            case "screenglitchautodecaytime":
-                ScreenData.screenGlitchAutoDecayTime = newValue;
-                break;
-            case "screenglitchmaxdelay":
-                ScreenData.screenGlitchMaxDelay = newValue;
-                break;
-            case "vesselmovementenabled":
-                VesselMovements.Enabled = newValue > 0;
-                break;
-            case "timetointercept":
-                VesselMovements.TimeToIntercept = newValue;
-                break;
-            case "megspeed":
-                SonarData.MegSpeed = newValue;
-                break;
-            case "megturnspeed":
-                SonarData.MegTurnSpeed = newValue;
-				break;
-			case "motionslerpspeed":
-				MotionBaseData.MotionSlerpSpeed = newValue;
-				break;
-			case "motionhazardsensitivity":
-                MotionBaseData.MotionHazardSensitivity = newValue;
-				break;
-			case "motionsafety":
-                MotionBaseData.MotionSafety = newValue > 0;
-				break;
-			case "motionhazard":
-                MotionBaseData.MotionHazard = newValue > 0;
-				break;
-			case "motionhazardenabled":
-				MotionBaseData.MotionHazardEnabled = newValue > 0;
-				break;
-            case "motioncomport":
-                MotionBaseData.MotionComPort = Mathf.RoundToInt(newValue);
-                break;
-            case "motionscaleimpacts":
-				SubControl.MotionScaleImpacts = newValue;
-				break;
-			case "motionminimpactinterval":
-				SubControl.MotionMinImpactInterval = newValue;
-				break;
-            case "motionpitchmax":
-                MotionBaseData.MotionPitchMax = newValue;
-                break;
-            case "motionpitchmin":
-                MotionBaseData.MotionPitchMin = newValue;
-                break;
-            case "motionrollmax":
-                MotionBaseData.MotionRollMax = newValue;
-                break;
-            case "motionrollmin":
-                MotionBaseData.MotionRollMin = newValue;
-                break;
-            case "motionyawmax":
-                MotionBaseData.MotionYawMax = newValue;
-                break;
-            case "maxgliderangle":
-                SubControl.MaxGliderAngle = newValue;
-                break;
-            case "absolutemaxangularvel":
-                SubControl.AbsoluteMaxAngularVel = newValue;
-                break;
-            case "sonarheadingup":
-                SonarData.HeadingUp = newValue > 0;
-                break;
-            case "sonarlongfrequency":
-                SonarData.LongFrequency = newValue;
-                break;
-            case "sonarlonggain":
-                SonarData.LongGain = newValue;
-                break;
-            case "sonarlongrange":
-                SonarData.LongRange = newValue;
-                break;
-            case "sonarlongsensitivity":
-                SonarData.LongSensitivity = newValue;
-                break;
-            case "sonarproximity":
-                SonarData.Proximity = newValue;
-                break;
-            case "sonarshortfrequency":
-                SonarData.ShortFrequency = newValue;
-                break;
-            case "sonarshortgain":
-                SonarData.ShortGain = newValue;
-                break;
-            case "sonarshortrange":
-                SonarData.ShortRange = newValue;
-                break;
-            case "sonarshortsensitivity":
-                SonarData.ShortSensitivity = newValue;
-                break;
-            case "stabiliserstability":
-                SubControl.StabiliserStability = newValue;
-                break;
-            case "stabiliserspeed":
-                SubControl.StabiliserSpeed = newValue;
-                break;
-            case "motionstabiliserkicker":
-                MotionBaseData.MotionStabiliserKicker = newValue;
-                break;
-            case "error_thruster_l":
-                GliderErrorData.error_thruster_l = newValue;
-                break;
-            case "error_thruster_r":
-                GliderErrorData.error_thruster_r = newValue;
-                break;
-            case "error_vertran_l":
-                GliderErrorData.error_vertran_l = newValue;
-                break;
-            case "error_vertran_r":
-                GliderErrorData.error_vertran_r = newValue;
-                break;
-            case "error_jet_l":
-                GliderErrorData.error_jet_l = newValue;
-                break;
-            case "error_jet_r":
-                GliderErrorData.error_jet_r = newValue;
-                break;
-            case "vertran_heat_l":
-                GliderErrorData.vertran_heat_l = newValue;
-                break;
-            case "vertran_heat_r":
-                GliderErrorData.vertran_heat_r = newValue;
-                break;
-            case "thruster_heat_l":
-                GliderErrorData.thruster_heat_l = newValue;
-                break;
-            case "thruster_heat_r":
-                GliderErrorData.thruster_heat_r = newValue;
-                break;
-            case "jet_heat_l":
-                GliderErrorData.jet_heat_l = newValue;
-                break;
-            case "jet_heat_r":
-                GliderErrorData.jet_heat_r = newValue;
-                break;
-            case "error_panel_l":
-                GliderErrorData.error_panel_l = newValue;
-                break;
-            case "error_panel_r":
-                GliderErrorData.error_panel_r = newValue;
-                break;
-            case "error_pressure":
-                GliderErrorData.error_pressure = newValue;
-                break;
-            case "error_structural":
-                GliderErrorData.error_structural = newValue;
-                break;
-            case "error_grapple":
-                GliderErrorData.error_grapple = newValue;
-                break;
-            case "error_system":
-                GliderErrorData.error_system = newValue;
-                break;
-            case "dcccommscontent":
-                DCCScreenData.DCCcommsContent = (int)newValue;
-                break;
-            case "dccvesselnameintitle":
-                DCCScreenData.DCCvesselNameInTitle = newValue > 0;
-                break;
-            case "dcccommsusesliders":
-                DCCScreenData.DCCcommsUseSliders = newValue > 0;
-                break;
-            case "isautopilot":
-				SubControl.isAutoPilot = newValue > 0;
-				break;
-            case "iscontroldecentmode":
-                SubControl.isControlDecentMode = newValue > 0;
-				break;
-            case "oldphysics":
-                SubControl.oldPhysics = newValue > 0;
-                break;
-            case "iscontroldecentmodeonjoystick":
-                isControlDecentModeOnJoystick = newValue > 0;
-                break;
-            case "iscontrolmodeoverride":
-                SubControl.isControlModeOverride = newValue > 0;
-                break;
-            case "iscontroloverridestandard":
-                SubControl.isControlOverrideStandard = newValue > 0;
-                break;
-            case "camerabrightness":
-                ScreenData.cameraBrightness = newValue;
-                break;
-            case "startimagesequence":
-                ScreenData.startImageSequence = (int)newValue;
-                break;
-            case "greenscreenbrightness":
-                ScreenData.greenScreenBrightness = newValue;
-                break;
-            case "acidlayer":
-                MapData.acidLayer = (int)newValue;
-                break;
-            case "waterlayer":
-                MapData.waterLayer = (int)newValue;
-                break;
-            case "mapinteractive":
-                MapData.mapInteractive = newValue > 0;
-                break;
-            case "mapmode":
-                MapData.mapMode = (mapData.Mode) newValue;
-                break;
-            case "maplayeralerts":
-                MapData.mapLayerAlerts = (int) newValue;
-                break;
-            case "maplayercontours":
-                MapData.mapLayerContours = (int) newValue;
-                break;
-            case "maplayerdepths":
-                MapData.mapLayerDepths = (int) newValue;
-                break;
-            case "maplayergrid":
-                MapData.mapLayerGrid = (int)newValue;
-                break;
-            case "maplayerlabels":
-                MapData.mapLayerLabels = (int) newValue;
-                break;
-            case "maplayersatellite":
-                MapData.mapLayerSatellite = (int)newValue;
-                break;
-            case "maplayershipping":
-                MapData.mapLayerShipping = (int) newValue;
-                break;
-            case "maplayertemperatures":
-                MapData.mapLayerTemperatures = (int) newValue;
-                break;
-            case "maptopdown":
-                MapData.mapTopDown= newValue > 0;
-                break;
-            case "maxwildlife":
-                SonarData.MaxWildlife = (int)newValue;
-                break;
-            case "lightarray1":
-                LightData.lightArray1 = (int)newValue;
-                break;
-            case "lightarray2":
-                LightData.lightArray2 = (int)newValue;
-                break;
-            case "lightarray3":
-                LightData.lightArray3 = (int)newValue;
-                break;
-            case "lightarray4":
-                LightData.lightArray4 = (int)newValue;
-                break;
-            case "lightarray5":
-                LightData.lightArray5 = (int)newValue;
-                break;
-            case "lightarray6":
-                LightData.lightArray6 = (int)newValue;
-                break;
-            case "lightarray7":
-                LightData.lightArray7 = (int)newValue;
-                break;
-            case "lightarray8":
-                LightData.lightArray8 = (int)newValue;
-                break;
-            case "lightarray9":
-                LightData.lightArray9 = (int)newValue;
-                break;
-            case "lightarray10":
-                LightData.lightArray10 = (int)newValue;
-                break;
-            case "docking1":
-                DockingData.docking1 = (int)newValue;
-                break;
-            case "docking2":
-                DockingData.docking2 = (int)newValue;
-                break;
-            case "docking3":
-                DockingData.docking3 = (int)newValue;
-                break;
-            case "docking4":
-                DockingData.docking4 = (int)newValue;
-                break;
-            case "dockinggaugeon":
-                DockingData.dockinggaugeon = newValue > 0;
-                break;
-            case "dockinggaugevalue":
-                DockingData.dockinggaugevalue = newValue;
-                break;
-            case "bootcodeduration":
-                PopupData.bootCodeDuration = newValue;
-                break;
-            case "bootprogress":
-                PopupData.bootProgress = newValue;
-                break;
-            case "towtargetx":
-                GLTowingData.towTargetX = newValue;
-                break;
-            case "towtargety":
-                GLTowingData.towTargetY = newValue;
-                break;
-            case "towtargetspeed":
-                GLTowingData.towTargetSpeed = newValue;
-                break;
-            case "towtargetvisible":
-                GLTowingData.towTargetVisible = newValue > 0;
-                break;
-            case "towfiringpressure":
-                GLTowingData.towFiringPressure = newValue;
-                break;
-            case "towfiringpower":
-                GLTowingData.towFiringPower = newValue;
-                break;
-            case "towfiringstatus":
-                GLTowingData.towFiringStatus = newValue;
-                break;
-            case "towlinespeed":
-                GLTowingData.towLineSpeed = newValue;
-                break;
-            case "towlinelength":
-                GLTowingData.towLineLength = newValue;
-                break;
-            case "towlineremaining":
-                GLTowingData.towLineRemaining = newValue;
-                break;
-            case "towtargetdistance":
-                GLTowingData.towTargetDistance = newValue;
-                break;
-            case "towusehat":
-                GLTowingData.towUseHat = newValue > 0;
-                break;
-            case "glpowerupprogress":
-                GLTowingData.glpowerupprogress = (int)newValue;
-                break;
-            case "taws_online":
-                GLScreenData.taws_online = newValue > 0;
-                break;
-            case "header01override":
-                GLScreenData.header01Override = newValue > 0;
-                break;
-            case "header02override":
-                GLScreenData.header02Override = newValue > 0;
-                break;
-            case "header03override":
-                GLScreenData.header03Override = newValue > 0;
-                break;
-            case "header04override":
-                GLScreenData.header04Override = newValue > 0;
-                break;
-            case "header05override":
-                GLScreenData.header05Override = newValue > 0;
-                break;
-            case "descentmodevalue":
-                GLScreenData.descentModeValue = newValue;
-                break;
-            case "dccschematicstoggle":
-                DCCScreenData.DCCschematicsToggle = (int)newValue;
-                break;
-            default:
-                if (VesselData.IsVesselKey(valueName))
-                    VesselData.SetServerData(valueName, newValue, add);
-                else if (CrewData.IsCrewKey(valueName))
-                    CrewData.SetServerData(valueName, newValue, add);
-                else
-                    SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
-                break;
+                case "co2":
+                    CabinData.Co2 = newValue;
+                    break;
+                case "cabinpressure":
+                    CabinData.cabinPressure = newValue;
+                    break;
+                case "cabintemp":
+                    CabinData.cabinTemp = newValue;
+                    break;
+                case "cabinhumidity":
+                    CabinData.cabinHumidity = newValue;
+                    break;
+                case "cabinoxygen":
+                    CabinData.cabinOxygen = newValue;
+                    break;
+                case "scrubbedco2":
+                    CabinData.scrubbedCo2 = newValue;
+                    break;
+                case "scrubbedhumidity":
+                    CabinData.scrubbedHumidity = newValue;
+                    break;
+                case "scrubbedoxygen":
+                    CabinData.scrubbedOxygen = newValue;
+                    break;
+                case "pressureoverride":
+                    CabinData.pressureOverride = newValue;
+                    break;
+                case "pressureoverrideamount":
+                    CabinData.pressureOverrideAmount = newValue;
+                    break;
+                case "watertempoverride":
+                    CabinData.waterTempOverride = newValue;
+                    break;
+                case "watertempoverrideamount":
+                    CabinData.waterTempOverrideAmount = newValue;
+                    break;
+                case "error_bilgeleak":
+                    ErrorData.error_bilgeLeak = newValue;
+                    break;
+                case "error_batteryleak":
+                    ErrorData.error_batteryLeak = newValue;
+                    break;
+                case "error_electricleak":
+                    ErrorData.error_electricLeak = newValue;
+                    break;
+                case "error_oxygenext":
+                    ErrorData.error_oxygenExt = newValue;
+                    break;
+                case "error_vhf":
+                    ErrorData.error_vhf = newValue;
+                    break;
+                case "error_forwardsonar":
+                    ErrorData.error_forwardSonar = newValue;
+                    break;
+                case "error_depthsonar":
+                    ErrorData.error_depthSonar = newValue;
+                    break;
+                case "error_doppler":
+                    ErrorData.error_doppler = newValue;
+                    break;
+                case "error_gps":
+                    ErrorData.error_gps = newValue;
+                    break;
+                case "error_cpu":
+                    ErrorData.error_cpu = newValue;
+                    break;
+                case "error_vidhd":
+                    ErrorData.error_vidhd = newValue;
+                    break;
+                case "error_datahd":
+                    ErrorData.error_datahd = newValue;
+                    break;
+                case "error_tow":
+                    ErrorData.error_tow = newValue;
+                    break;
+                case "error_radar":
+                    ErrorData.error_radar = newValue;
+                    break;
+                case "error_sternlights":
+                    ErrorData.error_sternLights = newValue;
+                    break;
+                case "error_bowlights":
+                    ErrorData.error_bowLights = newValue;
+                    break;
+                case "error_portlights":
+                    ErrorData.error_portLights = newValue;
+                    break;
+                case "error_bowthruster":
+                    ErrorData.error_bowThruster = newValue;
+                    break;
+                case "error_hatch":
+                    ErrorData.error_hatch = newValue;
+                    break;
+                case "error_hyrdaulicres":
+                    ErrorData.error_hyrdaulicRes = newValue;
+                    break;
+                case "error_starboardlights":
+                    ErrorData.error_starboardLights = newValue;
+                    break;
+                case "error_runninglights":
+                    ErrorData.error_runningLights = newValue;
+                    break;
+                case "error_ballasttank":
+                    ErrorData.error_ballastTank = newValue;
+                    break;
+                case "error_hydraulicpump":
+                    ErrorData.error_hydraulicPump = newValue;
+                    break;
+                case "error_oxygenpump":
+                    ErrorData.error_oxygenPump = newValue;
+                    break;
+                case "error_diagnostics":
+                    ErrorData.error_diagnostics = newValue;
+                    break;
+                case "genericerror":
+                    ErrorData.genericerror = newValue;
+                    break;
+                case "inputxaxis":
+                    SubControl.inputXaxis = newValue;
+                    break;
+                case "inputyaxis":
+                    SubControl.inputYaxis = newValue;
+                    break;
+                case "inputzaxis":
+                    SubControl.inputZaxis = newValue;
+                    break;
+                case "inputxaxis2":
+                    SubControl.inputXaxis2 = newValue;
+                    break;
+                case "inputyaxis2":
+                    SubControl.inputYaxis2 = newValue;
+                    break;
+                case "inputxaxis3":
+                    SubControl.inputXaxis3 = newValue;
+                    break;
+                case "inputyaxis3":
+                    SubControl.inputYaxis3 = newValue;
+                    break;
+                case "inputsource":
+                    inputSource = newValue;
+                    break;
+                case "isautostabilised":
+                    SubControl.isAutoStabilised = newValue > 0;
+                    break;
+                case "decouplemotionbase":
+                    MotionBaseData.DecoupleMotionBase = newValue > 0;
+                    break;
+                case "ispitchalsostabilised":
+                    SubControl.IsPitchAlsoStabilised = newValue > 0;
+                    break;
+                case "joystickoverride":
+                    SubControl.JoystickOverride = newValue > 0;
+                    break;
+                case "joystickpilot":
+                    SubControl.JoystickPilot = newValue > 0;
+                    break;
+                case "acceleration":
+                    SubControl.Acceleration = newValue;
+                    break;
+                case "yawspeed":
+                    SubControl.yawSpeed = newValue;
+                    break;
+                case "pitchspeed":
+                    SubControl.pitchSpeed = newValue;
+                    break;
+                case "rollspeed":
+                    SubControl.rollSpeed = newValue;
+                    break;
+                case "maxspeed":
+                    SubControl.MaxSpeed = newValue;
+                    break;
+                case "minspeed":
+                    SubControl.MinSpeed = newValue;
+                    break;
+                case "pitchangle":
+                    Quaternion qPitch = Quaternion.Euler(newValue, transform.rotation.eulerAngles.y,
+                        transform.rotation.eulerAngles.z);
+                    transform.rotation = qPitch;
+                    break;
+                case "heading":
+                case "yawangle":
+                    Quaternion qYaw = Quaternion.Euler(transform.rotation.eulerAngles.x, newValue,
+                        transform.rotation.eulerAngles.z);
+                    transform.rotation = qYaw;
+                    break;
+                case "rollangle":
+                    Quaternion qRoll = Quaternion.Euler(transform.rotation.eulerAngles.x,
+                        transform.rotation.eulerAngles.y, newValue);
+                    transform.rotation = qRoll;
+                    break;
+                case "velocity":
+                    velocity = newValue;
+                    if (rb)
+                        rb.velocity = transform.forward*newValue;
+                    break;
+                case "posx":
+                    transform.position = new Vector3(newValue, transform.position.y, transform.position.z);
+                    break;
+                case "posy":
+                    transform.position = new Vector3(transform.position.x, newValue, transform.position.z);
+                    break;
+                case "posz":
+                    transform.position = new Vector3(transform.position.x, transform.position.y, newValue);
+                    break;
+                case "playervessel":
+                    VesselData.SetPlayerVessel(Mathf.RoundToInt(newValue));
+                    break;
+                case "latitude":
+                    MapData.latitude = newValue;
+                    break;
+                case "longitude":
+                    MapData.longitude = newValue;
+                    break;
+                case "mapscale":
+                    MapData.mapScale = newValue;
+                    break;
+                case "initiatemapevent":
+                    MapData.initiateMapEvent = newValue;
+                    break;
+                case "towwinchload":
+                    OperatingData.towWinchLoad = newValue;
+                    break;
+                case "hydraulictemp":
+                    OperatingData.hydraulicTemp = newValue;
+                    break;
+                case "hydraulicpressure":
+                    OperatingData.hydraulicPressure = newValue;
+                    break;
+                case "ballastpressure":
+                    OperatingData.ballastPressure = newValue;
+                    break;
+                case "variableballasttemp":
+                    OperatingData.variableBallastTemp = newValue;
+                    break;
+                case "variableballastpressure":
+                    OperatingData.variableBallastPressure = newValue;
+                    break;
+                case "commssignalstrength":
+                    OperatingData.commsSignalStrength = newValue;
+                    break;
+                case "divertpowertothrusters":
+                    OperatingData.divertPowerToThrusters = newValue;
+                    break;
+                case "pilotbuttonenabled":
+                    OperatingData.pilotButtonEnabled = newValue > 0;
+                    break;
+                case "dockingbuttonenabled":
+                    OperatingData.dockingButtonEnabled = newValue > 0;
+                    break;
+                case "screenglitchamount":
+                    ScreenData.screenGlitch = newValue;
+                    break;
+                case "screenglitchautodecay":
+                    ScreenData.screenGlitchAutoDecay = newValue > 0;
+                    break;
+                case "screenglitchautodecaytime":
+                    ScreenData.screenGlitchAutoDecayTime = newValue;
+                    break;
+                case "screenglitchmaxdelay":
+                    ScreenData.screenGlitchMaxDelay = newValue;
+                    break;
+                case "vesselmovementenabled":
+                    VesselMovements.Enabled = newValue > 0;
+                    break;
+                case "timetointercept":
+                    VesselMovements.TimeToIntercept = newValue;
+                    break;
+                case "megspeed":
+                    SonarData.MegSpeed = newValue;
+                    break;
+                case "megturnspeed":
+                    SonarData.MegTurnSpeed = newValue;
+                    break;
+                case "motionslerpspeed":
+                    MotionBaseData.MotionSlerpSpeed = newValue;
+                    break;
+                case "motionhazardsensitivity":
+                    MotionBaseData.MotionHazardSensitivity = newValue;
+                    break;
+                case "motionsafety":
+                    MotionBaseData.MotionSafety = newValue > 0;
+                    break;
+                case "motionhazard":
+                    MotionBaseData.MotionHazard = newValue > 0;
+                    break;
+                case "motionhazardenabled":
+                    MotionBaseData.MotionHazardEnabled = newValue > 0;
+                    break;
+                case "motioncomport":
+                    MotionBaseData.MotionComPort = Mathf.RoundToInt(newValue);
+                    break;
+                case "motionscaleimpacts":
+                    SubControl.MotionScaleImpacts = newValue;
+                    break;
+                case "motionminimpactinterval":
+                    SubControl.MotionMinImpactInterval = newValue;
+                    break;
+                case "motionpitchmax":
+                    MotionBaseData.MotionPitchMax = newValue;
+                    break;
+                case "motionpitchmin":
+                    MotionBaseData.MotionPitchMin = newValue;
+                    break;
+                case "motionrollmax":
+                    MotionBaseData.MotionRollMax = newValue;
+                    break;
+                case "motionrollmin":
+                    MotionBaseData.MotionRollMin = newValue;
+                    break;
+                case "motionyawmax":
+                    MotionBaseData.MotionYawMax = newValue;
+                    break;
+                case "maxgliderangle":
+                    SubControl.MaxGliderAngle = newValue;
+                    break;
+                case "absolutemaxangularvel":
+                    SubControl.AbsoluteMaxAngularVel = newValue;
+                    break;
+                case "sonarheadingup":
+                    SonarData.HeadingUp = newValue > 0;
+                    break;
+                case "sonarlongfrequency":
+                    SonarData.LongFrequency = newValue;
+                    break;
+                case "sonarlonggain":
+                    SonarData.LongGain = newValue;
+                    break;
+                case "sonarlongrange":
+                    SonarData.LongRange = newValue;
+                    break;
+                case "sonarlongsensitivity":
+                    SonarData.LongSensitivity = newValue;
+                    break;
+                case "sonarproximity":
+                    SonarData.Proximity = newValue;
+                    break;
+                case "sonarshortfrequency":
+                    SonarData.ShortFrequency = newValue;
+                    break;
+                case "sonarshortgain":
+                    SonarData.ShortGain = newValue;
+                    break;
+                case "sonarshortrange":
+                    SonarData.ShortRange = newValue;
+                    break;
+                case "sonarshortsensitivity":
+                    SonarData.ShortSensitivity = newValue;
+                    break;
+                case "stabiliserstability":
+                    SubControl.StabiliserStability = newValue;
+                    break;
+                case "stabiliserspeed":
+                    SubControl.StabiliserSpeed = newValue;
+                    break;
+                case "motionstabiliserkicker":
+                    MotionBaseData.MotionStabiliserKicker = newValue;
+                    break;
+                case "error_thruster_l":
+                    GliderErrorData.error_thruster_l = newValue;
+                    break;
+                case "error_thruster_r":
+                    GliderErrorData.error_thruster_r = newValue;
+                    break;
+                case "error_vertran_l":
+                    GliderErrorData.error_vertran_l = newValue;
+                    break;
+                case "error_vertran_r":
+                    GliderErrorData.error_vertran_r = newValue;
+                    break;
+                case "error_jet_l":
+                    GliderErrorData.error_jet_l = newValue;
+                    break;
+                case "error_jet_r":
+                    GliderErrorData.error_jet_r = newValue;
+                    break;
+                case "vertran_heat_l":
+                    GliderErrorData.vertran_heat_l = newValue;
+                    break;
+                case "vertran_heat_r":
+                    GliderErrorData.vertran_heat_r = newValue;
+                    break;
+                case "thruster_heat_l":
+                    GliderErrorData.thruster_heat_l = newValue;
+                    break;
+                case "thruster_heat_r":
+                    GliderErrorData.thruster_heat_r = newValue;
+                    break;
+                case "jet_heat_l":
+                    GliderErrorData.jet_heat_l = newValue;
+                    break;
+                case "jet_heat_r":
+                    GliderErrorData.jet_heat_r = newValue;
+                    break;
+                case "error_panel_l":
+                    GliderErrorData.error_panel_l = newValue;
+                    break;
+                case "error_panel_r":
+                    GliderErrorData.error_panel_r = newValue;
+                    break;
+                case "error_pressure":
+                    GliderErrorData.error_pressure = newValue;
+                    break;
+                case "error_structural":
+                    GliderErrorData.error_structural = newValue;
+                    break;
+                case "error_grapple":
+                    GliderErrorData.error_grapple = newValue;
+                    break;
+                case "error_system":
+                    GliderErrorData.error_system = newValue;
+                    break;
+                case "dcccommscontent":
+                    DCCScreenData.DCCcommsContent = (int) newValue;
+                    break;
+                case "dccvesselnameintitle":
+                    DCCScreenData.DCCvesselNameInTitle = newValue > 0;
+                    break;
+                case "dcccommsusesliders":
+                    DCCScreenData.DCCcommsUseSliders = newValue > 0;
+                    break;
+                case "isautopilot":
+                    SubControl.isAutoPilot = newValue > 0;
+                    break;
+                case "iscontroldecentmode":
+                    SubControl.isControlDecentMode = newValue > 0;
+                    break;
+                case "oldphysics":
+                    SubControl.oldPhysics = newValue > 0;
+                    break;
+                case "iscontroldecentmodeonjoystick":
+                    isControlDecentModeOnJoystick = newValue > 0;
+                    break;
+                case "iscontrolmodeoverride":
+                    SubControl.isControlModeOverride = newValue > 0;
+                    break;
+                case "iscontroloverridestandard":
+                    SubControl.isControlOverrideStandard = newValue > 0;
+                    break;
+                case "camerabrightness":
+                    ScreenData.cameraBrightness = newValue;
+                    break;
+                case "startimagesequence":
+                    ScreenData.startImageSequence = (int) newValue;
+                    break;
+                case "greenscreenbrightness":
+                    ScreenData.greenScreenBrightness = newValue;
+                    break;
+                case "acidlayer":
+                    MapData.acidLayer = (int) newValue;
+                    break;
+                case "waterlayer":
+                    MapData.waterLayer = (int) newValue;
+                    break;
+                case "mapinteractive":
+                    MapData.mapInteractive = newValue > 0;
+                    break;
+                case "mapmode":
+                    MapData.mapMode = (mapData.Mode) newValue;
+                    break;
+                case "maplayeralerts":
+                    MapData.mapLayerAlerts = (int) newValue;
+                    break;
+                case "maplayercontours":
+                    MapData.mapLayerContours = (int) newValue;
+                    break;
+                case "maplayerdepths":
+                    MapData.mapLayerDepths = (int) newValue;
+                    break;
+                case "maplayergrid":
+                    MapData.mapLayerGrid = (int) newValue;
+                    break;
+                case "maplayerlabels":
+                    MapData.mapLayerLabels = (int) newValue;
+                    break;
+                case "maplayersatellite":
+                    MapData.mapLayerSatellite = (int) newValue;
+                    break;
+                case "maplayershipping":
+                    MapData.mapLayerShipping = (int) newValue;
+                    break;
+                case "maplayertemperatures":
+                    MapData.mapLayerTemperatures = (int) newValue;
+                    break;
+                case "maptopdown":
+                    MapData.mapTopDown = newValue > 0;
+                    break;
+                case "maxwildlife":
+                    SonarData.MaxWildlife = (int) newValue;
+                    break;
+                case "lightarray1":
+                    LightData.lightArray1 = (int) newValue;
+                    break;
+                case "lightarray2":
+                    LightData.lightArray2 = (int) newValue;
+                    break;
+                case "lightarray3":
+                    LightData.lightArray3 = (int) newValue;
+                    break;
+                case "lightarray4":
+                    LightData.lightArray4 = (int) newValue;
+                    break;
+                case "lightarray5":
+                    LightData.lightArray5 = (int) newValue;
+                    break;
+                case "lightarray6":
+                    LightData.lightArray6 = (int) newValue;
+                    break;
+                case "lightarray7":
+                    LightData.lightArray7 = (int) newValue;
+                    break;
+                case "lightarray8":
+                    LightData.lightArray8 = (int) newValue;
+                    break;
+                case "lightarray9":
+                    LightData.lightArray9 = (int) newValue;
+                    break;
+                case "lightarray10":
+                    LightData.lightArray10 = (int) newValue;
+                    break;
+                case "docking1":
+                    DockingData.docking1 = (int) newValue;
+                    break;
+                case "docking2":
+                    DockingData.docking2 = (int) newValue;
+                    break;
+                case "docking3":
+                    DockingData.docking3 = (int) newValue;
+                    break;
+                case "docking4":
+                    DockingData.docking4 = (int) newValue;
+                    break;
+                case "dockinggaugeon":
+                    DockingData.dockinggaugeon = newValue > 0;
+                    break;
+                case "dockinggaugevalue":
+                    DockingData.dockinggaugevalue = newValue;
+                    break;
+                case "bootcodeduration":
+                    PopupData.bootCodeDuration = newValue;
+                    break;
+                case "bootprogress":
+                    PopupData.bootProgress = newValue;
+                    break;
+                case "towtargetx":
+                    GLTowingData.towTargetX = newValue;
+                    break;
+                case "towtargety":
+                    GLTowingData.towTargetY = newValue;
+                    break;
+                case "towtargetspeed":
+                    GLTowingData.towTargetSpeed = newValue;
+                    break;
+                case "towtargetvisible":
+                    GLTowingData.towTargetVisible = newValue > 0;
+                    break;
+                case "towfiringpressure":
+                    GLTowingData.towFiringPressure = newValue;
+                    break;
+                case "towfiringpower":
+                    GLTowingData.towFiringPower = newValue;
+                    break;
+                case "towfiringstatus":
+                    GLTowingData.towFiringStatus = newValue;
+                    break;
+                case "towlinespeed":
+                    GLTowingData.towLineSpeed = newValue;
+                    break;
+                case "towlinelength":
+                    GLTowingData.towLineLength = newValue;
+                    break;
+                case "towlineremaining":
+                    GLTowingData.towLineRemaining = newValue;
+                    break;
+                case "towtargetdistance":
+                    GLTowingData.towTargetDistance = newValue;
+                    break;
+                case "towusehat":
+                    GLTowingData.towUseHat = newValue > 0;
+                    break;
+                case "glpowerupprogress":
+                    GLTowingData.glpowerupprogress = (int) newValue;
+                    break;
+                case "taws_online":
+                    GLScreenData.taws_online = newValue > 0;
+                    break;
+                case "header01override":
+                    GLScreenData.header01Override = newValue > 0;
+                    break;
+                case "header02override":
+                    GLScreenData.header02Override = newValue > 0;
+                    break;
+                case "header03override":
+                    GLScreenData.header03Override = newValue > 0;
+                    break;
+                case "header04override":
+                    GLScreenData.header04Override = newValue > 0;
+                    break;
+                case "header05override":
+                    GLScreenData.header05Override = newValue > 0;
+                    break;
+                case "descentmodevalue":
+                    GLScreenData.descentModeValue = newValue;
+                    break;
+                case "dccschematicstoggle":
+                    DCCScreenData.DCCschematicsToggle = (int) newValue;
+                    break;
+                default:
+                    if (VesselData.IsVesselKey(valueName))
+                        VesselData.SetServerData(valueName, newValue, add);
+                    else if (CrewData.IsCrewKey(valueName))
+                        CrewData.SetServerData(valueName, newValue, add);
+                    else
+                        SetDynamicValue(new serverUtils.ServerValue(key, newValue), add);
+                    break;
+            }
+
+            if (ValueChangedEvent != null)
+                ValueChangedEvent(valueName, newValue);
         }
-
-        if (ValueChangedEvent != null)
-            ValueChangedEvent(valueName, newValue);
+        catch (Exception ex)
+        {
+            Debug.LogWarning("serverData.onValueChanged(): Failed to set server value: " 
+                + valueName + " to " + newValue + " - " + ex);
+        }
     }
 
     /** Set a shared server value at runtime. */
@@ -1288,21 +1300,29 @@ public class serverData : NetworkBehaviour
     /** Updates a server string value. */
     public void OnValueChanged(string valueName, string newValue)
     {
-        switch (valueName.ToLower())
+        try
         {
-            case "mapeventname":
-                MapData.mapEventName = newValue;
-                break;
+            switch (valueName.ToLower())
+            {
+                case "mapeventname":
+                    MapData.mapEventName = newValue;
+                    break;
 
-            case "playervesselname":
-                VesselData.PlayerVesselName = newValue;
-                break;
+                case "playervesselname":
+                    VesselData.PlayerVesselName = newValue;
+                    break;
 
-            default:
-                float value;
-                if (float.TryParse(newValue, out value))
-                    OnValueChanged(valueName, value);
-                break;
+                default:
+                    float value;
+                    if (float.TryParse(newValue, out value))
+                        OnValueChanged(valueName, value);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning("serverData.onValueChanged(): Failed to set server bool value: "
+                + valueName + " to " + newValue + " - " + ex);
         }
     }
 
@@ -1316,87 +1336,95 @@ public class serverData : NetworkBehaviour
         if (CrewData.IsCrewKey(boolName))
             { CrewData.SetServerData(boolName, newValue ? 1 : 0); return; }
 
-        // Match incoming key against known data values.
-        switch (boolName.ToLower())
+        try
+        { 
+            // Match incoming key against known data values.
+            switch (boolName.ToLower())
+            {
+                case "depthdisplayed":
+                    depthDisplayed = newValue;
+                    break;
+                case "divetimeactive":
+                    diveTimeActive = newValue;
+                    break;
+                case "duetimeactive":
+                    dueTimeActive = newValue;
+                    break;
+                case "disableinput":
+                    SubControl.disableInput = newValue;
+                    break;
+                case "floordistancedisplayed":
+                    floorDistanceDisplayed = newValue;
+                    break;
+                case "vesselmovementenabled":
+                    VesselMovements.Enabled = newValue;
+                    break;
+                case "isautostabilised":
+                    SubControl.isAutoStabilised = newValue;
+                    break;
+                case "decouplemotionbase":
+                    MotionBaseData.DecoupleMotionBase = newValue;
+                    break;
+                case "ispitchalsostabilised":
+                    SubControl.IsPitchAlsoStabilised = newValue;
+                    break;
+                case "joystickoverride":
+                    SubControl.JoystickOverride = newValue;
+                    break;
+                case "joystickpilot":
+                    SubControl.JoystickPilot = newValue;
+                    break;
+                case "batterylifeenabled":
+                    BatteryData.batteryLifeEnabled = newValue;
+                    break;
+                case "batterytimeenabled":
+                    BatteryData.batteryTimeEnabled = newValue;
+                    break;
+			    case "isautopilot":
+				    SubControl.isAutoPilot = newValue;
+				    break;
+                case "iscontroldecentmode":
+                    SubControl.isControlDecentMode = newValue;
+                    break;
+                case "oldphysics":
+                    SubControl.oldPhysics = newValue;
+                    break;
+                case "iscontroldecentmodeonjoystick":
+                    isControlDecentModeOnJoystick = newValue;
+                    break;
+                case "iscontrolmodeoverride":
+                    SubControl.isControlModeOverride = newValue;
+                    break;
+                case "iscontroloverridestandard":
+                    SubControl.isControlOverrideStandard = newValue;
+                    break;
+			    case "motionhazard":
+				    MotionBaseData.MotionHazard = newValue;
+				    break;
+			    case "motionhazardenabled":
+				    MotionBaseData.MotionHazardEnabled = newValue;
+				    break;
+			    case "motionsafety":
+				    MotionBaseData.MotionSafety = newValue;
+				    break;
+                case "pilotbuttonenabled":
+                    OperatingData.pilotButtonEnabled = newValue;
+                    break;
+                case "dockingbuttonenabled":
+                    OperatingData.dockingButtonEnabled = newValue;
+                    break;
+                case "dccvesselnameintitle":
+                    DCCScreenData.DCCvesselNameInTitle = newValue;
+                    break;
+                case "dcccommsusesliders":
+                    DCCScreenData.DCCcommsUseSliders = newValue;
+                    break;
+            }
+        }
+        catch (Exception ex)
         {
-            case "depthdisplayed":
-                depthDisplayed = newValue;
-                break;
-            case "divetimeactive":
-                diveTimeActive = newValue;
-                break;
-            case "duetimeactive":
-                dueTimeActive = newValue;
-                break;
-            case "disableinput":
-                SubControl.disableInput = newValue;
-                break;
-            case "floordistancedisplayed":
-                floorDistanceDisplayed = newValue;
-                break;
-            case "vesselmovementenabled":
-                VesselMovements.Enabled = newValue;
-                break;
-            case "isautostabilised":
-                SubControl.isAutoStabilised = newValue;
-                break;
-            case "decouplemotionbase":
-                MotionBaseData.DecoupleMotionBase = newValue;
-                break;
-            case "ispitchalsostabilised":
-                SubControl.IsPitchAlsoStabilised = newValue;
-                break;
-            case "joystickoverride":
-                SubControl.JoystickOverride = newValue;
-                break;
-            case "joystickpilot":
-                SubControl.JoystickPilot = newValue;
-                break;
-            case "batterylifeenabled":
-                BatteryData.batteryLifeEnabled = newValue;
-                break;
-            case "batterytimeenabled":
-                BatteryData.batteryTimeEnabled = newValue;
-                break;
-			case "isautopilot":
-				SubControl.isAutoPilot = newValue;
-				break;
-            case "iscontroldecentmode":
-                SubControl.isControlDecentMode = newValue;
-                break;
-            case "oldphysics":
-                SubControl.oldPhysics = newValue;
-                break;
-            case "iscontroldecentmodeonjoystick":
-                isControlDecentModeOnJoystick = newValue;
-                break;
-            case "iscontrolmodeoverride":
-                SubControl.isControlModeOverride = newValue;
-                break;
-            case "iscontroloverridestandard":
-                SubControl.isControlOverrideStandard = newValue;
-                break;
-			case "motionhazard":
-				MotionBaseData.MotionHazard = newValue;
-				break;
-			case "motionhazardenabled":
-				MotionBaseData.MotionHazardEnabled = newValue;
-				break;
-			case "motionsafety":
-				MotionBaseData.MotionSafety = newValue;
-				break;
-            case "pilotbuttonenabled":
-                OperatingData.pilotButtonEnabled = newValue;
-                break;
-            case "dockingbuttonenabled":
-                OperatingData.dockingButtonEnabled = newValue;
-                break;
-            case "dccvesselnameintitle":
-                DCCScreenData.DCCvesselNameInTitle = newValue;
-                break;
-            case "dcccommsusesliders":
-                DCCScreenData.DCCcommsUseSliders = newValue;
-                break;
+            Debug.LogWarning("serverData.onValueChanged(): Failed to set server bool value: "
+                + boolName + " to " + newValue + " - " + ex);
         }
     }
 

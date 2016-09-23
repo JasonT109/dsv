@@ -151,7 +151,10 @@ namespace Meg.Scene
         {
             var json = new JSONObject();
             foreach (var parameter in serverUtils.WriteableParameters)
-                json.AddField(parameter, serverUtils.GetServerDataRaw(parameter));
+                try
+                    { json.AddField(parameter, serverUtils.GetServerDataRaw(parameter)); }
+                catch (Exception ex)
+                    { Debug.LogWarning("megSceneFile.SaveParameters(): Failed to save parameter '" + parameter + "' - " + ex); }
 
             return json;
         }
@@ -188,7 +191,10 @@ namespace Meg.Scene
             var value = 0.0f;
             foreach (var key in json.keys)
                 if (json.GetField(ref value, key))
-                    serverUtils.SetServerData(key, value);
+                    try
+                        { serverUtils.SetServerData(key, value); }
+                    catch (Exception ex)
+                        { Debug.LogWarning("megSceneFile.LoadParameters(): Failed to set parameter '" + key + "' to " + value + ":- " + ex); }
         }
 
         /** Load vessel states from JSON. */
