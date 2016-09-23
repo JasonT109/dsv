@@ -313,10 +313,10 @@ public class SubControl : NetworkBehaviour
     private void ApplyGliderForces()
     {
         //TODO DELETE THIS
-        if(Input.GetKeyDown("space"))
-        {
-            oldPhysics = !oldPhysics;
-        }
+        //if(Input.GetKeyDown("space"))
+        //{
+        //    oldPhysics = !oldPhysics;
+        //}
 
         //localAngularVelocity = MotionBaseSub.transform.InverseTransformDirection(_motionRigidBody.angularVelocity);
 
@@ -429,9 +429,27 @@ public class SubControl : NetworkBehaviour
 
     private void ApplyRovForces()
     {
-        _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
-        _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
-        _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis2));
+        //test for bowtie deadzone
+        if (!(inputXaxis < BowtieDeadzone * Mathf.Abs(inputYaxis) && inputXaxis > -BowtieDeadzone * Mathf.Abs(inputYaxis)))
+        {
+            //out of deadzone
+            _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+        }
+
+        //test for bowtie deadzone
+        if (!(inputYaxis < BowtieDeadzone * Mathf.Abs(inputXaxis) && inputYaxis > -BowtieDeadzone * Mathf.Abs(inputXaxis)))
+        {
+            //out of deadzone
+            _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+        }
+
+
+        //test for bowtie deadzone
+        if (!(inputXaxis2 < BowtieDeadzone * Mathf.Abs(inputZaxis) && inputXaxis2 > -BowtieDeadzone * Mathf.Abs(inputZaxis)))
+        {
+            //out of deadzone
+            _rigidbody.AddRelativeTorque(Vector3.up * (yawSpeed * inputXaxis2));
+        }
 
         // Auto-stabilize the sub if desired.
         ApplyStabilizationForce();
