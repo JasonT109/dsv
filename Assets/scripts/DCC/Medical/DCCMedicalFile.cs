@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class DCCMedicalFile : MonoBehaviour
@@ -28,6 +28,9 @@ public class DCCMedicalFile : MonoBehaviour
         BloodType.Text = MedicalInfo.BloodType;
         PhotoRenderer.material.mainTexture = PhotoID;
 
+        /*
+        // Replaced this functionality with textValueFromServer on the patient name text components.
+
         string vitalsText = " VITALS";
 
         for (int i = 0; i < NameFields.Length; i++)
@@ -56,5 +59,6 @@ public class DCCMedicalFile : MonoBehaviour
                     break;
             }
         }
-	}
+        */
+    }
 }

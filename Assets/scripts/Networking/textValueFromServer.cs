@@ -19,6 +19,7 @@ public class textValueFromServer : widgetText
     public bool unsigned = false;
     public string format = "";
     public string prefix = "";
+    public string suffix = "";
     public bool upperCase;
     public ValueRange[] Ranges;
 
@@ -124,6 +125,10 @@ public class textValueFromServer : widgetText
         // Apply prefix (if any).
         if (!string.IsNullOrEmpty(prefix))
             Text = prefix + Text;
+
+        // Apply suffix (if any).
+        if (!string.IsNullOrEmpty(suffix))
+            Text = Text + suffix;
     }
 
 }
