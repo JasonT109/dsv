@@ -1007,6 +1007,9 @@ public class serverData : NetworkBehaviour
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue > 0;
 				break;
+            case "oldphysics":
+                SubControl.oldPhysics = newValue > 0;
+                break;
             case "iscontroldecentmodeonjoystick":
                 isControlDecentModeOnJoystick = newValue > 0;
                 break;
@@ -1335,6 +1338,9 @@ public class serverData : NetworkBehaviour
 				break;
             case "iscontroldecentmode":
                 SubControl.isControlDecentMode = newValue;
+                break;
+            case "oldphysics":
+                SubControl.oldPhysics = newValue;
                 break;
             case "iscontroldecentmodeonjoystick":
                 isControlDecentModeOnJoystick = newValue;

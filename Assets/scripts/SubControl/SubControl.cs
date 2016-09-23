@@ -86,6 +86,8 @@ public class SubControl : NetworkBehaviour
     public float MaxGliderAngle = 90f;
     [SyncVar]
     public float AbsoluteMaxAngularVel = 1.7f;
+    [SyncVar]
+    public bool oldPhysics = true;
 
 
     //private float SoftMaxGliderAngle = 90f;
@@ -127,8 +129,6 @@ public class SubControl : NetworkBehaviour
     public bool LaunchROV = false;
 
     public bool Collision = false;
-
-    public bool oldPhysics = true;
 
     public Vector3 AngVel;
     public float sPitch;
@@ -272,6 +272,8 @@ public class SubControl : NetworkBehaviour
         //_rigidbody.maxAngularVelocity = 0.0001f;
 
         serverUtils.MotionBaseData.MotionSlerpSpeed = 5.0f;
+
+        oldPhysics = false;
     }
 
     /** Apply defaults that relate to the ROV here */

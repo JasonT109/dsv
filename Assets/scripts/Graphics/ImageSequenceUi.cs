@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ImageSequenceUi : MonoBehaviour
 {
     public Image Image;
+    public RawImage RawImage;
 
     public enum playbackType
     {
@@ -48,6 +49,8 @@ public class ImageSequenceUi : MonoBehaviour
     {
         if (!Image)
             Image = GetComponent<Image>();
+        if (!RawImage)
+            RawImage = GetComponent<RawImage>();
 
         baseName = folderName + "/" + imageSequenceName;
         nFrames = numberOfFrames;
@@ -172,6 +175,8 @@ public class ImageSequenceUi : MonoBehaviour
         var frameName = GetFrameName(i);
         if (Image)
             Image.sprite = Resources.Load<Sprite>(frameName);
+        else if (RawImage)
+            RawImage.texture = Resources.Load<Texture>(frameName);
     }
 
 }

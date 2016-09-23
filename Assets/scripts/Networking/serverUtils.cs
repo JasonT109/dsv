@@ -565,6 +565,7 @@ namespace Meg.Networking
             "inputyaxis3",
             "inputzaxis",
 			"iscontroldecentmode",
+            "oldphysics",
             "iscontroldecentmodeonjoystick",
             "isautopilot",
 			"iscontrolmodeoverride",
@@ -988,7 +989,8 @@ namespace Meg.Networking
             { "inputyaxis3", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Y3 input axis."  } },
             { "inputzaxis", new ParameterInfo { minValue = -1, maxValue = 1, description = "Current value of the joystick Z input axis (throttle)."} },
 			{ "isautopilot", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control auto pilot toggle. does nothing but change a button light." } },
-			{ "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Controls whether sub is in auto-descent mode." } },
+            { "isoldphysics", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "physics model of the glider" } },
+            { "iscontroldecentmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Controls whether sub is in auto-descent mode." } },
             { "iscontroldecentmodeonjoystick", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether joystick input can be used to toggle descent mode." } },
             { "iscontrolmodeoverride", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode server override." } },
 			{ "iscontroloverridestandard", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Sub control mode when server is overriding." } },
@@ -1486,7 +1488,9 @@ namespace Meg.Networking
                     return MotionBaseData.DecoupleMotionBase ? 1 : 0;
                 case "iscontroldecentmode":
 					return SubControl.isControlDecentMode ? 1 : 0;
-				case "iscontrolmodeoverride":
+                case "oldphysics":
+                    return SubControl.oldPhysics ? 1 : 0;
+                case "iscontrolmodeoverride":
 					return SubControl.isControlModeOverride ? 1 : 0;
 				case "iscontroloverridestandard":
 					return SubControl.isControlOverrideStandard ? 1 : 0;
@@ -1518,6 +1522,8 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot ? 1 : 0;
                 case "isControlDecentMode":
                     return SubControl.isControlDecentMode ? 1 : 0;
+                case "OldPhysics":
+                    return SubControl.oldPhysics ? 1 : 0;
                 case "iscontroldecentmodeonjoystick":
                     return ServerData.isControlDecentModeOnJoystick ? 1 : 0;
                 case "isControlModeOverride":
@@ -2064,6 +2070,8 @@ namespace Meg.Networking
 					return SubControl.isAutoPilot;
 				case "iscontroldecentmode":
 					return SubControl.isControlDecentMode;
+                case "oldphysics":
+                    return SubControl.oldPhysics;
                 case "iscontroldecentmodeonjoystick":
                     return ServerData.isControlDecentModeOnJoystick;
                 case "iscontrolmodeoverride":
