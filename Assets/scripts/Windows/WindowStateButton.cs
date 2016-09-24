@@ -37,7 +37,17 @@ public class WindowStateButton : MonoBehaviour
             _button.setButtonActive(active);
 
         if (Window && Window.activeSelf != active)
-            Window.SetActive(active);
+            Window.SetActive(active && !RecentlyClosed());
+    }
+
+    private bool RecentlyClosed()
+    {
+        var dcc = Window.GetComponent<DCCWindow>();
+        if (!dcc)
+            return false;
+
+        var dt = Time.time - dcc.lastCloseTime;
+        return (dt < 0.5f);
     }
 
     /** Apply window visibility to matching screens. */

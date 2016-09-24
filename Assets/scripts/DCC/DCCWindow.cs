@@ -42,6 +42,8 @@ public class DCCWindow : MonoBehaviour
     public float lerpTime = 0.6f;
     public bool canDropBucket = true;
 
+    public float lastCloseTime;
+
     private Vector3 toPosition;
     private Vector3 fromPosition;
     private Vector2 toScale;
@@ -116,6 +118,8 @@ public class DCCWindow : MonoBehaviour
 
     private void OnDisable()
     {
+        lastCloseTime = Time.time;
+
         GetComponent<PressGesture>().Pressed -= pressedHandler;
         GetComponent<ReleaseGesture>().Released -= releaseHandler;
         GetComponent<TransformGesture>().Transformed -= transformHandler;
@@ -287,7 +291,7 @@ public class DCCWindow : MonoBehaviour
             screenManager = ObjectFinder.Find<DCCScreenManager>();
     }
 
-	void LateUpdate ()
+	void Update()
     {
         if (isLerping)
         {
@@ -321,6 +325,7 @@ public class DCCWindow : MonoBehaviour
             if (offscreenLerpTimer > 1)
             {
                 transformOffscreen = false;
+                gameObject.SetActive(false);
                 transform.localPosition = offscreenInitPos;
                 GetComponentInChildren<DCCWindowCloseButton>().closeWindow();
             }

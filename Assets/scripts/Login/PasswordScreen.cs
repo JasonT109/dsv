@@ -87,6 +87,7 @@ public class PasswordScreen : MonoBehaviour
 
         HostIP.text = host;
         HostIPTextPlaceholder.text = host;
+        _manager.Host = host;
 
         if (scene == NetworkManagerCustom.BigSubScene)
             ToggleBigSub();
