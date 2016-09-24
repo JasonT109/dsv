@@ -14,7 +14,7 @@ public class OSRov : NetworkBehaviour
     [SyncVar]
     public int RovState = 0;
 
-    private int RovLastState = 0;
+    private int RovLastState = 5;
     public bool DebugMode = true;
 
     public GameObject LightsScreen;
@@ -155,6 +155,8 @@ public class OSRov : NetworkBehaviour
             CameraLaunched.SetActive(false);
         if (SonarLaunched)
             SonarLaunched.SetActive(false);
+
+        serverUtils.ServerData.yawAngle = 15f;
 
     }
 
