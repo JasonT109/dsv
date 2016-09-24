@@ -17,6 +17,10 @@ public class OSRov : NetworkBehaviour
     private int RovLastState = 0;
     public bool DebugMode = true;
 
+    public GameObject LightsScreen;
+    public GameObject CameraScreen;
+    public GameObject SonarScreen;
+
     public GameObject CameraAlerts;
     public GameObject SonarAlerts;
 
@@ -76,6 +80,8 @@ public class OSRov : NetworkBehaviour
         {
             DebugStuff();
         }
+
+        Hotkeys();
 
         //each frame updates
         switch (RovState)
@@ -162,14 +168,14 @@ public class OSRov : NetworkBehaviour
         SonarAlerts.SetActive(false);
 
         if(CameraaStart)
-            CameraaStart.SetActive(true);
+            CameraaStart.SetActive(false);
         if(SonarStart)
-            SonarStart.SetActive(true);
+            SonarStart.SetActive(false);
 
         if(CameraLaunched)
-            CameraLaunched.SetActive(false);
+            CameraLaunched.SetActive(true);
         if(SonarLaunched)
-            SonarLaunched.SetActive(false);
+            SonarLaunched.SetActive(true);
     }
 
     void WarningRov()
@@ -207,5 +213,60 @@ public class OSRov : NetworkBehaviour
         {
             RovState = 0;
         }
+    }
+
+    void Hotkeys()
+    {
+        //if (Input.GetKeyDown("1") || Input.GetKeyDown("1"))
+        //    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+        //        SetLightScreen();
+        //
+        //if (Input.GetKeyDown("2") || Input.GetKeyDown("2"))
+        //    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+        //        SetLightScreen();
+        //
+        //if (Input.GetKeyDown("3") || Input.GetKeyDown("3"))
+        //    if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+        //        SetLightScreen();
+
+        if (Input.GetKeyDown("1"))
+        {
+            if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                SetLightScreen();
+        }
+
+        if (Input.GetKeyDown("2"))
+        {
+            if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                SetCameraScreen();
+        }
+
+        if (Input.GetKeyDown("3"))
+        {
+            if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                SetSonarScreen();
+        }
+
+    }
+
+    public void SetLightScreen()
+    {
+        LightsScreen.SetActive(true);
+        CameraScreen.SetActive(false);
+        SonarScreen.SetActive(false);
+    }
+
+    public void SetCameraScreen()
+    {
+        LightsScreen.SetActive(false);
+        CameraScreen.SetActive(true);
+        SonarScreen.SetActive(false);
+    }
+
+    public void SetSonarScreen()
+    {
+        LightsScreen.SetActive(false);
+        CameraScreen.SetActive(false);
+        SonarScreen.SetActive(true);
     }
 }
