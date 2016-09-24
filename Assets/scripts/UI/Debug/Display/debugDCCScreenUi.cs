@@ -32,6 +32,12 @@ public class debugDCCScreenUi : MonoBehaviour
     /** Local player indicator graphic. */
     public Graphic LocalIndicator;
 
+    /** Local player color. */
+    public Color LocalColor;
+
+    /** Station colors. */
+    public Color[] StationColors;
+
     /** The player (game instance) whose screen this is. */
     public serverPlayer Player { get; set; }
 
@@ -56,7 +62,19 @@ public class debugDCCScreenUi : MonoBehaviour
         Title.text = Player.Id;
         StationName.text = DCCScreenData.GetStationName(Player.StationId);
         _typeLabel.text = GetScreenLabel();
-        LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
+
+        if (Player.isLocalPlayer)
+            LocalIndicator.color = LocalColor;
+        else
+            LocalIndicator.color = ColorForStation(Player.StationId);
+    }
+
+    private Color ColorForStation(int id)
+    {
+        if (id >= 0 && id < StationColors.Length)
+            return StationColors[id];
+
+        return new Color(0, 0, 0, 0);
     }
 
     private string GetScreenLabel()

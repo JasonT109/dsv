@@ -12,6 +12,12 @@ public class debugDCCStationUi : MonoBehaviour
 
     public int StationId;
 
+    public Graphic Backdrop;
+
+    /** Station colors. */
+    public Color[] StationColors;
+    public Color DefaultStationColor;
+
     public Text Title;
     public Button TopLeft;
     public Button TopMid;
@@ -168,6 +174,8 @@ public class debugDCCStationUi : MonoBehaviour
 
         Control.interactable = GetPlayerWithScreen(screenData.Type.DccControl) != null;
         Surface.interactable = GetPlayerWithScreen(screenData.Type.DccSurface) != null;
+
+        Backdrop.color = ColorForStation(StationId);
     }
 
     public void SelectTopScreenContent(DCCScreenID._screenID id)
@@ -287,5 +295,14 @@ public class debugDCCStationUi : MonoBehaviour
                     player.netId, windowIds);
             });
     }
+
+    private Color ColorForStation(int id)
+    {
+        if (id >= 0 && id < StationColors.Length)
+            return StationColors[id];
+
+        return DefaultStationColor;
+    }
+
 
 }
