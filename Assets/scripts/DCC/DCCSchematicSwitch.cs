@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Meg.Networking;
 
 public class DCCSchematicSwitch : MonoBehaviour
@@ -7,7 +7,6 @@ public class DCCSchematicSwitch : MonoBehaviour
     public GameObject SubButton;
     public GameObject GliderButton;
     public int CurrentState;
-    public bool IsSetter = false;
     public float UpdateTick = 0.2f;
 
     private float _updateTimer;
@@ -23,21 +22,16 @@ public class DCCSchematicSwitch : MonoBehaviour
 
     void Start ()
     {
-        if (!IsSetter)
-        {
-            CurrentState = (int)serverUtils.GetServerData("DCCschematicsToggle");
-            ToggleSchematics(CurrentState);
-        }
-        else
-        {
-            if (SubButton.GetComponent<buttonControl>().active)
-                serverUtils.SetServerData("DCCschematicsToggle", 0);
-            else
-                serverUtils.SetServerData("DCCschematicsToggle", 1);
-        }
+        SubButton.GetComponent<buttonControl>().onPress.AddListener(() =>
+            serverUtils.PostServerData("DCCschematicsToggle", 0));
+        GliderButton.GetComponent<buttonControl>().onPress.AddListener(() =>
+            serverUtils.PostServerData("DCCschematicsToggle", 1));
+
+        CurrentState = (int) serverUtils.GetServerData("DCCschematicsToggle");
+        ToggleSchematics(CurrentState);
 	}
 
-	void Update ()
+	void Update()
     {
         _updateTimer += Time.deltaTime;
         if (_updateTimer < UpdateTick)
@@ -45,17 +39,7 @@ public class DCCSchematicSwitch : MonoBehaviour
 
         _updateTimer = 0;
 
-        if (!IsSetter)
-        {
-            CurrentState = (int)serverUtils.GetServerData("DCCschematicsToggle");
-            ToggleSchematics(CurrentState);
-        }
-        else
-        {
-            if (SubButton.GetComponent<buttonControl>().active)
-                serverUtils.SetServerData("DCCschematicsToggle", 0);
-            else
-                serverUtils.SetServerData("DCCschematicsToggle", 1);
-        }
+        CurrentState = (int)serverUtils.GetServerData("DCCschematicsToggle");
+        ToggleSchematics(CurrentState);
     }
 }

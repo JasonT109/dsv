@@ -17,11 +17,17 @@ public class WindowStateButton : MonoBehaviour
     /** Associated button control. */
     private buttonControl _button;
 
-    private void Start()
+    private void Awake()
     {
         // Set up button association automatically.
         _button = GetComponent<buttonControl>();
         _button.onPress.AddListener(Apply);
+
+        if (_button.visGroup)
+        {
+            Window = _button.visGroup;
+            _button.visGroup = null;
+        }
     }
 
     private void Update()
@@ -43,7 +49,7 @@ public class WindowStateButton : MonoBehaviour
             AddWindow();
     }
 
-    private bool HasWindow()
+    public bool HasWindow()
     {
         if (Local && serverUtils.LocalPlayer)
             return serverUtils.LocalPlayer.HasWindow(WindowId);
@@ -51,7 +57,7 @@ public class WindowStateButton : MonoBehaviour
         return serverUtils.GetPlayers().Any(p => p.HasWindow(WindowId));
     }
 
-    private void AddWindow()
+    public void AddWindow()
     {
         if (Local && serverUtils.LocalPlayer)
         {
@@ -68,7 +74,7 @@ public class WindowStateButton : MonoBehaviour
         }
     }
 
-    private void RemoveWindow()
+    public void RemoveWindow()
     {
         if (Local && serverUtils.LocalPlayer)
         {

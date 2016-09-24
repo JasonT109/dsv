@@ -252,6 +252,8 @@ public class DCCWindow : MonoBehaviour
 
         if (!quadWindow)
             screenManager.UnregisterWindow(this);
+
+        hasFocus = false;
     }
 
     IEnumerator focusWait(float waitTime)
@@ -285,7 +287,7 @@ public class DCCWindow : MonoBehaviour
             screenManager = ObjectFinder.Find<DCCScreenManager>();
     }
 
-	void Update ()
+	void LateUpdate ()
     {
         if (isLerping)
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Meg.DCC;
 using UnityEngine;
@@ -443,6 +444,14 @@ public class serverPlayer : NetworkBehaviour
             ServerClearWindows(playerId);
         else
             CmdClearWindows(playerId);
+    }
+
+    /** Set windows for this player's screen. */
+    public void PostSetWindows(NetworkInstanceId playerId, IEnumerable<screenData.WindowId> windowIds)
+    {
+        PostClearWindows(playerId);
+        foreach (var id in windowIds)
+            PostAddWindow(playerId, id);
     }
 
 

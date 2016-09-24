@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Meg.DCC;
 using Meg.Networking;
@@ -20,6 +21,8 @@ public class debugDCCStationUi : MonoBehaviour
     public Button QuadBottomLeft;
     public Button QuadBottomRight;
     public Button QuadMiddle;
+    public Button Control;
+    public Button Surface;
 
     public Graphic TopLeftOn;
     public Graphic TopMidOn;
@@ -34,16 +37,80 @@ public class debugDCCStationUi : MonoBehaviour
 
     private float _nextUpdateTime;
 
+    private readonly screenData.Content[] _controlWindowContents =
+    {
+        screenData.Content.Diagnostics,
+        screenData.Content.Batteries,
+        screenData.Content.Vitals,
+        screenData.Content.Oxygen,
+        screenData.Content.Comms,
+        screenData.Content.SonarLong,
+        screenData.Content.Power,
+        screenData.Content.Systems,
+    };
+
+    private readonly screenData.Content[] _surfaceWindowContents =
+    {
+        screenData.Content.Diagnostics,
+        screenData.Content.Batteries,
+        screenData.Content.Vitals,
+        screenData.Content.Oxygen,
+        screenData.Content.Comms,
+        screenData.Content.SonarLong,
+        screenData.Content.Power,
+        screenData.Content.Systems,
+    };
+
+    private readonly DCCWindow.contentID[] _topScreenContentIDs =
+    {
+        DCCWindow.contentID.none,
+        DCCWindow.contentID.comms,
+        DCCWindow.contentID.sonar,
+        DCCWindow.contentID.batteries,
+        DCCWindow.contentID.oxygen,
+        DCCWindow.contentID.thrusters,
+        DCCWindow.contentID.power,
+        DCCWindow.contentID.diagnostics,
+        DCCWindow.contentID.lifesupport,
+    };
+
+    private readonly DCCWindow.contentID[] _quadScreenContentIDs =
+    {
+        DCCWindow.contentID.none,
+        DCCWindow.contentID.gliderdiagnostics,
+        DCCWindow.contentID.gliderpower,
+        DCCWindow.contentID.gliderthrusters,
+        DCCWindow.contentID.nav,
+        DCCWindow.contentID.piloting,
+        DCCWindow.contentID.lifesupport,
+        DCCWindow.contentID.diagnostics,
+        DCCWindow.contentID.instruments,
+        DCCWindow.contentID.thrusters,
+        DCCWindow.contentID.batteries,
+        DCCWindow.contentID.oxygen,
+        DCCWindow.contentID.power,
+        DCCWindow.contentID.comms,
+        DCCWindow.contentID.sonar,
+        DCCWindow.contentID.crew1,
+        DCCWindow.contentID.crew2,
+        DCCWindow.contentID.crew3,
+        DCCWindow.contentID.crew4,
+        DCCWindow.contentID.crew5,
+    };
+
+
     void Start()
     {
-        TopLeft.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen3));
-        TopMid.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen4));
-        TopRight.onClick.AddListener(() => SelectScreenContent(DCCScreenID._screenID.screen5));
+        TopLeft.onClick.AddListener(() => SelectTopScreenContent(DCCScreenID._screenID.screen3));
+        TopMid.onClick.AddListener(() => SelectTopScreenContent(DCCScreenID._screenID.screen4));
+        TopRight.onClick.AddListener(() => SelectTopScreenContent(DCCScreenID._screenID.screen5));
         QuadTopLeft.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.topLeft));
         QuadTopRight.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.topRight));
         QuadBottomLeft.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.bottomLeft));
         QuadBottomRight.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.bottomRight));
         QuadMiddle.onClick.AddListener(() => SelectQuadContent(DCCScreenContentPositions.positionID.middle));
+        Control.onClick.AddListener(SelectControlWindows);
+        Surface.onClick.AddListener(SelectSurfaceWindows);
     }
 
     void Update()
@@ -101,12 +168,19 @@ public class debugDCCStationUi : MonoBehaviour
         QuadBottomLeftOn.gameObject.SetActive(quadBottomLeft != DCCWindow.contentID.none);
         QuadBottomRightOn.gameObject.SetActive(quadBottomRight != DCCWindow.contentID.none);
         QuadMiddleOn.gameObject.SetActive(quadMiddle != DCCWindow.contentID.none);
+
+        Control.interactable = GetPlayerWithScreen(screenData.Type.DccControl) != null;
+        Surface.interactable = GetPlayerWithScreen(screenData.Type.DccSurface) != null;
     }
 
-    public void SelectScreenContent(DCCScreenID._screenID id)
+    public void SelectTopScreenContent(DCCScreenID._screenID id)
+        { SelectScreenContent(id, _topScreenContentIDs); }
+
+    public void SelectScreenContent(DCCScreenID._screenID id, IEnumerable<DCCWindow.contentID> options)
     {
         var current = serverUtils.GetScreenContent(id, StationId);
-        var items = Enum.GetNames(typeof(DCCWindow.contentID))
+        var items = options
+            .Select(o => o.ToString())
             .OrderBy(t => t)
             .Select(t => new DialogList.Item { Name = t.ToUpper(), Id = t });
 
@@ -128,7 +202,8 @@ public class debugDCCStationUi : MonoBehaviour
     public void SelectQuadContent(DCCScreenContentPositions.positionID id)
     {
         var current = serverUtils.GetQuadContent(id, StationId);
-        var items = Enum.GetNames(typeof(DCCWindow.contentID))
+        var items = _quadScreenContentIDs
+            .Select(o => o.ToString())
             .OrderBy(t => t)
             .Select(t => new DialogList.Item { Name = t.ToUpper(), Id = t });
 
@@ -168,6 +243,52 @@ public class debugDCCStationUi : MonoBehaviour
         serverUtils.PostQuadContent(position, content, StationId);
         if (position == DCCScreenContentPositions.positionID.middle)
             serverUtils.PostQuadFullScreen(content != DCCWindow.contentID.none ? 1 : 0, StationId);
+    }
+
+    public void SelectControlWindows()
+        { SelectWindowsForType(screenData.Type.DccControl, _controlWindowContents); }
+
+    public void SelectSurfaceWindows()
+        { SelectWindowsForType(screenData.Type.DccSurface, _surfaceWindowContents); }
+
+    private serverPlayer GetPlayerWithScreen(screenData.Type type)
+    {
+        return serverUtils.GetPlayers()
+            .FirstOrDefault(p => p.ScreenState.Type == type
+                && p.StationId == StationId);
+    }
+
+    private void SelectWindowsForType(screenData.Type type, IEnumerable<screenData.Content> contents)
+    {
+        // Locate the first player who has a control screen open on this station.
+        var player = GetPlayerWithScreen(type);
+        if (!player)
+            return;
+
+        var items = contents
+            .Select(c => c.ToString())
+            .OrderBy(c => c)
+            .Select(t => new DialogList.Item { Name = t.ToUpper(), Id = t });
+
+        var selected = player.WindowIds
+            .Where(id => id.State.Type == type)
+            .Select(id => id.State.Content.ToString());
+
+        var message = string.Format("Please select windows for {0} : Control Screen",
+            DCCScreenData.GetStationName(StationId));
+
+        DialogManager.Instance.ShowListMultiple("SELECT CONTROL WINDOWS",
+            message,
+            items,
+            selected,
+            (chosen) =>
+            {
+                var windowIds = chosen.Select(item =>
+                    screenData.WindowIdForState(type, screenData.ContentForName(item.Id)));
+
+                serverUtils.LocalPlayer.PostSetWindows(
+                    player.netId, windowIds);
+            });
     }
 
 }

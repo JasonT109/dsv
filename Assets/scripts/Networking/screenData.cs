@@ -310,4 +310,12 @@ public class screenData : NetworkBehaviour
         return result ?? "";
     }
 
+    /** Return content for a given string value. */
+    public static Content ContentForName(string name)
+        { return (Content) Enum.Parse(typeof(Content), name); }
+
+    /** Given state values, return a window id. */
+    public static WindowId WindowIdForState(Type type, Content content)
+        { return new WindowId {State = new State {Type = type, Content = content} }; }
+
 }

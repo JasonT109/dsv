@@ -62,6 +62,23 @@ public class DialogManager : Singleton<DialogManager>
         return dialog;
     }
 
+    /** Display a list dialog in multiple-selection mode. */
+    public DialogList ShowListMultiple(string title, string message, IEnumerable<DialogList.Item> items, IEnumerable<string> selection, UnityAction<List<DialogList.Item>> chosen = null)
+    {
+        if (Showing)
+            return null;
+
+        var dialog = Instantiate(DialogListPrefab);
+        dialog.transform.SetParent(transform, false);
+        dialog.Configure(title.ToUpper(), message, items, selection);
+        Current = dialog;
+
+        if (chosen != null)
+            dialog.OnItemsChosen.AddListener(chosen);
+
+        return dialog;
+    }
+
 
 
 }
