@@ -1062,6 +1062,12 @@ public class serverData : NetworkBehaviour
                 case "acidlayer":
                     MapData.acidLayer = (int) newValue;
                     break;
+                case "acidlayercount":
+                    MapData.acidLayerCount = (int) newValue;
+                    break;
+                case "acidlayeropacity":
+                    MapData.acidLayerOpacity = newValue;
+                    break;
                 case "waterlayer":
                     MapData.waterLayer = (int) newValue;
                     break;

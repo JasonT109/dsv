@@ -103,12 +103,14 @@ public class widget3DMap : MonoBehaviour {
 
     private Material _waterMaterial;
     private Material _acidMaterial;
+    private Renderer[] _acidRenderers;
 
     private float _waterAlpha = 1;
     private float _waterSmoothVelocity;
     private float _acidAlpha;
     private float _acidSmoothVelocity;
     private float _acidMaxRefraction;
+    private float _acidInitialAlpha = 0.5f;
 
     private Vector3 _cameraSmoothVelocity;
     private float _lastPressTime;
@@ -470,14 +472,17 @@ public class widget3DMap : MonoBehaviour {
 
         // Update acid visibility.
         var acidColor = Color.Lerp(AcidColor2d, AcidColor3d, t);
-        var acidTargetAlpha = serverUtils.GetServerData("acidLayer", 0);
+        var acidMaxAlpha = serverUtils.GetServerData("acidLayerOpacity", _acidInitialAlpha);
+        var acidTargetAlpha = serverUtils.GetServerData("acidLayer", 0) * acidMaxAlpha;
         _acidAlpha = Mathf.SmoothDamp(_acidAlpha, acidTargetAlpha, ref _acidSmoothVelocity, 0.25f);
-        if (_acidMaterial)
+        if (_acidMaterial && _acidRenderers != null)
         {
             acidColor.a *= _acidAlpha;
             _acidMaterial.SetColor("_FogColor", acidColor);
             _acidMaterial.SetFloat("_Opacity", _acidAlpha);
             _acidMaterial.SetFloat("_RefractionAmount", _acidMaxRefraction * _acidAlpha);
+            for (var i = 0; i < _acidRenderers.Length; i++)
+                _acidRenderers[i].material = _acidMaterial;
         }
         if (Acid)
             Acid.gameObject.SetActive(_acidAlpha > 0.01f);
@@ -522,7 +527,9 @@ public class widget3DMap : MonoBehaviour {
         if (Acid)
         {
             _acidMaterial = Acid.GetComponent<Renderer>().material;
+            _acidInitialAlpha = _acidMaterial.GetFloat("_Opacity");
             _acidMaxRefraction = _acidMaterial.GetFloat("_RefractionAmount");
+            _acidRenderers = Acid.GetComponentsInChildren<Renderer>();
         }
 
         _terrainInitialized = true;

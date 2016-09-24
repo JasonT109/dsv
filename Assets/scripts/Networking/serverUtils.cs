@@ -435,6 +435,8 @@ namespace Meg.Networking
         {
             "acceleration",
             "acidlayer",
+            "acidlayercount",
+            "acidlayeropacity",
             "air",
             "airtank1",
             "airtank2",
@@ -863,6 +865,8 @@ namespace Meg.Networking
         {
             { "acceleration", new ParameterInfo { description = "Sub's acceleration (scaling factor)."} },
             { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Acid layer map visibility."} },
+            { "acidlayercount", new ParameterInfo { maxValue = 4, type = ParameterType.Int, description = "Acid layer count in map."} },
+            { "acidlayeropacity", new ParameterInfo { maxValue = 1, description = "Acid layer's opacity."} },
             { "air", new ParameterInfo { readOnly = true } },
             { "airtank1", new ParameterInfo { description = "Main air tank 1 capacity (%)."} },
             { "airtank2", new ParameterInfo { description = "Main air tank 2 capacity (%)."} },
@@ -1726,6 +1730,10 @@ namespace Meg.Networking
                         return ScreenData.greenScreenBrightness;
                     case "acidlayer":
                         return MapData.acidLayer;
+                    case "acidlayercount":
+                        return MapData.acidLayerCount;
+                    case "acidlayeropacity":
+                        return MapData.acidLayerOpacity;
                     case "waterlayer":
                         return MapData.waterLayer;
                     case "mapmode":

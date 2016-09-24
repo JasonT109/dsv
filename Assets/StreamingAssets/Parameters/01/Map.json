@@ -33,6 +33,14 @@
 				},
 				{
 					"type":"Value",
+					"serverParam":"acidlayercount"
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayeropacity"
+				},
+				{
+					"type":"Value",
 					"serverParam":"waterlayer"
 				}
 			]

@@ -50,6 +50,12 @@ public class mapData : NetworkBehaviour
     public int acidLayer;
 
     [SyncVar]
+    public int acidLayerCount = 4;
+
+    [SyncVar]
+    public float acidLayerOpacity = 0.5f;
+
+    [SyncVar]
     public int waterLayer = 1;
 
     [SyncVar]
