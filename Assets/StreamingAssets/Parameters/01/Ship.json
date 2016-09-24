@@ -42,6 +42,10 @@
 				{
 					"type":"Value",
 					"serverParam":"decouplemotionbase"
+				},
+				{
+					"type":"Value",
+					"serverParam":"oldphysics"
 				}
 			]
 		},

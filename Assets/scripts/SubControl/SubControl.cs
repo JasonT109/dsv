@@ -112,10 +112,10 @@ public class SubControl : NetworkBehaviour
     public bool TripPitch = false;
     public bool TripRoll = false;
 
-    private float MaxGliderPitch;
-    private float MinGliderPitch;
-    private float MaxGliderRoll;
-    private float MinGliderRoll;
+    public float MaxGliderPitch;
+    public float MinGliderPitch;
+    public float MaxGliderRoll;
+    public float MinGliderRoll;
 
     public float motionYawSpeed;
 
@@ -133,6 +133,8 @@ public class SubControl : NetworkBehaviour
     public Vector3 AngVel;
     public float sPitch;
     public float sRoll;
+
+    public Vector3 newOrientation;
 
     //public float ScaleRoll;
 
@@ -344,7 +346,7 @@ public class SubControl : NetworkBehaviour
 
         CalculateMaxAngles();
 
-        if(oldPhysics == true)
+        if (oldPhysics == true)
         {
             GliderYawLogic();
 
@@ -356,6 +358,8 @@ public class SubControl : NetworkBehaviour
         }
         else
         {
+
+            NerfStabiliser = false;
             //var localAngularVelocity = MotionBaseSub.transform.InverseTransformDirection(_motionRigidBody.angularVelocity);
             //
             //Quaternion YawlessMotionBaseQ = Quaternion.identity;
@@ -373,7 +377,14 @@ public class SubControl : NetworkBehaviour
             GliderPitchLogic();
 
             GliderStabiliserSpeedNerf();
-        }
+
+            CheckPhysicsSubLimits();
+
+            if(!serverUtils.MotionBaseData.DecoupleMotionBase)
+            {
+                this.transform.eulerAngles = new Vector3(MotionBaseSub.transform.eulerAngles.x, this.transform.eulerAngles.y, MotionBaseSub.transform.eulerAngles.z);
+            }
+        } 
 
 
         //if(_motionRigidBody.detectCollisions)
@@ -601,7 +612,7 @@ public class SubControl : NetworkBehaviour
                 clampRollVel(ScaleRoll);
             }
 
-            _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)));// * ScaleRoll);
+            _motionRigidBody.AddTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
             clampRollVel(ScaleRoll);
 
@@ -619,7 +630,7 @@ public class SubControl : NetworkBehaviour
                 clampRollVel(ScaleRoll);
             }
 
-            _motionRigidBody.AddRelativeTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)));// * ScaleRoll);
+            _motionRigidBody.AddTorque((Vector3.forward * ((rollSpeed) * -inputXaxis)) * ScaleRoll);
             //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
             clampRollVel(ScaleRoll);
         }
@@ -634,7 +645,8 @@ public class SubControl : NetworkBehaviour
                 _rigidbody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
             }
 
-            _motionRigidBody.AddRelativeTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            _motionRigidBody.AddTorque((Vector3.forward * (rollSpeed * -inputXaxis)));
+            //clampRollVel(1f);
         }
     }
 
@@ -743,7 +755,7 @@ public class SubControl : NetworkBehaviour
         ScalePitch = Mathf.Abs(ScalePitch);
 
         //pitch logic
-        if (inputYaxis > 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 180f && MotionBaseSub.transform.rotation.eulerAngles.x < 360f)
+        if (inputYaxis > 0 && MotionBaseSub.transform.localRotation.eulerAngles.x > 180f && MotionBaseSub.transform.localRotation.eulerAngles.x < 360f)
         {
             if (serverUtils.MotionBaseData.DecoupleMotionBase)
             {
@@ -757,11 +769,11 @@ public class SubControl : NetworkBehaviour
             }
 
 
-            _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)));// * ScalePitch);
+            _motionRigidBody.AddTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
             ClampPitchVel(ScalePitch);
         }
-        else if (inputYaxis < 0 && MotionBaseSub.transform.rotation.eulerAngles.x > 0f && MotionBaseSub.transform.rotation.eulerAngles.x < 180f)
+        else if (inputYaxis < 0 && MotionBaseSub.transform.localRotation.eulerAngles.x > 0f && MotionBaseSub.transform.localRotation.eulerAngles.x < 180f)
         {
             if (serverUtils.MotionBaseData.DecoupleMotionBase)
             {
@@ -774,7 +786,7 @@ public class SubControl : NetworkBehaviour
                 ClampPitchVel(ScalePitch);
             }
 
-            _motionRigidBody.AddRelativeTorque((Vector3.left * ((pitchSpeed) * inputYaxis)));// * ScalePitch);
+            _motionRigidBody.AddTorque((Vector3.left * ((pitchSpeed) * inputYaxis)) * ScalePitch);
             //_motionRigidBody.angularVelocity = Vector3.ClampMagnitude(_motionRigidBody.angularVelocity, (MaxAngularVelocity * Mathf.Clamp(ScalePitch, 0.4f, 1f)));
             ClampPitchVel(ScalePitch);
         }
@@ -789,7 +801,8 @@ public class SubControl : NetworkBehaviour
                 _rigidbody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
             }
 
-            _motionRigidBody.AddRelativeTorque(Vector3.left * (pitchSpeed * inputYaxis));
+            _motionRigidBody.AddTorque(Vector3.left * (pitchSpeed * inputYaxis));
+            //ClampPitchVel(1f);
         }
     }
 
@@ -1016,12 +1029,12 @@ public class SubControl : NetworkBehaviour
 
         if (_motionRigidBody.angularVelocity.z > MaxAngularVelocity * ScaleRoll)
         {
-            _motionRigidBody.angularVelocity = new Vector3(_motionRigidBody.angularVelocity.x, _motionRigidBody.angularVelocity.y, (MaxAngularVelocity * ScaleRoll)); // * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
+            _motionRigidBody.angularVelocity = new Vector3(_motionRigidBody.angularVelocity.x, 0f, (MaxAngularVelocity * ScaleRoll)); // * Mathf.Clamp(ScaleRoll, 0.4f, 1f)));
         }
 
         if (_motionRigidBody.angularVelocity.z < -(MaxAngularVelocity * ScaleRoll))
         {
-            _motionRigidBody.angularVelocity = new Vector3(_motionRigidBody.angularVelocity.x, _motionRigidBody.angularVelocity.y, -((MaxAngularVelocity * ScaleRoll))); // * Mathf.Clamp(ScaleRoll, 0.4f, 1f))));
+            _motionRigidBody.angularVelocity = new Vector3(_motionRigidBody.angularVelocity.x, 0f, -((MaxAngularVelocity * ScaleRoll))); // * Mathf.Clamp(ScaleRoll, 0.4f, 1f))));
         }
         
         //if (_rigidbody.angularVelocity.z > MaxAngularVelocity * ScaleRoll)
@@ -1051,13 +1064,51 @@ public class SubControl : NetworkBehaviour
 
         if (_motionRigidBody.angularVelocity.x > MaxAngularVelocity * ScalePitch)
         {
-            _motionRigidBody.angularVelocity = new Vector3((MaxAngularVelocity * ScalePitch), _motionRigidBody.angularVelocity.y, _motionRigidBody.angularVelocity.z);
+            _motionRigidBody.angularVelocity = new Vector3((MaxAngularVelocity * ScalePitch), 0f, _motionRigidBody.angularVelocity.z);
         }
         
         if (_motionRigidBody.angularVelocity.x < -(MaxAngularVelocity * ScalePitch))
         {
-            _motionRigidBody.angularVelocity = new Vector3(-(MaxAngularVelocity * ScalePitch), _motionRigidBody.angularVelocity.y, _motionRigidBody.angularVelocity.z);
+            _motionRigidBody.angularVelocity = new Vector3(-((MaxAngularVelocity * ScalePitch)), 0f, _motionRigidBody.angularVelocity.z);
         }
+
+    }
+
+    void CheckPhysicsSubLimits()
+    {
+        newOrientation = new Vector3(MotionBaseSub.transform.localRotation.eulerAngles.x, MotionBaseSub.transform.localRotation.eulerAngles.y, MotionBaseSub.transform.localRotation.eulerAngles.z);
+
+        if(newOrientation.x > 180)
+        {
+            newOrientation.x -= 360;
+        }
+
+        if (newOrientation.z > 180)
+        {
+            newOrientation.z -= 360;
+        }
+
+        if (newOrientation.x > MaxGliderPitch)
+        {
+            newOrientation.x = MaxGliderPitch;
+        }
+
+        if (newOrientation.x < -MinGliderPitch)
+        {
+            newOrientation.x = -MinGliderPitch;
+        }
+
+        if(newOrientation.z > MaxGliderRoll)
+        {
+            newOrientation.z = MaxGliderRoll;
+        }
+
+        if (newOrientation.z < -MinGliderRoll)
+        {
+            newOrientation.z = -MinGliderRoll;
+        }
+
+        MotionBaseSub.transform.localEulerAngles = newOrientation;
 
     }
 }
