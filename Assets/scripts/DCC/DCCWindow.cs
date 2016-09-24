@@ -169,7 +169,7 @@ public class DCCWindow : MonoBehaviour
 
         if (canDropBucket)
         {
-            GameObject DropTargetObject = GetDropTarget();
+            GameObject DropTargetObject = GetDropTarget(hit.Point);
             if (DropTargetObject)
             {
                 DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
@@ -210,7 +210,7 @@ public class DCCWindow : MonoBehaviour
 
         if (canDropBucket)
         {
-            GameObject DropTargetObject = GetDropTarget();
+            GameObject DropTargetObject = GetDropTarget(hit.Point);
             if (DropTargetObject)
             {
                 if (windowGlow)
@@ -267,9 +267,10 @@ public class DCCWindow : MonoBehaviour
     }
 
     /** Returns a drop bucket target gameobject for sending content to other screens. */
-    private GameObject GetDropTarget()
+    private GameObject GetDropTarget(Vector3 point)
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var s = Camera.main.WorldToScreenPoint(point);
+        var ray = Camera.main.ScreenPointToRay(s);
         var hits = Physics.RaycastAll(ray);
         foreach (var hit in hits)
         {

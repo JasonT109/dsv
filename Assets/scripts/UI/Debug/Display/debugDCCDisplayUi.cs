@@ -40,7 +40,8 @@ public class debugDCCDisplayUi : MonoBehaviour
             Message = "{station-id} : {screen-type}",
             Icon = popupData.Icon.None,
             Type = popupData.Type.Warning,
-            Color = Color.red
+            Color = Color.red,
+            Scale = Vector3.one * 2
         };
 
         serverUtils.PostTogglePopup(popup);
