@@ -1,8 +1,8 @@
 {
 	"metadata":{
-		"utc":"23/09/16 06:13:06.4",
-		"startedTimestamp":"23/09/16 06:12:00.2",
-		"stoppedTimestamp":"23/09/16 06:11:54.7"
+		"utc":"24/09/16 11:30:06.9",
+		"startedTimestamp":"24/09/16 11:29:05.7",
+		"stoppedTimestamp":"24/09/16 11:29:38.2"
 	},
 	"groups":[
 		{
@@ -20,61 +20,121 @@
 					],
 					"toOrientation":[
 						53.43141,
-						4.980204,
+						5,
 						0
 					],
 					"toZoom":-1100
 				},
 				{
-					"type":"MapCamera",
-					"triggerTime":1.131373,
-					"completeTime":4.884258,
-					"toPosition":[
-						-172.3199,
-						-25.06742,
-						-187.4062
-					],
-					"toOrientation":[
-						28.89695,
-						358.1496,
-						0
-					],
-					"toZoom":-325.9281
+					"type":"Value",
+					"serverParam":"acidlayer",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayeropacity",
+					"serverValue":0.65
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapinteractive",
+					"serverValue":0
 				},
 				{
 					"type":"MapCamera",
-					"triggerTime":4.89869,
-					"completeTime":4.203701,
+					"triggerTime":2,
+					"completeTime":5,
 					"toPosition":[
-						-214.1175,
-						13.31287,
+						-75,
+						15,
+						-170
+					],
+					"toOrientation":[
+						16,
+						0,
+						0
+					],
+					"toZoom":-300
+				},
+				{
+					"type":"Value",
+					"triggerTime":12,
+					"completeTime":15,
+					"serverParam":"acidlayeropacity",
+					"serverValue":0
+				},
+				{
+					"type":"MapCamera",
+					"triggerTime":7,
+					"completeTime":5,
+					"toPosition":[
+						-75,
+						15,
 						-178.0861
 					],
 					"toOrientation":[
-						11.12965,
-						13.48942,
+						9,
+						350,
 						0
 					],
-					"toZoom":-144.4719
+					"toZoom":-145
 				},
 				{
 					"type":"MapCamera",
-					"triggerTime":8.950316,
-					"completeTime":4.203712,
+					"triggerTime":12,
+					"completeTime":15,
 					"toPosition":[
-						-205.275,
-						13.80076,
-						-149.2237
+						-82.55519,
+						-11.53848,
+						-155.7562
 					],
 					"toOrientation":[
 						7.5,
-						13.48942,
+						327.0034,
 						0
 					],
-					"toZoom":-144.4719
+					"toZoom":-119.6944
 				}
 			],
 			"hotKey":"0"
+		},
+		{
+			"id":"RESET",
+			"paused":true,
+			"minimized":true,
+			"rewindOnComplete":true,
+			"events":[
+				{
+					"type":"MapCamera",
+					"toPosition":[
+						-77.37985,
+						-88.16695,
+						-194.9395
+					],
+					"toOrientation":[
+						53.43141,
+						5,
+						0
+					],
+					"toZoom":-1100
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayer",
+					"serverValue":1
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayeropacity",
+					"serverValue":0.65
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapinteractive",
+					"serverValue":0
+				}			
+			],
+			"hotKey":"1"
 		}
 	]
 }
