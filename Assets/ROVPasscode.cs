@@ -15,6 +15,8 @@ public class ROVPasscode : MonoBehaviour
 
     public GameObject System;
 
+    public GameObject PasscodeWindow;
+
     int iKeysEntered = 0;
 
     // Use this for initialization
@@ -22,6 +24,8 @@ public class ROVPasscode : MonoBehaviour
     {
         LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
         LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
+
+        PasscodeWindow.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -34,6 +38,11 @@ public class ROVPasscode : MonoBehaviour
             Key3.SetActive(false);
             Key4.SetActive(false);
         }
+
+        if(System.GetComponent<ImageSequenceSingleTexture>().frameCounter > 78)
+        {
+            PasscodeWindow.SetActive(true);
+        }
 	}
 
     void OnEnable()
@@ -41,6 +50,7 @@ public class ROVPasscode : MonoBehaviour
         System.SetActive(true);
         LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
         LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
+        PasscodeWindow.SetActive(false);
     }
 
     public void Reset()
@@ -123,8 +133,8 @@ public class ROVPasscode : MonoBehaviour
             Key3.SetActive(true);
             Key4.SetActive(true);
 
-            LiveButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
-            LiveButtonText.GetComponent<Text>().color = new Color(0f, 0.9f, 0f);
+            LiveButton.GetComponent<Image>().color = new Color(0f, 0.8f, 0f);
+            LiveButtonText.GetComponent<Text>().color = new Color(0.05f, 0.5f, 0.05f);
         }
     }
 

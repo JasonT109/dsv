@@ -100,6 +100,15 @@ public class OSRov : NetworkBehaviour
         //each frame updates
         switch (RovState)
         {
+            case -1:
+                {
+                    //not launched. Starting state
+                    if(serverUtils.SubControl.isControlDecentMode)
+                    {
+                        RovState = 0;
+                    }
+                }
+                break;
             case 0:
                 {
                     //not launched. Starting state
