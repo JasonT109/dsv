@@ -598,7 +598,9 @@ public class serverData : NetworkBehaviour
                 case "reserveairtank9":
                     AirData.reserveAirTank9 = newValue;
                     break;
-
+                case "rovcamerastate":
+                    OSRov.ROVCameraState = Mathf.RoundToInt(newValue);
+                    break;
                 case "rovstate":
                     OSRov.RovState = Mathf.RoundToInt(newValue);
                     break;

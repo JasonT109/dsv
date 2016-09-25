@@ -14,6 +14,12 @@ public class OSRov : NetworkBehaviour
     [SyncVar]
     public int RovState = 0;
 
+    [SyncVar]
+    public int ROVCameraState = 0;
+    // 0 = live feed
+    // 1 = green
+    // 2 = offline screen
+
     private int RovLastState = 5;
     public bool DebugMode = true;
 
@@ -35,6 +41,8 @@ public class OSRov : NetworkBehaviour
 
     public GameObject CameraReset;
     public GameObject SonarReset;
+
+    public GameObject Green;
     //0 = not launched
     //1 = launched
     //2 = eaten by a shark **SPOILER ALERT**

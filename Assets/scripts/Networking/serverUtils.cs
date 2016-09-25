@@ -685,6 +685,7 @@ namespace Meg.Networking
             "rollangle",
             "rollspeed",
             "rovstate",
+            "rovcamerastate",
             "rovlightbow",
             "rovlightsboard",
             "rovlightport",
@@ -1108,6 +1109,7 @@ namespace Meg.Networking
             { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current roll angle (degrees)." } },
             { "rollspeed", new ParameterInfo { description = "Sub's rolling speed."} },
             { "rovstate", new ParameterInfo { minValue = -1, maxValue = 2, type = ParameterType.Int,  description = "rov screen state (start, launch, alert."} },
+            { "rovcamerastate", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int,  description = "live feed, green, offline."} },
             { "rovlightbow", new ParameterInfo { description = "rov light amount."} },
             { "rovlightsboard", new ParameterInfo { description = "rov light amount."} },
             { "rovlightport", new ParameterInfo { description = "rov light amount."} },
@@ -1364,6 +1366,8 @@ namespace Meg.Networking
                         return AirData.reserveAirTank9;
                     case "rovstate":
                         return OSRov.RovState;
+                    case "rovcamerastate":
+                        return OSRov.ROVCameraState;
                     case "rovlightbow":
                         return OSRov.RovLightBow;
                     case "rovlightsboard":
@@ -2066,6 +2070,8 @@ namespace Meg.Networking
                         return DomeData.domeSquareTop.ToString();
                     case "rovstate":
                         return OSRov.RovState.ToString();
+                    case "rovcamerastate":
+                        return OSRov.ROVCameraState.ToString();
                     case "rovlightbow":
                         return OSRov.RovLightBow.ToString();
                     case "rovlightsboard":
