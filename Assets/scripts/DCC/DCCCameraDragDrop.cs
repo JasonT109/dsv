@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections;
 using TouchScript.Gestures;
@@ -54,7 +54,7 @@ public class DCCCameraDragDrop : MonoBehaviour
 
         if (canDropBucket)
         {
-            GameObject DropTargetObject = GetDropBucket();
+            GameObject DropTargetObject = GetDropBucket(hit.Point);
             if (DropTargetObject)
             {
                 DCCDropBucket.dropBucket DropTarget = DropTargetObject.GetComponent<DCCDropBucket>().bucket;
@@ -107,7 +107,7 @@ public class DCCCameraDragDrop : MonoBehaviour
 
         if (canDropBucket)
         {
-            GameObject DropTargetObject = GetDropBucket();
+            GameObject DropTargetObject = GetDropBucket(hit.Point);
             if (DropTargetObject)
             {
                 //windowGlow.SetActive(true);
@@ -140,9 +140,10 @@ public class DCCCameraDragDrop : MonoBehaviour
     }
 
     /** Returns a drop bucket target gameobject for sending content to other screens. */
-    private GameObject GetDropBucket()
+    private GameObject GetDropBucket(Vector3 point)
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var screen = Camera.main.WorldToScreenPoint(point);
+        var ray = Camera.main.ScreenPointToRay(screen);
         var hits = Physics.RaycastAll(ray);
         foreach (var hit in hits)
         {
