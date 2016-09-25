@@ -11,14 +11,18 @@ public class ROVPasscode : MonoBehaviour
     public GameObject Key4;
 
     public GameObject LiveButton;
+    public GameObject LiveButtonText;
+
+    public GameObject System;
 
     int iKeysEntered = 0;
 
     // Use this for initialization
     void Start ()
     {
-	    
-	}
+        LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
+        LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -32,9 +36,16 @@ public class ROVPasscode : MonoBehaviour
         }
 	}
 
+    void OnEnable()
+    {
+        System.SetActive(true);
+        LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
+        LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
+    }
+
     public void Reset()
     {
-
+        System.SetActive(true);
     }
 
     public void ButtonPress()
@@ -63,6 +74,9 @@ public class ROVPasscode : MonoBehaviour
             Key3.SetActive(false);
             Key4.SetActive(false);
 
+            LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
+            LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
+
         }
 
         if (iKeysEntered == 2)
@@ -76,6 +90,9 @@ public class ROVPasscode : MonoBehaviour
             Key2.SetActive(true);
             Key3.SetActive(false);
             Key4.SetActive(false);
+
+            LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
+            LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
         }
 
         if (iKeysEntered == 3)
@@ -89,20 +106,35 @@ public class ROVPasscode : MonoBehaviour
             Key2.SetActive(true);
             Key3.SetActive(true);
             Key4.SetActive(false);
+
+            LiveButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
+            LiveButtonText.GetComponent<Text>().color = new Color(0.6f, 0.6f, 0.6f);
         }
 
         if (iKeysEntered == 4)
         {
-            Key1.GetComponent<Image>().color = new Color(0.9f, 0f, 0f);
-            Key2.GetComponent<Image>().color = new Color(0.9f, 0f, 0f);
-            Key3.GetComponent<Image>().color = new Color(0.9f, 0f, 0f);
-            Key4.GetComponent<Image>().color = new Color(0.9f, 0f, 0f);
+            Key1.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
+            Key2.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
+            Key3.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
+            Key4.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
 
             Key1.SetActive(true);
             Key2.SetActive(true);
             Key3.SetActive(true);
             Key4.SetActive(true);
+
+            LiveButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0f);
+            LiveButtonText.GetComponent<Text>().color = new Color(0f, 0.9f, 0f);
         }
+    }
+
+    public void LivePressed()
+    {
+        LiveButton.GetComponent<Image>().color = new Color(0.4f, 0.4f, 0.4f);
+        LiveButtonText.GetComponent<Text>().color = new Color(0.4f, 0.4f, 0.4f);
+
+
+        System.SetActive(false);
     }
 
 

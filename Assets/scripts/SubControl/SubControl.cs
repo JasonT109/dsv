@@ -980,6 +980,11 @@ public class SubControl : NetworkBehaviour
         if (disableInput)
             return;
 
+        if(inputZaxis == 0)
+        {
+            return;
+        }
+
         // Check that sub has a non-zero max speed.
         if (Mathf.Approximately(MaxSpeed, 0))
             return;

@@ -180,6 +180,8 @@ public class OSRov : NetworkBehaviour
 
         serverUtils.ServerData.yawAngle = 15f;
 
+        Physics.gravity = new Vector3(0, -0.5F, 0);
+
     }
 
     void ResetRov()
@@ -216,6 +218,8 @@ public class OSRov : NetworkBehaviour
 
         serverUtils.ServerData.yawAngle = 15f;
 
+        Physics.gravity = new Vector3(0, -0.5F, 0);
+
     }
 
     void LaunchRov()
@@ -236,6 +240,8 @@ public class OSRov : NetworkBehaviour
             CameraLaunched.SetActive(true);
         if(SonarLaunched)
             SonarLaunched.SetActive(true);
+
+        Physics.gravity = new Vector3(0, -0.5F, 0);
     }
 
     void WarningRov()
@@ -260,6 +266,10 @@ public class OSRov : NetworkBehaviour
             SonarPreset.SetActive(true);
         if (SonarReset)
             SonarReset.SetActive(false);
+
+        serverUtils.ServerData.velocity = 0f;
+        serverUtils.ServerData.verticalVelocity = 0f;
+        Physics.gravity = new Vector3(0f, 0f, 0f);
     }
 
     void DebugStuff()
