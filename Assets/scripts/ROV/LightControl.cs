@@ -95,7 +95,8 @@ public class LightControl : MonoBehaviour
                 BowButton.gameObject.SetActive(false);
             }
 
-            if (PngSeqSysR.iStage == 1)
+            // the stage has changed. Initialise the current stage
+            if (PngSeqSysR.iStage > 1)
             {
                 SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0.5f);
                 SBoardLights.SetActive(false);
@@ -111,6 +112,22 @@ public class LightControl : MonoBehaviour
                 BowButton.gameObject.SetActive(true);
             }
 
+            if (PngSeqSysR.iStage == 1)
+            {
+                SBoardButton.color = new Color(SBoardButton.color.r, SBoardButton.color.g, SBoardButton.color.b, 0f);
+                SBoardLights.SetActive(false);
+
+                PortButton.color = new Color(PortButton.color.r, PortButton.color.g, PortButton.color.b, 0f);
+                PortLights.SetActive(false);
+
+                BowButton.color = new Color(BowButton.color.r, BowButton.color.g, BowButton.color.b, 0f);
+                BowLights.SetActive(false);
+
+                SBoardButton.gameObject.SetActive(false);
+                PortButton.gameObject.SetActive(false);
+                BowButton.gameObject.SetActive(false);
+            }
+
         }
 
         UpdateBowLights();
@@ -121,13 +138,13 @@ public class LightControl : MonoBehaviour
 
         iStage = PngSeqSysR.iStage;
 
-        if (iStage > 1)
+        if (iStage > 1 && iStage != 5)
         {
-            Warning.SetActive(true);
+            //Warning.SetActive(true);
         }
         else
         {
-            Warning.SetActive(false);
+            //Warning.SetActive(false);
         }
     }
 
@@ -211,6 +228,11 @@ public class LightControl : MonoBehaviour
 
     public void SetState(int _iState)
     {
+
+        if(_iState == -1)
+        {
+            _iState = 5;
+        }
         PngSeqSysR.setStage(_iState);
     }
 

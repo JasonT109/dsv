@@ -1107,7 +1107,7 @@ namespace Meg.Networking
             { "reserveoxygentank6", new ParameterInfo { description = "Oxygen reserve tank 6 capacity (%)."} },
             { "rollangle", new ParameterInfo { minValue = -90, maxValue = 90, description = "Sub's current roll angle (degrees)." } },
             { "rollspeed", new ParameterInfo { description = "Sub's rolling speed."} },
-            { "rovstate", new ParameterInfo { minValue = 0, maxValue = 2, type = ParameterType.Int,  description = "rov screen state (start, launch, alert."} },
+            { "rovstate", new ParameterInfo { minValue = -1, maxValue = 2, type = ParameterType.Int,  description = "rov screen state (start, launch, alert."} },
             { "rovlightbow", new ParameterInfo { description = "rov light amount."} },
             { "rovlightsboard", new ParameterInfo { description = "rov light amount."} },
             { "rovlightport", new ParameterInfo { description = "rov light amount."} },

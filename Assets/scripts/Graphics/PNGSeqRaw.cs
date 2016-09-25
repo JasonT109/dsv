@@ -78,6 +78,10 @@ public class PNGSeqRaw : MonoBehaviour
 
         if (iIndex != iLastIndex)
         {
+            if (iIndex > stages[iStage].textures.Length - 1)
+            {
+                iIndex = stages[iStage].textures.Length - 1;
+            }
             Destination.texture = stages[iStage].textures[iIndex];
         }
         iLastIndex = iIndex;

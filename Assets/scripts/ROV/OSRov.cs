@@ -29,6 +29,12 @@ public class OSRov : NetworkBehaviour
 
     public GameObject CameraLaunched;
     public GameObject SonarLaunched;
+
+    public GameObject CameraPreset;
+    public GameObject SonarPreset;
+
+    public GameObject CameraReset;
+    public GameObject SonarReset;
     //0 = not launched
     //1 = launched
     //2 = eaten by a shark **SPOILER ALERT**
@@ -110,6 +116,12 @@ public class OSRov : NetworkBehaviour
         {
             switch (RovState)
             {
+                case -1:
+                    {
+                        //not launched. Starting state
+                        PresetRov();
+                    }
+                    break;
                 case 0:
                     {
                         //not launched. Starting state
@@ -134,10 +146,10 @@ public class OSRov : NetworkBehaviour
         RovLastState = RovState;
     }
 
-    void ResetRov()
+    void PresetRov()
     {
         //Lights
-        Lights.SetState(RovState);
+        Lights.SetState(0);
         this.transform.localPosition = StartPos;
         serverUtils.SubControl.LaunchROV = false;
         this.GetComponent<Rigidbody>().angularVelocity = new Vector3(0f, 0f, 0f);
@@ -156,6 +168,52 @@ public class OSRov : NetworkBehaviour
         if (SonarLaunched)
             SonarLaunched.SetActive(false);
 
+        if (CameraPreset)
+            CameraPreset.SetActive(true);
+        if (SonarPreset)
+            SonarPreset.SetActive(true);
+
+        if (CameraReset)
+            CameraReset.SetActive(false);
+        if (SonarReset)
+            SonarReset.SetActive(false);
+
+        serverUtils.ServerData.yawAngle = 15f;
+
+    }
+
+    void ResetRov()
+    {
+        //Lights
+        Lights.SetState(1);
+        this.transform.localPosition = StartPos;
+        serverUtils.SubControl.LaunchROV = false;
+        this.GetComponent<Rigidbody>().angularVelocity = new Vector3(0f, 0f, 0f);
+        this.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, 0f);
+
+        CameraAlerts.SetActive(false);
+        SonarAlerts.SetActive(false);
+
+        if (CameraaStart)
+            CameraaStart.SetActive(true);
+        if (SonarStart)
+            SonarStart.SetActive(true);
+
+        if (CameraLaunched)
+            CameraLaunched.SetActive(false);
+        if (SonarLaunched)
+            SonarLaunched.SetActive(false);
+
+        if (CameraPreset)
+            CameraPreset.SetActive(false);
+        if (SonarPreset)
+            SonarPreset.SetActive(false);
+
+        if (CameraReset)
+            CameraReset.SetActive(true);
+        if (SonarReset)
+            SonarReset.SetActive(true);
+
         serverUtils.ServerData.yawAngle = 15f;
 
     }
@@ -163,7 +221,7 @@ public class OSRov : NetworkBehaviour
     void LaunchRov()
     {
         //Lights
-        Lights.SetState(RovState);
+        Lights.SetState(5);
         serverUtils.SubControl.LaunchROV = true;
 
         CameraAlerts.SetActive(false);
@@ -213,7 +271,7 @@ public class OSRov : NetworkBehaviour
 
         if (Input.GetKeyDown("escape"))
         {
-            RovState = 0;
+            RovState = -1;
         }
     }
 
