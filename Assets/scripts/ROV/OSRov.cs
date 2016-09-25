@@ -207,7 +207,7 @@ public class OSRov : NetworkBehaviour
         if (CameraPreset)
             CameraPreset.SetActive(false);
         if (SonarPreset)
-            SonarPreset.SetActive(false);
+            SonarPreset.SetActive(true);
 
         if (CameraReset)
             CameraReset.SetActive(true);
@@ -249,12 +249,17 @@ public class OSRov : NetworkBehaviour
         if (CameraaStart)
             CameraaStart.SetActive(false);
         if (SonarStart)
-            SonarStart.SetActive(false);
+            SonarStart.SetActive(true);
 
         if (CameraLaunched)
             CameraLaunched.SetActive(false);
         if (SonarLaunched)
             SonarLaunched.SetActive(false);
+
+        if (SonarPreset)
+            SonarPreset.SetActive(true);
+        if (SonarReset)
+            SonarReset.SetActive(false);
     }
 
     void DebugStuff()
