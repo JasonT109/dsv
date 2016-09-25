@@ -294,6 +294,8 @@ public class SubControl : NetworkBehaviour
         serverUtils.ServerData.isControlDecentModeOnJoystick = true;
 
         Physics.gravity = new Vector3(0, -0.5F, 0);
+
+        BowtieDeadzone = 0.6f;
     }
 
     /** Apply control forces to pilot a big sub. */
