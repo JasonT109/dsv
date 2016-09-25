@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using Meg.Networking;
@@ -198,7 +198,7 @@ public class LightControl : MonoBehaviour
 
     public void UpdateBowLights()
     {
-        LightAmountBow = BowSlider.GetComponent<RadialSlider>().value;
+        LightAmountBow = BowSlider.GetComponent<RadialDial>().value;
 
         BowSlider.fillAmount = LightAmountBow;
         BowSlider.color = new Color(BowSlider.color.r, BowSlider.color.g, BowSlider.color.b, Mathf.Clamp(LightAmountBow, 0.3f, 1f));
@@ -208,7 +208,7 @@ public class LightControl : MonoBehaviour
 
     public void UpdateSboardLights()
     {
-        LightAmountSboard = SBoardSlider.GetComponent<RadialSlider>().value;
+        LightAmountSboard = SBoardSlider.GetComponent<RadialDial>().value;
 
         SBoardSlider.fillAmount = LightAmountSboard;
         SBoardSlider.color = new Color(SBoardSlider.color.r, SBoardSlider.color.g, SBoardSlider.color.b, Mathf.Clamp(LightAmountSboard, 0.3f, 1f));
@@ -218,7 +218,7 @@ public class LightControl : MonoBehaviour
 
     public void UpdatePortLights()
     {
-        LightAmountPort = PortSlider.GetComponent<RadialSlider>().value;
+        LightAmountPort = PortSlider.GetComponent<RadialDial>().value;
 
         PortSlider.fillAmount = LightAmountPort;
         PortSlider.color = new Color(PortSlider.color.r, PortSlider.color.g, PortSlider.color.b, Mathf.Clamp(LightAmountPort, 0.3f, 1f));
