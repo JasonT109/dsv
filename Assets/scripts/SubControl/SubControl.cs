@@ -442,6 +442,15 @@ public class SubControl : NetworkBehaviour
 
     private void ApplyRovForces()
     {
+        if(serverUtils.OSRov.RovState != 1)
+        {
+            Physics.gravity = new Vector3(0f, 0f, 0f);
+            return;
+
+        }
+
+        Physics.gravity = new Vector3(0, -0.5F, 0);
+
         //test for bowtie deadzone
         if (!(inputXaxis < BowtieDeadzone * Mathf.Abs(inputYaxis) && inputXaxis > -BowtieDeadzone * Mathf.Abs(inputYaxis)))
         {

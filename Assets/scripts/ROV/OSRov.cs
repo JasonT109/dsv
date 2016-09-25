@@ -13,13 +13,17 @@ public class OSRov : NetworkBehaviour
 
     [SyncVar]
     public int RovState = 0;
+    //-1 = not live
+    //0 = not launched
+    //1 = launched
+    //2 = eaten by a shark **SPOILER ALERT**
 
     [SyncVar]
     public int ROVCameraState = 0;
-    // 0 = live feed
-    // 1 = green
-    // 2 = offline screen
-
+    // 0 = offline screen
+    // 1 = live feed
+    // 2 = green
+ 
     private int RovLastState = 5;
     public bool DebugMode = true;
 
@@ -42,10 +46,9 @@ public class OSRov : NetworkBehaviour
     public GameObject CameraReset;
     public GameObject SonarReset;
 
-    public GameObject Green;
-    //0 = not launched
-    //1 = launched
-    //2 = eaten by a shark **SPOILER ALERT**
+    public GameObject CamerasGreen;
+    public GameObject CamerasOffline;
+    public GameObject CamerasLive;
 
     public LightControl Lights;
 
@@ -95,6 +98,40 @@ public class OSRov : NetworkBehaviour
             DebugStuff();
         }
 
+        switch(ROVCameraState)
+        {
+            case 0:
+                {
+                    if(CamerasOffline.activeInHierarchy == false)
+                    {
+                        CamerasGreen.SetActive(false);
+                        CamerasOffline.SetActive(true);
+                        CamerasLive.SetActive(false);
+                    }
+                }
+                break;
+            case 1:
+                {
+                    if (CamerasLive.activeInHierarchy == false)
+                    {
+                        CamerasGreen.SetActive(false);
+                        CamerasOffline.SetActive(false);
+                        CamerasLive.SetActive(true);
+                    }
+                }
+                break;
+            case 2:
+                {
+                    if (CamerasGreen.activeInHierarchy == false)
+                    {
+                        CamerasGreen.SetActive(true);
+                        CamerasOffline.SetActive(false);
+                        CamerasLive.SetActive(false);
+                    }
+                }
+                break;
+        }
+
         Hotkeys();
 
         //each frame updates
@@ -105,6 +142,7 @@ public class OSRov : NetworkBehaviour
                     //not launched. Starting state
                     if(serverUtils.SubControl.isControlDecentMode)
                     {
+                        serverUtils.SubControl.isControlDecentMode = false;
                         RovState = 0;
                     }
                 }
