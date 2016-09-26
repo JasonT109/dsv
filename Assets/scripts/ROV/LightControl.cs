@@ -93,6 +93,8 @@ public class LightControl : MonoBehaviour
                 SBoardButton.gameObject.SetActive(false);
                 PortButton.gameObject.SetActive(false);
                 BowButton.gameObject.SetActive(false);
+
+                Warning.SetActive(false);
             }
 
             // the stage has changed. Initialise the current stage
@@ -110,6 +112,15 @@ public class LightControl : MonoBehaviour
                 SBoardButton.gameObject.SetActive(true);
                 PortButton.gameObject.SetActive(true);
                 BowButton.gameObject.SetActive(true);
+
+                Warning.SetActive(false);
+            }
+
+            // the stage has changed. Initialise the current stage
+            if (PngSeqSysR.iStage == 2 || PngSeqSysR.iStage == 3 || PngSeqSysR.iStage == 4)
+            {
+
+                Warning.SetActive(true);
             }
 
             if (PngSeqSysR.iStage == 1)
@@ -126,6 +137,8 @@ public class LightControl : MonoBehaviour
                 SBoardButton.gameObject.SetActive(false);
                 PortButton.gameObject.SetActive(false);
                 BowButton.gameObject.SetActive(false);
+
+                Warning.SetActive(false);
             }
 
         }
