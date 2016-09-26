@@ -474,7 +474,8 @@ public class widget3DMap : MonoBehaviour {
         var acidColor = Color.Lerp(AcidColor2d, AcidColor3d, t);
         var acidMaxAlpha = serverUtils.GetServerData("acidLayerOpacity", _acidInitialAlpha);
         var acidTargetAlpha = serverUtils.GetServerData("acidLayer", 0) * acidMaxAlpha;
-        _acidAlpha = Mathf.SmoothDamp(_acidAlpha, acidTargetAlpha, ref _acidSmoothVelocity, 0.25f);
+        var acidFadeTime = serverUtils.GetServerData("acidLayerFadeTime", 0);
+        _acidAlpha = Mathf.SmoothDamp(_acidAlpha, acidTargetAlpha, ref _acidSmoothVelocity, acidFadeTime);
         if (_acidMaterial && _acidRenderers != null)
         {
             acidColor.a *= _acidAlpha;
@@ -529,7 +530,7 @@ public class widget3DMap : MonoBehaviour {
             _acidMaterial = Acid.GetComponent<Renderer>().material;
             _acidInitialAlpha = _acidMaterial.GetFloat("_Opacity");
             _acidMaxRefraction = _acidMaterial.GetFloat("_RefractionAmount");
-            _acidRenderers = Acid.GetComponentsInChildren<Renderer>();
+            _acidRenderers = Acid.GetComponentsInChildren<Renderer>(true);
         }
 
         _terrainInitialized = true;

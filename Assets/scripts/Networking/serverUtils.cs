@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.3.2";
+        public const string Version = "1.3.3";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -436,6 +436,7 @@ namespace Meg.Networking
             "acceleration",
             "acidlayer",
             "acidlayercount",
+            "acidlayerfadetime",
             "acidlayeropacity",
             "air",
             "airtank1",
@@ -615,6 +616,7 @@ namespace Meg.Networking
             "mapmode",
             "mapscale",
             "maptopdown",
+            "mapuseoldindicators",
             "maxwildlife",
             "maxspeed",
             "meg1posx",
@@ -867,6 +869,7 @@ namespace Meg.Networking
             { "acceleration", new ParameterInfo { description = "Sub's acceleration (scaling factor)."} },
             { "acidlayer", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Acid layer map visibility."} },
             { "acidlayercount", new ParameterInfo { maxValue = 4, type = ParameterType.Int, description = "Acid layer count in map."} },
+            { "acidlayerfadetime", new ParameterInfo { maxValue = 1, description = "Acid layer transition time."} },
             { "acidlayeropacity", new ParameterInfo { maxValue = 1, description = "Acid layer's opacity."} },
             { "air", new ParameterInfo { readOnly = true } },
             { "airtank1", new ParameterInfo { description = "Main air tank 1 capacity (%)."} },
@@ -1044,6 +1047,7 @@ namespace Meg.Networking
             { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
             { "mapscale", new ParameterInfo { description = "Scale factor used when placing vessels on the map."} },
             { "maptopdown", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether 3d map is in top-down (contour) mode."} },
+            { "mapuseoldindicators", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether to use the old-style map height indicators."} },
             { "maxwildlife", new ParameterInfo { minValue = 0, maxValue = 30, type = ParameterType.Int, description = "Maximum number of spawned small sonar contacts."} },
             { "maxspeed", new ParameterInfo { description = "Sub's maximum speed at 100% throttle (m/s)."} },
             { "megspeed", new ParameterInfo { description = "Speed that the Meg moves in the short-range sonar display."} },
@@ -1592,6 +1596,8 @@ namespace Meg.Networking
                         return MapData.mapScale;
                     case "maptopdown":
                         return MapData.mapTopDown ? 1 : 0;
+                    case "mapuseoldindicators":
+                        return MapData.mapUseOldIndicators ? 1 : 0;
                     case "towwinchload":
                         return OperatingData.towWinchLoad;
                     case "hydraulictemp":
@@ -1732,6 +1738,8 @@ namespace Meg.Networking
                         return ScreenData.startImageSequence;
                     case "greenscreenbrightness":
                         return ScreenData.greenScreenBrightness;
+                    case "acidlayerfadetime":
+                        return MapData.acidLayerFadeTime;
                     case "acidlayer":
                         return MapData.acidLayer;
                     case "acidlayercount":

@@ -1061,6 +1061,9 @@ public class serverData : NetworkBehaviour
                 case "greenscreenbrightness":
                     ScreenData.greenScreenBrightness = newValue;
                     break;
+                case "acidlayerfadetime":
+                    MapData.acidLayerFadeTime = newValue;
+                    break;
                 case "acidlayer":
                     MapData.acidLayer = (int) newValue;
                     break;
@@ -1105,6 +1108,9 @@ public class serverData : NetworkBehaviour
                     break;
                 case "maptopdown":
                     MapData.mapTopDown = newValue > 0;
+                    break;
+                case "mapuseoldindicators":
+                    MapData.mapUseOldIndicators = newValue > 0;
                     break;
                 case "maxwildlife":
                     SonarData.MaxWildlife = (int) newValue;

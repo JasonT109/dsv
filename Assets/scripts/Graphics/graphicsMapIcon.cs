@@ -43,10 +43,6 @@ public class graphicsMapIcon : MonoBehaviour {
         atBounds = isAtBounds;
         direction = iconDirection;
 
-        var mapPinManager = ObjectFinder.Find<NavSubPins>();
-        if (mapPinManager.isGliderMap)
-            transform.localScale = new Vector3(0.27f, transform.localScale.y, transform.localScale.z);
-
         if (atBounds)
         {
             button.GetComponent<Renderer>().enabled = false;

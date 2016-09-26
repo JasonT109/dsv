@@ -31,6 +31,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool mapTopDown = true;
 
+    [SyncVar]
+    public bool mapUseOldIndicators = false;
+
 
     [Header("Coordinates")]
 
@@ -54,6 +57,9 @@ public class mapData : NetworkBehaviour
 
     [SyncVar]
     public float acidLayerOpacity = 0.5f;
+
+    [SyncVar]
+    public float acidLayerFadeTime = 0.25f;
 
     [SyncVar]
     public int waterLayer = 1;

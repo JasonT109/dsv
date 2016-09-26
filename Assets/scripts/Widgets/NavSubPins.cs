@@ -22,6 +22,7 @@ public class NavSubPins : Singleton<NavSubPins>
 
     [Header("Configuration")]
 
+    public Vector2 ViewportSize = new Vector2(1920, 1080);
     public Vector2 imageSize = new Vector2(5, 5);
     public float lineXOffset = -0.1f;
     public bool isGliderMap = false;
@@ -86,18 +87,18 @@ public class NavSubPins : Singleton<NavSubPins>
         return pin;
     }
 
-    public Vector3 ConvertToMapScreenSpace(Vector3 position)
+    public Vector3 ConvertToPinSpace(Vector3 position)
     {
         // Project from map camera into viewport.
         var c = _mapCamera.WorldToViewportPoint(position);
 
-        // Convert into 2D map space.
-        Vector3 p;
-        p.x = Mathf.Clamp((c.x * 10.0f) - 5.0f, -imageSize.x, imageSize.x);
-        p.y = Mathf.Clamp((c.y * 10.0f) - 5.0f, -imageSize.y, imageSize.y);
-        p.z = c.z * 0.001f;
+        // Convert into pin's parent viewport space.
+        var extents = ViewportSize * 0.005f;
+        var x = graphicsMaths.remapValue(c.x, 0, 1, -extents.x, extents.x);
+        var y = graphicsMaths.remapValue(c.y, 0, 1, -extents.y, extents.y);
+        var z = c.z * 0.001f;
 
-        return p;
+        return new Vector3(x, y, z);
     }
 
     public float GetVesselFloorDistance(int vessel)

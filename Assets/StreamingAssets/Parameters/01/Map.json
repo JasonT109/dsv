@@ -17,6 +17,10 @@
 				},
 				{
 					"type":"Value",
+					"serverParam":"mapuseoldindicators"
+				},
+				{
+					"type":"Value",
 					"serverParam":"latitude"
 				},
 				{
@@ -34,6 +38,10 @@
 				{
 					"type":"Value",
 					"serverParam":"acidlayercount"
+				},
+				{
+					"type":"Value",
+					"serverParam":"acidlayerfadetime"
 				},
 				{
 					"type":"Value",

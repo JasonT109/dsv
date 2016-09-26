@@ -48,6 +48,9 @@ public class NavSubPin : MonoBehaviour
     /** Intercept line color. */
     public Color InterceptLineColor;
 
+    /** Height indicator line color. */
+    public Color HeightLineColor;
+
     /** Distance to ocean floor. */
     public float Distance;
 
@@ -88,6 +91,9 @@ public class NavSubPin : MonoBehaviour
 
     /** Raycast result, used to locate ocean floor. */
     private RaycastHit _hit;
+
+    /** Height indicator line. */
+    private VectorLine _heightLine;
 
     /** Interception line. */
     private VectorLine _interceptLine;
@@ -143,6 +149,7 @@ public class NavSubPin : MonoBehaviour
     /** Disabling. */
     private void OnDisable()
     {
+        VectorLine.Destroy(ref _heightLine);
         VectorLine.Destroy(ref _interceptLine);
         VectorLine.Destroy(ref _trailLine);
 
@@ -197,9 +204,8 @@ public class NavSubPin : MonoBehaviour
             _icon = vesselButton.GetComponent<graphicsMapIcon>();
 
         // Set up button handler for stats boxes.
-        // TODO: Re-enable stats boxes if desired.
-        // _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
-        // _vesselButtonControl.onPress.AddListener(OnButtonPressed);
+        _vesselButtonControl.onPress.RemoveListener(OnButtonPressed);
+        _vesselButtonControl.onPress.AddListener(OnButtonPressed);
     }
 
     /** Handle the map pin button being pressed. */
@@ -231,7 +237,6 @@ public class NavSubPin : MonoBehaviour
         // Update pin visibility.
         var visible = serverUtils.GetVesselVis(VesselId);
         vesselButton.SetActive(visible);
-        vesselHeightIndicator.SetActive(visible);
 
         // Get vessel's server position and apply that to the vessel model.
         var position = serverUtils.GetVesselPosition(VesselId);
@@ -245,33 +250,9 @@ public class NavSubPin : MonoBehaviour
         // Locate the vessel in 3d map world space.
         vesselModel.transform.position = serverUtils.GetVesselMapPosition(VesselId);
 
-        // Get position in map space and position button there.
-        var mapPos = VesselToMapScreen(vesselModel.transform.position);
+        // Get position in pin space and position button there.
+        var mapPos = VesselToPinSpace(vesselModel.transform.position);
         vesselButton.transform.localPosition = mapPos;
-
-        // Cast a ray down to the terrain from the original position.
-        if (Physics.Raycast(vesselModel.transform.position, -Vector3.up, out _hit))
-            Distance = _hit.distance;
-
-        // Update height indicator.
-        if (Distance > 0)
-        {
-            // Set the position of the height indicators to be at ground level
-            var groundPos = VesselToMapScreen(_hit.point);
-            vesselHeightIndicator.transform.localPosition = groundPos;
-
-            // Set the x position to be exactly the same as button plus offset
-            vesselHeightIndicator.transform.localPosition =
-                new Vector3(mapPos.x + LineXOffset,
-                    vesselHeightIndicator.transform.localPosition.y,
-                    vesselHeightIndicator.transform.localPosition.z + 0.1f);
-        }
-
-        // Update the height indicator's length.
-        float vesselHeight = mapPos.y - vesselHeightIndicator.transform.localPosition.y;
-        vesselHeightIndicator.GetComponent<graphicsSlicedMesh>().Height = vesselHeight;
-        vesselHeightIndicator.GetComponent<Renderer>()
-            .material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
 
         // Update pin colors. 
         UpdateColor();
@@ -282,9 +263,11 @@ public class NavSubPin : MonoBehaviour
         // Update label visibility.
         UpdateLabel();
 
-        // Hide indicator line at screen margins.
-        if (_icon.atBounds)
-            vesselHeightIndicator.SetActive(false);
+        // Update the height indicator.
+        if (serverUtils.GetServerBool("mapUseOldIndicators"))
+            UpdateHeightIndicatorOld(visible);
+        else
+            UpdateHeightIndicator(visible);
     }
 
     /** Update indicator lines for this vessel pin. */
@@ -375,15 +358,83 @@ public class NavSubPin : MonoBehaviour
     }
 
     /** Convert a vessel's position into map screenspace. */
-    private Vector3 VesselToMapScreen(Vector3 p)
-        { return _manager.ConvertToMapScreenSpace(p); }
+    private Vector3 VesselToPinSpace(Vector3 p)
+        { return _manager.ConvertToPinSpace(p); }
 
     /** Convert a vessel's position into 2D screen space. */
     private Vector3 VesselToScreen(Vector3 p)
     {
-        var map = VesselToMapScreen(p);
+        var map = VesselToPinSpace(p);
         var world = vesselButton.transform.parent.TransformPoint(map);
         return Camera.main.WorldToScreenPoint(world);
+    }
+
+    /** Update the height indicator for this vessel. */
+    private void UpdateHeightIndicatorOld(bool visible)
+    {
+        var buttonPos = vesselButton.transform.localPosition;
+        vesselHeightIndicator.SetActive(visible);
+
+        // Cast a ray down to the terrain from the original position.
+        if (Physics.Raycast(vesselModel.transform.position, -Vector3.up, out _hit))
+            Distance = _hit.distance;
+
+        // Update height indicator.
+        if (Distance > 0)
+        {
+            // Set the position of the height indicators to be at ground level
+            var groundPos = VesselToPinSpace(_hit.point);
+            vesselHeightIndicator.transform.localPosition = groundPos;
+
+            // Set the x position to be exactly the same as button plus offset
+            vesselHeightIndicator.transform.localPosition =
+                new Vector3(buttonPos.x + LineXOffset,
+                    vesselHeightIndicator.transform.localPosition.y,
+                    vesselHeightIndicator.transform.localPosition.z + 0.1f);
+        }
+
+        // Update the height indicator's length.
+        float vesselHeight = buttonPos.y - vesselHeightIndicator.transform.localPosition.y;
+        vesselHeightIndicator.GetComponent<graphicsSlicedMesh>().Height = vesselHeight;
+        vesselHeightIndicator.GetComponent<Renderer>()
+            .material.SetTextureScale("_MainTex", new Vector2(1, 4 * vesselHeight));
+
+        // Hide indicator line at screen margins.
+        if (_icon.atBounds)
+            vesselHeightIndicator.SetActive(false);
+    }
+
+    /** Update the height indicator for this vessel. */
+    private void UpdateHeightIndicator(bool visible)
+    {
+        vesselHeightIndicator.SetActive(false);
+
+        // Ensure intercept line exists.
+        if (_heightLine == null)
+        {
+            _heightLine = VectorLine.SetLine(HeightLineColor, new Vector3[2]);
+            _heightLine.lineWidth = InterceptLineWidth;
+            _heightLine.layer = gameObject.layer;
+        }
+
+        // Cast a ray down to the terrain from the original position.
+        Distance = -1f;
+        if (Physics.Raycast(vesselModel.transform.position, -Vector3.up, out _hit))
+            Distance = _hit.distance;
+
+        // Check if we should draw the intercept indicator.
+        _heightLine.active = Distance > 0 && visible; // && !_icon.atBounds;
+        if (!_heightLine.active)
+            return;
+
+        // Get interception locations.
+        var from = vesselModel.transform.position;
+        var to = _hit.point;
+
+        // Update interception indicator.
+        _heightLine.points3[0] = new Vector3(from.x, from.y, from.z);
+        _heightLine.points3[1] = new Vector3(to.x, to.y, to.z);
+        _heightLine.Draw3D();
     }
 
     /** Update the interception indicator for this vessel (if intercepting). */
