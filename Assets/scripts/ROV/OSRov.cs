@@ -52,6 +52,9 @@ public class OSRov : NetworkBehaviour
 
     public LightControl Lights;
 
+    public GameObject CamerasGuages;
+    public GameObject SonarGuages;
+
     Vector3 StartPos;
 
 
@@ -237,6 +240,9 @@ public class OSRov : NetworkBehaviour
 
         Physics.gravity = new Vector3(0, -0.5F, 0);
 
+        CamerasGuages.SetActive(false);
+        SonarGuages.SetActive(false);
+
     }
 
     void ResetRov()
@@ -275,6 +281,9 @@ public class OSRov : NetworkBehaviour
 
         Physics.gravity = new Vector3(0, -0.5F, 0);
 
+        CamerasGuages.SetActive(false);
+        SonarGuages.SetActive(false);
+
     }
 
     void LaunchRov()
@@ -297,6 +306,9 @@ public class OSRov : NetworkBehaviour
             SonarLaunched.SetActive(true);
 
         Physics.gravity = new Vector3(0, -0.5F, 0);
+
+        CamerasGuages.SetActive(true);
+        SonarGuages.SetActive(true);
     }
 
     void WarningRov()
@@ -325,6 +337,9 @@ public class OSRov : NetworkBehaviour
         serverUtils.ServerData.velocity = 0f;
         serverUtils.ServerData.verticalVelocity = 0f;
         Physics.gravity = new Vector3(0f, 0f, 0f);
+
+        CamerasGuages.SetActive(true);
+        SonarGuages.SetActive(true);
     }
 
     void DebugStuff()
