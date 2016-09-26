@@ -117,7 +117,7 @@ public class LightControl : MonoBehaviour
             }
 
             // the stage has changed. Initialise the current stage
-            if (PngSeqSysR.iStage == 2)
+            if (PngSeqSysR.iStage == 2 || PngSeqSysR.iStage == 3 || PngSeqSysR.iStage == 4)
             {
 
                 Warning.SetActive(true);
