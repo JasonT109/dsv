@@ -54,6 +54,8 @@ public class OSRov : NetworkBehaviour
 
     public GameObject CamerasGuages;
     public GameObject SonarGuages;
+    public GameObject WhiteMapObjects;
+    public GameObject YellowMapObjects;
 
     Vector3 StartPos;
 
@@ -243,6 +245,9 @@ public class OSRov : NetworkBehaviour
         CamerasGuages.SetActive(false);
         SonarGuages.SetActive(false);
 
+        WhiteMapObjects.SetActive(false);
+        YellowMapObjects.SetActive(false);
+
     }
 
     void ResetRov()
@@ -284,6 +289,9 @@ public class OSRov : NetworkBehaviour
         CamerasGuages.SetActive(false);
         SonarGuages.SetActive(false);
 
+        WhiteMapObjects.SetActive(false);
+        YellowMapObjects.SetActive(false);
+
     }
 
     void LaunchRov()
@@ -309,6 +317,9 @@ public class OSRov : NetworkBehaviour
 
         CamerasGuages.SetActive(true);
         SonarGuages.SetActive(true);
+
+        WhiteMapObjects.SetActive(true);
+        YellowMapObjects.SetActive(true);
     }
 
     void WarningRov()
@@ -340,6 +351,9 @@ public class OSRov : NetworkBehaviour
 
         CamerasGuages.SetActive(true);
         SonarGuages.SetActive(true);
+
+        WhiteMapObjects.SetActive(false);
+        YellowMapObjects.SetActive(false);
     }
 
     void DebugStuff()
