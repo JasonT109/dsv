@@ -25,6 +25,12 @@ public class debugVesselViewportUi : MonoBehaviour
     /** Root of the map display. */
     public Transform Map;
 
+    /** Header. */
+    public GameObject Header;
+
+    /** Footer. */
+    public GameObject Footer;
+
     /** Yaw control for the sonar. */
     public serverValueRotate SonarYaw;
 
@@ -40,12 +46,16 @@ public class debugVesselViewportUi : MonoBehaviour
     /** Toggle for setting map mode. */
     public Toggle MapToggle;
 
+    /** Toggle for setting nautical map mode. */
+    public Toggle NauticalMapToggle;
+
     /** Possible viewport display modes. */
     public enum ViewportMode
     {
         SonarNorthUp,
         SonarHeadingUp,
-        Map
+        Map,
+        NauticalMap
     }
 
     /** Current viewport mode. */
@@ -59,6 +69,10 @@ public class debugVesselViewportUi : MonoBehaviour
     public bool IsMap
         { get { return Mode == ViewportMode.Map; } }
 
+    /** Whether nautical map is displayed. */
+    public bool IsNauticalMap
+        { get { return Mode == ViewportMode.NauticalMap; } }
+
 
     // Members
     // ------------------------------------------------------------
@@ -66,9 +80,17 @@ public class debugVesselViewportUi : MonoBehaviour
     /** Whether UI is being updated. */
     private bool _updating;
 
+    /** Viewport's backdrop graphic. */
+    private Graphic _graphic;
+
+
 
     // Unity Methods
     // ------------------------------------------------------------
+
+    /** Initialization. */
+    private void Awake()
+        { _graphic = GetComponent<Graphic>(); }
 
     /** Enabling. */
     private void OnEnable()
@@ -94,6 +116,10 @@ public class debugVesselViewportUi : MonoBehaviour
     public void SelectMap()
         { if (!_updating) Mode = ViewportMode.Map; }
 
+    /** Select Nautical Map mode. */
+    public void SelectNauticalMap()
+        { if (!_updating) Mode = ViewportMode.NauticalMap; }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -107,10 +133,18 @@ public class debugVesselViewportUi : MonoBehaviour
         SonarHeadingUpToggle.isOn = Mode == ViewportMode.SonarHeadingUp;
         MapToggle.isOn = Mode == ViewportMode.Map;
 
+        NauticalMapToggle.isOn = Mode == ViewportMode.NauticalMap;
+        NauticalMapToggle.interactable = Map2d.HasInstance;
+
+        _graphic.enabled = Mode != ViewportMode.NauticalMap;
+
         Sonar.gameObject.SetActive(IsSonar);
         Map.gameObject.SetActive(IsMap);
         SonarYaw.enabled = Mode == ViewportMode.SonarHeadingUp;
         SonarShipYaw.enabled = Mode == ViewportMode.SonarNorthUp;
+
+        if (Map2d.HasInstance)
+            Map2d.Instance.gameObject.SetActive(Mode == ViewportMode.NauticalMap);
 
         _updating = false;
     }

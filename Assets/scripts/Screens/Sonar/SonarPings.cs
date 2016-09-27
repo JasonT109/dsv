@@ -52,6 +52,9 @@ public class SonarPings : MonoBehaviour
     /** Whether to hide pings if this is the player vessel. */
     public bool HideIfPlayer = true;
 
+    /** Whether ping keeps its original world position/scale when added to the ping diplay. */
+    public bool WorldPositionStays;
+
 
     [Header("Prefabs")]
 
@@ -181,7 +184,7 @@ public class SonarPings : MonoBehaviour
         {
             Destroy(_pings[i].gameObject);
             _pings[i] = Instantiate(prefab);
-            _pings[i].transform.SetParent(Root, false);
+            _pings[i].transform.SetParent(Root, WorldPositionStays);
         }
 
         // Return the ping instance.

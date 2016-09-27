@@ -45,6 +45,8 @@ public class debugVesselPingUi : MonoBehaviour
     public Graphic Icon;
     public Image Arrow;
 
+    public bool ServerOnly;
+
 
     [Header("Colors")]
 
@@ -102,6 +104,10 @@ public class debugVesselPingUi : MonoBehaviour
 
     void Update()
     {
+        // Check if pings can only be manipulated on the server.
+        if (ServerOnly && !serverUtils.IsServer())
+            return;
+
         // Determine the proper color for this ping.
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var color = Ping.Color;
@@ -178,6 +184,10 @@ public class debugVesselPingUi : MonoBehaviour
 
     private void OnPressed(object sender, EventArgs e)
     {
+        // Check if pings can only be manipulated on the server.
+        if (ServerOnly && !serverUtils.IsServer())
+            return;
+
         Select();
     }
 
