@@ -4,10 +4,14 @@ using System.Collections;
 public class ReciprocalScale : MonoBehaviour
 {
 
+    private Vector3 _initialScale;
+
     public Transform Target;
 
     private void Start()
     {
+        _initialScale = transform.localScale;
+
         if (!Target && Camera.main)
             Target = Camera.main.transform;
 
@@ -26,7 +30,8 @@ public class ReciprocalScale : MonoBehaviour
         if (Mathf.Approximately(s.x, 0) || Mathf.Approximately(s.y, 0) || Mathf.Approximately(s.z, 0))
             return;
 
-        transform.localScale = new Vector3(1 / s.x, 1 / s.y, 1 / s.z);
+        var o = _initialScale;
+        transform.localScale = new Vector3(o.x / s.x, o.y / s.y, o.z / s.z);
     }
 
 }
