@@ -45,8 +45,6 @@ public class debugVesselPingUi : MonoBehaviour
     public Graphic Icon;
     public Image Arrow;
 
-    public bool ServerOnly;
-
 
     [Header("Colors")]
 
@@ -104,8 +102,13 @@ public class debugVesselPingUi : MonoBehaviour
 
     void Update()
     {
-        // Check if pings can only be manipulated on the server.
-        if (ServerOnly && !serverUtils.IsServer())
+        // Only allow pings to be manipulated when debug screen is open.
+        var active = debugVesselsUi.Instance.gameObject.activeInHierarchy;
+        Transformer.gameObject.SetActive(active);
+        TransformGesture.enabled = active;
+        PressGesture.enabled = active;
+        ReleaseGesture.enabled = active;
+        if (!active)
             return;
 
         // Determine the proper color for this ping.
@@ -184,10 +187,6 @@ public class debugVesselPingUi : MonoBehaviour
 
     private void OnPressed(object sender, EventArgs e)
     {
-        // Check if pings can only be manipulated on the server.
-        if (ServerOnly && !serverUtils.IsServer())
-            return;
-
         Select();
     }
 
