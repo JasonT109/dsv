@@ -22,12 +22,22 @@ public class RemoteScreenStateButtons : MonoBehaviour
     /** The set of buttons to toggle according to screen state. */
     public StateButton[] Buttons;
 
+    /** Button press timeout. */
+    public float PressTimeout = 0.25f;
+
+
+    /** Time for next update. */
+    private float _nextUpdateTime;
+
 
     /** Intialization. */
     private void Awake()
     {
         if (!ButtonGroup)
             ButtonGroup = GetComponent<buttonGroup>();
+
+        foreach (var button in Buttons)
+            button.Button.onPress.AddListener(OnPressed);
     }
 
     /** Enabling. */
@@ -49,6 +59,9 @@ public class RemoteScreenStateButtons : MonoBehaviour
     /** Update buttons according to screen state. */
     private void UpdateButtons()
     {
+        if (Time.time < _nextUpdateTime)
+            return;
+
         if (!serverUtils.IsReady())
             return;
 
@@ -71,6 +84,13 @@ public class RemoteScreenStateButtons : MonoBehaviour
     private void ToggleOn(StateButton b)
     {
         ButtonGroup.toggleButtonOn(b.Button.gameObject);
+    }
+
+    /** Handle one of the buttons being pressed. */
+    private void OnPressed()
+    {
+        if (PressTimeout > 0)
+            _nextUpdateTime = Time.time + PressTimeout;
     }
 
 }

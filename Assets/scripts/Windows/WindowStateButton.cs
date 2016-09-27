@@ -14,8 +14,14 @@ public class WindowStateButton : MonoBehaviour
     /** Window that button is associated with. */
     public GameObject Window;
 
+    /** Button press timeout. */
+    public float PressTimeout;
+
     /** Associated button control. */
     private buttonControl _button;
+
+    /** Time for next update. */
+    private float _nextUpdateTime;
 
     private void Awake()
     {
@@ -32,6 +38,9 @@ public class WindowStateButton : MonoBehaviour
 
     private void Update()
     {
+        if (Time.time < _nextUpdateTime)
+            return;
+
         var active = HasWindow();
         if (_button.active != active)
             _button.setButtonActive(active);
@@ -57,6 +66,9 @@ public class WindowStateButton : MonoBehaviour
             RemoveWindow();
         else
             AddWindow();
+
+        if (PressTimeout > 0)
+            _nextUpdateTime = Time.time + PressTimeout;
     }
 
     public bool HasWindow()
