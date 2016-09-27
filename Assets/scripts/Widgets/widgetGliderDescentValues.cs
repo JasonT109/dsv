@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -42,10 +42,19 @@ public class widgetGliderDescentValues : MonoBehaviour
         float pitchAngle = serverUtils.GetServerData("pitchAngle");
         angleText.Text = pitchAngle.ToString("N0") + "°";
 
-        float flowRate = 0;
+        float flowRate = maxFlowRate * powerValue;
+        UpdateParticles(flowRate, powerValue);
+
+        flowText.Text = flowRate.ToString("N2");
+    }
+
+    private void UpdateParticles(float flowRate, float powerValue)
+    {
+        if (!p1 || !p2)
+            return;
+
         if (powerValue != 0)
         {
-            flowRate = maxFlowRate * powerValue;
             //flowRate += Mathf.Sin(0.01f * Time.time);
             p1Emission.rate = new ParticleSystem.MinMaxCurve(100);
             p2Emission.rate = new ParticleSystem.MinMaxCurve(100);
@@ -59,7 +68,6 @@ public class widgetGliderDescentValues : MonoBehaviour
             p1Emission.rate = new ParticleSystem.MinMaxCurve(0);
             p2Emission.rate = new ParticleSystem.MinMaxCurve(0);
         }
-        flowText.Text = flowRate.ToString("N2");
     }
 
     void OnEnable()

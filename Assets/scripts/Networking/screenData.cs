@@ -109,7 +109,8 @@ public class screenData : NetworkBehaviour
         Systems,
         Map,
         Cameras,
-        Vitals
+        Vitals,
+        DiveMode
     }
 
     // Structures

@@ -42,6 +42,8 @@ public class graphicsBackColor : MonoBehaviour
     {
         r = gameObject.GetComponent<Renderer>();
         m = r.material;
+
+        Update();
     }
 
     void Update ()
