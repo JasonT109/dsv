@@ -56,7 +56,8 @@ public class vesselData : NetworkBehaviour
         Square = 3,
         Diamond = 4,
         Arrow = 5,
-        Tracker = 6
+        Tracker = 6,
+        Marker = 7
     }
 
     public static Icon IconForName(string name)

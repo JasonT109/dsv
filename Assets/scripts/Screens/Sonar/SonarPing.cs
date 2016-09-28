@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
@@ -65,7 +66,7 @@ public class SonarPing : MonoBehaviour
         }
     }
 
-
+    
     // Private Properties
     // ------------------------------------------------------------
 
@@ -246,6 +247,5 @@ public class SonarPing : MonoBehaviour
             DepthLabel.Text = string.Format("{0:n0}m", Vessel.Depth);
         }
     }
-
 
 }

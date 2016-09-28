@@ -96,6 +96,14 @@ public class debugVesselViewportUi : MonoBehaviour
     private void OnEnable()
         { UpdateUi(); }
 
+    /** Disabling. */
+    private void OnDisable()
+    {
+        // Disable 2D map when leaving the map viewport.
+        if (Map2d.HasInstance && Mode == ViewportMode.NauticalMap)
+            Map2d.Instance.gameObject.SetActive(false);
+    }
+
     /** Update the UI's current state. */
     private void Update()
         { UpdateUi(); }
@@ -148,6 +156,5 @@ public class debugVesselViewportUi : MonoBehaviour
 
         _updating = false;
     }
-
 
 }
