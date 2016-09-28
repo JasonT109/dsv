@@ -44,6 +44,9 @@ public class debugFileListUi : MonoBehaviour
     /** The current set of file entries. */
     private readonly List<debugFileEntryUi> _entries = new List<debugFileEntryUi>();
 
+    /** The set of instantiated file entries. */
+    private readonly List<debugFileEntryUi> _instances = new List<debugFileEntryUi>();
+
     /** The selected entry. */
     private debugFileEntryUi _selectedEntry;
 
@@ -114,18 +117,35 @@ public class debugFileListUi : MonoBehaviour
             if (!Regex.IsMatch(f.FullName, Filter))
                 continue;
 
-            var entry = Instantiate(FileEntryPrefab);
-            _entries.Add(entry);
-
-            entry.transform.SetParent(transform, false);
+            var entry = GetEntry(_entries.Count);
             entry.FileInfo = f;
+
+            _entries.Add(entry);
+        }
+    }
+
+    private debugFileEntryUi GetEntry(int i)
+    {
+        if (i >= _instances.Count)
+        {
+            var entry = Instantiate(FileEntryPrefab);
             entry.Toggle.onValueChanged.AddListener(
                 on => OnEntryChanged(entry, on));
+
+            entry.transform.SetParent(transform, false);
+            _instances.Add(entry);
         }
+
+        _instances[i].gameObject.SetActive(true);
+
+        return _instances[i];
     }
 
     private void OnEntryChanged(debugFileEntryUi entry, bool value)
     {
+        if (!entry || !entry.gameObject.activeInHierarchy)
+            return;
+
         if (value)
             SelectedEntry = entry;
         else if (entry == SelectedEntry)
@@ -135,7 +155,7 @@ public class debugFileListUi : MonoBehaviour
     private void RemoveEntries()
     {
         foreach (var e in _entries)
-            e.gameObject.Cleanup();
+            e.gameObject.SetActive(false);
 
         _entries.Clear();
         SetSelectedEntry(null);

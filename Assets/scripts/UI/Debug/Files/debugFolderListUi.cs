@@ -55,8 +55,11 @@ public class debugFolderListUi : MonoBehaviour
     /** The current folder. */
     private string _folder;
 
-    /** The current set of file entries. */
+    /** The current set of folder entries. */
     private readonly List<debugFolderEntryUi> _entries = new List<debugFolderEntryUi>();
+
+    /** The set of instantiated folder entries. */
+    private readonly List<debugFolderEntryUi> _instances = new List<debugFolderEntryUi>();
 
     /** The selected entry. */
     private debugFolderEntryUi _selectedEntry;
@@ -134,14 +137,27 @@ public class debugFolderListUi : MonoBehaviour
             if (!Regex.IsMatch(f.FullName, Filter))
                 continue;
 
-            var entry = Instantiate(FolderEntryPrefab);
-            _entries.Add(entry);
-
-            entry.transform.SetParent(transform, false);
+            var entry = GetEntry(_entries.Count);
             entry.DirectoryInfo = f;
+            _entries.Add(entry);
+        }
+    }
+
+    private debugFolderEntryUi GetEntry(int i)
+    {
+        if (i >= _instances.Count)
+        {
+            var entry = Instantiate(FolderEntryPrefab);
             entry.Toggle.onValueChanged.AddListener(
                 on => OnEntryChanged(entry, on));
+
+            entry.transform.SetParent(transform, false);
+            _instances.Add(entry);
         }
+
+        _instances[i].gameObject.SetActive(true);
+
+        return _instances[i];
     }
 
     private void OnEntryChanged(debugFolderEntryUi entry, bool value)
@@ -155,7 +171,7 @@ public class debugFolderListUi : MonoBehaviour
     private void RemoveEntries()
     {
         foreach (var e in _entries)
-            e.gameObject.Cleanup();
+            e.gameObject.SetActive(false);
 
         _entries.Clear();
         SetSelectedEntry(null);
