@@ -2361,6 +2361,13 @@ namespace Meg.Networking
                 LocalPlayer.PostVesselIcon(id, icon);
         }
 
+        /** Post vessel's icon color to the server. */
+        public static void PostVesselColor(int id, Color color)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselColor(id, color);
+        }
+
         /** Post vessel map visibility to the server. */
         public static void PostVesselOnMap(int id, bool value)
         {

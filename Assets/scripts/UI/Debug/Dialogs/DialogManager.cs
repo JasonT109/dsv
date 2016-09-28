@@ -12,6 +12,10 @@ public class DialogManager : Singleton<DialogManager>
     /** Prefab for a list dialog. */
     public DialogList DialogListPrefab;
 
+    /** Prefab for a color dialog. */
+    public DialogColor DialogColorPrefab;
+
+
     /** Current dialog instance. */
     public Dialog Current { get; private set; }
 
@@ -79,6 +83,21 @@ public class DialogManager : Singleton<DialogManager>
         return dialog;
     }
 
+    /** Display a color dialog. */
+    public DialogColor ShowColor(string title, string message, Color color, UnityAction<Color> chosen)
+    {
+        if (Showing)
+            return null;
 
+        var dialog = Instantiate(DialogColorPrefab);
+        dialog.transform.SetParent(transform, false);
+        dialog.Configure(title.ToUpper(), message, color);
+        Current = dialog;
+
+        if (chosen != null)
+            dialog.OnChosen.AddListener(chosen);
+
+        return dialog;
+    }
 
 }

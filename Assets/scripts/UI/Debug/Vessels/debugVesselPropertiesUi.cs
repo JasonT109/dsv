@@ -28,7 +28,9 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public Slider DepthSlider;
     public InputField DepthInput;
     public Button SelectIconButton;
+    public Button SelectColorButton;
     public Button AddMovementEventButton;
+    public Graphic Color;
 
     [Header("Movement Components")]
     public Transform MovementProperties;
@@ -183,6 +185,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.onValueChanged.AddListener(OnDepthSliderChanged);
         DepthInput.onEndEdit.AddListener(OnDepthInputChanged);
         SelectIconButton.onClick.AddListener(OnSelectIconClicked);
+        SelectColorButton.onClick.AddListener(OnSelectColorClicked);
 
         ConfigureMovementProperties();
     }
@@ -200,6 +203,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.value = Vessel.Depth;
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, Vessel.Depth);
         DepthInput.text = string.Format("{0:N1}", Vessel.Depth);
+        Color.color = Vessel.ColorOnMap;
 
         _updating = false;
 
@@ -232,10 +236,22 @@ public class debugVesselPropertiesUi : MonoBehaviour
             string.Format("Please select the icon for vessel '{0}':", Vessel.Name),
             items,
             Vessel.Icon.ToString(),
-            (item) =>
+            item =>
             {
                 var icon = vesselData.IconForName(item.Id);
                 serverUtils.PostVesselIcon(Vessel.Id, icon);
+            });
+    }
+
+    private void OnSelectColorClicked()
+    {
+        DialogManager.Instance.ShowColor("SELECT VESSEL COLOR",
+            string.Format("Please select the icon color for vessel '{0}':", Vessel.Name),
+            Vessel.ColorOnMap,
+            color =>
+            {
+                serverUtils.PostVesselColor(Vessel.Id, color);
+                Color.color = color;
             });
     }
 

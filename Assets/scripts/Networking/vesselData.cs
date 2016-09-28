@@ -51,7 +51,12 @@ public class vesselData : NetworkBehaviour
     public enum Icon
     {
         Normal = 0,
-        Warning = 1
+        Warning = 1,
+        Circle = 2,
+        Square = 3,
+        Diamond = 4,
+        Arrow = 5,
+        Tracker = 6
     }
 
     public static Icon IconForName(string name)
@@ -528,6 +533,10 @@ public class vesselData : NetworkBehaviour
     /** Return a vessel's current warning status. */
     public Icon GetIcon(int id)
         { return GetVessel(id).Icon; }
+
+    /** Set a vessel's color (1-based index). */
+    public void SetColor(int id, Color color)
+        { SetVessel(id, new Vessel(GetVessel(id)) { ColorOnSonar = color, ColorOnMap = color }); }
 
     /** Set a vessel's sonar color (1-based index). */
     public void SetColorOnSonar(int id, Color color)

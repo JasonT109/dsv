@@ -211,6 +211,15 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselIcon(id, icon);
     }
 
+    /** Post vessel's color to the server. */
+    public void PostVesselColor(int id, Color color)
+    {
+        if (isServer)
+            ServerSetVesselColor(id, color);
+        else
+            CmdSetVesselColor(id, color);
+    }
+
     /** Post vessel map visibility to the server. */
     public void PostVesselOnMap(int id, bool value)
     {
@@ -535,6 +544,11 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselIcon(int id, vesselData.Icon icon)
         { ServerSetVesselIcon(id, icon); }
 
+    /** Set vessel's color on the server. */
+    [Command]
+    public void CmdSetVesselColor(int id, Color color)
+        { ServerSetVesselColor(id, color); }
+
     /** Command to set vessel movements state on the server. */
     [Command]
     public void CmdSetVesselMovementState(string state)
@@ -726,6 +740,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetVesselIcon(int id, vesselData.Icon icon)
         { serverUtils.VesselData.SetIcon(id, icon); }
+
+    /** Set vessel's color on the server. */
+    [Server]
+    public void ServerSetVesselColor(int id, Color color)
+        { serverUtils.VesselData.SetColor(id, color); }
 
     /** Set vessel map visibility to the server. */
     [Server]
