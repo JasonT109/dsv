@@ -70,7 +70,7 @@ public class ObjectPool : AutoSingleton<ObjectPool>
         if (Instance.IsPooled(go))
             Instance.ReturnObject(go, unparent);
         else
-            Destroy(go);
+            go.Cleanup();
     }
 
 

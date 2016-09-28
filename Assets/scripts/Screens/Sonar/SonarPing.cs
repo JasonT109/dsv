@@ -122,6 +122,12 @@ public class SonarPing : MonoBehaviour
             StartCoroutine(AutoPulseRoutine(AutoPulseInterval));
     }
 
+    /** Disabling. */
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
 
     // Public Methods
     // ------------------------------------------------------------
@@ -196,7 +202,7 @@ public class SonarPing : MonoBehaviour
         Indicator.transform.DOScale(_indicatorScale, 0.5f);
 
         var r = Indicator.GetComponent<MeshRenderer>();
-        var g = Indicator.GetComponent<Graphic>();
+        var g = Indicator.GetComponent<CanvasGroup>();
         if (r)
         {
             r.material.SetColor("_TintColor", _indicatorColor);
@@ -204,8 +210,8 @@ public class SonarPing : MonoBehaviour
         }
         else if (g)
         {
-            g.color = _indicatorColor;
-            g.DOColor(new Color(0, 0, 0, 0), 0.5f).SetDelay(0.25f);
+            g.alpha = 1;
+            g.DOFade(0, 0.5f).SetDelay(0.25f);
         }
     }
 
@@ -222,7 +228,7 @@ public class SonarPing : MonoBehaviour
             Pulse();
             yield return wait;
         }
-        
+       
     }
 
     /** Update the ping's depth display. */

@@ -11,10 +11,15 @@ public class DestroyAfterTime : MonoBehaviour {
         StartCoroutine(DestroyRoutine());
     }
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
     IEnumerator DestroyRoutine()
     {
         yield return new WaitForSeconds(Interval);
-        gameObject.Cleanup();
+        ObjectPool.Cleanup(gameObject);
     }
 
 }

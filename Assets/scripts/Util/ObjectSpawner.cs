@@ -10,6 +10,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public float MinDistance = 0;
 
+    public bool Pooled;
     public bool Siblings;
     public bool InheritScale;
 
@@ -38,7 +39,7 @@ public class ObjectSpawner : MonoBehaviour
                 yield return wait;
 
             _lastSpawnPosition = transform.localPosition;
-            var go = Instantiate(Prefab);
+            var go = Pooled ? ObjectPool.Get(Prefab) : Instantiate(Prefab);
             if (!go)
                 yield break;
 

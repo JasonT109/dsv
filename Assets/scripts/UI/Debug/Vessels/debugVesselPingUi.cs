@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 using Meg.EventSystem;
 using Meg.Networking;
 using TouchScript.Behaviors;
@@ -74,6 +75,9 @@ public class debugVesselPingUi : MonoBehaviour
     /** Graphical elements in the ping. */
     private Graphic[] _graphics;
 
+    /** Canvas group. */
+    private CanvasGroup _group;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -97,12 +101,19 @@ public class debugVesselPingUi : MonoBehaviour
         if (ReleaseGesture)
             ReleaseGesture.Released += OnReleased;
 
-        _graphics = transform.GetComponentsInChildren<Graphic>();
+        _graphics = transform.GetComponentsInChildren<Graphic>(true);
+        _group = GetComponent<CanvasGroup>();
     }
 
     private void OnEnable()
     {
         Transformer.gameObject.SetActive(true);
+
+        if (_group)
+        {
+            _group.alpha = 0;
+            _group.DOFade(1, 0.25f);
+        }
     }
 
     private void OnDisable()
