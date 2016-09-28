@@ -56,6 +56,10 @@ public class debugEvacScreenUi : MonoBehaviour
 
     private readonly screenData.Content[] _topWindows =
     {
+        screenData.Content.Thrusters,
+        screenData.Content.SonarLong,
+        screenData.Content.Comms,
+        screenData.Content.DiveMode,
     };
 
     private readonly screenData.Content[] _noWindows =
