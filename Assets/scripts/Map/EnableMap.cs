@@ -23,8 +23,12 @@ public class EnableMap : MonoBehaviour
 
     void SetEnabled(bool value)
     {
-        if (Map.Instance)
-            Map.Instance.Root.gameObject.SetActive(value);
+        if (!Map.Instance)
+            return;
+
+        var root = Map.Instance.Root.gameObject;
+        if (root.activeSelf != value)
+            root.SetActive(value);
     }
 
 }

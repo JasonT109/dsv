@@ -100,6 +100,16 @@ public class debugVesselPingUi : MonoBehaviour
         _graphics = transform.GetComponentsInChildren<Graphic>();
     }
 
+    private void OnEnable()
+    {
+        Transformer.gameObject.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        Transformer.gameObject.SetActive(false);
+    }
+
     void Update()
     {
         // Only allow pings to be manipulated when debug screen is open.

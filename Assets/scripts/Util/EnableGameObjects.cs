@@ -26,7 +26,7 @@ public class EnableGameObjects : MonoBehaviour
     void SetEnabled(bool value)
     {
         foreach (var go in Objects)
-            if (go)
+            if (go && go.activeSelf != value)
                 go.SetActive(value);
     }
 

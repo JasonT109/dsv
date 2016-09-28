@@ -15,13 +15,15 @@ public class EnableObjectsFromButton : MonoBehaviour
 	}
 	
 	void Update()
-    {
+	{
+	    var active = Button && Button.active;
+
         foreach (var go in Objects)
-            if (go)
-                go.SetActive(Button && Button.active);
+            if (go && go.activeSelf != active)
+                go.SetActive(active);
 
         foreach (var b in Behaviours)
             if (b)
-                b.enabled = Button && Button.active;
+                b.enabled = active;
     }
 }

@@ -25,7 +25,8 @@ public class enableOnPlayerMovement : MonoBehaviour
             active = !active;
 
         for (var i = 0; i < Targets.Length; i++)
-            Targets[i].SetActive(active);
+            if (Targets[i].activeSelf != active)
+                Targets[i].SetActive(active);
     }
 
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
  * for getting and recycling them. 
  */ 
 
-public class ObjectPool : Singleton<ObjectPool>
+public class ObjectPool : AutoSingleton<ObjectPool>
 {
 	// Properties
 	// ----------------------------------------------------------------------------
@@ -43,44 +43,34 @@ public class ObjectPool : Singleton<ObjectPool>
 
     /** Tries to get an object instance from the pool. */
     public static GameObject Get(GameObject template, bool active = true, bool staticBatch = false, string name = null)
-    { return HasInstance ? Instance.GetObject(template, active, staticBatch, name) : null; }
+        { return Instance.GetObject(template, active, staticBatch, name); }
 
     /** Tries to get an object instance from the pool, placing it at the given transform's location. */
     public static GameObject GetAt(GameObject template, Transform t, bool reparent = true)
-    { return HasInstance ? Instance.GetObjectAt(template, t, reparent) : null; }
+        { return Instance.GetObjectAt(template, t, reparent); }
 
     /** Tries to get an object instance from the pool, placing it at the given transform's location. */
     public static GameObject GetAt(GameObject template, Vector3 position, Quaternion rotation)
-    { return HasInstance ? Instance.GetObjectAt(template, position, rotation) : null; }
+        { return Instance.GetObjectAt(template, position, rotation); }
 
     /** Get an object with the associated component on it. */
     public static T GetComponent<T>(T component, bool active = true, bool staticBatch = false, string name = null) where T : Component
-    { return HasInstance ? Instance.GetObjectWithComponent<T>(component, active, staticBatch, name) : null; }
+        { return Instance.GetObjectWithComponent<T>(component, active, staticBatch, name); }
 
     /** Get an object with the associated component on it, placing it at the given transform's location.. */
     public static T GetComponentAt<T>(T component, Transform t, bool reparent = true) where T : Component
-    { return HasInstance ? Instance.GetObjectWithComponentAt<T>(component, t, reparent) : null; }
+        { return Instance.GetObjectWithComponentAt<T>(component, t, reparent); }
 
     /** Cleans up an object (whether pooled or not.) */
     public static void Cleanup(GameObject go, bool unparent = false)
     {
-        if (!HasInstance || !go)
+        if (!go)
             return;
 
         if (Instance.IsPooled(go))
             Instance.ReturnObject(go, unparent);
         else
             Destroy(go);
-    }
-
-
-    // Unity Methods
-    // ----------------------------------------------------------------------------
-
-    /** Preinitialization. */
-    private void Awake()
-    {
-        EnsureInstanceExists();
     }
 
 

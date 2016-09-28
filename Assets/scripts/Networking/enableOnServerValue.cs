@@ -40,7 +40,8 @@ public class enableOnServerValue : MonoBehaviour
             active = Mathf.Approximately(value, threshold);
 
         for (var i = 0; i < Targets.Length; i++)
-            Targets[i].SetActive(active);
+            if (Targets[i].activeSelf != active)
+                Targets[i].SetActive(active);
 
         for (var i = 0; i < Behaviours.Length; i++)
             Behaviours[i].enabled = active;

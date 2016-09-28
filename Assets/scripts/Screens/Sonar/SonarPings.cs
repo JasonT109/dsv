@@ -174,7 +174,7 @@ public class SonarPings : MonoBehaviour
         var prefab = GetPingPrefab(vessel.Icon);
         if (i >= _pings.Count)
         {
-            var ping = Instantiate(prefab);
+            var ping = ObjectPool.GetComponent(prefab);
             ping.transform.SetParent(Root, false);
             _pings.Add(ping);
         }
@@ -182,8 +182,8 @@ public class SonarPings : MonoBehaviour
         // Switch ping instances if icon changes.
         if (_pings[i].Vessel.Icon != vessel.Icon)
         {
-            _pings[i].gameObject.Cleanup();
-            _pings[i] = Instantiate(prefab);
+            ObjectPool.Cleanup(_pings[i].gameObject);
+            _pings[i] = ObjectPool.GetComponent(prefab);
             _pings[i].transform.SetParent(Root, WorldPositionStays);
         }
 

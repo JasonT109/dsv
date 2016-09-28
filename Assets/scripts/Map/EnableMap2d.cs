@@ -23,8 +23,12 @@ public class EnableMap2d : MonoBehaviour
 
     void SetEnabled(bool value)
     {
-        if (Map2d.HasInstance)
-            Map2d.Instance.gameObject.SetActive(value);
+        if (!Map2d.HasInstance)
+            return;
+
+        var map = Map2d.Instance.gameObject;
+        if (map.activeSelf != value)
+            map.SetActive(value);
     }
 
 }
