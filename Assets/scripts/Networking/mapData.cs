@@ -118,7 +118,7 @@ public class mapData : NetworkBehaviour
     {
         base.OnStartServer();
 
-        // Default to top-down map in the gliders.
+        // Default to top-down map in gliders / evac ship.
         if (serverUtils.IsGlider())
             mapTopDown = true;
     }

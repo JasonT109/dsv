@@ -173,6 +173,10 @@ public class NetworkManagerCustom : MonoBehaviour
     public static bool IsInRov
         { get { return IsInScene(RovScene); } }
 
+    /** Whether we're in the Evac ship scene. */
+    public static bool IsInEvacShip
+        { get { return IsInScene(EvacScene); } }
+
     /** Whether we're in a given scene. */
     public static bool IsInScene(string scene)
         { return SceneManager.GetActiveScene().name == scene; }

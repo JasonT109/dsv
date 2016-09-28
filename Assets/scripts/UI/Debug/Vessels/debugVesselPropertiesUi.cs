@@ -229,7 +229,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
             .Select(t => new DialogList.Item { Name = t, Id = t });
 
         DialogManager.Instance.ShowList("SELECT VESSEL ICON",
-            string.Format("Please select the icon for vessel {0}:", Vessel.Name),
+            string.Format("Please select the icon for vessel '{0}':", Vessel.Name),
             items,
             Vessel.Icon.ToString(),
             (item) =>

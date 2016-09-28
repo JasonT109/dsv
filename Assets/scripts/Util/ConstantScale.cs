@@ -5,10 +5,9 @@ using TouchScript.Gestures;
 public class ConstantScale : MonoBehaviour
 {
     public Transform Root;
-    public float Scale = 1;
+    public float InitialRootScale;
 
     private Vector3 _initialScale;
-    private Vector3 _initialRootScale;
 
 	void Start()
 	{
@@ -18,13 +17,14 @@ public class ConstantScale : MonoBehaviour
             Root = gesture ? gesture.transform : transform;
         }
 
-        _initialScale = transform.localScale * Scale;
-        _initialRootScale = Root.localScale;
-	}
-	
-	void LateUpdate()
+        _initialScale = transform.localScale;
+        if (InitialRootScale <= 0)
+            InitialRootScale = Root.localScale.x;
+    }
+
+    void LateUpdate()
 	{
-	    var s = _initialRootScale.x / Root.localScale.x;
+	    var s = InitialRootScale / Root.localScale.x;
         transform.localScale = _initialScale * s;
     }
 }

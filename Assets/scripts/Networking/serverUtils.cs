@@ -2602,6 +2602,10 @@ namespace Meg.Networking
         public static bool IsRov()
             { return NetworkManagerCustom.IsInRov; }
 
+        /** Whether player is in the Evac ship scene. */
+        public static bool IsEvac()
+            { return NetworkManagerCustom.IsInEvacShip; }
+
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
         {
