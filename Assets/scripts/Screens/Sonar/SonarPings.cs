@@ -193,6 +193,12 @@ public class SonarPings : MonoBehaviour
 
     /** Return a ping prefab to use for a given vessel icon. */
     private SonarPing GetPingPrefab(vesselData.Icon icon)
-        { return PingIcons.FirstOrDefault(p => p.Icon == icon).Prefab; }
+    {
+        var entry = PingIcons.FirstOrDefault(p => p.Icon == icon);
+        if (!entry.Prefab)
+            return PingIcons.First().Prefab;
+
+        return entry.Prefab;
+    }
 
 }

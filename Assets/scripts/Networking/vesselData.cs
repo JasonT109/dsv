@@ -54,6 +54,9 @@ public class vesselData : NetworkBehaviour
         Warning = 1
     }
 
+    public static Icon IconForName(string name)
+        { return (Icon) Enum.Parse(typeof(Icon), name); }
+
 
     // Structures
     // ------------------------------------------------------------

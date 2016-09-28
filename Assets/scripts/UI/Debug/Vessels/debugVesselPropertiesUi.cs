@@ -27,7 +27,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public debugVesselsUi Vessels;
     public Slider DepthSlider;
     public InputField DepthInput;
-    public Toggle[] IconToggles;
+    public Button SelectIconButton;
     public Button AddMovementEventButton;
 
     [Header("Movement Components")]
@@ -68,7 +68,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
         get { return _vessel; }
         set { SetVessel(value); }
     }
-
 
     // Private Properties
     // ------------------------------------------------------------
@@ -183,13 +182,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     {
         DepthSlider.onValueChanged.AddListener(OnDepthSliderChanged);
         DepthInput.onEndEdit.AddListener(OnDepthInputChanged);
-
-        for (var i = 0; i < IconToggles.Length; i++)
-        {
-            var icon = (vesselData.Icon) i;
-            IconToggles[i].onValueChanged.AddListener(
-                on => OnIconToggled(icon, on));
-        }
+        SelectIconButton.onClick.AddListener(OnSelectIconClicked);
 
         ConfigureMovementProperties();
     }
@@ -210,7 +203,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
 
         _updating = false;
 
-        UpdateIconToggles();
         InitMovementProperties();
     }
 
@@ -221,8 +213,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
         AddMovementEventButton.interactable = CanAddEvents;
         EtaGroup.interactable = !megEventManager.Instance.Playing;
         _updating = false;
-
-        UpdateIconToggles();
     }
 
     private void ClearUi()
@@ -230,6 +220,23 @@ public class debugVesselPropertiesUi : MonoBehaviour
         PropertiesGroup.interactable = false;
         NameInput.text = "PROPERTIES";
         PropertiesContainer.gameObject.SetActive(false);
+    }
+
+    private void OnSelectIconClicked()
+    {
+        var items = Enum.GetNames(typeof(vesselData.Icon))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t, Id = t });
+
+        DialogManager.Instance.ShowList("SELECT VESSEL ICON",
+            string.Format("Please select the icon for vessel {0}:", Vessel.Name),
+            items,
+            Vessel.Icon.ToString(),
+            (item) =>
+            {
+                var icon = vesselData.IconForName(item.Id);
+                serverUtils.PostVesselIcon(Vessel.Id, icon);
+            });
     }
 
     private void OnDepthSliderChanged(float value)
@@ -253,27 +260,6 @@ public class debugVesselPropertiesUi : MonoBehaviour
         serverUtils.PostVesselDepth(Vessel.Id, result);
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, result);
         DepthSlider.value = result;
-    }
-
-    private void UpdateIconToggles()
-    {
-        _updating = true;
-        var icon = VesselData.GetIcon(Vessel.Id);
-        for (var i = 0; i < IconToggles.Length; i++)
-        {
-            var toggle = IconToggles[i];
-            toggle.isOn = ((vesselData.Icon) i) == icon;
-        }
-        _updating = false;
-    }
-
-    private void OnIconToggled(vesselData.Icon icon, bool value)
-    {
-        if (_updating)
-            return;
-
-        serverUtils.PostVesselIcon(Vessel.Id, icon);
-        UpdateIconToggles();
     }
 
     /** Simulate a button press. */
