@@ -77,7 +77,7 @@ public class crewData : NetworkBehaviour
             ETCO2Max = 38f;
             ETCO2Pattern = 0f;
             SPO2Min = 0f;
-            SPO2Max = 38f;
+            SPO2Max = 98f;
             SPO2Pattern = 0f;
             ABPMin = 82f;
             ABPMax = 125f;
