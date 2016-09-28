@@ -105,6 +105,9 @@ public class debugEventFileUi : MonoBehaviour
     /** Event group UI nodes. */
     private readonly List<debugEventGroupUi> _groups = new List<debugEventGroupUi>();
 
+    /** Event group UI instances. */
+    private readonly List<debugEventGroupUi> _instances = new List<debugEventGroupUi>();
+
     /** Play button text component. */
     private Text _playLabel;
 
@@ -273,6 +276,9 @@ public class debugEventFileUi : MonoBehaviour
         _groups[index] = _groups[index - 1];
         _groups[index - 1] = ui;
 
+        _instances[index] = _instances[index - 1];
+        _instances[index - 1] = ui;
+
         ui.transform.SetSiblingIndex(index - 1);
     }
 
@@ -297,6 +303,9 @@ public class debugEventFileUi : MonoBehaviour
 
         _groups[index] = _groups[index + 1];
         _groups[index + 1] = ui;
+
+        _instances[index] = _instances[index + 1];
+        _instances[index + 1] = ui;
 
         ui.transform.SetSiblingIndex(index + 1);
     }
@@ -378,7 +387,7 @@ public class debugEventFileUi : MonoBehaviour
     private void RemoveGroupUis()
     {
         foreach (var group in _groups)
-            group.gameObject.Cleanup();
+            group.gameObject.SetActive(false);
 
         _groups.Clear();
     }
@@ -393,8 +402,13 @@ public class debugEventFileUi : MonoBehaviour
         if (Properties.Group == group)
             Properties.Group = null;
 
+        ui.gameObject.SetActive(false);
+        ui.transform.SetAsLastSibling();
+
+        _instances.Remove(ui);
+        _instances.Add(ui);
+
         _groups.Remove(ui);
-        ui.gameObject.Cleanup();
     }
 
     /** Add event groups from a file. */
@@ -409,13 +423,25 @@ public class debugEventFileUi : MonoBehaviour
     /** Add UI for an event group. */
     private debugEventGroupUi AddGroupUi(megEventGroup group)
     {
-        var ui = Instantiate(EventGroupUiPrefab);
-        ui.transform.SetParent(Groups, false);
+        var ui = GetGroup(_groups.Count);
         ui.Group = group;
-        ui.OnSelected += HandleGroupSelected;
-
         _groups.Add(ui);
         return ui;
+    }
+
+    private debugEventGroupUi GetGroup(int i)
+    {
+        if (i >= _instances.Count)
+        {
+            var ui = Instantiate(EventGroupUiPrefab);
+            ui.transform.SetParent(Groups, false);
+            ui.OnSelected += HandleGroupSelected;
+            _instances.Add(ui);
+        }
+
+        _instances[i].gameObject.SetActive(true);
+
+        return _instances[i];
     }
 
     private void HandleGroupSelected(debugEventGroupUi groupUi, debugEventUi eventUi = null)

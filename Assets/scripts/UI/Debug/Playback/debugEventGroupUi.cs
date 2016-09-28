@@ -108,6 +108,9 @@ public class debugEventGroupUi : MonoBehaviour
     /** Whether ui is being updated. */
     private bool _updating;
 
+    /** Whether ui has been created yet. */
+    private bool _started;
+
     /** Trigger buttons for events. */
     private readonly List<debugEventTriggerUi> _triggers = new List<debugEventTriggerUi>();
 
@@ -119,6 +122,7 @@ public class debugEventGroupUi : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        _started = true;
         _nameLabel = PausedToggle.GetComponentInChildren<Text>();
         Timeline.OnEventSelected += HandleEventSelected;
 
@@ -129,6 +133,13 @@ public class debugEventGroupUi : MonoBehaviour
     private void Update()
     {
         UpdateGroupUi();
+    }
+
+    private void OnDisable()
+    {
+        Timeline.gameObject.SetActive(false);
+        TriggerContainer.gameObject.SetActive(false);
+        On.gameObject.SetActive(false);
     }
 
 
@@ -181,11 +192,14 @@ public class debugEventGroupUi : MonoBehaviour
     private void SetGroup(megEventGroup value)
     {
         _group = value;
+
+        if (_started)
+            UpdateGroupUi();
     }
 
     private void UpdateGroupUi()
     {
-        if (_group == null)
+        if (_group == null || !_started)
             return;
 
         _updating = true;

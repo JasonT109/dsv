@@ -17,7 +17,11 @@ public class debugEventTriggerUi : MonoBehaviour
     public Text Label;
 
     /** The event to trigger. */
-    public megEvent Event;
+    public megEvent Event
+    {
+        get { return _event; } 
+        set { SetEvent(value); }
+    }
 
     /** Color for event when it's not running. */
     public Color InactiveColor;
@@ -41,22 +45,37 @@ public class debugEventTriggerUi : MonoBehaviour
     public Text HotKey;
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Whether trigger component has been started. */
+    private bool _started;
+
+    /** Trigger's current event. */
+    private megEvent _event;
+
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
     /** Initialization. */
     private void Start()
     {
+        _started = true;
+
         if (!Button)
             Button = GetComponent<Button>();
 
         Button.onClick.AddListener(OnButtonClicked);
+
+        Update();
     }
 
     /** Updating. */
     private void Update()
     {
-        if (Event == null)
+        if (Event == null || !_started)
             return;
 
         var recentlyTriggered = Time.time - Event.lastTriggerTime < 0.25f;
@@ -104,10 +123,20 @@ public class debugEventTriggerUi : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
+    /** Set the trigger's current event. */
+    private void SetEvent(megEvent e)
+    {
+        _event = e;
+
+        if (_started)
+            Update();
+    }
+
     /** Button click handler. */
     private void OnButtonClicked()
     {
         if (Event != null)
             Event.Trigger();
     }
+
 }
