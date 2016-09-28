@@ -14,7 +14,7 @@ public class DestroyAfterTime : MonoBehaviour {
     IEnumerator DestroyRoutine()
     {
         yield return new WaitForSeconds(Interval);
-        Destroy(gameObject);
+        gameObject.Cleanup();
     }
 
 }

@@ -182,7 +182,7 @@ public class SonarPings : MonoBehaviour
         // Switch ping instances if icon changes.
         if (_pings[i].Vessel.Icon != vessel.Icon)
         {
-            Destroy(_pings[i].gameObject);
+            _pings[i].gameObject.Cleanup();
             _pings[i] = Instantiate(prefab);
             _pings[i].transform.SetParent(Root, WorldPositionStays);
         }

@@ -135,7 +135,7 @@ public class debugFileListUi : MonoBehaviour
     private void RemoveEntries()
     {
         foreach (var e in _entries)
-            Destroy(e.gameObject);
+            e.gameObject.Cleanup();
 
         _entries.Clear();
         SetSelectedEntry(null);

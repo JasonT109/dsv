@@ -146,7 +146,7 @@ public class debugVesselPingUi : MonoBehaviour
     {
         // Clean up transformer (since we decoupled it and made it a sibling).
         if (Transformer)
-            Destroy(Transformer.gameObject);
+            Transformer.gameObject.Cleanup();
     }
 
     private void UpdateWhileTransforming()

@@ -347,7 +347,7 @@ public class debugParameterFileUi : MonoBehaviour
     private void RemoveGroupUis()
     {
         foreach (var group in _groups)
-            Destroy(group.gameObject);
+            group.gameObject.Cleanup();
 
         _groups.Clear();
     }
@@ -360,7 +360,7 @@ public class debugParameterFileUi : MonoBehaviour
             return;
 
         _groups.Remove(ui);
-        Destroy(ui.gameObject);
+        ui.gameObject.Cleanup();
     }
 
     /** Add event groups from a file. */

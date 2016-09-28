@@ -344,7 +344,8 @@ public class debugParameterGroupUi : MonoBehaviour
         var ui = _parameters[i];
         if (ui.Parameter != null && parameter.type != ui.Parameter.type)
         {
-            Destroy(ui.gameObject);
+            ui.gameObject.Cleanup();
+
             ui = CreateParameterUi(parameter);
             ui.transform.SetParent(ParameterContainer, false);
             ui.transform.SetSiblingIndex(i);

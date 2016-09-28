@@ -77,6 +77,6 @@ public class Dialog : MonoBehaviour
 
         // Kill dialog after a short delay.
         yield return new WaitForSeconds(0.25f);
-        Destroy(gameObject);
+        gameObject.Cleanup();
     }
 }

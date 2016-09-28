@@ -382,7 +382,7 @@ public class vesselMovements : NetworkBehaviour
     {
         var movements = GetMovements(id);
         foreach (var movement in movements)
-            Destroy(movement.gameObject);
+            movement.gameObject.Cleanup();
         
         movements.Clear();
     }
