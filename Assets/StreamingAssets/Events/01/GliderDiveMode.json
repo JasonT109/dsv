@@ -1,0 +1,35 @@
+{
+	"metadata":{
+		"utc":"27/09/16 11:59:52.6",
+		"startedTimestamp":"01/01/01 12:00:00.0",
+		"stoppedTimestamp":"01/01/01 12:00:00.0"
+	},
+	"groups":[
+		{
+			"id":"GLIDER DIVE MODE",
+			"events":[
+				{
+					"type":"Value",
+					"triggerLabel":"ASCEND",
+					"triggerHotKey":"0",
+					"serverParam":"descentmodevalue",
+					"serverValue":-90
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"CRUISE",
+					"triggerHotKey":"1",
+					"serverParam":"descentmodevalue",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerLabel":"DESCEND",
+					"triggerHotKey":"2",
+					"serverParam":"descentmodevalue",
+					"serverValue":90
+				}
+			]
+		}
+	]
+}

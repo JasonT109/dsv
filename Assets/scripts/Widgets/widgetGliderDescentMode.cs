@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Networking;
 
@@ -8,59 +8,48 @@ public class widgetGliderDescentMode : MonoBehaviour
     public buttonControl cruise;
     public buttonControl ascend;
 
-    public float descentValue;
-    private float prevValue;
-    private bool hasChanged;
-    private float timer = 0f;
-    private float updateTick = 0.2f;
+    private float _nextButtonUpdate;
 
-    public float degreesPerSecond = 10f;
-
+    private const float PressTimeout = 0.25f;
+    
 	void Start ()
     {
-	
-	}
+        descent.onPress.AddListener(OnDescentClicked);
+        cruise.onPress.AddListener(OnCruiseClicked);
+        ascend.onPress.AddListener(OnAscendClicked);
+    }
 
-	void Update ()
+    private void OnDescentClicked()
     {
+        serverUtils.PostServerData("descentmodevalue", 90);
+        _nextButtonUpdate = Time.time + PressTimeout;
+    }
 
-        if (descent.active && descentValue > -90f)
+    private void OnCruiseClicked()
+    {
+        serverUtils.PostServerData("descentmodevalue", 0);
+        _nextButtonUpdate = Time.time + PressTimeout;
+    }
+
+    private void OnAscendClicked()
+    {
+        serverUtils.PostServerData("descentmodevalue", -90);
+        _nextButtonUpdate = Time.time + PressTimeout;
+    }
+
+
+    void Update ()
+	{
+	    var target = serverUtils.GetServerData("descentmodevalue", 0);
+        var ascending = target < -5;
+        var descending = target > 5;
+
+        if (Time.time >= _nextButtonUpdate)
         {
-            descentValue -= Time.deltaTime * degreesPerSecond;
-            descentValue = Mathf.Clamp(descentValue, -90, 90);
+            ascend.active = ascending;
+            descent.active = descending;
+            cruise.active = !(ascending || descending);
         }
-
-        if (cruise.active && descentValue != 0)
-        {
-            if (descentValue >= -90f && descentValue < 0)
-                descentValue += Time.deltaTime * degreesPerSecond;
-            else if (descentValue <= 90f && descentValue > 0)
-                descentValue -= Time.deltaTime * degreesPerSecond;
-
-            if (Mathf.Approximately(descentValue, 0f))
-                descentValue = 0f;
-        }
-
-        if (ascend.active && descentValue < 90f)
-        {
-            descentValue += Time.deltaTime * degreesPerSecond;
-            descentValue = Mathf.Clamp(descentValue, -90, 90);
-        }
-
-        if (descentValue != prevValue)
-        {
-            hasChanged = true;
-            prevValue = descentValue;
-        }
-
-        if (Time.time < timer)
-            return;
         
-        if (hasChanged)
-        {
-            timer = Time.time + updateTick;
-            serverUtils.PostServerData("descentmodevalue", descentValue);
-        }
-
 	}
 }

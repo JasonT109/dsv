@@ -46,6 +46,10 @@
 				{
 					"type":"Value",
 					"serverParam":"oldphysics"
+				},
+				{
+					"type":"Value",
+					"serverParam":"descentmodevalue"
 				}
 			]
 		},

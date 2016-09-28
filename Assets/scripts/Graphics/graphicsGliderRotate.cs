@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Meg.Maths;
 using Meg.Networking;
@@ -24,6 +24,8 @@ public class graphicsGliderRotate : MonoBehaviour {
     public string serverDrivingParam = "pitch";
     public float serverMin = 0f;
     public float serverMax = 90f;
+
+    public float LerpSpeed = 0.3f;
 
     private float pitchValue = 0;
     private float yawValue = 0;
@@ -79,6 +81,6 @@ public class graphicsGliderRotate : MonoBehaviour {
 
         Quaternion combinedRotation = Quaternion.Euler(new Vector3(pitchValue, yawValue, rollValue));
 
-        gameObject.transform.localRotation = Quaternion.Lerp(gameObject.transform.localRotation, combinedRotation, Time.deltaTime);
+        gameObject.transform.localRotation = Quaternion.Lerp(gameObject.transform.localRotation, combinedRotation, Time.deltaTime * LerpSpeed);
     }
 }
