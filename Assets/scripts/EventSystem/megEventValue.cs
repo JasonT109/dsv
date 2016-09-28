@@ -80,6 +80,8 @@ namespace Meg.EventSystem
 
             if (!Mathf.Approximately(initialValue, 0))
                 json.AddField("initialValue", initialValue);
+            if (applyInitialValue)
+                json.AddField("applyInitialValue", applyInitialValue);
 
             return json;
         }
@@ -91,6 +93,7 @@ namespace Meg.EventSystem
             json.GetField(ref serverParam, "serverParam");
             json.GetField(ref serverValue, "serverValue");
             json.GetField(ref initialValue, "initialValue");
+            json.GetField(ref applyInitialValue, "applyInitialValue");
         }
 
 
