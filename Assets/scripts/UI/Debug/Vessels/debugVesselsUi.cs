@@ -124,7 +124,8 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
             Name = "Unknown",
             Position = new Vector3(0, 0, playerDepth),
             ColorOnMap = vesselData.DefaultColorOnMap,
-            ColorOnSonar = vesselData.DefaultColorOnSonar
+            ColorOnSonar = vesselData.DefaultColorOnSonar,
+            IconScale = 1
         });
     }
 

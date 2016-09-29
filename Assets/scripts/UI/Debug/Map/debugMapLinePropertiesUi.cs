@@ -21,23 +21,18 @@ public class debugMapLinePropertiesUi : MonoBehaviour
     public InputField NameInput;
     public Button SelectColorButton;
     public Graphic Color;
-
     public Slider WidthSlider;
     public InputField WidthInput;
-
     public Button SelectStyleButton;
     public Text Style;
-
     public Button SelectPointStyleButton;
     public Text PointStyle;
-
+    public Slider PointScaleSlider;
+    public InputField PointScaleInput;
     public InputField PointCountInput;
-
     public Button AddPointButton;
     public Button RemovePointButton;
-
     public Transform PointContainer;
-
     public Slider PercentageSlider;
     public InputField PercentageInput;
 
@@ -143,6 +138,8 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         WidthInput.onEndEdit.AddListener(OnWidthInputEndEdit);
         SelectStyleButton.onClick.AddListener(OnSelectStyleClicked);
         SelectPointStyleButton.onClick.AddListener(OnSelectPointStyleClicked);
+        PointScaleSlider.onValueChanged.AddListener(OnPointScaleSliderChanged);
+        PointScaleInput.onEndEdit.AddListener(OnPointScaleInputEndEdit);
         PointCountInput.onEndEdit.AddListener(OnPointCountInputEndEdit);
         AddPointButton.onClick.AddListener(OnAddPointClicked);
         RemovePointButton.onClick.AddListener(OnRemovePointClicked);
@@ -169,6 +166,8 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         PointCountInput.text = PointCount.ToString();
         Style.text = Line.Style.ToString();
         PointStyle.text = Line.PointStyle.ToString();
+        PointScaleSlider.value = Line.PointScale;
+        PointScaleInput.text = Line.PointScale.ToString();
 
         var percent = serverUtils.MapData.GetLinePercent(Line.Id);
         PercentageSlider.maxValue = Mathf.Max(PercentageSlider.maxValue, percent);
@@ -274,6 +273,31 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         serverUtils.PostSetMapLine(_line);
         WidthSlider.maxValue = Mathf.Max(WidthSlider.maxValue, result);
         WidthSlider.value = result;
+    }
+
+    private void OnPointScaleSliderChanged(float value)
+    {
+        if (_updating)
+            return;
+
+        _line.PointScale = value;
+        serverUtils.PostSetMapLine(_line);
+        PointScaleInput.text = value.ToString();
+    }
+
+    private void OnPointScaleInputEndEdit(string value)
+    {
+        if (_updating)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        _line.PointScale = result;
+        serverUtils.PostSetMapLine(_line);
+        PointScaleSlider.maxValue = Mathf.Max(PointScaleSlider.maxValue, result);
+        PointScaleSlider.value = result;
     }
 
     private void OnPointCountInputEndEdit(string value)

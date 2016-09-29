@@ -28,6 +28,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public Slider DepthSlider;
     public InputField DepthInput;
     public Button SelectIconButton;
+    public InputField IconScaleInput;
     public Button SelectColorButton;
     public Button AddMovementEventButton;
     public Graphic Color;
@@ -186,6 +187,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthInput.onEndEdit.AddListener(OnDepthInputChanged);
         SelectIconButton.onClick.AddListener(OnSelectIconClicked);
         SelectColorButton.onClick.AddListener(OnSelectColorClicked);
+        IconScaleInput.onEndEdit.AddListener(OnIconScaleInputChanged);
 
         ConfigureMovementProperties();
     }
@@ -204,6 +206,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, Vessel.Depth);
         DepthInput.text = string.Format("{0:N1}", Vessel.Depth);
         Color.color = Vessel.ColorOnMap;
+        IconScaleInput.text = Vessel.IconScale.ToString();
 
         _updating = false;
 
@@ -276,6 +279,18 @@ public class debugVesselPropertiesUi : MonoBehaviour
         serverUtils.PostVesselDepth(Vessel.Id, result);
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, result);
         DepthSlider.value = result;
+    }
+
+    private void OnIconScaleInputChanged(string value)
+    {
+        if (_updating)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        serverUtils.PostVesselIconScale(Vessel.Id, result);
     }
 
     /** Simulate a button press. */

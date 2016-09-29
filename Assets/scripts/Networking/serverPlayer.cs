@@ -211,6 +211,15 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselIcon(id, icon);
     }
 
+    /** Post vessel's icon scale to the server. */
+    public void PostVesselIconScale(int id, float value)
+    {
+        if (isServer)
+            ServerSetVesselIconScale(id, value);
+        else
+            CmdSetVesselIconScale(id, value);
+    }
+
     /** Post vessel's color to the server. */
     public void PostVesselColor(int id, Color color)
     {
@@ -588,6 +597,11 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselIcon(int id, vesselData.Icon icon)
         { ServerSetVesselIcon(id, icon); }
 
+    /** Set vessel's icon scale on the server. */
+    [Command]
+    public void CmdSetVesselIconScale(int id, float value)
+        { ServerSetVesselIconScale(id, value); }
+
     /** Set vessel's color on the server. */
     [Command]
     public void CmdSetVesselColor(int id, Color color)
@@ -809,6 +823,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetVesselIcon(int id, vesselData.Icon icon)
         { serverUtils.VesselData.SetIcon(id, icon); }
+
+    /** Set vessel's icon scale on the server. */
+    [Server]
+    public void ServerSetVesselIconScale(int id, float value)
+        { serverUtils.VesselData.SetIconScale(id, value); }
 
     /** Set vessel's color on the server. */
     [Server]

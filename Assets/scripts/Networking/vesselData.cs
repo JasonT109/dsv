@@ -78,6 +78,7 @@ public class vesselData : NetworkBehaviour
         public bool OnMap;
         public bool OnSonar;
         public Icon Icon;
+        public float IconScale;
         public Color ColorOnSonar;
         public Color ColorOnMap;
         public Color ColorThemeBackground;
@@ -102,6 +103,7 @@ public class vesselData : NetworkBehaviour
             OnMap = vessel.OnMap;
             OnSonar = vessel.OnSonar;
             Icon = vessel.Icon;
+            IconScale = vessel.IconScale;
             ColorOnSonar = vessel.ColorOnSonar;
             ColorOnMap = vessel.ColorOnMap;
             ColorThemeBackground = vessel.ColorThemeBackground;
@@ -278,6 +280,8 @@ public class vesselData : NetworkBehaviour
             new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
         serverUtils.RegisterServerValue(string.Format("vessel{0}icon", id),
             new serverUtils.ParameterInfo { maxValue = (int) Icon.Warning, type = serverUtils.ParameterType.Int, description = "Vessel's icon (0:Normal, 1:Warning)" });
+        serverUtils.RegisterServerValue(string.Format("vessel{0}iconscale", id),
+            new serverUtils.ParameterInfo { minValue = 0, maxValue = 2, description = "Vessel's current icon scale factor."});
 
         // Hide some of the old legacy parameters.
         serverUtils.RegisterServerValue(string.Format("v{0}vis", id),
@@ -412,6 +416,9 @@ public class vesselData : NetworkBehaviour
             case "icon":
                 SetIcon(id, (Icon) Mathf.RoundToInt(value));
                 break;
+            case "iconscale":
+                SetIconScale(id, value);
+                break;
         }
     }
 
@@ -444,6 +451,8 @@ public class vesselData : NetworkBehaviour
                 return GetVessel(id).Speed;
             case "icon":
                 return (int) GetIcon(id);
+            case "iconscale":
+                return GetVessel(id).IconScale;
             default:
                 return defaultValue;
         }
@@ -562,8 +571,15 @@ public class vesselData : NetworkBehaviour
     /** Return a vessel's current speed. */
     public float GetSpeed(int id)
         { return GetVessel(id).Speed; }
-    
-    
+
+    /** Set a vessel's icon scale (1-based index). */
+    public void SetIconScale(int id, float value)
+        { SetVessel(id, new Vessel(GetVessel(id)) { IconScale = value }); }
+
+    /** Return a vessel's current icon scale. */
+    public float GetIconScale(int id)
+        { return GetVessel(id).IconScale; }
+
 
     // Coordinates and Spaces
     // ------------------------------------------------------------
@@ -739,6 +755,7 @@ public class vesselData : NetworkBehaviour
         json.AddField("OnMap", vessel.OnMap);
         json.AddField("OnSonar", vessel.OnSonar);
         json.AddField("Icon", (int) vessel.Icon);
+        json.AddField("IconScale", vessel.IconScale);
         json.AddField("ColorOnMap", vessel.ColorOnMap);
         json.AddField("ColorOnSonar", vessel.ColorOnSonar);
         json.AddField("ColorThemeBackground", vessel.ColorThemeBackground);
@@ -758,7 +775,8 @@ public class vesselData : NetworkBehaviour
             OnSonar = true,
             ColorOnMap = DefaultColorOnMap,
             ColorOnSonar = DefaultColorOnSonar,
-            ColorThemeBackground = DefaultColorThemeBackground
+            ColorThemeBackground = DefaultColorThemeBackground,
+            IconScale = 1
         };
 
         json.GetField(ref vessel.Id, "Id");
@@ -779,6 +797,7 @@ public class vesselData : NetworkBehaviour
         var icon = 0;
         json.GetField(ref icon, "Icon");
         vessel.Icon = (Icon) icon;
+        json.GetField(ref vessel.IconScale, "IconScale");
 
         return vessel;
     }
@@ -821,7 +840,8 @@ public class vesselData : NetworkBehaviour
         {
             Name = Unknown,
             ColorOnMap = DefaultColorOnMap,
-            ColorOnSonar = DefaultColorOnSonar
+            ColorOnSonar = DefaultColorOnSonar,
+            IconScale = 1
         };
 
         json.GetField(ref vessel.Name, "name");
@@ -833,6 +853,7 @@ public class vesselData : NetworkBehaviour
         json.GetField(ref vessel.ColorThemeBackground, "colorthemebackground");
         json.GetField(ref vessel.ColorThemeKey, "colorthemekey");
         json.GetField(ref vessel.ColorThemeHighlight, "colorthemehighlight");
+        json.GetField(ref vessel.IconScale, "iconscale");
 
         var iconName = "normal";
         try

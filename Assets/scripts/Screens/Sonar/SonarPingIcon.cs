@@ -34,6 +34,8 @@ public class SonarPingIcon : MonoBehaviour
     /** Update the ping's icon. */
     private void UpdateIcon()
     {
+        transform.localScale = Vector3.one * Ping.Vessel.IconScale;
+
         var anyIconActive = false;
         for (var i = 0; i < Options.Length; i++)
         {

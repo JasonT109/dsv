@@ -83,6 +83,9 @@ public class Map2dLine : MonoBehaviour
         // Initialize line points.
         _vectorObject = GetComponent<VectorObject2D>();
         _line = _vectorObject.vectorLine;
+
+        // Update the line style.
+        UpdateStyle();
     }
 
 
@@ -146,13 +149,12 @@ public class Map2dLine : MonoBehaviour
             _line.points2[end] = Vector2.Lerp(p0, p1, t);
         }
 
+        // Set line styling.
+        UpdateStyle();
+
         // Update line width to remain a constant size on screen.
         var s = InitialTransformRootScale / _transformRoot.localScale.x;
         _line.lineWidth = Line.Width * s * LineWidthScale;
-
-        // Set line styling.
-        if (Line.Style != _style)
-            UpdateStyle();
 
         // Redraw the line.
         _line.color = Line.Color;
@@ -226,7 +228,7 @@ public class Map2dLine : MonoBehaviour
 
         // Update points to remain a constant size on screen.
         var s = InitialTransformRootScale / _transformRoot.localScale.x;
-        var scale = s * LinePointScale;
+        var scale = s * LinePointScale * Line.PointScale;
 
         var index = 0;
         var n = Line.Points != null ? Line.Points.Length : 0;

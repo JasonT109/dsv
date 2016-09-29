@@ -165,6 +165,7 @@ public class mapData : NetworkBehaviour
         public float Width;
         public Color Color;
         public PointStyle PointStyle;
+        public float PointScale;
         public Vector3[] Points;
 
         public Line(Line other)
@@ -175,6 +176,7 @@ public class mapData : NetworkBehaviour
             Color = other.Color;
             Width = other.Width;
             PointStyle = other.PointStyle;
+            PointScale = other.PointScale;
             if (other.Points != null)
                 Points = other.Points.Clone() as Vector3[];
             else
@@ -188,6 +190,7 @@ public class mapData : NetworkBehaviour
             Style = LineStyle.Normal;
             Color = Color.white;
             PointStyle = PointStyle.None;
+            PointScale = 1;
             Points = new Vector3[0];
             Width = 0.1f;
         }
@@ -415,6 +418,7 @@ public class mapData : NetworkBehaviour
         json.AddField("Color", line.Color);
         json.AddField("Style", line.Style.ToString());
         json.AddField("PointStyle", line.PointStyle.ToString());
+        json.AddField("PointScale", line.PointScale);
         json.AddField("Width", line.Width);
 
         var pointsJson = new JSONObject(JSONObject.Type.ARRAY);
@@ -435,6 +439,7 @@ public class mapData : NetworkBehaviour
         json.GetField(ref line.Name, "Name");
         json.GetField(ref line.Color, "Color");
         json.GetField(ref line.Width, "Width");
+        json.GetField(ref line.PointScale, "PointScale");
 
         var styleName = "Normal";
         json.GetField(ref styleName, "Style");
