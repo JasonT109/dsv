@@ -93,25 +93,9 @@ public class debugEvacScreenUi : MonoBehaviour
         NextButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
 
-        var canSetContent = CanSetContent();
-        NextContentButton.gameObject.SetActive(canSetContent);
-        PreviousContentButton.gameObject.SetActive(canSetContent);
-
+        NextContentButton.gameObject.SetActive(!Player.isLocalPlayer);
+        PreviousContentButton.gameObject.SetActive(!Player.isLocalPlayer);
         SelectWindowsButton.interactable = CanSelectWindows();
-    }
-
-    private bool CanSetContent()
-    {
-        if (Player.isLocalPlayer)
-            return false;
-
-        if (Player.ScreenState.Content == screenData.Content.Debug)
-            return false;
-
-        if (Player.ScreenState.Type != screenData.Type.EvacTop)
-            return false;
-
-        return true;
     }
 
     private bool CanSelectWindows()
@@ -130,19 +114,11 @@ public class debugEvacScreenUi : MonoBehaviour
 
     private string GetScreenLabel()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return "DEBUG";
-
         return screenData.NameForType(Player.ScreenState.Type).ToUpper();
     }
 
     private void OnNextClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         var current = Player.ScreenState.Type;
         var next = GetNextType(current);
         serverUtils.PostScreenStateType(Player.netId, next);
@@ -150,10 +126,6 @@ public class debugEvacScreenUi : MonoBehaviour
 
     private void OnPreviousClicked()
     {
-        var content = Player.ScreenState.Content;
-        if (content == screenData.Content.Debug)
-            return;
-
         var current = Player.ScreenState.Type;
         var next = GetPreviousType(current);
         serverUtils.PostScreenStateType(Player.netId, next);
@@ -161,9 +133,6 @@ public class debugEvacScreenUi : MonoBehaviour
 
     private void OnNextContentClicked()
     {
-        if (!CanSetContent())
-            return;
-
         var current = Player.ScreenState.Content;
         var type = Player.ScreenState.Type;
         var next = GetNextContent(type, current);
@@ -172,9 +141,6 @@ public class debugEvacScreenUi : MonoBehaviour
 
     private void OnPreviousContentClicked()
     {
-        if (!CanSetContent())
-            return;
-
         var current = Player.ScreenState.Content;
         var type = Player.ScreenState.Type;
         var next = GetPreviousContent(type, current);
