@@ -93,9 +93,20 @@ public class debugEvacScreenUi : MonoBehaviour
         NextButton.interactable = !Player.isLocalPlayer;
         LocalIndicator.gameObject.SetActive(Player.isLocalPlayer);
 
-        NextContentButton.gameObject.SetActive(!Player.isLocalPlayer);
-        PreviousContentButton.gameObject.SetActive(!Player.isLocalPlayer);
+        NextContentButton.gameObject.SetActive(CanSetContent());
+        PreviousContentButton.gameObject.SetActive(CanSetContent());
         SelectWindowsButton.interactable = CanSelectWindows();
+    }
+
+    private bool CanSetContent()
+    {
+        if (Player.isLocalPlayer)
+            return false;
+
+        if (Player.ScreenState.Content == screenData.Content.Debug)
+            return false;
+
+        return true;
     }
 
     private bool CanSelectWindows()

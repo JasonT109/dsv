@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Meg.Networking;
 using TouchScript.Gestures;
 using Vectrosity;
 
@@ -24,6 +25,11 @@ public class Map2dLine : MonoBehaviour
     /** Line width scale. */
     public float LineWidthScale { get; set; }
 
+    /** Line point scale. */
+    public float LinePointScale { get; set; }
+
+    public Map2dLinePoint PointPrefab;
+
 
     // Members
     // ------------------------------------------------------------
@@ -36,6 +42,9 @@ public class Map2dLine : MonoBehaviour
 
     /** The transform root. */
     private Transform _transformRoot;
+
+    /** The list of point instances. */
+    private readonly List<Map2dLinePoint> _points = new List<Map2dLinePoint>();
 
 
     // Unity Methods
@@ -63,10 +72,6 @@ public class Map2dLine : MonoBehaviour
     /** Update the line component. */
     public void UpdateLine()
     {
-        // Initialize line on demand.
-        if (!_vectorObject)
-            InitLine();
-
         // Locate the transform root on demand.
         if (!_transformRoot)
         {
@@ -74,8 +79,18 @@ public class Map2dLine : MonoBehaviour
             _transformRoot = gesture.transform;
         }
 
+        if (!_transformRoot)
+            return;
+
+        // Update line points.
+        UpdatePointUis();
+
+        // Initialize line on demand.
+        if (!_vectorObject)
+            InitLine();
+
         // Check if line is OK to draw.
-        if (_line == null || !_transformRoot)
+        if (_line == null)
             return;
 
         // Update line size.
@@ -119,5 +134,92 @@ public class Map2dLine : MonoBehaviour
         _line.color = Line.Color;
         _line.Draw();
     }
+
+    /** Return the line's ith point. */
+    public Vector3 GetPoint(int i)
+    {
+        if (Line.Points != null && i >= 0 && i < Line.Points.Length)
+            return Line.Points[i];
+
+        return Vector3.zero;
+    }
+
+    /** Return the line's ith point. */
+    public void SetPoint(int i, Vector3 value)
+    {
+        if (Line.Points != null && i >= 0 && i < Line.Points.Length)
+        {
+            Line.Points[i] = value;
+            serverUtils.PostSetMapLine(Line);
+        }
+    }
+
+    /** Return a point's alpha based on current progress. */
+    public float GetPointAlpha(int i)
+    {
+        var points = Line.Points;
+        var n = points != null ? points.Length : 0;
+        if (n <= 0 || Progress <= 0)
+            return 0;
+
+        if (Progress >= 100)
+            return 1;
+
+        var progress = (Progress / 100f) * (n - 1);
+        var start = Mathf.FloorToInt(progress);
+        var end = Mathf.CeilToInt(progress);
+        var t = progress - start;
+
+        if (i <= start || start == end)
+            return 1;
+
+        return i > end ? 0 : t;
+    }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Update map points. */
+    private void UpdatePointUis()
+    {
+        if (!PointPrefab)
+            return;
+
+        // Update points to remain a constant size on screen.
+        var s = InitialTransformRootScale / _transformRoot.localScale.x;
+        var scale = s * LinePointScale;
+
+        var index = 0;
+        var n = Line.Points != null ? Line.Points.Length : 0;
+        for (var i = 0; i < n; i++)
+        {
+            var point = GetPointUi(index++);
+            point.Parent = this;
+            point.Index = i;
+            point.transform.localScale = Vector3.one * scale;
+            point.UpdatePoint();
+        }
+
+        for (var i = index; i < _points.Count; i++)
+            _points[i].gameObject.SetActive(false);
+    }
+
+    /** Return a line object for the given index. */
+    private Map2dLinePoint GetPointUi(int i)
+    {
+        if (i >= _points.Count)
+        {
+            var point = Instantiate(PointPrefab);
+            point.transform.SetParent(transform, false);
+            point.transform.localPosition = Vector3.zero;
+            point.transform.localScale = Vector3.one;
+            _points.Add(point);
+        }
+
+        _points[i].gameObject.SetActive(true);
+        return _points[i];
+    }
+
 
 }

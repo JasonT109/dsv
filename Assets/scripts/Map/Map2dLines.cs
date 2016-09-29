@@ -26,6 +26,9 @@ public class Map2dLines : MonoBehaviour
     /** Line width scaling factor. */
     public float LineWidthScale = 1;
 
+    /** Line point scaling factor. */
+    public float LinePointScale = 1;
+
     /** Initial transform root scale. */
     public float InitialTransformRootScale = 1;
 
@@ -96,6 +99,7 @@ public class Map2dLines : MonoBehaviour
         {
             var line = GetLine(index++);
             line.LineWidthScale = LineWidthScale;
+            line.LinePointScale = LinePointScale;
             line.InitialTransformRootScale = InitialTransformRootScale;
             line.Line = MapData.Lines[i];
             line.Progress = i < nPercentages ? MapData.LinePercentages[i] : 0f;

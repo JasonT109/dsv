@@ -342,7 +342,16 @@ public class mapData : NetworkBehaviour
         }
     }
 
+    /** Return progress of a line by id. */
+    public float GetLinePercent(int id)
+    {
+        if (id >= 1 && id <= Lines.Count)
+            return LinePercentages[id - 1];
 
+        return 100f;
+    }
+
+    
     // Load / Save
     // ------------------------------------------------------------
 
@@ -356,6 +365,13 @@ public class mapData : NetworkBehaviour
             linesJson.Add(SaveLine(v));
 
         json.AddField("Lines", linesJson);
+
+        // Load in line progress data from file.
+        var percentagesJson = new JSONObject(JSONObject.Type.ARRAY);
+        foreach (var percentage in LinePercentages)
+            percentagesJson.Add(percentage);
+        json.AddField("LinePercentages", percentagesJson);
+
         return json;
     }
 
@@ -376,6 +392,13 @@ public class mapData : NetworkBehaviour
             return;
         for (var i = 0; i < linesJson.Count; i++)
             AddLine(LoadLine(linesJson[i]));
+
+        // Load in line progress data from file.
+        var percentagesJson = json.GetField("LinePercentages");
+        if (percentagesJson == null || percentagesJson.IsNull)
+            return;
+        for (var i = 0; i < percentagesJson.Count; i++)
+            SetLinePercent(i + 1, percentagesJson[i].f);
     }
 
     /** Save a line state to JSON. */
@@ -433,17 +456,8 @@ public class mapData : NetworkBehaviour
     /** Set the progress of a line by id. */
     private void SetLinePercent(int id, float value)
     {
-        if (id >= 1 && id <= Lines.Count)
+        if (id >= 1 && id <= LinePercentages.Count)
             LinePercentages[id - 1] = value;
-    }
-
-    /** Return progress of a line by id. */
-    private float GetLinePercent(int id)
-    {
-        if (id >= 1 && id <= Lines.Count)
-            return LinePercentages[id - 1];
-
-        return 100f;
     }
 
     /** Parse a server data value key into line id and parameter key. */
