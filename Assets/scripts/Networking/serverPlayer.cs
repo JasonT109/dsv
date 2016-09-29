@@ -463,6 +463,42 @@ public class serverPlayer : NetworkBehaviour
             PostAddWindow(playerId, id);
     }
 
+    /** Add a map line to the simulation. */
+    public void PostAddMapLine(mapData.Line line)
+    {
+        if (isServer)
+            serverUtils.MapData.AddLine(line);
+        else if (isClient)
+            CmdAddMapLine(line);
+    }
+
+    /** Remove the last map line from the simulation. */
+    public void PostRemoveLastMapLine()
+    {
+        if (isServer)
+            serverUtils.MapData.RemoveLastLine();
+        else if (isClient)
+            CmdRemoveLastMapLine();
+    }
+
+    /** Clear map lines from the simulation. */
+    public void PostClearMapLines()
+    {
+        if (isServer)
+            serverUtils.MapData.ClearLines();
+        else if (isClient)
+            CmdClearMapLines();
+    }
+
+    /** Update a map line in the simulation. */
+    public void PostSetMapLine(mapData.Line line)
+    {
+        if (isServer)
+            serverUtils.MapData.SetLine(line.Id, line);
+        else if (isClient)
+            CmdSetMapLine(line);
+    }
+
 
     // Commands
     // ------------------------------------------------------------
@@ -578,6 +614,26 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdClearExtraVessels()
         { serverUtils.VesselData.ClearExtraVessels(); }
+
+    /** Add a map line to the simulation. */
+    [Command]
+    public void CmdAddMapLine(mapData.Line line)
+        { serverUtils.MapData.AddLine(line); }
+
+    /** Update a map line int the simulation. */
+    [Command]
+    public void CmdSetMapLine(mapData.Line line)
+        { serverUtils.MapData.SetLine(line.Id, line); }
+
+    /** Remove the last vessel from the simulation. */
+    [Command]
+    public void CmdRemoveLastMapLine()
+        { serverUtils.MapData.RemoveLastLine(); }
+
+    /** Clear map lines from the simulation. */
+    [Command]
+    public void CmdClearMapLines()
+        { serverUtils.MapData.ClearLines(); }
 
     /** Add a popup on the server. */
     [Command]

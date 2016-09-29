@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Meg.Networking;
 
 public class mapData : NetworkBehaviour
@@ -108,6 +109,15 @@ public class mapData : NetworkBehaviour
     public SyncListFloat LinePercentages = new SyncListFloat();
 
 
+    // Properties
+    // ------------------------------------------------------------
+
+    #region PublicProperties
+
+    /** Regular expression used to match server data keys. */
+    public readonly Regex LineDataKeyPattern = new Regex(
+        @"^(mapline)(\w+)(\d+)$", RegexOptions.IgnoreCase);
+
     public bool IsMap2D
         { get { return mapMode == Mode.Mode2D; } }
 
@@ -116,6 +126,8 @@ public class mapData : NetworkBehaviour
 
     public bool IsSubSchematic
         { get { return mapMode == Mode.ModeSubSchematic; } }
+
+    #endregion
 
 
     // Enumerations
@@ -136,13 +148,35 @@ public class mapData : NetworkBehaviour
     public struct Line
     {
         public int Id;
+        public string Name;
         public LineStyle Style;
         public Color Color;
         public Vector3[] Points;
-        public float Progress;
+
+        public Line(Line other)
+        {
+            Id = other.Id;
+            Name = other.Name;
+            Style = other.Style;
+            Color = other.Color;
+            if (other.Points != null)
+                Points = other.Points.Clone() as Vector3[];
+            else
+                Points = null;
+        }
+
+        public Line(int id)
+        {
+            Id = id;
+            Name = "Line";
+            Style = LineStyle.Normal;
+            Color = Color.white;
+            Points = new Vector3[0];
+        }
+
     }
 
-    /** Class definition for a synchronized list of crew states. */
+    /** Class definition for a synchronized list of line states. */
     public class SyncListLines : SyncListStruct<Line> { };
 
 
@@ -184,6 +218,241 @@ public class mapData : NetworkBehaviour
     */
 
     #endregion
+
+
+    // Public Methods
+    // ------------------------------------------------------------
+
+    /** Add a line. */
+    [Server]
+    public void AddLine(Line line)
+    {
+        // Check if line already exists in the list.
+        // If so, just overwrite the existing line with this one.
+        if (line.Id > 0 && line.Id <= Lines.Count)
+        {
+            SetLine(line.Id, line);
+            return;
+        }
+
+        // Assign line an id based on the highest existing id in list.
+        var id = Lines.Count + 1;
+        line.Id = id;
+
+        // Add line to the synchronized list.
+        Lines.Add(line);
+        LinePercentages.Add(100f);
+
+        // Register line dynamic server parameters.
+        serverUtils.RegisterServerValue(string.Format("maplinepercent{0}", id), 
+            new serverUtils.ParameterInfo { description = "Progress percentage for a line on the map." });
+    }
+
+    /** Remove the last line (if possible). */
+    [Server]
+    public void RemoveLastLine()
+    {
+        if (Lines.Count > 0)
+            Lines.RemoveAt(Lines.Count - 1);
+
+        while (LinePercentages.Count > Lines.Count)
+            LinePercentages.RemoveAt(LinePercentages.Count - 1);
+    }
+
+    /** Clear all lines. */
+    [Server]
+    public void ClearLines()
+    {
+        Lines.Clear();
+        LinePercentages.Clear();
+    }
+
+    /** Update a line by id. */
+    [Server]
+    public void SetLine(int id, Line line)
+    {
+        // Update line's data in the synchronized list.
+        if (id >= 1 && id <= Lines.Count)
+            Lines[id - 1] = line;
+    }
+
+
+    // Setters and Getters
+    // ------------------------------------------------------------
+
+    /** Return the number of map lines. */
+    public int LineCount
+        { get { return Lines.Count; } }
+
+    /** Return the last map line's id. */
+    public int LastLine
+        { get { return Lines.Count; } }
+
+    /** Return a line for the given id. */
+    public Line GetLine(int id)
+    {
+        if (id >= 1 && id <= Lines.Count)
+            return Lines[id - 1];
+
+        return new Line { Id = id };
+    }
+
+    /** Whether the given server data key relates to map line state. */
+    public bool IsMapLineKey(string valueName)
+        { return valueName.StartsWith("mapline"); }
+
+    /** Updates a server shared value. */
+    public void SetServerData(string valueName, float value, bool add = false)
+    {
+        // Parse value into line id and parameter name.
+        int id; string parameter;
+        if (!TryParseKey(valueName, out id, out parameter))
+            return;
+
+        // Apply the appropriate change.
+        switch (parameter.ToLower())
+        {
+            case "percent":
+                SetLinePercent(id, value);
+                break;
+        }
+    }
+
+    /** Returns a server shared value. */
+    public float GetServerData(string valueName, float defaultValue)
+    {
+        // Parse value into line id and parameter name.
+        int id; string parameter;
+        if (!TryParseKey(valueName, out id, out parameter))
+            return defaultValue;
+
+        // Apply the appropriate change.
+        switch (parameter.ToLower())
+        {
+            case "percent":
+                return GetLinePercent(id);
+
+            default:
+                return defaultValue;
+        }
+    }
+
+
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Save map state to JSON. */
+    public JSONObject Save()
+    {
+        var json = new JSONObject();
+
+        var linesJson = new JSONObject(JSONObject.Type.ARRAY);
+        foreach (var v in Lines)
+            linesJson.Add(SaveLine(v));
+
+        json.AddField("Lines", linesJson);
+        return json;
+    }
+
+    /** Load map state from JSON. */
+    [Server]
+    public void Load(JSONObject json)
+    {
+        // Reinitialize lines to default state.
+        ClearLines();
+
+        // Load in line data from file.
+        var linesJson = json.GetField("Lines");
+        if (linesJson == null || linesJson.IsNull)
+            return;
+        for (var i = 0; i < linesJson.Count; i++)
+            AddLine(LoadLine(linesJson[i]));
+    }
+
+    /** Save a line state to JSON. */
+    private JSONObject SaveLine(Line line)
+    {
+        var json = new JSONObject();
+        json.AddField("Id", line.Id);
+        json.AddField("Name", line.Name);
+        json.AddField("Color", line.Color);
+        json.AddField("Style", line.Style.ToString());
+
+        var pointsJson = new JSONObject(JSONObject.Type.ARRAY);
+        foreach (var p in line.Points)
+            pointsJson.Add(p);
+
+        json.AddField("Points", pointsJson);
+
+        return json;
+    }
+
+    /** Load line state from JSON. */
+    private Line LoadLine(JSONObject json)
+    {
+        var line = new Line(0);
+        json.GetField(ref line.Id, "Id");
+        json.GetField(ref line.Name, "Name");
+        json.GetField(ref line.Color, "Color");
+
+        var styleName = "Normal";
+        json.GetField(ref styleName, "Style");
+        line.Style = (LineStyle) Enum.Parse(typeof(LineStyle), styleName, true);
+
+        // Load in line points.
+        var linesJson = json.GetField("Points");
+        if (linesJson != null && linesJson.IsArray)
+        {
+            var n = linesJson.Count;
+            var points = new Vector3[n];
+            for (var i = 0; i < n; i++)
+                points[i] = linesJson[i].toVector3();
+        }
+
+        return line;
+    }
+
+
+    // Private Methods
+    // ------------------------------------------------------------
+
+    /** Set the progress of a line by id. */
+    private void SetLinePercent(int id, float value)
+    {
+        if (id >= 1 && id <= Lines.Count)
+            LinePercentages[id - 1] = value;
+    }
+
+    /** Return progress of a line by id. */
+    private float GetLinePercent(int id)
+    {
+        if (id >= 1 && id <= Lines.Count)
+            return LinePercentages[id - 1];
+
+        return 100f;
+    }
+
+    /** Parse a server data value key into line id and parameter key. */
+    private bool TryParseKey(string valueName, out int id, out string parameter)
+    {
+        // Check if a value name was supplied.
+        id = 0; parameter = "";
+        if (string.IsNullOrEmpty(valueName))
+            return false;
+
+        // Pattern match on incoming key to determine what to change.
+        var key = valueName.ToLower();
+        var match = LineDataKeyPattern.Match(key);
+        if (!match.Success)
+            return false;
+
+        // Parse the match into line id and state key.
+        parameter = match.Groups[2].Value;
+        id = int.Parse(match.Groups[3].Value);
+
+        // Successfully parsed key into components.
+        return true;
+    }
 
 
 }

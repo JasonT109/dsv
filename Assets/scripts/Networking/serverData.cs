@@ -1235,6 +1235,8 @@ public class serverData : NetworkBehaviour
                 default:
                     if (VesselData.IsVesselKey(valueName))
                         VesselData.SetServerData(valueName, newValue, add);
+                    else if (MapData.IsMapLineKey(valueName))
+                        MapData.SetServerData(valueName, newValue, add);
                     else if (CrewData.IsCrewKey(valueName))
                         CrewData.SetServerData(valueName, newValue, add);
                     else
@@ -1342,14 +1344,6 @@ public class serverData : NetworkBehaviour
 
     public void OnChangeBool(string boolName, bool newValue)
     {
-        // Check if we're setting a vessel state value.
-        if (VesselData.IsVesselKey(boolName))
-            { VesselData.SetServerData(boolName, newValue ? 1 : 0); return; }
-
-        // Check if we're setting a vessel state value.
-        if (CrewData.IsCrewKey(boolName))
-            { CrewData.SetServerData(boolName, newValue ? 1 : 0); return; }
-
         try
         { 
             // Match incoming key against known data values.
@@ -1432,6 +1426,15 @@ public class serverData : NetworkBehaviour
                     break;
                 case "dcccommsusesliders":
                     DCCScreenData.DCCcommsUseSliders = newValue;
+                    break;
+
+                default:
+                    if (VesselData.IsVesselKey(boolName))
+                        VesselData.SetServerData(boolName, newValue ? 1 : 0);
+                    else if (CrewData.IsCrewKey(boolName))
+                        CrewData.SetServerData(boolName, newValue ? 1 : 0);
+                    else if (MapData.IsMapLineKey(boolName))
+                        MapData.SetServerData(boolName, newValue ? 1 : 0);
                     break;
             }
         }

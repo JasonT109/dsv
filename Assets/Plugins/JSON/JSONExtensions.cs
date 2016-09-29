@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 public static class JSONExtensions
 {
 
-    public static Vector3 toVector(this JSONObject json)
+    public static Vector3 toVector3(this JSONObject json)
     {
         if (!json.IsArray || json.Count < 3)
             return Vector3.zero;

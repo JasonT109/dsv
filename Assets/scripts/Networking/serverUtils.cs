@@ -1833,6 +1833,8 @@ namespace Meg.Networking
                     default:
                         if (VesselData.IsVesselKey(valueName))
                             return VesselData.GetServerData(valueName, defaultValue);
+                        if (MapData.IsMapLineKey(valueName))
+                            return MapData.GetServerData(valueName, defaultValue);
                         if (CrewData.IsCrewKey(valueName))
                             return CrewData.GetServerData(valueName, defaultValue);
 
@@ -2174,6 +2176,8 @@ namespace Meg.Networking
                     default:
                         if (VesselData.IsVesselKey(boolName))
                             return VesselData.GetServerData(boolName, Unknown) > 0;
+                        if (MapData.IsMapLineKey(boolName))
+                            return MapData.GetServerData(boolName, Unknown) > 0;
                         if (CrewData.IsCrewKey(boolName))
                             return CrewData.GetServerData(boolName, Unknown) > 0;
 
@@ -2554,6 +2558,34 @@ namespace Meg.Networking
         /** Return the current player vessel movement mode (if any). */
         public static vesselMovement GetPlayerVesselMovement()
             { return VesselMovements ? VesselMovements.GetPlayerVesselMovement() : null; }
+
+        /** Add a map line to the simulation. */
+        public static void PostAddMapLine(mapData.Line line)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostAddMapLine(line);
+        }
+
+        /** Remove the last map line from the simulation. */
+        public static void PostRemoveLastMapLine()
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostRemoveLastMapLine();
+        }
+
+        /** Clear map lines from the simulation. */
+        public static void PostClearMapLines()
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostClearMapLines();
+        }
+
+        /** Update a map line in the simulation. */
+        public static void PostSetMapLine(mapData.Line line)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSetMapLine(line);
+        }
 
         /** Set the current vessel color theme. */
         public static void SetColorTheme(megColorTheme theme)

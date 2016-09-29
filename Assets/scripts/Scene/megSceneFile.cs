@@ -106,6 +106,10 @@ namespace Meg.Scene
             if (vessels)
                 LoadVessels(vessels);
 
+            var map = json.GetField("map");
+            if (map)
+                LoadMap(map);
+
             var movements = json.GetField("movements");
             if (movements)
                 LoadMovements(movements);
@@ -122,6 +126,7 @@ namespace Meg.Scene
             json.AddField("metadata", SaveMetadata());
             json.AddField("parameters", SaveParameters());
             json.AddField("vessels", SaveVessels());
+            json.AddField("map", SaveMap());
             json.AddField("movements", SaveMovements());
             json.AddField("events", SaveEvents());
 
@@ -165,6 +170,12 @@ namespace Meg.Scene
             return serverUtils.VesselData.Save();
         }
 
+        /** Save state of the map to JSON. */
+        private JSONObject SaveMap()
+        {
+            return serverUtils.MapData.Save();
+        }
+
         /** Save state of vessel movements to JSON. */
         private JSONObject SaveMovements()
         {
@@ -201,6 +212,12 @@ namespace Meg.Scene
         public void LoadVessels(JSONObject json)
         {
             serverUtils.VesselData.Load(json);
+        }
+
+        /** Load map state from JSON. */
+        public void LoadMap(JSONObject json)
+        {
+            serverUtils.MapData.Load(json);
         }
 
         /** Load vessel movements from JSON. */
