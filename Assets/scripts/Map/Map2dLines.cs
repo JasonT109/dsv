@@ -23,6 +23,12 @@ public class Map2dLines : MonoBehaviour
     /** Server parameter used to drive scale factor (optional). */
     public string ScaleServerParam;
 
+    /** Line width scaling factor. */
+    public float LineWidthScale = 1;
+
+    /** Initial transform root scale. */
+    public float InitialTransformRootScale = 1;
+
 
     [Header("Prefabs")]
 
@@ -42,6 +48,9 @@ public class Map2dLines : MonoBehaviour
     // Members
     // ------------------------------------------------------------
 
+    /** Initial root scale. */
+    private float _initialRootScale;
+
     /** The list of line instances. */
     private readonly List<Map2dLine> _lines = new List<Map2dLine>();
 
@@ -53,6 +62,8 @@ public class Map2dLines : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        _initialRootScale = LineToRootScale;
+
         if (!Root)
             Root = transform;
     }
@@ -67,14 +78,14 @@ public class Map2dLines : MonoBehaviour
     // Private Methods
     // ------------------------------------------------------------
 
-    /** Update sonar lines. */
+    /** Update map lines. */
     private void UpdateLines()
     {
         if (!MapData)
             return;
 
         if (!string.IsNullOrEmpty(ScaleServerParam))
-            LineToRootScale = serverUtils.GetServerData(ScaleServerParam, LineToRootScale);
+            LineToRootScale = serverUtils.GetServerData(ScaleServerParam, LineToRootScale) * _initialRootScale;
 
         transform.localScale = Vector3.one * LineToRootScale;
 
@@ -84,8 +95,11 @@ public class Map2dLines : MonoBehaviour
         for (var i = 0; i < n; i++)
         {
             var line = GetLine(index++);
+            line.LineWidthScale = LineWidthScale;
+            line.InitialTransformRootScale = InitialTransformRootScale;
             line.Line = MapData.Lines[i];
             line.Progress = i < nPercentages ? MapData.LinePercentages[i] : 0f;
+            line.UpdateLine();
         }
 
         for (var i = index; i < _lines.Count; i++)
@@ -104,6 +118,8 @@ public class Map2dLines : MonoBehaviour
             line.transform.localScale = Vector3.one;
             _lines.Add(line);
         }
+
+        _lines[i].gameObject.SetActive(true);
 
         // Return the line instance.
         return _lines[i];

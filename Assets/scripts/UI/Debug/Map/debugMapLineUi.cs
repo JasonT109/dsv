@@ -36,7 +36,7 @@ public class debugMapLineUi : MonoBehaviour
     // ------------------------------------------------------------
 
     /** Whether ui is being updated. */
-    private bool _updating;
+    // private bool _updating;
 
 
     // Public Methods
@@ -45,7 +45,6 @@ public class debugMapLineUi : MonoBehaviour
     /** Select this line. */
     public void Select()
         { Lines.Selected = Line; }
-
 
 
     // Unity Methods
@@ -71,7 +70,7 @@ public class debugMapLineUi : MonoBehaviour
 
     private void UpdateLineUi()
     {
-        _updating = true;
+        // _updating = true;
 
         var isSelected = Lines.Selected.Id == Line.Id;
         Backdrop.color = HSBColor.FromColor(Line.Color)
@@ -80,7 +79,7 @@ public class debugMapLineUi : MonoBehaviour
 
         NameLabel.text = Line.Name;
 
-        _updating = false;
+        // _updating = false;
     }
 
 }

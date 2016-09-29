@@ -19,7 +19,10 @@ public class Map2dLine : MonoBehaviour
     public float Progress { get; set; }
 
     /** Initial transform root scale. */
-    public float InitialTransformRootScale = 0.35f;
+    public float InitialTransformRootScale { get; set; }
+
+    /** Line width scale. */
+    public float LineWidthScale { get; set; }
 
 
     // Members
@@ -34,10 +37,6 @@ public class Map2dLine : MonoBehaviour
     /** The transform root. */
     private Transform _transformRoot;
 
-    /** Line's initial width. */
-    private float _initialLineWidth;
-
-
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -45,10 +44,6 @@ public class Map2dLine : MonoBehaviour
     /** Enabling. */
     private void OnEnable()
         { InitLine(); }
-
-    /** Updating. */
-    private void LateUpdate()
-        { UpdateLine(); }
 
     /** Initialize the line component. */
     private void InitLine()
@@ -59,11 +54,14 @@ public class Map2dLine : MonoBehaviour
         // Initialize line points.
         _vectorObject = GetComponent<VectorObject2D>();
         _line = _vectorObject.vectorLine;
-        _initialLineWidth = _line.lineWidth;
     }
 
+
+    // Public Methods
+    // ------------------------------------------------------------
+
     /** Update the line component. */
-    private void UpdateLine()
+    public void UpdateLine()
     {
         // Initialize line on demand.
         if (!_vectorObject)
@@ -80,11 +78,9 @@ public class Map2dLine : MonoBehaviour
         if (_line == null || !_transformRoot)
             return;
 
+        // Update line size.
         var points = Line.Points;
-        if (points == null)
-            return;
-
-        var n = points.Length;
+        var n = points != null ? points.Length : 0;
         if (_line.points2.Count != n)
         {
             // HACK: Force Vectrocity to reset the line by changing its type.
@@ -93,26 +89,34 @@ public class Map2dLine : MonoBehaviour
             _line.Resize(n);
         }
 
+        // Check for empty line.
+        if (n == 0)
+            return;
+
+        // Update line positions.
         for (var i = 0; i < n; i++)
             _line.points2[i] = Line.Points[i];
 
         // Update line progress fraction.
         var progress = (Progress / 100f) * (n - 1);
+        var start = Mathf.FloorToInt(progress);
         var end = Mathf.CeilToInt(progress);
-        var t = progress - Mathf.FloorToInt(progress);
+        var t = progress - start;
         _line.drawEnd = end;
 
-        if (end > 0)
+        if (end > 0 && start < end)
         {
             var p0 = _line.points2[end - 1];
             var p1 = _line.points2[end];
             _line.points2[end] = Vector2.Lerp(p0, p1, t);
         }
 
-        // Update line widths to remain a constant size on screen.
+        // Update line width to remain a constant size on screen.
         var s = InitialTransformRootScale / _transformRoot.localScale.x;
-        _line.lineWidth = _initialLineWidth * s;
+        _line.lineWidth = Line.Width * s * LineWidthScale;
 
+        // Redraw the line.
+        _line.color = Line.Color;
         _line.Draw();
     }
 

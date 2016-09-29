@@ -12,6 +12,8 @@ public class mapData : NetworkBehaviour
     /** Default floor depth to assume. */
     public const float DefaultFloorDepth = 11050;
 
+    public const int MaxLinePointCount = 50;
+
     /** Map modes. */
     public enum Mode
     {
@@ -150,6 +152,7 @@ public class mapData : NetworkBehaviour
         public int Id;
         public string Name;
         public LineStyle Style;
+        public float Width;
         public Color Color;
         public Vector3[] Points;
 
@@ -159,6 +162,7 @@ public class mapData : NetworkBehaviour
             Name = other.Name;
             Style = other.Style;
             Color = other.Color;
+            Width = other.Width;
             if (other.Points != null)
                 Points = other.Points.Clone() as Vector3[];
             else
@@ -172,6 +176,7 @@ public class mapData : NetworkBehaviour
             Style = LineStyle.Normal;
             Color = Color.white;
             Points = new Vector3[0];
+            Width = 0.1f;
         }
 
     }
@@ -361,6 +366,10 @@ public class mapData : NetworkBehaviour
         // Reinitialize lines to default state.
         ClearLines();
 
+        // Check if valid JSON was supplied.
+        if (!json || json.IsNull)
+            return;
+
         // Load in line data from file.
         var linesJson = json.GetField("Lines");
         if (linesJson == null || linesJson.IsNull)
@@ -377,10 +386,12 @@ public class mapData : NetworkBehaviour
         json.AddField("Name", line.Name);
         json.AddField("Color", line.Color);
         json.AddField("Style", line.Style.ToString());
+        json.AddField("Width", line.Width);
 
         var pointsJson = new JSONObject(JSONObject.Type.ARRAY);
-        foreach (var p in line.Points)
-            pointsJson.Add(p);
+        if (line.Points != null)
+            foreach (var p in line.Points)
+                pointsJson.Add(p);
 
         json.AddField("Points", pointsJson);
 
@@ -394,6 +405,7 @@ public class mapData : NetworkBehaviour
         json.GetField(ref line.Id, "Id");
         json.GetField(ref line.Name, "Name");
         json.GetField(ref line.Color, "Color");
+        json.GetField(ref line.Width, "Width");
 
         var styleName = "Normal";
         json.GetField(ref styleName, "Style");
@@ -404,10 +416,12 @@ public class mapData : NetworkBehaviour
         if (linesJson != null && linesJson.IsArray)
         {
             var n = linesJson.Count;
-            var points = new Vector3[n];
+            line.Points = new Vector3[n];
             for (var i = 0; i < n; i++)
-                points[i] = linesJson[i].toVector3();
+                line.Points[i] = linesJson[i].toVector3();
         }
+        else
+            line.Points = new Vector3[0];
 
         return line;
     }

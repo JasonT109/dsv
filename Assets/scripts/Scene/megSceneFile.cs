@@ -107,8 +107,7 @@ namespace Meg.Scene
                 LoadVessels(vessels);
 
             var map = json.GetField("map");
-            if (map)
-                LoadMap(map);
+            LoadMap(map);
 
             var movements = json.GetField("movements");
             if (movements)

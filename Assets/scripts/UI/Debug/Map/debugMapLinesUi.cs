@@ -100,7 +100,8 @@ public class debugMapLinesUi : Singleton<debugMapLinesUi>
         {
             Name = "Line",
             Color = Color.white,
-            Style = mapData.LineStyle.Normal
+            Style = mapData.LineStyle.Normal,
+            Width = 0.1f
         });
     }
 
@@ -172,6 +173,8 @@ public class debugMapLinesUi : Singleton<debugMapLinesUi>
             line.transform.SetParent(LineContainer, false);
             _lines.Add(line);
         }
+
+        _lines[i].gameObject.SetActive(true);
 
         return _lines[i];
     }
