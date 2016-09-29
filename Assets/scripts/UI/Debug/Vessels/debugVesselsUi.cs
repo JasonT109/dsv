@@ -88,6 +88,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
 
     private void Awake()
     {
+        SetInstance(this);
         if (!VesselContainer)
             VesselContainer = transform;
     }

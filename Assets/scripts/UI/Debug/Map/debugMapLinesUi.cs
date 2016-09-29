@@ -70,6 +70,7 @@ public class debugMapLinesUi : Singleton<debugMapLinesUi>
 
     private void Awake()
     {
+        SetInstance(this);
         if (!LineContainer)
             LineContainer = transform;
     }
