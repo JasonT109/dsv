@@ -110,7 +110,10 @@ public class Map2dLinePoint : MonoBehaviour
         if (transforming)
             UpdateWhileTransforming();
         else
+        {
             Transformer.transform.localPosition = transform.localPosition;
+            Transformer.transform.localScale = transform.localScale;
+        }
     }
 
 }

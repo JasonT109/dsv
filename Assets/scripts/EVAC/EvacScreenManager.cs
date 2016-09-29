@@ -14,8 +14,6 @@ public class EvacScreenManager : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha3))
             PostScreenType(screenData.Type.EvacRight);
         if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha4))
-            PostScreenType(screenData.Type.EvacTop);
-        if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.Alpha5))
             PostScreenType(screenData.Type.EvacMap);
     }
 

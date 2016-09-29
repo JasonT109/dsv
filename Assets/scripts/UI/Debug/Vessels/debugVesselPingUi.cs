@@ -160,7 +160,10 @@ public class debugVesselPingUi : MonoBehaviour
         if (transforming)
             UpdateWhileTransforming();
         else
+        {
             Transformer.transform.localPosition = Ping.transform.localPosition;
+            Transformer.transform.localScale = Ping.transform.localScale;
+        }
     }
 
     void OnDestroy()

@@ -42,7 +42,7 @@ public class debugEvacScreenUi : MonoBehaviour
     private Text _screenLabel;
 
 
-    private readonly screenData.Content[] _bottomWindows =
+    private readonly screenData.Content[] _midWindows =
     {
         screenData.Content.Controls,
         screenData.Content.Thrusters,
@@ -54,7 +54,7 @@ public class debugEvacScreenUi : MonoBehaviour
         screenData.Content.Power,
     };
 
-    private readonly screenData.Content[] _topWindows =
+    private readonly screenData.Content[] _sideWindows =
     {
         screenData.Content.Thrusters,
         screenData.Content.SonarLong,
@@ -116,7 +116,6 @@ public class debugEvacScreenUi : MonoBehaviour
             case screenData.Type.EvacLeft:
             case screenData.Type.EvacMid:
             case screenData.Type.EvacRight:
-            case screenData.Type.EvacTop:
                 return true;
             default:
                 return false;
@@ -168,8 +167,6 @@ public class debugEvacScreenUi : MonoBehaviour
             case screenData.Type.EvacMid:
                 return screenData.Type.EvacRight;
             case screenData.Type.EvacRight:
-                return screenData.Type.EvacTop;
-            case screenData.Type.EvacTop:
                 return screenData.Type.EvacMap;
             case screenData.Type.EvacMap:
                 return screenData.Type.EvacLeft;
@@ -189,12 +186,10 @@ public class debugEvacScreenUi : MonoBehaviour
                 return screenData.Type.EvacLeft;
             case screenData.Type.EvacRight:
                 return screenData.Type.EvacMid;
-            case screenData.Type.EvacTop:
-                return screenData.Type.EvacRight;
             case screenData.Type.EvacMap:
-                return screenData.Type.EvacTop;
+                return screenData.Type.EvacRight;
             default:
-                return screenData.Type.EvacTop;
+                return screenData.Type.EvacMid;
         }
     }
 
@@ -203,8 +198,9 @@ public class debugEvacScreenUi : MonoBehaviour
     {
         switch (type)
         {
-            case screenData.Type.EvacTop:
-                return GetNextTopContent(current);
+            case screenData.Type.EvacLeft:
+            case screenData.Type.EvacRight:
+                return GetNextSideContent(current);
             default:
                 return current;
         }
@@ -215,15 +211,16 @@ public class debugEvacScreenUi : MonoBehaviour
     {
         switch (type)
         {
-            case screenData.Type.EvacTop:
-                return GetPreviousTopContent(current);
+            case screenData.Type.EvacLeft:
+            case screenData.Type.EvacRight:
+                return GetPreviousSideContent(current);
             default:
                 return current;
         }
     }
 
     /** Given a content value, return the next valid value, cycling round to None. */
-    private static screenData.Content GetNextTopContent(screenData.Content current)
+    private static screenData.Content GetNextSideContent(screenData.Content current)
     {
         switch (current)
         {
@@ -241,7 +238,7 @@ public class debugEvacScreenUi : MonoBehaviour
     }
 
     /** Given a content value, return the previous valid value, cycling round to None. */
-    private static screenData.Content GetPreviousTopContent(screenData.Content current)
+    private static screenData.Content GetPreviousSideContent(screenData.Content current)
     {
         switch (current)
         {
@@ -270,12 +267,11 @@ public class debugEvacScreenUi : MonoBehaviour
         switch (type)
         {
             case screenData.Type.EvacLeft:
-            case screenData.Type.EvacMid:
             case screenData.Type.EvacRight:
-                return _bottomWindows;
+                return _sideWindows;
 
-            case screenData.Type.EvacTop:
-                return _topWindows;
+            case screenData.Type.EvacMid:
+                return _midWindows;
 
             default:
                 return _noWindows;
