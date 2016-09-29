@@ -14,7 +14,20 @@ public class Map2dLinePoint : MonoBehaviour
     public Transformer Transformer;
     public TransformGesture TransformGesture;
 
-    
+    public StyleOption[] Options;
+
+
+    // Structures
+    // ------------------------------------------------------------
+
+    [Serializable]
+    public struct StyleOption
+    {
+        public mapData.PointStyle Style;
+        public GameObject Object;
+    }
+
+
     // Members
     // ------------------------------------------------------------
 
@@ -81,6 +94,11 @@ public class Map2dLinePoint : MonoBehaviour
         _group.alpha = Parent.GetPointAlpha(Index);
         for (var i = 0; i < _graphics.Length; i++)
             _graphics[i].color = Parent.Line.Color;
+
+        // Set point style.
+        var style = Parent.Line.PointStyle;
+        for (var i = 0; i < Options.Length; i++)
+            Options[i].Object.SetActive(style == Options[i].Style);
 
         // Update transformer (if any).
         if (Transformer)

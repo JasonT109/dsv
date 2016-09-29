@@ -25,6 +25,12 @@ public class debugMapLinePropertiesUi : MonoBehaviour
     public Slider WidthSlider;
     public InputField WidthInput;
 
+    public Button SelectStyleButton;
+    public Text Style;
+
+    public Button SelectPointStyleButton;
+    public Text PointStyle;
+
     public InputField PointCountInput;
 
     public Button AddPointButton;
@@ -135,6 +141,8 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         SelectColorButton.onClick.AddListener(OnSelectColorClicked);
         WidthSlider.onValueChanged.AddListener(OnWidthSliderChanged);
         WidthInput.onEndEdit.AddListener(OnWidthInputEndEdit);
+        SelectStyleButton.onClick.AddListener(OnSelectStyleClicked);
+        SelectPointStyleButton.onClick.AddListener(OnSelectPointStyleClicked);
         PointCountInput.onEndEdit.AddListener(OnPointCountInputEndEdit);
         AddPointButton.onClick.AddListener(OnAddPointClicked);
         RemovePointButton.onClick.AddListener(OnRemovePointClicked);
@@ -159,6 +167,8 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         WidthSlider.value = Line.Width;
         WidthInput.text = Line.Width.ToString();
         PointCountInput.text = PointCount.ToString();
+        Style.text = Line.Style.ToString();
+        PointStyle.text = Line.PointStyle.ToString();
 
         var percent = serverUtils.MapData.GetLinePercent(Line.Id);
         PercentageSlider.maxValue = Mathf.Max(PercentageSlider.maxValue, percent);
@@ -200,6 +210,44 @@ public class debugMapLinePropertiesUi : MonoBehaviour
                 _line.Color = color;
                 serverUtils.PostSetMapLine(_line);
                 Color.color = color;
+            });
+    }
+
+    private void OnSelectStyleClicked()
+    {
+        var items = Enum.GetNames(typeof(mapData.LineStyle))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t, Id = t });
+
+        DialogManager.Instance.ShowList("SELECT LINE STYLE",
+            string.Format("Please select the style for line '{0}':", Line.Name),
+            items,
+            Line.Style.ToString(),
+            item =>
+            {
+                var style = mapData.LineStyleForName(item.Id);
+                _line.Style = style;
+                serverUtils.PostSetMapLine(_line);
+                Style.text = _line.Style.ToString();
+            });
+    }
+
+    private void OnSelectPointStyleClicked()
+    {
+        var items = Enum.GetNames(typeof(mapData.PointStyle))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t, Id = t });
+
+        DialogManager.Instance.ShowList("SELECT POINT STYLE",
+            string.Format("Please select the point style for line '{0}':", Line.Name),
+            items,
+            Line.PointStyle.ToString(),
+            item =>
+            {
+                var style = mapData.PointStyleForName(item.Id);
+                _line.PointStyle = style;
+                serverUtils.PostSetMapLine(_line);
+                PointStyle.text = _line.PointStyle.ToString();
             });
     }
 

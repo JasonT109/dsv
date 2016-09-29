@@ -129,13 +129,11 @@ public class debugVesselPingUi : MonoBehaviour
         TransformGesture.enabled = active;
         PressGesture.enabled = active;
         ReleaseGesture.enabled = active;
-        if (!active)
-            return;
 
         // Determine the proper color for this ping.
         var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var color = Ping.Color;
-        if (selected)
+        if (selected && active)
             color = HSBColor.FromColor(color).Brighten(1.5f).ToColor();
         if (!Ping.Visible)
             color.a *= 0.5f;
@@ -144,8 +142,16 @@ public class debugVesselPingUi : MonoBehaviour
         for (var i = 0; i < _graphics.Length; i++)
             _graphics[i].color = color;
 
+        if (active)
+            UpdateTransformer();
+
+    }
+
+    private void UpdateTransformer()
+    {
+        var selected = debugVesselsUi.Instance.Selected.Id == Vessel.Id;
         var transforming = TransformGesture.State == Gesture.GestureState.Changed;
-	    Ping.enabled = !transforming;
+        Ping.enabled = !transforming;
         Ping.AutoPulse(selected ? 1 : 0);
 
         // Push selected ping in front of others so it gets preferentially transformed.

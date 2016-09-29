@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,6 +31,22 @@ public class Map2dLine : MonoBehaviour
 
     public Map2dLinePoint PointPrefab;
 
+    /** Line style options. */
+    public StyleOption[] StyleOptions;
+
+
+    // Structures
+    // ------------------------------------------------------------
+
+    [Serializable]
+    public struct StyleOption
+    {
+        public mapData.LineStyle Style;
+        public Texture Texture;
+        public float Scale;
+        public bool Continuous;
+    }
+
 
     // Members
     // ------------------------------------------------------------
@@ -45,6 +62,9 @@ public class Map2dLine : MonoBehaviour
 
     /** The list of point instances. */
     private readonly List<Map2dLinePoint> _points = new List<Map2dLinePoint>();
+
+    /** Currently applied style. */
+    private mapData.LineStyle _style = mapData.LineStyle.None;
 
 
     // Unity Methods
@@ -130,9 +150,27 @@ public class Map2dLine : MonoBehaviour
         var s = InitialTransformRootScale / _transformRoot.localScale.x;
         _line.lineWidth = Line.Width * s * LineWidthScale;
 
+        // Set line styling.
+        if (Line.Style != _style)
+            UpdateStyle();
+
         // Redraw the line.
         _line.color = Line.Color;
         _line.Draw();
+    }
+
+    /** Update line styling. */
+    private void UpdateStyle()
+    {
+        _style = Line.Style;
+        for (var i = 0; i < StyleOptions.Length; i++)
+            if (StyleOptions[i].Style == _style)
+            {
+                var option = StyleOptions[i];
+                _line.texture = option.Texture;
+                _line.textureScale = option.Scale;
+                _line.continuousTexture = option.Continuous;
+            }
     }
 
     /** Return the line's ith point. */
@@ -170,10 +208,10 @@ public class Map2dLine : MonoBehaviour
         var end = Mathf.CeilToInt(progress);
         var t = progress - start;
 
-        if (i <= start || start == end)
+        if (i < start)
             return 1;
 
-        return i > end ? 0 : t;
+        return i >= end ? 0 : t;
     }
 
 

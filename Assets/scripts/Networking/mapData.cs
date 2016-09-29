@@ -138,7 +138,17 @@ public class mapData : NetworkBehaviour
     /** Possible line styles. */
     public enum LineStyle
     {
-        Normal
+        None = -1,
+        Normal = 0,
+        Dashed = 1
+    }
+
+    /** Possible point styles. */
+    public enum PointStyle
+    {
+        None = -1,
+        Circle = 0,
+        Diamond = 1
     }
 
 
@@ -154,6 +164,7 @@ public class mapData : NetworkBehaviour
         public LineStyle Style;
         public float Width;
         public Color Color;
+        public PointStyle PointStyle;
         public Vector3[] Points;
 
         public Line(Line other)
@@ -163,6 +174,7 @@ public class mapData : NetworkBehaviour
             Style = other.Style;
             Color = other.Color;
             Width = other.Width;
+            PointStyle = other.PointStyle;
             if (other.Points != null)
                 Points = other.Points.Clone() as Vector3[];
             else
@@ -175,6 +187,7 @@ public class mapData : NetworkBehaviour
             Name = "Line";
             Style = LineStyle.Normal;
             Color = Color.white;
+            PointStyle = PointStyle.None;
             Points = new Vector3[0];
             Width = 0.1f;
         }
@@ -198,29 +211,7 @@ public class mapData : NetworkBehaviour
         // Default to top-down map in gliders / evac ship.
         if (serverUtils.IsGlider())
             mapTopDown = true;
-
-        /*
-        var line = new Line
-        {
-            Id = 0,
-            Color = Color.cyan,
-            Points = new[] {new Vector3(0, 0, 0), new Vector3(100, 0, 0), new Vector3(100, 100, 0), new Vector3(0, 100, 0), new Vector3(0, 0, 0), },
-        };
-
-        Lines.Add(line);
-        LinePercentages.Add(0f);
-        */
     }
-
-    /*
-    private void Update()
-    {
-        if (!isServer || LinePercentages.Count <= 0)
-            return;
-
-        LinePercentages[0] = Mathf.Repeat(Time.time * 25f, 100f);
-    }
-    */
 
     #endregion
 
@@ -280,6 +271,12 @@ public class mapData : NetworkBehaviour
         if (id >= 1 && id <= Lines.Count)
             Lines[id - 1] = line;
     }
+
+    public static LineStyle LineStyleForName(string name)
+        { return (LineStyle) Enum.Parse(typeof(LineStyle), name); }
+
+    public static PointStyle PointStyleForName(string name)
+        { return (PointStyle) Enum.Parse(typeof(PointStyle), name); }
 
 
     // Setters and Getters
@@ -417,6 +414,7 @@ public class mapData : NetworkBehaviour
         json.AddField("Name", line.Name);
         json.AddField("Color", line.Color);
         json.AddField("Style", line.Style.ToString());
+        json.AddField("PointStyle", line.PointStyle.ToString());
         json.AddField("Width", line.Width);
 
         var pointsJson = new JSONObject(JSONObject.Type.ARRAY);
@@ -441,6 +439,10 @@ public class mapData : NetworkBehaviour
         var styleName = "Normal";
         json.GetField(ref styleName, "Style");
         line.Style = (LineStyle) Enum.Parse(typeof(LineStyle), styleName, true);
+
+        var pointStyleName = "None";
+        json.GetField(ref pointStyleName, "PointStyle");
+        line.PointStyle = (PointStyle) Enum.Parse(typeof(PointStyle), pointStyleName, true);
 
         // Load in line points.
         var linesJson = json.GetField("Points");
