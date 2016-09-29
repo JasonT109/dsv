@@ -499,6 +499,14 @@ public class serverPlayer : NetworkBehaviour
             CmdSetMapLine(line);
     }
 
+    /** Update a map line in the simulation. */
+    public void PostSetMapLinePercent(int id, float value)
+    {
+        if (isServer)
+            serverUtils.MapData.SetLinePercent(id, value);
+        else if (isClient)
+            CmdSetMapLinePercent(id, value);
+    }
 
     // Commands
     // ------------------------------------------------------------
@@ -620,10 +628,15 @@ public class serverPlayer : NetworkBehaviour
     public void CmdAddMapLine(mapData.Line line)
         { serverUtils.MapData.AddLine(line); }
 
-    /** Update a map line int the simulation. */
+    /** Update a map line in the simulation. */
     [Command]
     public void CmdSetMapLine(mapData.Line line)
         { serverUtils.MapData.SetLine(line.Id, line); }
+
+    /** Update a map line in the simulation. */
+    [Command]
+    public void CmdSetMapLinePercent(int id, float value)
+        { serverUtils.MapData.SetLinePercent(id, value); }
 
     /** Remove the last vessel from the simulation. */
     [Command]

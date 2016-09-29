@@ -351,7 +351,15 @@ public class mapData : NetworkBehaviour
         return 100f;
     }
 
-    
+    /** Set the progress of a line by id. */
+    [Server]
+    public void SetLinePercent(int id, float value)
+    {
+        if (id >= 1 && id <= LinePercentages.Count)
+            LinePercentages[id - 1] = value;
+    }
+
+
     // Load / Save
     // ------------------------------------------------------------
 
@@ -452,13 +460,6 @@ public class mapData : NetworkBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
-
-    /** Set the progress of a line by id. */
-    private void SetLinePercent(int id, float value)
-    {
-        if (id >= 1 && id <= LinePercentages.Count)
-            LinePercentages[id - 1] = value;
-    }
 
     /** Parse a server data value key into line id and parameter key. */
     private bool TryParseKey(string valueName, out int id, out string parameter)

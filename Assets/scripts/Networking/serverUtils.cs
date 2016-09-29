@@ -2587,6 +2587,13 @@ namespace Meg.Networking
                 LocalPlayer.PostSetMapLine(line);
         }
 
+        /** Update a map line in the simulation. */
+        public static void PostSetMapLinePercent(int id, float value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostSetMapLinePercent(id, value);
+        }
+
         /** Set the current vessel color theme. */
         public static void SetColorTheme(megColorTheme theme)
         {

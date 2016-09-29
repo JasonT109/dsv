@@ -32,6 +32,9 @@ public class debugMapLinePropertiesUi : MonoBehaviour
 
     public Transform PointContainer;
 
+    public Slider PercentageSlider;
+    public InputField PercentageInput;
+
 
     [Header("Prefabs")]
 
@@ -135,6 +138,8 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         PointCountInput.onEndEdit.AddListener(OnPointCountInputEndEdit);
         AddPointButton.onClick.AddListener(OnAddPointClicked);
         RemovePointButton.onClick.AddListener(OnRemovePointClicked);
+        PercentageSlider.onValueChanged.AddListener(OnPercentageSliderChanged);
+        PercentageInput.onEndEdit.AddListener(OnPercentageInputEndEdit);
     }
 
     private void InitUi()
@@ -154,6 +159,11 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         WidthSlider.value = Line.Width;
         WidthInput.text = Line.Width.ToString();
         PointCountInput.text = PointCount.ToString();
+
+        var percent = serverUtils.MapData.GetLinePercent(Line.Id);
+        PercentageSlider.maxValue = Mathf.Max(PercentageSlider.maxValue, percent);
+        PercentageSlider.value = percent;
+        PercentageInput.text = percent.ToString();
 
         _updating = false;
     }
@@ -238,7 +248,18 @@ public class debugMapLinePropertiesUi : MonoBehaviour
         else
             Array.Resize(ref _line.Points, count);
 
+        // Set up the new point's position.
+        var p = _line.Points;
+        var n = _line.Points.Length;
+        var last = n - 1;
+        if (n > 2)
+            p[last] = p[last - 1] + (p[last - 1] - p[last - 2]);
+
         serverUtils.PostSetMapLine(_line);
+
+        _updating = true;
+        PointCountInput.text = count.ToString();
+        _updating = false;
     }
 
     private void OnAddPointClicked()
@@ -246,6 +267,29 @@ public class debugMapLinePropertiesUi : MonoBehaviour
 
     private void OnRemovePointClicked()
         { SetPointCount(PointCount - 1); }
+
+    private void OnPercentageSliderChanged(float value)
+    {
+        if (_updating)
+            return;
+
+        serverUtils.PostSetMapLinePercent(_line.Id, value);
+        PercentageInput.text = value.ToString();
+    }
+
+    private void OnPercentageInputEndEdit(string value)
+    {
+        if (_updating)
+            return;
+
+        float result;
+        if (!float.TryParse(value, out result))
+            return;
+
+        serverUtils.PostSetMapLinePercent(_line.Id, result);
+        PercentageSlider.maxValue = Mathf.Max(PercentageSlider.maxValue, result);
+        PercentageSlider.value = result;
+    }
 
 
     // Private Methods
