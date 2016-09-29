@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
@@ -98,6 +99,15 @@ public class mapData : NetworkBehaviour
     public string mapEventName;
 
 
+    [Header("Lines")]
+
+    /** Synchronized list for holding map lines. */
+    public SyncListLines Lines = new SyncListLines();
+
+    /** Synchronized list for holding line progress percentages. */
+    public SyncListFloat LinePercentages = new SyncListFloat();
+
+
     public bool IsMap2D
         { get { return mapMode == Mode.Mode2D; } }
 
@@ -106,6 +116,34 @@ public class mapData : NetworkBehaviour
 
     public bool IsSubSchematic
         { get { return mapMode == Mode.ModeSubSchematic; } }
+
+
+    // Enumerations
+    // ------------------------------------------------------------
+
+    /** Possible line styles. */
+    public enum LineStyle
+    {
+        Normal
+    }
+
+
+    // Structures
+    // ------------------------------------------------------------
+
+    /** Structure representing a line on the map. */
+    [Serializable]
+    public struct Line
+    {
+        public int Id;
+        public LineStyle Style;
+        public Color Color;
+        public Vector3[] Points;
+        public float Progress;
+    }
+
+    /** Class definition for a synchronized list of crew states. */
+    public class SyncListLines : SyncListStruct<Line> { };
 
 
     // Unity Methods
@@ -121,7 +159,29 @@ public class mapData : NetworkBehaviour
         // Default to top-down map in gliders / evac ship.
         if (serverUtils.IsGlider())
             mapTopDown = true;
+
+        /*
+        var line = new Line
+        {
+            Id = 0,
+            Color = Color.cyan,
+            Points = new[] {new Vector3(0, 0, 0), new Vector3(100, 0, 0), new Vector3(100, 100, 0), new Vector3(0, 100, 0), new Vector3(0, 0, 0), },
+        };
+
+        Lines.Add(line);
+        LinePercentages.Add(0f);
+        */
     }
+
+    /*
+    private void Update()
+    {
+        if (!isServer || LinePercentages.Count <= 0)
+            return;
+
+        LinePercentages[0] = Mathf.Repeat(Time.time * 25f, 100f);
+    }
+    */
 
     #endregion
 
