@@ -52,7 +52,8 @@ public class DCCStrategyMap : MonoBehaviour
         if (oldMode == mode)
             mode = mapData.Mode.Mode3D;
 
-        serverUtils.PostServerData("mapMode", (int) mode);
+        if (serverUtils.GetServerBool("mapCanSwitchMode"))
+            serverUtils.PostServerData("mapMode", (int) mode);
     }
 
     public void ActivateMapMode(mapData.Mode mode)
@@ -60,7 +61,8 @@ public class DCCStrategyMap : MonoBehaviour
         if (DOTween.IsTweening(Fader))
             return;
 
-        serverUtils.PostServerData("mapMode", (int) mode);
+        if (serverUtils.GetServerBool("mapCanSwitchMode"))
+            serverUtils.PostServerData("mapMode", (int) mode);
     }
 
     private void UpdateMapMode(mapData.Mode mode)

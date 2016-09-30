@@ -33,6 +33,18 @@ public class mapData : NetworkBehaviour
     public bool mapInteractive = true;
 
     [SyncVar]
+    public bool mapCanSwitchMode = true;
+
+    [SyncVar]
+    public bool mapCanPan = true;
+
+    [SyncVar]
+    public bool mapCanZoom = true;
+
+    [SyncVar]
+    public bool mapCanRotate = true;
+
+    [SyncVar]
     public bool mapTopDown = true;
 
     [SyncVar]

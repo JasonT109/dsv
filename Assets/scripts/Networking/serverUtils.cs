@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.3.9";
+        public const string Version = "1.4.0";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -604,6 +604,10 @@ namespace Meg.Networking
             "lightarray9",
             "lightarray10",
             "longitude",
+            "mapcanpan",
+            "mapcanrotate",
+            "mapcanswitchmode",
+            "mapcanzoom",
             "mapinteractive",
             "maplayeralerts",
             "maplayercontours",
@@ -1035,6 +1039,10 @@ namespace Meg.Networking
             { "lightarray9", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "lightarray10", new ParameterInfo { minValue = 0, maxValue = 3, type = ParameterType.Int, description = "Light array 1 status."} },
             { "longitude", new ParameterInfo { minValue = -180, maxValue = 180, description = "Latitude at the map's origin (+E/-W, decimal degrees).", precision = 6 } },
+            { "mapcanpan", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be panned."} },
+            { "mapcanrotate", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be rotated."} },
+            { "mapcanswitchmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map moed (2d/3d/schematic) can be changed."} },
+            { "mapcanzoom", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be zoomed."} },
             { "mapinteractive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be interacted with."} },
             { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether ELB alerts are displayed on the map."} },
             { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether contour lines are displayed on the map."} },
@@ -1576,6 +1584,14 @@ namespace Meg.Networking
                         return MapData.longitude;
                     case "mapinteractive":
                         return MapData.mapInteractive ? 1 : 0;
+                    case "mapcanswitchmode":
+                        return MapData.mapCanSwitchMode ? 1 : 0;
+                    case "mapcanpan":
+                        return MapData.mapCanPan ? 1 : 0;
+                    case "mapcanzoom":
+                        return MapData.mapCanZoom ? 1 : 0;
+                    case "mapcanrotate":
+                        return MapData.mapCanRotate ? 1 : 0;
                     case "maplayeralerts":
                         return MapData.mapLayerAlerts;
                     case "maplayercontours":

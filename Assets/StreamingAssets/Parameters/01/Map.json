@@ -5,22 +5,6 @@
 			"parameters":[
 				{
 					"type":"Value",
-					"serverParam":"mapinteractive"
-				},
-				{
-					"type":"Value",
-					"serverParam":"mapmode"
-				},
-				{
-					"type":"Value",
-					"serverParam":"maptopdown"
-				},
-				{
-					"type":"Value",
-					"serverParam":"mapuseoldindicators"
-				},
-				{
-					"type":"Value",
 					"serverParam":"latitude"
 				},
 				{
@@ -50,6 +34,10 @@
 				{
 					"type":"Value",
 					"serverParam":"waterlayer"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapuseoldindicators"
 				}
 			]
 		},
@@ -87,6 +75,39 @@
 				{
 					"type":"Value",
 					"serverParam":"maplayertemperatures"
+				}
+			]
+		},
+		{
+			"id":"MAP INTERACTIVITY",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"mapinteractive"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapmode"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapcanswitchmode"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapcanpan"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapcanrotate"
+				},
+				{
+					"type":"Value",
+					"serverParam":"mapcanzoom"
+				},
+				{
+					"type":"Value",
+					"serverParam":"maptopdown"
 				}
 			]
 		}

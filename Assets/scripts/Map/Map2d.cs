@@ -2,8 +2,10 @@ using UnityEngine;
 using System.Collections;
 using DG.Tweening;
 using Meg.EventSystem;
+using Meg.Networking;
 using TouchScript.Behaviors;
 using TouchScript.Gestures;
+using TouchScript.Gestures.Base;
 
 public class Map2d : Singleton<Map2d>
 {
@@ -20,6 +22,23 @@ public class Map2d : Singleton<Map2d>
     {
         _gesture = Root.GetComponent<TransformGesture>();
         _transformer = Root.GetComponent<TransformerConstrained>();
+    }
+
+    private void Update()
+    {
+        var mapData = serverUtils.MapData;
+        if (!mapData)
+            return;
+
+        TransformGestureBase.TransformType type = 0;
+        if (mapData.mapCanPan)
+            type = type | TransformGestureBase.TransformType.Translation;
+        if (mapData.mapCanZoom)
+            type = type | TransformGestureBase.TransformType.Scaling;
+        // if (mapData.mapCanRotate)
+        //    type = type | TransformGestureBase.TransformType.Rotation;
+
+        _gesture.Type = type;
     }
 
     public void TriggerEventFromState(megMapCameraEventManager.State state)

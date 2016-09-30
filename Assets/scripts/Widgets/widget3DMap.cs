@@ -183,6 +183,11 @@ public class widget3DMap : MonoBehaviour {
             var distance = Vector3.Distance(t[0].Position, t[1].Position);
             var rotScale = Mathf.Clamp01((distance - MinRotationDistance) / RotationDistanceRange);
             rotDelta = Mathf.Clamp(gesture.DeltaRotation * rotScale, -MaxRotationDelta, MaxRotationDelta);
+
+            if (!serverUtils.MapData.mapCanRotate)
+                rotDelta = 0;
+            if (!serverUtils.MapData.mapCanZoom)
+                scaleDelta = 0;
         }
         else
         {
@@ -331,7 +336,7 @@ public class widget3DMap : MonoBehaviour {
                 }
             }
 
-            if (touches >= 3 && !IsTopDown)
+            if (touches >= 3 && !IsTopDown && serverUtils.MapData.mapCanRotate)
             {
                 // Adjust view angle as gesture moves up and down the screen.
                 viewAngle = Mathf.Clamp(viewAngle + touchDelta.y * pitchSpeed * Time.deltaTime, slider.minValue, slider.maxValue);
@@ -344,7 +349,7 @@ public class widget3DMap : MonoBehaviour {
             maxScroll = Mathf.Abs(maxScroll);
 
             //pan the camera
-            if (touches == 1)
+            if (touches == 1 && serverUtils.MapData.mapCanPan)
             {
                 //z translate is normalised view angle * touchDelta.y
                 float zTrans = graphicsMaths.remapValue(viewAngle, viewAngleSlider.GetComponent<sliderWidget>().minValue, viewAngleSlider.GetComponent<sliderWidget>().maxValue, 0, 1) * touchDelta.y;

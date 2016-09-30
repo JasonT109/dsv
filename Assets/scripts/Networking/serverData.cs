@@ -1079,6 +1079,18 @@ public class serverData : NetworkBehaviour
                 case "mapinteractive":
                     MapData.mapInteractive = newValue > 0;
                     break;
+                case "mapcanswitchmode":
+                    MapData.mapCanSwitchMode = newValue > 0;
+                    break;
+                case "mapcanpan":
+                    MapData.mapCanPan = newValue > 0;
+                    break;
+                case "mapcanzoom":
+                    MapData.mapCanZoom = newValue > 0;
+                    break;
+                case "mapcanrotate":
+                    MapData.mapCanRotate = newValue > 0;
+                    break;
                 case "mapmode":
                     MapData.mapMode = (mapData.Mode) newValue;
                     break;
