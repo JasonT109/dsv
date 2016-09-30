@@ -32,6 +32,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public Button SelectColorButton;
     public Button AddMovementEventButton;
     public Graphic Color;
+    public Button SelectLabelButton;
 
     [Header("Movement Components")]
     public Transform MovementProperties;
@@ -188,6 +189,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         SelectIconButton.onClick.AddListener(OnSelectIconClicked);
         SelectColorButton.onClick.AddListener(OnSelectColorClicked);
         IconScaleInput.onEndEdit.AddListener(OnIconScaleInputChanged);
+        SelectLabelButton.onClick.AddListener(OnSelectLabelClicked);
 
         ConfigureMovementProperties();
     }
@@ -243,6 +245,25 @@ public class debugVesselPropertiesUi : MonoBehaviour
             {
                 var icon = vesselData.IconForName(item.Id);
                 serverUtils.PostVesselIcon(Vessel.Id, icon);
+                _vessel.Icon = icon;
+            });
+    }
+
+    private void OnSelectLabelClicked()
+    {
+        var items = Enum.GetNames(typeof(vesselData.Label))
+            .OrderBy(t => t)
+            .Select(t => new DialogList.Item { Name = t, Id = t });
+
+        DialogManager.Instance.ShowList("SELECT VESSEL LABEL STYLE",
+            string.Format("Please select the label style for vessel '{0}':", Vessel.Name),
+            items,
+            Vessel.Label.ToString(),
+            item =>
+            {
+                var label = vesselData.LabelForName(item.Id);
+                serverUtils.PostVesselLabel(Vessel.Id, label);
+                _vessel.Label = label;
             });
     }
 

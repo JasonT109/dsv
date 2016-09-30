@@ -151,7 +151,9 @@ public class SonarPing : MonoBehaviour
             && (Vessel.Id != player || !Pings.HideIfPlayer);
 
         gameObject.SetActive(visible);
-        Rotator.rotation = Quaternion.identity;
+
+        if (Rotator)
+            Rotator.rotation = Quaternion.identity;
 
         var t = Time.time;
         if (t > _nextPositionUpdate)
@@ -160,7 +162,9 @@ public class SonarPing : MonoBehaviour
             _nextPositionUpdate = t + PositionUpdateInterval;
         }
 
-        NameLabel.Text = Vessel.Name.ToUpper();
+        if (NameLabel)
+            NameLabel.Text = Vessel.Name.ToUpper();
+
         if (t > _nextDepthUpdate && DepthLabel)
         { 
             UpdateDepth();

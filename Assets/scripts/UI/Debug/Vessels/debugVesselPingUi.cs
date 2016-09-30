@@ -42,7 +42,6 @@ public class debugVesselPingUi : MonoBehaviour
     public TransformGesture TransformGesture;
     public PressGesture PressGesture;
     public ReleaseGesture ReleaseGesture;
-    public Text NameLabel;
     public Graphic Icon;
     public Image Arrow;
 
@@ -140,7 +139,8 @@ public class debugVesselPingUi : MonoBehaviour
 
         // Update UI elements accordingly.
         for (var i = 0; i < _graphics.Length; i++)
-            _graphics[i].color = color;
+            if (_graphics[i].tag != "Ignore")
+                _graphics[i].color = color;
 
         if (active)
             UpdateTransformer();

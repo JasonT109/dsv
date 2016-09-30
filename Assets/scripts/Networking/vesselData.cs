@@ -60,8 +60,20 @@ public class vesselData : NetworkBehaviour
         Marker = 7
     }
 
+    /** Types of vessel label. */
+    public enum Label
+    {
+        None = -1,
+        Normal = 0,
+        BoxLeft = 1,
+        BoxRight = 2,
+    }
+
     public static Icon IconForName(string name)
         { return (Icon) Enum.Parse(typeof(Icon), name); }
+
+    public static Label LabelForName(string name)
+        { return (Label) Enum.Parse(typeof(Label), name); }
 
 
     // Structures
@@ -79,6 +91,7 @@ public class vesselData : NetworkBehaviour
         public bool OnSonar;
         public Icon Icon;
         public float IconScale;
+        public Label Label;
         public Color ColorOnSonar;
         public Color ColorOnMap;
         public Color ColorThemeBackground;
@@ -104,6 +117,7 @@ public class vesselData : NetworkBehaviour
             OnSonar = vessel.OnSonar;
             Icon = vessel.Icon;
             IconScale = vessel.IconScale;
+            Label = vessel.Label;
             ColorOnSonar = vessel.ColorOnSonar;
             ColorOnMap = vessel.ColorOnMap;
             ColorThemeBackground = vessel.ColorThemeBackground;
@@ -580,6 +594,14 @@ public class vesselData : NetworkBehaviour
     public float GetIconScale(int id)
         { return GetVessel(id).IconScale; }
 
+    /** Set a vessel's label style (1-based index). */
+    public void SetLabel(int id, Label value)
+        { SetVessel(id, new Vessel(GetVessel(id)) { Label = value }); }
+
+    /** Return a vessel's current label style. */
+    public Label GetLabel(int id)
+        { return GetVessel(id).Label; }
+
 
     // Coordinates and Spaces
     // ------------------------------------------------------------
@@ -756,6 +778,7 @@ public class vesselData : NetworkBehaviour
         json.AddField("OnSonar", vessel.OnSonar);
         json.AddField("Icon", (int) vessel.Icon);
         json.AddField("IconScale", vessel.IconScale);
+        json.AddField("Label", (int) vessel.Label);
         json.AddField("ColorOnMap", vessel.ColorOnMap);
         json.AddField("ColorOnSonar", vessel.ColorOnSonar);
         json.AddField("ColorThemeBackground", vessel.ColorThemeBackground);
@@ -799,6 +822,10 @@ public class vesselData : NetworkBehaviour
         vessel.Icon = (Icon) icon;
         json.GetField(ref vessel.IconScale, "IconScale");
 
+        var label = 0;
+        json.GetField(ref label, "Label");
+        vessel.Label = (Label) label;
+
         return vessel;
     }
 
@@ -809,10 +836,6 @@ public class vesselData : NetworkBehaviour
     /** Update a vessel by id. */
     private void SetVessel(int id, Vessel vessel)
     {
-        // Ensure enough vessels exist in the synchronized list.
-        // while (Vessels.Count < id)
-        //    Vessels.Add(new Vessel());
-
         // Update vessel's data in the synchronized list.
         if (id >= 1 && id <= Vessels.Count)
             Vessels[id - 1] = vessel;
