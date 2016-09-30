@@ -22,12 +22,14 @@ public class debugEventPropertiesUi : MonoBehaviour
     /** Default complete time time slider length. */
     public const float DefaultCompleteTimeSliderLength = 10.0f;
 
-    /** Default phyiscs magnitude slider length. */
+    /** Default physics magnitude slider length. */
     public const float DefaultPhysicsMagnitudeSliderLength = 1.0f;
 
-    /** Default phyiscs magnitude slider length. */
-    public const float DefaultMapCameraDistanceSliderLength = 1000.0f;
+    /** Default 3d map camera distance slider length. */
+    public const float DefaultMapCamera3DDistanceSliderLength = 1000.0f;
 
+    /** Default 2d map camera distance slider length. */
+    public const float DefaultMapCamera2DDistanceSliderLength = 50.0f;
 
 
     // Configuration
@@ -102,7 +104,6 @@ public class debugEventPropertiesUi : MonoBehaviour
     public InputField MapCameraYawInput;
     public Slider MapCameraDistanceSlider;
     public InputField MapCameraDistanceInput;
-    public Button MapCameraCaptureButton;
 
 
     [Header("Sonar Event Components")]
@@ -919,6 +920,7 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateMapCameraEventNameInput()
     {
         MapCameraEventNameInput.text = MapCameraEvent.eventName;
+        MapCameraEventNameInput.interactable = MapCameraEvent.is3d;
     }
 
     public void MapCameraEventNameInputChanged(string value)
@@ -934,6 +936,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         MapCameraXInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.x);
         MapCameraYInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.y);
         MapCameraZInput.text = string.Format("{0:N1}", MapCameraEvent.toPosition.z);
+        MapCameraZInput.interactable = MapCameraEvent.is3d;
     }
 
     public void MapCameraXInputChanged(string value)
@@ -975,11 +978,13 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateMapCameraPitchSlider()
     {
         MapCameraPitchSlider.value = MapCameraEvent.toOrientation.x;
+        MapCameraPitchSlider.interactable = MapCameraEvent.is3d;
     }
 
     private void UpdateMapCameraPitchInput()
     {
         MapCameraPitchInput.text = string.Format("{0:N1}", MapCameraEvent.toOrientation.x);
+        MapCameraPitchInput.interactable = MapCameraEvent.is3d;
     }
 
     public void MapCameraPitchInputChanged(string value)
@@ -1007,11 +1012,13 @@ public class debugEventPropertiesUi : MonoBehaviour
     private void UpdateMapCameraYawSlider()
     {
         MapCameraYawSlider.value = MapCameraEvent.toOrientation.y;
+        MapCameraYawSlider.interactable = MapCameraEvent.is3d;
     }
 
     private void UpdateMapCameraYawInput()
     {
         MapCameraYawInput.text = string.Format("{0:N1}", MapCameraEvent.toOrientation.y);
+        MapCameraYawInput.interactable = MapCameraEvent.is3d;
     }
 
     public void MapCameraYawInputChanged(string value)
@@ -1038,16 +1045,23 @@ public class debugEventPropertiesUi : MonoBehaviour
 
     private void UpdateMapCameraDistanceSlider()
     {
-        var distance = -MapCameraEvent.toZoom;
-        var maxValue = Mathf.Max(distance, DefaultMapCameraDistanceSliderLength);
+        var zoom = -MapCameraEvent.toZoom;
+        var maxValue = Mathf.Max(zoom, DefaultMapCamera3DDistanceSliderLength);
+
+        if (MapCameraEvent.is2d)
+        {
+            zoom = MapCameraEvent.toZoom;
+            maxValue = Mathf.Max(zoom, DefaultMapCamera2DDistanceSliderLength);
+        }
+
         MapCameraDistanceSlider.maxValue = maxValue;
-        MapCameraDistanceSlider.value = distance;
+        MapCameraDistanceSlider.value = zoom;
     }
 
     private void UpdateMapCameraDistanceInput()
     {
-        var distance = -MapCameraEvent.toZoom;
-        MapCameraDistanceInput.text = string.Format("{0:N1}", distance);
+        var zoom = MapCameraEvent.is3d ? -MapCameraEvent.toZoom : MapCameraEvent.toZoom;
+        MapCameraDistanceInput.text = string.Format("{0:N1}", zoom);
     }
 
     public void MapCameraDistanceSliderChanged(float value)
@@ -1055,7 +1069,7 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (_initializing)
             return;
 
-        MapCameraEvent.toZoom = -value;
+        MapCameraEvent.toZoom = MapCameraEvent.is3d ? -value : value;
         UpdateMapCameraDistanceInput();
     }
 
@@ -1068,16 +1082,25 @@ public class debugEventPropertiesUi : MonoBehaviour
         if (!float.TryParse(value, out result))
             return;
 
-        MapCameraEvent.toZoom = -result;
+        MapCameraEvent.toZoom = MapCameraEvent.is3d ? -result : result;
         UpdateMapCameraDistanceSlider();
     }
     
-    public void MapCameraCapture()
+    public void MapCameraCapture3d()
     {
         if (_initializing)
             return;
 
-        MapCameraEvent.Capture();
+        MapCameraEvent.Capture3d();
+        InitUi();
+    }
+
+    public void MapCameraCapture2d()
+    {
+        if (_initializing)
+            return;
+
+        MapCameraEvent.Capture2d();
         InitUi();
     }
 

@@ -246,7 +246,7 @@ public class debugEventGroupPropertiesUi : MonoBehaviour
     {
         var cameraEvent = AddEvent(megEventType.MapCamera) as megEventMapCamera;
         if (cameraEvent != null)
-            cameraEvent.Capture();
+            cameraEvent.Capture3d();
     }
 
     /** Add a vessel simulation event to the group. */

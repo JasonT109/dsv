@@ -139,8 +139,11 @@ namespace Meg.EventSystem
         /** Whether sonar events have been triggered. */
         private bool _sonarEventsTriggered;
 
-        /** Whether initial camera state is known .*/
-        private bool _cameraEventsTriggered;
+        /** Whether 3d camera events have been triggered.*/
+        private bool _camera3DEventsTriggered;
+
+        /** Whether 2d camera events have been triggered.*/
+        private bool _camera2DEventsTriggered;
 
         /** Whether vessel movements have been altered. */
         private bool _movementEventsTriggered;
@@ -148,11 +151,17 @@ namespace Meg.EventSystem
         /** Whether popup events have been triggered. */
         private bool _popupEventsTriggered;
 
-        /** Initial camera state. */
-        private megMapCameraEventManager.State _initialCamera;
+        /** Initial 3d camera state. */
+        private megMapCameraEventManager.State _initialCamera3D;
 
-        /** Whether initial camera state is valid. */
-        private bool _initialCameraValid;
+        /** Initial 2d camera state. */
+        private megMapCameraEventManager.State _initialCamera2D;
+
+        /** Whether initial 3d camera state is valid. */
+        private bool _initialCamera3DValid;
+
+        /** Whether initial camera 2d state is valid. */
+        private bool _initialCamera2DValid;
 
 
         // Public Methods
@@ -428,14 +437,18 @@ namespace Meg.EventSystem
         /** Post a custom camera event by name. */
         public void PostMapCameraEvent(string eventName)
         {
-            _cameraEventsTriggered = true;
+            _camera3DEventsTriggered = true;
             serverUtils.PostMapCameraEvent(eventName);
         }
 
         /** Post a custom camera event by supplying the target state. */
         public void PostMapCameraState(megMapCameraEventManager.State state)
         {
-            _cameraEventsTriggered = true;
+            if (state.is2d)
+                _camera2DEventsTriggered = true;
+            else
+                _camera3DEventsTriggered = true;
+
             serverUtils.PostMapCameraState(state);
         }
 
@@ -543,7 +556,8 @@ namespace Meg.EventSystem
                 megSceneFile.AutoSave("Start");
 
             // Capture initial camera state.
-            _initialCameraValid = MapCamera && MapCamera.Capture(ref _initialCamera);
+            _initialCamera3DValid = MapCamera3d && MapCamera3d.Capture(ref _initialCamera3D);
+            _initialCamera2DValid = MapCamera2d && MapCamera2d.Capture(ref _initialCamera2D);
 
             // Capture initial vessel states.
             serverUtils.VesselMovements.CaptureInitialState();
@@ -567,12 +581,12 @@ namespace Meg.EventSystem
 
             if (_sonarEventsTriggered)
                 serverUtils.PostSonarClear();
-
             if (_popupEventsTriggered)
                 serverUtils.PostClearPopups();
-
-            if (_cameraEventsTriggered && _initialCameraValid)
-                serverUtils.PostMapCameraState(_initialCamera);
+            if (_camera3DEventsTriggered && _initialCamera3DValid)
+                serverUtils.PostMapCameraState(_initialCamera3D);
+            if (_camera2DEventsTriggered && _initialCamera2DValid)
+                serverUtils.PostMapCameraState(_initialCamera2D);
 
             // Reset vessels to their original state.
             // Only do this on the server, though.
@@ -586,13 +600,18 @@ namespace Meg.EventSystem
             _values.Clear();
             _movements.Clear();
             _sonarEventsTriggered = false;
-            _cameraEventsTriggered = false;
+            _camera3DEventsTriggered = false;
+            _camera2DEventsTriggered = false;
             _movementEventsTriggered = false;
         }
 
-        /** The camera event manager. */
-        private megMapCameraEventManager MapCamera
+        /** The 3d camera event manager. */
+        private megMapCameraEventManager MapCamera3d
             { get { return megMapCameraEventManager.Instance; } }
+
+        /** The 2d camera event manager. */
+        private Map2d MapCamera2d
+            { get { return Map2d.Instance; } }
 
     }
 }

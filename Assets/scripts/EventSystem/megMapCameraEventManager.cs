@@ -20,6 +20,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         public Vector3 toOrientation;
         public float toZoom;
         public float completeTime;
+        public bool is2d;
     }
 
 
@@ -171,6 +172,7 @@ public class megMapCameraEventManager : Singleton<megMapCameraEventManager>
         state.toPosition = mapCameraRoot.transform.localPosition;
         state.toOrientation = new Vector3(camX, camY);
         state.toZoom = camZ;
+        state.is2d = false;
 
         return true;
     }

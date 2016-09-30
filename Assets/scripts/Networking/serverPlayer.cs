@@ -973,7 +973,9 @@ public class serverPlayer : NetworkBehaviour
     [ClientRpc]
     public void RpcTriggerMapCameraState(megMapCameraEventManager.State state)
     {
-        if (MapCamera)
+        if (state.is2d && Map2d.Instance)
+            Map2d.Instance.TriggerEventFromState(state);
+        else if (!state.is2d && MapCamera)
             MapCamera.triggerEventFromState(state);
     }
 
