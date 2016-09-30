@@ -16,7 +16,7 @@ public class Window : MonoBehaviour
 
     private void OnEnable()
     {
-        transform.localPosition = Vector3.zero;
+        // transform.localPosition = Vector3.zero;
         transform.SetAsLastSibling();
     }
 
