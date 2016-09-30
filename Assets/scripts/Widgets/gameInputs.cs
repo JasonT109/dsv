@@ -231,7 +231,11 @@ public class gameInputs : NetworkBehaviour
             var y3 = _input.GetAxis("Y3");
 
             // Apply throttle response curve to determine final output.
-            z1 = ThrottleResponse.Evaluate(z1);
+            // Workaround: don't apply throttle response to wireless controllers.
+            // (they already supply throttle axis values in [-1 .. 1] range.
+            var hardwareName = _input.controllers.Joysticks[0].hardwareName;
+            if (hardwareName != "Wireless Controller")
+                z1 = ThrottleResponse.Evaluate(z1);
 
             // Check if it's time to send inputs to the server.
             if (Time.realtimeSinceStartup < _nextSendTime)
