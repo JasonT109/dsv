@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;
+using TouchScript.Gestures;
 using UnityEngine.UI;
 
 /**
@@ -154,7 +156,36 @@ public class debugVesselViewportUi : MonoBehaviour
         if (Map2d.HasInstance)
             Map2d.Instance.gameObject.SetActive(Mode == ViewportMode.NauticalMap);
 
+        // Allow zooming with the mouse wheel.
+        var dz = Input.GetAxis("MouseAxis3");
+        if (IsMap && !Mathf.Approximately(dz, 0))
+            MouseWheelZoom(dz);
+
         _updating = false;
     }
+
+
+    private void MouseWheelZoom(float dz)
+    {
+        var gesture = Map.GetComponentInChildren<TransformGesture>();
+        var root = gesture.transform;
+
+        var world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var target = root.InverseTransformPoint(world);
+
+        target.z = 0;
+
+        if (DOTween.IsTweening(root))
+            return;
+
+        var dZoom = (1 + dz * 0.5f);
+        var zoom = root.localScale.x * dZoom;
+
+        gesture.Cancel();
+        var duration = 0.25f;
+        root.DOScale(zoom, duration).SetEase(Ease.OutSine);
+        root.DOLocalMove(-target * zoom, duration).SetEase(Ease.OutSine);
+    }
+
 
 }

@@ -38,6 +38,11 @@ public class Map2d : Singleton<Map2d>
         // if (mapData.mapCanRotate)
         //    type = type | TransformGestureBase.TransformType.Rotation;
 
+        // Allow zooming with the mouse wheel.
+        var dz = Input.GetAxis("MouseAxis3");
+        if (!Mathf.Approximately(dz, 0))
+            MouseWheelZoom(dz);
+
         _gesture.Type = type;
     }
 
@@ -70,6 +75,31 @@ public class Map2d : Singleton<Map2d>
         state.is2d = true;
 
         return true;
+    }
+
+    private void MouseWheelZoom(float dz)
+    {
+        if (DOTween.IsTweening(Root))
+            return;
+
+        var state = new megMapCameraEventManager.State();
+        var world = Camera.main.ViewportToWorldPoint(new Vector2(0.5f, 0.5f));
+        var target = Root.InverseTransformPoint(world);
+        target.z = 0;
+
+        var dZoom = (1 + dz * 0.5f);
+        state.toZoom = Root.localScale.x * dZoom;
+        if (state.toZoom > _transformer.ZoomSoftLimits.y)
+            return;
+        if (state.toZoom < _transformer.ZoomSoftLimits.x)
+            return;
+
+        state.toPosition = -target * state.toZoom;
+        state.toOrientation = Vector3.zero;
+        state.is2d = true;
+        state.completeTime = 0.25f;
+
+        TriggerEventFromState(state);
     }
 
 }
