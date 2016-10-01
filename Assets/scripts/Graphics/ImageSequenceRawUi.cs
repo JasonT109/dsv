@@ -11,7 +11,8 @@ public class ImageSequenceRawUi : MonoBehaviour
     {
         loop,
         once,
-        hold
+        hold,
+        yoyo
     }
 
     [Header("Debug")]
@@ -23,6 +24,7 @@ public class ImageSequenceRawUi : MonoBehaviour
     public int startFrame;
     public float frameTime = 0.04f;
     public Texture notPlaying;
+    public float YoyoHoldTime = 0;
 
     [Header("Sequence 1")]
     public string folderName;
@@ -43,6 +45,8 @@ public class ImageSequenceRawUi : MonoBehaviour
     private int nFrames;
     private int direction = 1;
     private string baseName;
+
+    private float _nextYoyoUpdate;
 
     void Awake()
     {
@@ -101,7 +105,9 @@ public class ImageSequenceRawUi : MonoBehaviour
 
         if (playing)
         {
-            if (type == playbackType.loop)
+            if (type == playbackType.yoyo)
+                StartCoroutine("PlayYoyo", frameTime);
+            else if (type == playbackType.loop)
                 StartCoroutine("PlayLoop", frameTime);
             else
                 StartCoroutine("Play", frameTime);
@@ -123,20 +129,48 @@ public class ImageSequenceRawUi : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         if (direction == -1 && frameCounter > 0)
-        {
             frameCounter--;
-        }
         else if (direction == -1 && frameCounter == 0)
-        {
             frameCounter = nFrames - 1;
-        }
         else
-        {
             frameCounter = (++frameCounter) % nFrames;
-        }
 
         UpdateCurrentFrame();
         StopCoroutine("PlayLoop");
+    }
+
+    IEnumerator PlayYoyo(float delay)
+    {
+        if (Time.time < _nextYoyoUpdate)
+            yield break;
+
+        yield return new WaitForSeconds(delay);
+
+        if (direction == -1)
+        {
+            if (frameCounter > 0)
+                frameCounter--;
+            else
+            {
+                direction = 1;
+                frameCounter = 0;
+                _nextYoyoUpdate = Time.time + YoyoHoldTime;
+            }
+        }
+        else
+        {
+            if (frameCounter < (nFrames - 1))
+                frameCounter++;
+            else
+            {
+                direction = -1;
+                frameCounter = nFrames - 1;
+                _nextYoyoUpdate = Time.time + YoyoHoldTime;
+            }
+        }
+
+        UpdateCurrentFrame();
+        StopCoroutine("PlayYoyo");
     }
 
     IEnumerator Play(float delay)

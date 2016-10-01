@@ -52,6 +52,7 @@ public class debugEvacScreenUi : MonoBehaviour
         screenData.Content.DiveMode,
         screenData.Content.LifeSupport,
         screenData.Content.Power,
+        screenData.Content.Diagnostics,
     };
 
     private readonly screenData.Content[] _sideWindows =
@@ -60,6 +61,7 @@ public class debugEvacScreenUi : MonoBehaviour
         screenData.Content.SonarLong,
         screenData.Content.Comms,
         screenData.Content.DiveMode,
+        screenData.Content.Diagnostics,
     };
 
     private readonly screenData.Content[] _noWindows =
