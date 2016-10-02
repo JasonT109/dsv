@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.4.3";
+        public const string Version = "1.4.4";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -616,6 +616,7 @@ namespace Meg.Networking
             "maplayergrid",
             "maplayerlabels",
             "maplayersatellite",
+            "maplayersatellitealt",
             "maplayershipping",
             "maplayertemperatures",
             "mapmode",
@@ -1052,6 +1053,7 @@ namespace Meg.Networking
             { "maplayergrid", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether grid lines are displayed on the map."} },
             { "maplayerlabels", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether labels are displayed on the map."} },
             { "maplayersatellite", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether satellite imagery is displayed on the map."} },
+            { "maplayersatellitealt", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether satellite imagery is displayed on the map."} },
             { "maplayershipping", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether shipping lanes are displayed on the map."} },
             { "maplayertemperatures", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether temperatures are displayed on the map."} },
             { "mapmode", new ParameterInfo { maxValue = 2, type = ParameterType.Int, description = "Map display mode (0 = 3d, 1 = 2d nautical map, 2 = schematic view)."} },
@@ -1608,6 +1610,8 @@ namespace Meg.Networking
                         return MapData.mapLayerLabels;
                     case "maplayersatellite":
                         return MapData.mapLayerSatellite;
+                    case "maplayersatellitealt":
+                        return MapData.mapLayerSatelliteAlt;
                     case "maplayershipping":
                         return MapData.mapLayerShipping;
                     case "maplayertemperatures":

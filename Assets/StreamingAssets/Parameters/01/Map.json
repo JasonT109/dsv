@@ -70,6 +70,10 @@
 				},
 				{
 					"type":"Value",
+					"serverParam":"maplayersatellitealt"
+				},
+				{
+					"type":"Value",
 					"serverParam":"maplayershipping"
 				},
 				{

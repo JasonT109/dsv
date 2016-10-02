@@ -102,6 +102,9 @@ public class mapData : NetworkBehaviour
     public int mapLayerSatellite = 1;
 
     [SyncVar]
+    public int mapLayerSatelliteAlt = 1;
+
+    [SyncVar]
     public int mapLayerShipping = 1;
 
     [SyncVar]

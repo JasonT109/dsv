@@ -1115,6 +1115,9 @@ public class serverData : NetworkBehaviour
                 case "maplayersatellite":
                     MapData.mapLayerSatellite = (int) newValue;
                     break;
+                case "maplayersatellitealt":
+                    MapData.mapLayerSatelliteAlt = (int)newValue;
+                    break;
                 case "maplayershipping":
                     MapData.mapLayerShipping = (int) newValue;
                     break;
