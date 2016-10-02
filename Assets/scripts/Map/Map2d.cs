@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
+using System.Windows.Forms;
 using DG.Tweening;
 using Meg.EventSystem;
 using Meg.Networking;
+using SpaceNavigatorDriver;
 using TouchScript.Behaviors;
 using TouchScript.Gestures;
 using TouchScript.Gestures.Base;
@@ -12,11 +14,24 @@ public class Map2d : Singleton<Map2d>
 
     public Transform Root;
 
+    public float Pan3DSpeed = 750f;
+    public float Pan3DSmoothTime = 0.2f;
+    public float Zoom3DSpeed = 5;
+    public float Zoom3DSmoothTime = 0.2f;
+    public AnimationCurve ZoomResponse;
+
+
 	private void Awake()
 	    { SetInstance(this); }
 
     private TransformGesture _gesture;
     private TransformerConstrained _transformer;
+
+    private Vector3 _translation;
+    private Vector3 _translationVelocity;
+
+    private float _zoom;
+    private float _zoomVelocity;
 
     private void Start()
     {
@@ -42,6 +57,10 @@ public class Map2d : Singleton<Map2d>
         var dz = Input.GetAxis("MouseAxis3");
         if (!Mathf.Approximately(dz, 0))
             MouseWheelZoom(dz);
+
+        // Use Space Navigator (3D mouse) to move.
+        if (mapData.mapInteractive3d)
+            UpdateMouse3DMotion();
 
         _gesture.Type = type;
     }
@@ -100,6 +119,23 @@ public class Map2d : Singleton<Map2d>
         state.completeTime = 0.25f;
 
         TriggerEventFromState(state);
+    }
+
+    private void UpdateMouse3DMotion()
+    {
+        var navigator = SpaceNavigator.Instance;
+        var translate = navigator.GetTranslation();
+        var dx = -(Pan3DSpeed * translate.x) * Time.deltaTime;
+        var dy = -(Pan3DSpeed * translate.z) * Time.deltaTime;
+
+        var sz = ZoomResponse.Evaluate(translate.y);
+        var dz = -(translate.y * Zoom3DSpeed) * sz * Time.deltaTime;
+        _zoom = Mathf.SmoothDamp(_zoom, dz, ref _zoomVelocity, Zoom3DSmoothTime);
+
+        var v = new Vector3(dx, dy, 0);
+        _translation = Vector3.SmoothDamp(_translation, v, ref _translationVelocity, Pan3DSmoothTime);
+
+        _transformer.Move3D(_translation, _zoom);
     }
 
 }

@@ -120,5 +120,25 @@ namespace TouchScript.Behaviors
         }
 
         #endregion
+
+
+        public void Move3D(Vector3 translation, float zoom)
+        {
+            if (DOTween.IsTweening(transform))
+                return;
+
+            var scale = _targetScale * (1 + zoom);
+            if (scale.x < ZoomSoftLimits.x)
+                zoom = 0;
+            if (scale.x > ZoomSoftLimits.y)
+                zoom = 0;
+
+            _targetScale *= (1 + zoom);
+            _targetPosition += translation;
+
+            var dp = _targetPosition * zoom;
+            _targetPosition += dp;
+        }
+
     }
 }

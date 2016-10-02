@@ -1079,6 +1079,9 @@ public class serverData : NetworkBehaviour
                 case "mapinteractive":
                     MapData.mapInteractive = newValue > 0;
                     break;
+                case "mapinteractive3d":
+                    MapData.mapInteractive3d = newValue > 0;
+                    break;
                 case "mapcanswitchmode":
                     MapData.mapCanSwitchMode = newValue > 0;
                     break;

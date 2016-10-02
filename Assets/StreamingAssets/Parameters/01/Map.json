@@ -87,6 +87,10 @@
 				},
 				{
 					"type":"Value",
+					"serverParam":"mapinteractive3d"
+				},
+				{
+					"type":"Value",
 					"serverParam":"mapmode"
 				},
 				{

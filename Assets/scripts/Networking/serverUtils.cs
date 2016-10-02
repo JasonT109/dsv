@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.4.2";
+        public const string Version = "1.4.3";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
@@ -609,6 +609,7 @@ namespace Meg.Networking
             "mapcanswitchmode",
             "mapcanzoom",
             "mapinteractive",
+            "mapinteractive3d",
             "maplayeralerts",
             "maplayercontours",
             "maplayerdepths",
@@ -1044,6 +1045,7 @@ namespace Meg.Networking
             { "mapcanswitchmode", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map moed (2d/3d/schematic) can be changed."} },
             { "mapcanzoom", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be zoomed."} },
             { "mapinteractive", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be interacted with."} },
+            { "mapinteractive3d", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether map can be interacted with usinga 3d mouse."} },
             { "maplayeralerts", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether ELB alerts are displayed on the map."} },
             { "maplayercontours", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether contour lines are displayed on the map."} },
             { "maplayerdepths", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether depth soundings are displayed on the map."} },
@@ -1584,6 +1586,8 @@ namespace Meg.Networking
                         return MapData.longitude;
                     case "mapinteractive":
                         return MapData.mapInteractive ? 1 : 0;
+                    case "mapinteractive3d":
+                        return MapData.mapInteractive3d ? 1 : 0;
                     case "mapcanswitchmode":
                         return MapData.mapCanSwitchMode ? 1 : 0;
                     case "mapcanpan":

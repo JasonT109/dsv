@@ -33,6 +33,9 @@ public class mapData : NetworkBehaviour
     public bool mapInteractive = true;
 
     [SyncVar]
+    public bool mapInteractive3d = true;
+
+    [SyncVar]
     public bool mapCanSwitchMode = true;
 
     [SyncVar]
