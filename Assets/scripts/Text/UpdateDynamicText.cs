@@ -13,6 +13,8 @@ public class UpdateDynamicText : MonoBehaviour
 
     public const int maxTextSize = 64;
 
+    public Shader OverrideTextShader;
+
     void OnEnable()
         { StartCoroutine(UpdateTextRoutine()); }
 
@@ -30,6 +32,10 @@ public class UpdateDynamicText : MonoBehaviour
             
             text.pixelSnapTransformPos = true;
         }
+
+        // Override text material shaders if needed.
+        if (OverrideTextShader)
+            ApplyOverrideShader(texts);
 
         // Regenerate text meshes.
         yield return 0;
@@ -53,6 +59,24 @@ public class UpdateDynamicText : MonoBehaviour
             yield return wait;
             foreach (var text in texts)
                 text.GenerateMesh();
+        }
+    }
+
+    void ApplyOverrideShader(DynamicText[] texts)
+    {
+        foreach (var text in texts)
+        {
+            var r = text.GetComponent<MeshRenderer>();
+            if (r)
+                r.material.shader = OverrideTextShader;
+        }
+
+        var meshes = GetComponentsInChildren<TextMesh>();
+        foreach (var text in meshes)
+        {
+            var r = text.GetComponent<MeshRenderer>();
+            if (r)
+                r.material.shader = OverrideTextShader;
         }
     }
 
