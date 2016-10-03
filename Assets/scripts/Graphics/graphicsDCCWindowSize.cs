@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Meg.Maths;
 
 [ExecuteInEditMode]
 public class graphicsDCCWindowSize : MonoBehaviour
@@ -13,6 +14,9 @@ public class graphicsDCCWindowSize : MonoBehaviour
     [Header("Size:")]
     public float windowWidth = 190f;
     public float windowHeight = 106.875f;
+
+    [Header("Content Offsets:")]
+    public Vector2 verticalOffsetRange = new Vector2(0f, 0f);
 
     private float _scale = 1;
     public float windowScale
@@ -44,8 +48,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
         }
     }
 
-    public float scaleTweakFactor = 0.95f;
-
+    [Header ("Reset window to default size:")]
     public bool resetWidow = false;
 
     private BoxCollider boxCollider;
@@ -61,15 +64,12 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
     public void ResetWindowSize()
     {
-        //SetWindowSize(defaultWidth, defaultHeight);
         windowWidth = defaultWidth;
         windowHeight = defaultHeight;
         resetWidow = false;
 
         for (int i = 0; i < repositionItems.Length; i++)
-        {
             repositionItems[i].transform.localPosition = childPositions[i];
-        }
     }
 
     public void SetWindowPosition(Vector3 newWindowPosition)
@@ -79,6 +79,8 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
     public void SetWindowSize(float width, float height)
     {
+        var verticalOffset = graphicsMaths.remapValue(windowScale, 0, 1, verticalOffsetRange.x, verticalOffsetRange.y);
+
         boxCollider.size = new Vector3(width, height, 1);
         slicer.Width = width;
         slicer.Height = height;
@@ -90,7 +92,6 @@ public class graphicsDCCWindowSize : MonoBehaviour
                 slicedContent[i].Width = width;
                 slicedContent[i].Height = height;
             }
-
         }
 
         titleBarSlicer.Width = width;
@@ -103,9 +104,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
         currentYScale = (slicer.Height / defaultHeight);
 
         for (int i = 0; i < repositionItems.Length; i++)
-        {
             repositionItems[i].transform.localPosition = new Vector3((rPositions[i].x * currentXScale), (rPositions[i].y * currentYScale));
-        }
 
         for (int i = 0; i < scaleItems.Length; i++)
         {
@@ -113,7 +112,7 @@ public class graphicsDCCWindowSize : MonoBehaviour
             currentYScale = ((slicer.Height - (slicer.Border * 2)) / (defaultHeight - (slicer.Border * 2)));
 
             scaleItems[i].transform.localScale = new Vector3((currentXScale / sScales[i].x), (currentYScale / sScales[i].y), 1);
-            //scaleItems[i].transform.localScale = new Vector3((sScales[i].x * currentXScale) * scaleTweakFactor, (sScales[i].y * currentYScale) * scaleTweakFactor, 1);
+            scaleItems[i].transform.localPosition = new Vector3(scaleItems[i].transform.localPosition.x, 0f + verticalOffset, scaleItems[i].transform.localPosition.z);
         }
     }
 
@@ -127,16 +126,12 @@ public class graphicsDCCWindowSize : MonoBehaviour
         rPositions = new Vector3[repositionItems.Length];
 
         for (int i = 0; i < repositionItems.Length; i++)
-        {
             rPositions[i] = childPositions[i];
-        }
 
         sScales = new Vector2[scaleItems.Length];
 
         for (int i = 0; i < scaleItems.Length; i++)
-        {
             sScales[i] = new Vector2(1,1);
-        }
     }
 
     void Start ()
@@ -149,8 +144,6 @@ public class graphicsDCCWindowSize : MonoBehaviour
         SetWindowSize(windowWidth, windowHeight);
 
         if (resetWidow)
-        {
             ResetWindowSize();
-        }
     }
 }
