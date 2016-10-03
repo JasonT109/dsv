@@ -2690,6 +2690,10 @@ namespace Meg.Networking
         public static bool IsEvac()
             { return NetworkManagerCustom.IsInEvacShip; }
 
+        /** Whether player is in the DCC scene. */
+        public static bool IsDcc()
+            { return NetworkManagerCustom.IsInDcc; }
+
         /** Get an ID for the given glider screen. */
         public static int getGliderScreen(int screenID)
         {

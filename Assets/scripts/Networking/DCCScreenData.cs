@@ -99,6 +99,7 @@ public class DCCScreenData : NetworkBehaviour
         public bool HasScreen(screenData.Type type)
             { return GetStationHasScreen(Id, type); }
 
+        
     }
 
 
@@ -417,6 +418,68 @@ public class DCCScreenData : NetworkBehaviour
     {
         value = value.Replace("{station-id}", GetStationName(StationId));
         return value;
+    }
+
+
+    // Load / Save
+    // ------------------------------------------------------------
+
+    /** Load DCC screen state from file. */
+    public void Load(JSONObject json)
+    {
+        var stationsJson = json.GetField("Stations");
+        for (var i = 0; i < stationsJson.Count; i++)
+        {
+            var station = LoadStation(stationsJson[i]);
+            SetStation(station.Id, station);
+        }
+    }
+
+    /** Save DCC screen state to file. */
+    public JSONObject Save()
+    {
+        var json = new JSONObject();
+
+        var stationsJson = new JSONObject(JSONObject.Type.ARRAY);
+        foreach (var station in Stations)
+            stationsJson.Add(SaveStation(station));
+
+        json.AddField("Stations", stationsJson);
+        return json;
+    }
+
+    private Station LoadStation(JSONObject json)
+    {
+        var station = new Station();
+        json.GetField(ref station.Id, "Id");
+        json.GetField(ref station.Screen3, "Screen3");
+        json.GetField(ref station.Screen4, "Screen4");
+        json.GetField(ref station.Screen5, "Screen5");
+        json.GetField(ref station.Quad0, "Quad0");
+        json.GetField(ref station.Quad1, "Quad1");
+        json.GetField(ref station.Quad2, "Quad2");
+        json.GetField(ref station.Quad3, "Quad3");
+        json.GetField(ref station.Quad4, "Quad4");
+        json.GetField(ref station.QuadFullScreen, "QuadFullScreen");
+        json.GetField(ref station.QuadCycle, "QuadCycle");
+        return station;
+    }
+    
+    private JSONObject SaveStation(Station station)
+    {
+        var json = new JSONObject();
+        json.AddField("Id", station.Id);
+        json.AddField("Screen3", station.Screen3.ToString());
+        json.AddField("Screen4", station.Screen4.ToString());
+        json.AddField("Screen5", station.Screen5.ToString());
+        json.AddField("Quad0", station.Quad0.ToString());
+        json.AddField("Quad1", station.Quad1.ToString());
+        json.AddField("Quad2", station.Quad2.ToString());
+        json.AddField("Quad3", station.Quad3.ToString());
+        json.AddField("Quad4", station.Quad4.ToString());
+        json.AddField("QuadFullScreen", station.QuadFullScreen);
+        json.AddField("QuadCycle", station.QuadCycle);
+        return json;
     }
 
 
