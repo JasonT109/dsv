@@ -116,6 +116,10 @@ namespace Meg.Scene
             var events = json.GetField("events");
             if (events)
                 LoadEvents(events);
+
+            var dcc = json.GetField("dcc");
+            if (dcc)
+                LoadDcc(dcc);
         }
 
         /** Save state to JSON. */
@@ -128,6 +132,9 @@ namespace Meg.Scene
             json.AddField("map", SaveMap());
             json.AddField("movements", SaveMovements());
             json.AddField("events", SaveEvents());
+
+            if (serverUtils.IsDcc())
+                json.AddField("dcc", SaveDcc());
 
             return json;
         }
@@ -191,6 +198,12 @@ namespace Meg.Scene
             return new JSONObject();
         }
 
+        /** Save state of the DCC screens to JSON. */
+        private JSONObject SaveDcc()
+        {
+            return serverUtils.DCCScreenData.Save();
+        }
+
 
         // Load Methods
         // ------------------------------------------------------------
@@ -235,6 +248,13 @@ namespace Meg.Scene
                 file.Load(json);
             }
         }
+
+        /** Load state of the DCC screens from JSON. */
+        private void LoadDcc(JSONObject json)
+        {
+            serverUtils.DCCScreenData.Load(json);
+        }
+
 
     }
 
