@@ -9,6 +9,9 @@ using Meg.Scene;
 public class debugSceneFilesUi : MonoBehaviour
 {
 
+    public const string ArchiveFolder = "{archive-folder}";
+    public const string LocalFolder = "{save-folder}";
+
 
     // Properties
     // ------------------------------------------------------------
@@ -26,6 +29,15 @@ public class debugSceneFilesUi : MonoBehaviour
 
     /** Title for the scene file list. */
     public Text Title;
+
+    /** Title for the scene folder list. */
+    public Text FoldersTitle;
+
+    /** Button for selecting the local save folder. */
+    public Toggle LocalFolderToggle;
+
+    /** Button for selecting the archived save folder. */
+    public Toggle ArchiveFolderToggle;
 
 
     [Header("Configuration")]
@@ -64,6 +76,15 @@ public class debugSceneFilesUi : MonoBehaviour
 
     /** The current scene number (integer). */
     public int Scene { get; private set; }
+
+    /** Current scene folder type. */
+    public SceneFolderLocation Location = SceneFolderLocation.Local;
+
+    public enum SceneFolderLocation
+    {
+        Local,
+        Archives
+    }
     
 
     // Members
@@ -82,6 +103,9 @@ public class debugSceneFilesUi : MonoBehaviour
     /** Initialization. */
     private void Awake()
     {
+        LocalFolderToggle.onValueChanged.AddListener(OnLocalFolderClicked);
+        ArchiveFolderToggle.onValueChanged.AddListener(OnArchiveFolderClicked);
+
         if (!string.IsNullOrEmpty(InitialFolderType))
             SetFolderTypeByName(InitialFolderType);
     }
@@ -161,13 +185,36 @@ public class debugSceneFilesUi : MonoBehaviour
         var pattern = Configuration.ExpandedPath(FolderType.Pattern);
 
         // Update the file listing with new folder.
-        Files.Folder = string.Format(pattern, Scene);
+        Files.Folder = Scenes.Folder + "/" + string.Format(pattern, Scene);
     }
 
     /** Update the UI elements. */
     private void UpdateUi()
     {
         LoadButton.interactable = Files.SelectedEntry != null;
+        LocalFolderToggle.isOn = Location == SceneFolderLocation.Local;
+        ArchiveFolderToggle.isOn = Location == SceneFolderLocation.Archives;
     }
+
+    private void OnArchiveFolderClicked(bool value)
+    {
+        if (!value)
+            return;
+
+        Location = SceneFolderLocation.Archives;
+        Scenes.Folder = ArchiveFolder;
+        FoldersTitle.text = "SCENES (ARCHIVED)";
+    }
+
+    private void OnLocalFolderClicked(bool value)
+    {
+        if (!value)
+            return;
+
+        Location = SceneFolderLocation.Local;
+        Scenes.Folder = LocalFolder;
+        FoldersTitle.text = "SCENES";
+    }
+
 
 }
