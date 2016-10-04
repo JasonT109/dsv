@@ -40,6 +40,9 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     /** Button for clearing extra vessels. */
     public Button ClearButton;
 
+    /** Button for resetting selected vessel to the origin. */
+    public Button ResetToOriginButton;
+
     /** Button for setting the player vessel. */
     public Button SetPlayerButton;
 
@@ -184,6 +187,24 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
             });
     }
 
+    /** Reset selected vessel to the origin. */
+    public void ResetSelectedToOrigin()
+    {
+        DialogManager.Instance.ShowYesNo("RESET VESSEL TO ORIGIN?",
+            string.Format("Are you sure you wish to move the selected vessel '{0}' to the origin?", Selected.Name),
+            result =>
+            {
+                if (result != DialogYesNo.Result.Yes)
+                    return;
+
+                // Set XY position to the origin, but leave depth unaffected.
+                var depth = serverUtils.GetVesselDepth(Selected.Id);
+                var origin = new Vector3(0, 0, depth);
+
+                serverUtils.PostVesselPosition(Selected.Id, origin);
+            });
+    }
+
 
     // Private Methods
     // ------------------------------------------------------------
@@ -194,6 +215,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
         RemoveButton.interactable = CanRemoveVessels;
         ClearButton.interactable = CanRemoveVessels;
         SetPlayerButton.interactable = Selected.CanBePlayer;
+        ResetToOriginButton.interactable = true;
 
         var vessels = VesselData.Vessels;
         var index = 0;
