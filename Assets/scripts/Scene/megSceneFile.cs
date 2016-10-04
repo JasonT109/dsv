@@ -25,10 +25,17 @@ namespace Meg.Scene
         /** Load state from a JSON file. */
         public static void LoadFromFile(string path)
         {
-            var file = new megSceneFile();
-            var text = File.ReadAllText(path);
-            var json = new JSONObject(text);
-            file.Load(json);
+            try
+            {
+                var file = new megSceneFile();
+                var text = File.ReadAllText(path);
+                var json = new JSONObject(text);
+                file.Load(json);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("Unable to load scene from file: '{0}': {1}", path, ex));
+            }
         }
 
         /** Save state to a JSON file. */
@@ -98,28 +105,13 @@ namespace Meg.Scene
         /** Load state from JSON. */
         public void Load(JSONObject json)
         {
-            var parameters = json.GetField("parameters");
-            if (parameters)
-                LoadParameters(parameters);
+            // Perform bulk of loading on the server.
+            serverUtils.PostLoadSceneState(json);
 
-            var vessels = json.GetField("vessels");
-            if (vessels)
-                LoadVessels(vessels);
-
-            var map = json.GetField("map");
-            LoadMap(map);
-
-            var movements = json.GetField("movements");
-            if (movements)
-                LoadMovements(movements);
-
+            // Load events locally.
             var events = json.GetField("events");
             if (events)
                 LoadEvents(events);
-
-            var dcc = json.GetField("dcc");
-            if (dcc)
-                LoadDcc(dcc);
         }
 
         /** Save state to JSON. */
@@ -208,8 +200,31 @@ namespace Meg.Scene
         // Load Methods
         // ------------------------------------------------------------
 
+        /** Load scene state from JSON data (server-only). */
+        public void LoadSceneState(JSONObject json)
+        {
+            var parameters = json.GetField("parameters");
+            if (parameters)
+                LoadParameters(parameters);
+
+            var vessels = json.GetField("vessels");
+            if (vessels)
+                LoadVessels(vessels);
+
+            var map = json.GetField("map");
+            LoadMap(map);
+
+            var movements = json.GetField("movements");
+            if (movements)
+                LoadMovements(movements);
+
+            var dcc = json.GetField("dcc");
+            if (dcc)
+                LoadDcc(dcc);
+        }
+
         /** Load vessel states from JSON. */
-        public void LoadParameters(JSONObject json)
+        private void LoadParameters(JSONObject json)
         {
             var value = 0.0f;
             foreach (var key in json.keys)
@@ -221,13 +236,13 @@ namespace Meg.Scene
         }
 
         /** Load vessel states from JSON. */
-        public void LoadVessels(JSONObject json)
+        private void LoadVessels(JSONObject json)
         {
             serverUtils.VesselData.Load(json);
         }
 
         /** Load map state from JSON. */
-        public void LoadMap(JSONObject json)
+        private void LoadMap(JSONObject json)
         {
             serverUtils.MapData.Load(json);
         }

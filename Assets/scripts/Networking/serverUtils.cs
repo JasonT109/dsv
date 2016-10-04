@@ -2278,6 +2278,13 @@ namespace Meg.Networking
             ServerData.OnValueChanged(valueName, value);
         }
 
+        /** Load scene from JSON data on the server. */
+        public static void PostLoadSceneState(JSONObject json)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostLoadSceneState(json);
+        }
+
         /** Set the current value of a shared numeric state value by name (works on both clients and host). */
         public static void PostServerData(string valueName, float value, bool add = false)
         {

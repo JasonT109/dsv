@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Meg.EventSystem;
 using Meg.Networking;
+using Meg.Scene;
 using Meg.SonarEvent;
 
 public class serverPlayer : NetworkBehaviour
@@ -65,6 +66,15 @@ public class serverPlayer : NetworkBehaviour
         value = value.Replace("{screen-content}", screenData.NameForContent(ScreenState.Content));
 
         return value;
+    }
+
+    /** Load scene state on the server. */
+    public void PostLoadSceneState(JSONObject json)
+    {
+        if (isServer)
+            ServerLoadSceneState(json);
+        else if (isClient)
+            CmdLoadSceneState(json.Print(true));
     }
 
     /** Set a numeric data value on the server. */
@@ -529,6 +539,21 @@ public class serverPlayer : NetworkBehaviour
     // Commands
     // ------------------------------------------------------------
 
+    /** Command to load scene state on the server. */
+    [Command]
+    public void CmdLoadSceneState(string state)
+    {
+        try
+        {
+            var json = new JSONObject(state);
+            ServerLoadSceneState(json);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("CmdLoadSceneState(): Failed to load scene state from client: " + ex);
+        }
+    }
+
     /** Command to set a numeric data value on the server. */
     [Command]
     public void CmdPostServerFloat(string key, float value, bool add)
@@ -775,6 +800,14 @@ public class serverPlayer : NetworkBehaviour
 
     // Private Methods
     // ------------------------------------------------------------
+
+    /** Command to load scene state on the server. */
+    [Server]
+    public void ServerLoadSceneState(JSONObject json)
+    {
+        var file = new megSceneFile();
+        file.LoadSceneState(json);
+    }
 
     /** Issue a sonar event from the server. */
     [Server]
