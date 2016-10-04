@@ -97,7 +97,7 @@ public class UpdateDynamicText : MonoBehaviour
 
     void Update()
     {
-        if (scaleTextMinSize)
+        if (scaleTextMinSize && updateInterval > 0)
             UpdateTextSize();
     }
 }

@@ -97,6 +97,7 @@ public class buttonControl : MonoBehaviour
     private int frame = 0;
     public float doublePressTime = 0f;
     private bool doublePressCheck = false;
+    private float updateTimer = 0f;
 
     private buttonControl[] _autoWarningsInVisGroup;
 
@@ -358,6 +359,39 @@ public class buttonControl : MonoBehaviour
         }
     }
 
+    private void SetWarningColor()
+    {
+        float sinWave;
+        if (!useUniversalSync || !syncNode)
+        {
+            timeIndex += Time.deltaTime * warningFlashSpeed;
+            sinWave = Mathf.Sin(timeIndex);
+            if (timeIndex > 1.0f)
+                timeIndex = warningFlashPause;
+
+            SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
+        }
+        else
+        {
+            sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex);
+            SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
+        }
+    }
+
+    private void SetOptionalText()
+    {
+        if (!active)
+        {
+            optionalLabel.SetText(labelInactiveText);
+            optionalLabel.color = labelInactiveColor;
+        }
+        else
+        {
+            optionalLabel.SetText(labelActiveText);
+            optionalLabel.color = labelActiveColor;
+        }
+    }
+
     public void setButtonActive(bool value)
         { toggleButton(value ? gameObject : null, true); }
 
@@ -431,18 +465,7 @@ public class buttonControl : MonoBehaviour
             disabled = !serverUtils.GetServerBool(serverEnableKey, true);
 
         if (optionalLabel)
-        {
-            if (!active)
-            {
-                optionalLabel.SetText(labelInactiveText);
-                optionalLabel.color = labelInactiveColor;
-            }
-            else
-            {
-                optionalLabel.SetText(labelActiveText);
-                optionalLabel.color = labelActiveColor;
-            }
-        }
+            SetOptionalText();
 
         if (doublePressCheck)
             doublePressTime += Time.deltaTime;
@@ -460,33 +483,24 @@ public class buttonControl : MonoBehaviour
         if (gliderButton || DCCButton)
         {
             if (pressed || active)
-            {
                 gliderButtonOnMesh.SetActive(true);
-            }
             else
             {
                 transition = gliderButtonOnMesh.GetComponent<widgetHighLightOnActive>();
                 if (transition)
                 {
                     if (!transition.isScaleXLerping)
-                    {
                         gliderButtonOnMesh.SetActive(false);
-                    }
                 }
                 else
-                {
                     gliderButtonOnMesh.SetActive(false);
-                }
             }
         }
 
         if (DCCQuadButton)
         {
             if (pressTimer > pressTime && pressed)
-            {
-                
                 DCCQuadMenu.SetActive(true);
-            }
             else
             {
                 DCCQuadMenu.SetActive(false);
@@ -494,34 +508,25 @@ public class buttonControl : MonoBehaviour
             }
         }
 
-        updateColor();
-
-        if (autoWarning)
-            warning = IsAutoWarningActive();
-
         if (warning)
-        {
-            float sinWave;
-            if (!useUniversalSync || !syncNode)
-            {
-                timeIndex += Time.deltaTime * warningFlashSpeed;
-                sinWave = Mathf.Sin(timeIndex);
-                if (timeIndex > 1.0f)
-                    timeIndex = warningFlashPause;
-
-                SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
-            }
-            else
-            {
-                sinWave = Mathf.Sin(syncNode.GetComponent<widgetWarningFlashSync>().timeIndex);
-                SetColor(Color.Lerp(GetThemeColor(0), GetThemeColor(active ? 1 : 3), Mathf.Sin(sinWave)), false);
-            }
-        }
+            SetWarningColor();
         else
         {
             if (!pressed && !active)
                 SetColor(GetThemeColor(3), false);
         }
+
+        //Functionality that doesn't need to be updated every frame
+        updateTimer += Time.deltaTime;
+        if (updateTimer < 0.2f)
+            return;
+
+        updateTimer = 0f;
+
+        if (autoWarning)
+            warning = IsAutoWarningActive();
+
+        updateColor();
     }
 
     private bool IsAutoWarningActive()
@@ -569,8 +574,6 @@ public class buttonControl : MonoBehaviour
 
         return current <= value;
     }
-
-
 
     IEnumerator waitDoublePress(float waitTime)
     {
