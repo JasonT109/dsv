@@ -2459,6 +2459,13 @@ namespace Meg.Networking
                 LocalPlayer.PostClearExtraVessels();
         }
 
+        /** Set the player vessel. */
+        public static void PostPlayerVessel(int id)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostPlayerVessel(id);
+        }
+
         /** Number of vessels that can be displayed on the map. */
         public static int GetVesselCount()
             { return VesselData.VesselCount; }

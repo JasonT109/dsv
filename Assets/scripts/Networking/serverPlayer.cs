@@ -302,6 +302,15 @@ public class serverPlayer : NetworkBehaviour
             CmdClearExtraVessels();
     }
 
+    /** Set player vessel on the server. */
+    public void PostPlayerVessel(int id)
+    {
+        if (isServer)
+            serverUtils.VesselData.SetPlayerVessel(id);
+        else if (isClient)
+            CmdPlayerVessel(id);
+    }
+
     /** Post glider screen id for the given player. */
     public void PostGliderScreenId(NetworkInstanceId playerId, int screenId)
     {
@@ -675,6 +684,11 @@ public class serverPlayer : NetworkBehaviour
     [Command]
     public void CmdClearExtraVessels()
         { serverUtils.VesselData.ClearExtraVessels(); }
+
+    /** Set player vessel on the server. */
+    [Command]
+    public void CmdPlayerVessel(int id)
+        { serverUtils.VesselData.SetPlayerVessel(id); }
 
     /** Add a map line to the simulation. */
     [Command]
