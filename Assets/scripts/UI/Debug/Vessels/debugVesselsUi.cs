@@ -170,7 +170,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
     public void SetSelectedAsPlayer()
     {
         // Check if we can reassign the player vessel.
-        if (!Selected.CanBePlayer || !serverUtils.IsServer())
+        if (!Selected.CanBePlayer)
             return;
 
         DialogManager.Instance.ShowYesNo("SWITCH PLAYER VESSEL?",
@@ -180,7 +180,7 @@ public class debugVesselsUi : Singleton<debugVesselsUi>
                 if (result != DialogYesNo.Result.Yes)
                     return;
 
-                VesselData.SetPlayerVessel(Selected.Id);
+                serverUtils.PostPlayerVessel(Selected.Id);
             });
     }
 
