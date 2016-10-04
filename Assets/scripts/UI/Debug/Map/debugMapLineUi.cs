@@ -77,8 +77,7 @@ public class debugMapLineUi : MonoBehaviour
             .Brighten(isSelected ? 0.75f : 0.15f)
             .ToColor();
 
-        NameLabel.text = Line.Name;
-
+        NameLabel.text = string.Format("{0}: {1}", Line.Id, Line.Name);
         // _updating = false;
     }
 

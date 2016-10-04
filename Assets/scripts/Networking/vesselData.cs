@@ -67,6 +67,8 @@ public class vesselData : NetworkBehaviour
         Normal = 0,
         BoxLeft = 1,
         BoxRight = 2,
+        BoxLeftDesc = 3,
+        BoxRightDesc = 4
     }
 
     public static Icon IconForName(string name)
@@ -85,6 +87,7 @@ public class vesselData : NetworkBehaviour
     {
         public int Id;
         public string Name;
+        public string Description;
         public Vector3 Position;
         public float Speed;
         public bool OnMap;
@@ -110,6 +113,7 @@ public class vesselData : NetworkBehaviour
         public Vessel(Vessel vessel)
         {
             Id = vessel.Id;
+            Description = vessel.Description;
             Name = vessel.Name;
             Position = vessel.Position;
             Speed = vessel.Speed;
@@ -508,6 +512,10 @@ public class vesselData : NetworkBehaviour
     public void SetName(int id, string value)
         { SetVessel(id, new Vessel(GetVessel(id)) { Name = value }); }
 
+    /** Set a vessel's description (1-based index). */
+    public void SetDescription(int id, string value)
+        { SetVessel(id, new Vessel(GetVessel(id)) { Description = value }); }
+
     /** Return a vessel's current name. */
     public string GetName(int id)
     {
@@ -772,6 +780,7 @@ public class vesselData : NetworkBehaviour
         var json = new JSONObject();
         json.AddField("Id", vessel.Id);
         json.AddField("Name", vessel.Name);
+        json.AddField("Description", vessel.Description);
         json.AddField("Position", vessel.Position);
         json.AddField("Speed", vessel.Speed);
         json.AddField("OnMap", vessel.OnMap);
@@ -794,6 +803,7 @@ public class vesselData : NetworkBehaviour
         var vessel = new Vessel
         {
             Name = Unknown,
+            Description = "",
             OnMap = true,
             OnSonar = true,
             ColorOnMap = DefaultColorOnMap,
@@ -804,6 +814,7 @@ public class vesselData : NetworkBehaviour
 
         json.GetField(ref vessel.Id, "Id");
         json.GetField(ref vessel.Name, "Name");
+        json.GetField(ref vessel.Description, "Description");
         json.GetField(ref vessel.Position, "Position");
         json.GetField(ref vessel.Speed, "Speed");
         json.GetField(ref vessel.OnMap, "OnMap");
