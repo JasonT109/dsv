@@ -78,6 +78,11 @@ public class debugDCCStationUi : MonoBehaviour
         DCCWindow.contentID.power,
         DCCWindow.contentID.diagnostics,
         DCCWindow.contentID.lifesupport,
+        DCCWindow.contentID.crew1,
+        DCCWindow.contentID.crew2,
+        DCCWindow.contentID.crew3,
+        DCCWindow.contentID.crew4,
+        DCCWindow.contentID.crew5,
     };
 
     private readonly DCCWindow.contentID[] _quadScreenContentIDs =

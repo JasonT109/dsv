@@ -37,6 +37,7 @@ public class crewData : NetworkBehaviour
         public bool MonitorLeds;
         public bool MonitorGraphs;
         public bool Photo;
+        public bool Offline;
 
         public Crew(Crew other)
         {
@@ -61,6 +62,7 @@ public class crewData : NetworkBehaviour
             MonitorLeds = other.MonitorLeds;
             MonitorGraphs = other.MonitorGraphs;
             Photo = other.Photo;
+            Offline = other.Offline;
         }
 
         public Crew(int id)
@@ -86,6 +88,7 @@ public class crewData : NetworkBehaviour
             MonitorLeds = true;
             MonitorGraphs = true;
             Photo = true;
+            Offline = false;
         }
     };
 
@@ -181,6 +184,7 @@ public class crewData : NetworkBehaviour
         serverUtils.RegisterServerValue(string.Format("crewspo2max{0}", id), new serverUtils.ParameterInfo { description = "Maximum Oxygen saturation level." });
         serverUtils.RegisterServerValue(string.Format("crewspo2pattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph." });
         serverUtils.RegisterServerValue(string.Format("crewphoto{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Display crew photo?" });
+        serverUtils.RegisterServerValue(string.Format("crewoffline{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Crew member is offline?" });
 
     }
 
@@ -269,6 +273,9 @@ public class crewData : NetworkBehaviour
             case "photo":
                 SetCrew(id, new Crew(GetCrew(id)) { Photo = value > 0 });
                 break;
+            case "offline":
+                SetCrew(id, new Crew(GetCrew(id)) { Offline = value > 0 });
+                break;
         }
     }
 
@@ -323,6 +330,8 @@ public class crewData : NetworkBehaviour
                 return GetCrew(id).MonitorGraphs ? 1 : 0;
             case "photo":
                 return GetCrew(id).Photo ? 1 : 0;
+            case "offline":
+                return GetCrew(id).Offline ? 1 : 0;
             default:
                 return defaultValue;
         }
@@ -403,6 +412,7 @@ public class crewData : NetworkBehaviour
         json.AddField("MonitorLeds", crew.MonitorLeds);
         json.AddField("MonitorGraphs", crew.MonitorGraphs);
         json.AddField("Photo", crew.Photo);
+        json.AddField("Offline", crew.Offline);
         return json;
     }
 
@@ -431,7 +441,7 @@ public class crewData : NetworkBehaviour
         json.GetField(ref crew.PAPMax, "PAPMax");
         json.GetField(ref crew.MonitorLeds, "MonitorLeds");
         json.GetField(ref crew.MonitorGraphs, "MonitorGraphs");
-        json.GetField(ref crew.Photo, "Photo");
+        json.GetField(ref crew.Offline, "Offline");
         return crew;
     }
 

@@ -70,6 +70,10 @@
 				{
 					"type":"Value",
 					"serverParam":"crewphoto1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewoffline1"
 				}
 			]
 		},
@@ -143,6 +147,10 @@
 				{
 					"type":"Value",
 					"serverParam":"crewphoto2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewoffline2"
 				}
 			]
 		},
@@ -216,6 +224,10 @@
 				{
 					"type":"Value",
 					"serverParam":"crewphoto3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewoffline3"
 				}
 			]
 		},
@@ -289,6 +301,10 @@
 				{
 					"type":"Value",
 					"serverParam":"crewphoto4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewoffline4"
 				}
 			]
 		},
@@ -362,6 +378,10 @@
 				{
 					"type":"Value",
 					"serverParam":"crewphoto5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"crewoffline5"
 				}
 			]
 		}
