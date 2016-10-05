@@ -24,6 +24,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
     public CanvasGroup PropertiesGroup;
     public Transform PropertiesContainer;
     public InputField NameInput;
+    public InputField DescriptionInput;
     public debugVesselsUi Vessels;
     public Slider DepthSlider;
     public InputField DepthInput;
@@ -139,13 +140,22 @@ public class debugVesselPropertiesUi : MonoBehaviour
     // Public Methods
     // ------------------------------------------------------------
 
-    /** Sets the group's name. */
+    /** Sets the vessel's name. */
     public void SetName(string value)
     {
         if (_updating)
             return;
 
         serverUtils.PostVesselName(Vessel.Id, value);
+    }
+
+    /** Sets the vessel's description. */
+    public void SetDescription(string value)
+    {
+        if (_updating)
+            return;
+
+        serverUtils.PostVesselDescription(Vessel.Id, value);
     }
 
     /** Add a vessel movement event to the selected event group. */
@@ -204,6 +214,7 @@ public class debugVesselPropertiesUi : MonoBehaviour
         PropertiesContainer.gameObject.SetActive(true);
         PropertiesGroup.interactable = true;
         NameInput.text = Vessel.Name;
+        DescriptionInput.text = !string.IsNullOrEmpty(Vessel.Description) ? Vessel.Description : "";
         DepthSlider.value = Vessel.Depth;
         DepthSlider.maxValue = Mathf.Max(DepthSlider.maxValue, Vessel.Depth);
         DepthInput.text = string.Format("{0:N1}", Vessel.Depth);

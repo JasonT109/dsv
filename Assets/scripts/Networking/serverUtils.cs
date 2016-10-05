@@ -2382,6 +2382,13 @@ namespace Meg.Networking
                 LocalPlayer.PostVesselName(id, name);
         }
 
+        /** Post vessel's description to the server. */
+        public static void PostVesselDescription(int id, string value)
+        {
+            if (LocalPlayer)
+                LocalPlayer.PostVesselDescription(id, value);
+        }
+
         /** Post vessel's depth to the server. */
         public static void PostVesselDepth(int id, float depth)
         {

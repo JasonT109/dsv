@@ -20,6 +20,7 @@ public class SonarPingLabel : MonoBehaviour
         public vesselData.Label Type;
         public GameObject Label;
         public Text Name;
+        public Text Description;
     }
 
     private void Start()
@@ -41,8 +42,20 @@ public class SonarPingLabel : MonoBehaviour
             var option = Options[i];
             var active = Ping.Vessel.Label == option.Type;
             option.Label.SetActive(active);
-            if (active)
+
+            if (active && option.Name)
+            {
                 option.Name.text = Ping.Vessel.Name.ToUpper();
+                option.Name.gameObject.SetActive(
+                    !string.IsNullOrEmpty(option.Name.text));
+            }
+
+            if (active && option.Description)
+            {
+                option.Description.text = Ping.Vessel.Description;
+                option.Description.gameObject.SetActive(
+                    !string.IsNullOrEmpty(option.Description.text));
+            }
         }
     }
 

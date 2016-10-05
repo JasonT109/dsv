@@ -14,8 +14,11 @@ public class SonarPing : MonoBehaviour
 
     [Header("Components")]
 
-    /** Label for this ping. */
+    /** Name label for this ping. */
     public widgetText NameLabel;
+
+    /** Description label for this ping. */
+    public widgetText DescriptionLabel;
 
     /** Label for depth information. */
     public widgetText DepthLabel;
@@ -164,6 +167,9 @@ public class SonarPing : MonoBehaviour
 
         if (NameLabel)
             NameLabel.Text = Vessel.Name.ToUpper();
+
+        if (DescriptionLabel)
+            DescriptionLabel.Text = Vessel.Description;
 
         if (t > _nextDepthUpdate && DepthLabel)
         { 

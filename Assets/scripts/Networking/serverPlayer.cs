@@ -203,6 +203,15 @@ public class serverPlayer : NetworkBehaviour
             CmdSetVesselName(id, value);
     }
 
+    /** Post vessel's description to the server. */
+    public void PostVesselDescription(int id, string value)
+    {
+        if (isServer)
+            ServerSetVesselDescription(id, value);
+        else
+            CmdSetVesselDescription(id, value);
+    }
+
     /** Post vessel's depth to the server. */
     public void PostVesselDepth(int id, float depth)
     {
@@ -620,6 +629,11 @@ public class serverPlayer : NetworkBehaviour
     public void CmdSetVesselName(int id, string name)
         { ServerSetVesselName(id, name); }
 
+    /** Set vessel's description on the server. */
+    [Command]
+    public void CmdSetVesselDescription(int id, string name)
+        { ServerSetVesselDescription(id, name); }
+
     /** Set vessel map visibility to the server. */
     [Command]
     public void CmdSetVesselOnMap(int id, bool value)
@@ -874,6 +888,11 @@ public class serverPlayer : NetworkBehaviour
     [Server]
     public void ServerSetVesselName(int id, string value)
         { serverUtils.VesselData.SetName(id, value); }
+
+    /** Set vessel's description on the server. */
+    [Server]
+    public void ServerSetVesselDescription(int id, string value)
+        { serverUtils.VesselData.SetDescription(id, value); }
 
     /** Set vessel's depth on the server. */
     [Server]
