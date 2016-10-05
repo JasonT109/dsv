@@ -44,10 +44,18 @@ public class SonarPingLabel : MonoBehaviour
             option.Label.SetActive(active);
 
             if (active && option.Name)
+            {
                 option.Name.text = Ping.Vessel.Name.ToUpper();
+                option.Name.gameObject.SetActive(
+                    !string.IsNullOrEmpty(option.Name.text));
+            }
 
             if (active && option.Description)
+            {
                 option.Description.text = Ping.Vessel.Description;
+                option.Description.gameObject.SetActive(
+                    !string.IsNullOrEmpty(option.Description.text));
+            }
         }
     }
 
