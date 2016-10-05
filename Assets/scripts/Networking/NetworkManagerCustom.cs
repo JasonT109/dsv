@@ -107,6 +107,9 @@ public class NetworkManagerCustom : MonoBehaviour
     {
         Debug.Log(string.Format("NetworkManagerCustom.Awake(id:{0})", Id));
 
+        // Set full stacktrace logging to get more info on crashes.
+        // Application.stackTraceLogType = StackTraceLogType.Full;
+
         // Get default scene from the UNET network manager.
         _manager = GetComponent<Meg.Networking.NetworkManager>();
 
