@@ -22,10 +22,21 @@ public class widgetGliderDescentValues : MonoBehaviour
     private ParticleSystem.EmissionModule p1Emission;
     private ParticleSystem.EmissionModule p2Emission;
 
-    void updateValues()
+    private void LocateThrusterControl()
     {
+        // Locate the thruster control script (should be in a parent node).
+        if (!thrusterControl)
+            thrusterControl = ObjectFinder.FindInParents<widgetThrusterControl>(transform);
         if (!thrusterControl)
             thrusterControl = ObjectFinder.Find<widgetThrusterControl>();
+    }
+
+    void updateValues()
+    {
+        LocateThrusterControl();
+
+        if (thrusterControl)
+            return;
 
         float powerValue = thrusterControl.GetThrusterLevel(widgetThrusterControl.ThrusterId.MainShared);
         powerText.Text = Mathf.Abs(powerValue).ToString("N0");
