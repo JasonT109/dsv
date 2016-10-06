@@ -1,6 +1,6 @@
 {
 	"metadata":{
-		"utc":"29/08/16 03:05:20.8",
+		"utc":"06/10/16 08:02:02.5",
 		"startedTimestamp":"01/01/01 12:00:00.0",
 		"stoppedTimestamp":"01/01/01 12:00:00.0"
 	},
@@ -130,12 +130,6 @@
 				},
 				{
 					"type":"Value",
-					"triggerTime":0.8,
-					"serverParam":"error_oxygenExt",
-					"serverValue":0
-				},
-				{
-					"type":"Value",
 					"triggerTime":2,
 					"serverParam":"error_oxygenPump",
 					"serverValue":0
@@ -163,68 +157,73 @@
 		{
 			"id":"Reserve Air Depletion",
 			"paused":true,
-			"minimized":true,
 			"events":[
 				{
 					"type":"Value",
-					"completeTime":32,
+					"completeTime":18.76122,
 					"serverParam":"reserveAirTank1",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":4.11852,
-					"completeTime":43,
+					"completeTime":16.52251,
 					"serverParam":"reserveAirTank2",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":11.69554,
-					"completeTime":55,
+					"completeTime":16.26988,
 					"serverParam":"reserveAirTank3",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":4.60192,
-					"completeTime":54.75536,
+					"completeTime":19.45196,
 					"serverParam":"reserveAirTank4",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
-					"triggerTime":22.43431,
-					"completeTime":44.11616,
+					"triggerTime":15.35833,
+					"completeTime":22.9341,
 					"serverParam":"reserveAirTank5",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":9.503692,
-					"completeTime":53.59616,
+					"completeTime":23.58827,
 					"serverParam":"reserveAirTank6",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":4.598593,
-					"completeTime":40.19708,
+					"completeTime":32.69511,
 					"serverParam":"reserveAirTank7",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
 					"triggerTime":5.518311,
-					"completeTime":80,
+					"completeTime":22.88926,
 					"serverParam":"reserveAirTank8",
 					"serverValue":0
 				},
 				{
 					"type":"Value",
-					"triggerTime":16.50988,
-					"completeTime":66.9263,
+					"triggerTime":11.79253,
+					"completeTime":24.21322,
 					"serverParam":"reserveAirTank9",
+					"serverValue":0
+				},
+				{
+					"type":"Value",
+					"triggerTime":2.358677,
+					"serverParam":"error_oxygenext",
 					"serverValue":0
 				}
 			]
