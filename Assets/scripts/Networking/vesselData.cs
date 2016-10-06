@@ -57,7 +57,8 @@ public class vesselData : NetworkBehaviour
         Diamond = 4,
         Arrow = 5,
         Tracker = 6,
-        Marker = 7
+        Marker = 7,
+        CircleAlert = 8
     }
 
     /** Types of vessel label. */
