@@ -699,6 +699,7 @@ namespace Meg.Networking
             "rovlightport",
             "stabiliserspeed",
             "motionstabiliserkicker",
+            "seismicerror",
             "stabiliserstability",
             "scene",
             "screenglitchamount",
@@ -1129,6 +1130,7 @@ namespace Meg.Networking
             { "rovlightbow", new ParameterInfo { description = "rov light amount."} },
             { "rovlightsboard", new ParameterInfo { description = "rov light amount."} },
             { "rovlightport", new ParameterInfo { description = "rov light amount."} },
+            { "seismicerror", new ParameterInfo { minValue = 0, maxValue = 1, type = ParameterType.Bool, description = "Seismic error for when Meg bites the O level." } },
             { "scene", new ParameterInfo { minValue = 1, maxValue = 200, type = ParameterType.Int, description = "The scene currently being filmed." } },
             { "screenglitchamount", new ParameterInfo { description = "Amount of screen glitch across all screens."} },
             { "screenglitchautodecay", new ParameterInfo { maxValue = 1, type = ParameterType.Bool, description = "Whether screen glitch automatically decays over time."} },
@@ -1472,6 +1474,8 @@ namespace Meg.Networking
                         return ErrorData.error_oxygenPump;
                     case "genericerror":
                         return ErrorData.genericerror;
+                    case "seismicerror":
+                        return ErrorData.seismicerror;
                     case "error_thruster_l":
                         return GliderErrorData.error_thruster_l;
                     case "error_thruster_r":

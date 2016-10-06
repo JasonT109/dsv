@@ -731,6 +731,9 @@ public class serverData : NetworkBehaviour
                 case "genericerror":
                     ErrorData.genericerror = newValue;
                     break;
+                case "seismicerror":
+                    ErrorData.seismicerror = newValue;
+                    break;
                 case "inputxaxis":
                     SubControl.inputXaxis = newValue;
                     break;
