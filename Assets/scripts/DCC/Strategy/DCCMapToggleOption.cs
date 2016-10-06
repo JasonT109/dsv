@@ -33,6 +33,9 @@ public class DCCMapToggleOption : MonoBehaviour
 	    if (!Button)
 	        Button = GetComponent<Button>();
 
+        if (!StrategyMap)
+            StrategyMap = transform.GetComponentInParents<DCCStrategyMap>();
+
         Button.onClick.AddListener(ToggleOption);
         _on = Button.GetComponentInChildrenNotMe<Image>(true);
         StrategyMap.OnMapModeChanged += OnMapModeChanged;

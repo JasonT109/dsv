@@ -10,6 +10,8 @@ public class DCCStrategyMap : MonoBehaviour
     public GameObject Map2DRoot;
     public GameObject MapSubSchematicRoot;
 
+    public widget3DMap Map3D;
+
     public CanvasGroup Fader;
 
     private mapData.Mode _mode = mapData.Mode.Mode3D;
@@ -35,6 +37,9 @@ public class DCCStrategyMap : MonoBehaviour
         Map3DRoot.SetActive(true);
         Map2DRoot.SetActive(false);
         MapSubSchematicRoot.SetActive(false);
+
+        if (!Map3D)
+            Map3D = Map3DRoot.GetComponentInChildren<widget3DMap>(true);
     }
 
     private void Update()
