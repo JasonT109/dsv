@@ -45,6 +45,9 @@ public class DCCStrategyMenu : MonoBehaviour
     /** Initialization. */
     private void Start()
     {
+        if (!StrategyMap)
+            StrategyMap = transform.GetComponentInParents<DCCStrategyMap>();
+
         StrategyMap.OnMapModeChanged += OnMapModeChanged;
 
         DiveMapButton.onClick.AddListener(ToggleDiveMap);

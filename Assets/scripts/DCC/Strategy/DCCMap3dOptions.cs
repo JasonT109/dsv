@@ -70,6 +70,15 @@ public class DCCMap3dOptions : MonoBehaviour
         if (!serverUtils.MapData)
             return;
 
+        if (!StrategyMap)
+            StrategyMap = transform.GetComponentInParents<DCCStrategyMap>();
+
+        if (!Map3D)
+            Map3D = StrategyMap.Map3D;
+
+        if (!Map3D)
+            return;
+
         // Update 3d dive map options.
         var isMap3D = StrategyMap.IsMap3D;
         MapContoursButton.gameObject.SetActive(isMap3D);
