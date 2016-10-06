@@ -24,6 +24,7 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     public string autoWarningServerName = "depth";
     public bool autoWarningGreaterThan = false;
     public int[] materialIndex;
+    public bool disableRenderer = false;
 
     private Color[] shaderColorOrigValues;
     private Color[] shaderColorLerpValues;
@@ -164,6 +165,14 @@ public class graphicsAnimateWarningColor : MonoBehaviour {
     {
         if (!serverUtils.IsReady())
             return;
+
+        if (disableRenderer)
+        {
+            if (warning)
+                r.enabled = true;
+            else
+                r.enabled = false;
+        }
 
         if (materialIndex.Length > 0 && !isDynamicText)
         {

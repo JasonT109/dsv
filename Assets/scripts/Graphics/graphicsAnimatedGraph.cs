@@ -2,8 +2,12 @@
 using System.Collections;
 using System.Linq;
 using Meg.Networking;
+using Meg.Maths;
 
-public class graphicsAnimatedGraph : MonoBehaviour {
+public class graphicsAnimatedGraph : MonoBehaviour
+{
+
+    [Header ("Appearance")]
     public GameObject[] graphBars;
     public float updateSpeed = 1.0f;
     public float speed = 1.0f;
@@ -11,21 +15,27 @@ public class graphicsAnimatedGraph : MonoBehaviour {
     public float minHeight = 5.0f;
     public float noise = 0.2f;
     public bool useSineWave;
+    public bool fadeOut;
+
+    [Header ("Server")]
     public bool switchOnWarning = false;
     public string warningParam;
     public float warningValue;
     public float warningMaxHeight = 10.0f;
     public float warningMinHeight = 5.0f;
 
+    [HideInInspector]
+    public float[] graphHeights;
+
     private float minH;
     private float maxH;
-    public float[] graphHeights;
     private int n;
     private float tickTime;
     private float timeIndex = 0.0f;
     private bool switched = false;
 
-    void Start () {
+    void Start ()
+    {
         n = graphBars.Length;
         graphHeights = new float[n];
         minH = minHeight;
@@ -40,6 +50,14 @@ public class graphicsAnimatedGraph : MonoBehaviour {
             else
             {
                 graphBars[i].GetComponent<graphicsSlicedMesh>().Height = graphHeights[i] = Random.Range(minH, maxH);
+            }
+
+            if (fadeOut)
+            {
+                float _ColorLerpValue = graphicsMaths.remapValue(i, 0, n, 0, 1);
+                Renderer _Renderer = graphBars[i].GetComponent<Renderer>();
+                Color _OrigColor = _Renderer.material.color;
+                _Renderer.material.color = Color.Lerp(_OrigColor, new Color(0,0,0,0), 1 - _ColorLerpValue);
             }
         }
         tickTime = Time.time + updateSpeed;
