@@ -86,7 +86,7 @@ public class CameraGlitches : MonoBehaviour
     private float _glitchVelocity;
 
     /** Queue of saved glitch levels (used to introduce a random delay per instance.) */
-    private Queue<float> _glitchSamples = new Queue<float>();
+    private readonly Queue<float> _glitchSamples = new Queue<float>();
 
     /** Random delay (in frames) to introduce when sampling glitch level. */
     private int _glitchBufferDelay;
@@ -136,7 +136,7 @@ public class CameraGlitches : MonoBehaviour
 
         // Store glitch samples in a queue, and buffer them to introduce a random delay.
         _glitchSamples.Enqueue(glitch);
-        while (_glitchSamples.Count >= _glitchBufferDelay)
+        while (_glitchSamples.Count >= _glitchBufferDelay && _glitchSamples.Count > 0)
             glitch = _glitchSamples.Dequeue();
 
         // Determine glitch parameters based on amount.
