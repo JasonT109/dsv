@@ -17,7 +17,7 @@ namespace Meg.Networking
         // ------------------------------------------------------------
 
         /** The current application version. */
-        public const string Version = "1.4.5";
+        public const string Version = "1.4.6";
 
         /** Return value representing an unknown server data value. */
         public const float Unknown = -1;
