@@ -25,6 +25,7 @@ public class ImageSequenceRawUi : MonoBehaviour
     public float frameTime = 0.04f;
     public Texture notPlaying;
     public float YoyoHoldTime = 0;
+    public int LoopStartFrame = 0;
 
     [Header("Sequence 1")]
     public string folderName;
@@ -128,12 +129,20 @@ public class ImageSequenceRawUi : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        if (direction == -1 && frameCounter > 0)
-            frameCounter--;
-        else if (direction == -1 && frameCounter == 0)
-            frameCounter = nFrames - 1;
+        if (direction == -1)
+        {
+            if (frameCounter > 0)
+                frameCounter--;
+            else if (frameCounter == 0)
+                frameCounter = nFrames - 1;
+        }
         else
-            frameCounter = (++frameCounter) % nFrames;
+        {
+            if (frameCounter < (nFrames - 1))
+                frameCounter++;
+            else if (frameCounter == (nFrames - 1))
+                frameCounter = LoopStartFrame;
+        }
 
         UpdateCurrentFrame();
         StopCoroutine("PlayLoop");
