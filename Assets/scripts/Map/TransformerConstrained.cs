@@ -64,6 +64,7 @@ namespace TouchScript.Behaviors
                 if (transformGesture == null) continue;
 
                 _gestures.Add(transformGesture);
+                transformGesture.TransformStarted += transformStartedHandler;
                 transformGesture.Transformed += transformHandler;
                 transformGesture.TransformCompleted += transformCompleteHandler;
             }
@@ -84,6 +85,14 @@ namespace TouchScript.Behaviors
         #endregion
 
         #region Event handlers
+
+        private void transformStartedHandler(object sender, EventArgs e)
+        {
+            _deltaPosition = Vector3.zero;
+            _translation = Vector3.zero; ;
+            _deltaScale = 1;
+            _zoom = 1;
+        }
 
         private void transformHandler(object sender, EventArgs e)
         {
