@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Meg.Networking;
 using TouchScript.Gestures;
 using UnityEngine;
 
@@ -30,8 +31,18 @@ namespace TouchScript.Behaviors
 
         private Transform _cachedTransform;
         private Vector3 _targetPosition;
-        private Vector3 _targetScale;
+        private float _targetScale;
         private readonly List<ITransformGesture> _gestures = new List<ITransformGesture>();
+
+        private Vector3 _deltaPosition;
+        private float _deltaScale = 1;
+
+        private Vector3 _translation;
+        private Vector3 _translationVelocity;
+
+        private float _zoom;
+        private float _zoomVelocity;
+
 
         #endregion
 
@@ -41,7 +52,7 @@ namespace TouchScript.Behaviors
         {
             _cachedTransform = transform;
             _targetPosition = transform.position;
-            _targetScale = transform.localScale;
+            _targetScale = transform.localScale.x;
         }
 
         private void OnEnable()
@@ -54,6 +65,7 @@ namespace TouchScript.Behaviors
 
                 _gestures.Add(transformGesture);
                 transformGesture.Transformed += transformHandler;
+                transformGesture.TransformCompleted += transformCompleteHandler;
             }
 
         }
@@ -64,6 +76,7 @@ namespace TouchScript.Behaviors
             {
                 var transformGesture = _gestures[i];
                 transformGesture.Transformed -= transformHandler;
+                transformGesture.TransformCompleted -= transformCompleteHandler;
             }
             _gestures.Clear();
         }
@@ -78,66 +91,87 @@ namespace TouchScript.Behaviors
             ApplyTransform(gesture, _cachedTransform);
         }
 
+        private void transformCompleteHandler(object sender, EventArgs e)
+        {
+        }
+
         /// <inheritdoc />
         private void ApplyTransform(TransformGesture gesture, Transform target)
         {
-            var scale = _targetScale.x * gesture.DeltaScale;
-            if (scale < ZoomSoftLimits.x || scale > ZoomSoftLimits.y)
-            {
-                gesture.Cancel(true, true);
-                return;
-            }
-
-            _targetScale *= gesture.DeltaScale;
-
-            if (!Mathf.Approximately(gesture.DeltaRotation, 0f))
-                target.rotation = Quaternion.AngleAxis(gesture.DeltaRotation, gesture.RotationAxis) * target.rotation;
-
-            if (gesture.DeltaPosition != Vector3.zero)
-                _targetPosition += gesture.DeltaPosition;
+            _deltaPosition = gesture.DeltaPosition;
+            _translation = gesture.DeltaPosition;
+            _deltaScale = gesture.DeltaScale;
         }
 
         private void LateUpdate()
         {
+            // Smooth out panning / scaling gesture deltas.
+            var smoothTime = serverUtils.GetServerData("mapSmoothTime", 0.1f);
+            _translation = Vector3.SmoothDamp(_translation, _deltaPosition, ref _translationVelocity, smoothTime);
+            _zoom = Mathf.SmoothDamp(_zoom, _deltaScale, ref _zoomVelocity, smoothTime);
+            _deltaPosition = Vector3.zero;
+            _deltaScale = 1;
+
             // Respect tween values.
             if (DOTween.IsTweening(transform))
             {
-                _targetScale = transform.localScale;
+                _targetScale = transform.localScale.x;
                 _targetPosition = transform.position;
             }
+            else
+                PanAndZoom(_translation, _zoom, smoothTime);
 
             // Apply scaling.
-            transform.localScale = _targetScale;
+            transform.localScale = Vector3.one * _targetScale;
 
-            // Constrain panning.
+            // Constrain panning to respect bounds.
             transform.position = _targetPosition;
-            var min = PanLimits.min * _targetScale.x;
-            var max = PanLimits.max * _targetScale.x;
+            var min = PanLimits.min * _targetScale;
+            var max = PanLimits.max * _targetScale;
             var afterLocal = transform.localPosition;
             var constrainedLocal = Vector3.Min(Vector3.Max(afterLocal, min), max);
             transform.localPosition = constrainedLocal;
             _targetPosition = transform.position;
+
         }
 
         #endregion
 
 
-        public void Move3D(Vector3 translation, float zoom)
+        private void PanAndZoom(Vector3 translation, float zoom, float smoothTime)
         {
-            if (DOTween.IsTweening(transform))
-                return;
+            var scale = _targetScale * zoom;
+            var zooming = !Mathf.Approximately(zoom, 1);
+            if (zooming && scale < ZoomSoftLimits.x)
+            {
+                zoom = 1;
+                translation = Vector3.zero;
+            }
+            else if (zooming && scale > ZoomSoftLimits.y)
+            {
+                zoom = 1;
+                translation = Vector3.zero;
+            }
 
-            var scale = _targetScale * (1 + zoom);
-            if (scale.x < ZoomSoftLimits.x)
-                zoom = 0;
-            if (scale.x > ZoomSoftLimits.y)
-                zoom = 0;
+            _targetScale *= zoom;
 
-            _targetScale *= (1 + zoom);
-            _targetPosition += translation;
-
-            var dp = _targetPosition * zoom;
-            _targetPosition += dp;
+            if (smoothTime <= 0)
+            {
+                // When no smoothing is applied, allow simultaneous pan/zoom.
+                _targetPosition += translation;
+            }
+            else
+            {
+                // When smoothing is applied, only apply pan if not zooming.
+                // When zooming, keep the current focal point in center of screen.
+                if (zooming)
+                {
+                    var dp = _targetPosition * (zoom - 1);
+                    _targetPosition += dp;
+                }
+                else
+                    _targetPosition += translation;
+            }
         }
 
     }

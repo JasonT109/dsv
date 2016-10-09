@@ -1133,6 +1133,9 @@ public class serverData : NetworkBehaviour
                 case "mapuseoldindicators":
                     MapData.mapUseOldIndicators = newValue > 0;
                     break;
+                case "mapsmoothtime":
+                    MapData.mapSmoothTime = newValue;
+                    break;
                 case "maxwildlife":
                     SonarData.MaxWildlife = (int) newValue;
                     break;

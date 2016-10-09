@@ -53,6 +53,9 @@ public class mapData : NetworkBehaviour
     [SyncVar]
     public bool mapUseOldIndicators = false;
 
+    [SyncVar]
+    public float mapSmoothTime = 0.1f;
+
 
     [Header("Coordinates")]
 
