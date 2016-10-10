@@ -92,6 +92,8 @@ namespace TouchScript.Behaviors
             _translation = Vector3.zero; ;
             _deltaScale = 1;
             _zoom = 1;
+            _translationVelocity = Vector3.zero;
+            _zoomVelocity = 0;
         }
 
         private void transformHandler(object sender, EventArgs e)
