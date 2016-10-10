@@ -208,6 +208,9 @@ public class vesselData : NetworkBehaviour
     /** Initial player world position. */
     private Vector3 _initialPlayerPosition;
 
+    /** Number of registered vessels. */
+    private int _registeredVesselCount;
+
 
 
     // Unity Methods
@@ -224,11 +227,21 @@ public class vesselData : NetworkBehaviour
     }
 
     /** Physics update. */
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Force player vessel's data to match the sub's world position. 
         if (PlayerVessel > 0)
             SetPosition(PlayerVessel, WorldToVesselSpace(PlayerPosition));
+    }
+
+    /** Update. */
+    private void Update()
+    {
+        while (VesselCount > _registeredVesselCount)
+        {
+            _registeredVesselCount++;
+            RegisterVesselParams(_registeredVesselCount);
+        }
     }
 
     #endregion
@@ -275,7 +288,11 @@ public class vesselData : NetworkBehaviour
 
         // Add vessel to the synchronized list.
         Vessels.Add(vessel);
-
+    }
+    
+    /** Client callback for a vessel being added. */
+    private void RegisterVesselParams(int id)
+    { 
         // Register vessel dynamic server parameters.
         serverUtils.RegisterServerValue(string.Format("vessel{0}vis", id),
             new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, hideInUi = true });
@@ -349,7 +366,6 @@ public class vesselData : NetworkBehaviour
             serverUtils.RegisterServerValue(string.Format("intercept{0}velocity", id),
                 new serverUtils.ParameterInfo { minValue = 0, maxValue = 100, hideInUi = true });
         }
-
     }
 
     /** Remove the last vessel (if possible). */

@@ -127,6 +127,13 @@ public class crewData : NetworkBehaviour
     #endregion
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Number of registered crew members. */
+    private int _registeredCrewCount;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
@@ -139,6 +146,15 @@ public class crewData : NetworkBehaviour
         InitializeCrews();
     }
 
+    /** Update. */
+    private void Update()
+    {
+        while (CrewCount > _registeredCrewCount)
+        {
+            _registeredCrewCount++;
+            RegisterCrewParams(_registeredCrewCount);
+        }
+    }
     #endregion
 
 
@@ -163,29 +179,6 @@ public class crewData : NetworkBehaviour
 
         // Add crew to the synchronized list.
         Crews.Add(crew);
-
-        // Register crew dynamic server parameters.
-        serverUtils.RegisterServerValue(string.Format("crewabpmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum ambulatory blood pressure."});
-        serverUtils.RegisterServerValue(string.Format("crewabpmax{0}", id), new serverUtils.ParameterInfo { maxValue = 200, description = "Maximum ambulatory blood pressure." });
-        serverUtils.RegisterServerValue(string.Format("crewbodytemp{0}", id), new serverUtils.ParameterInfo { description = "Current body temperaturefor crew member 1." });
-        serverUtils.RegisterServerValue(string.Format("crewetco2min{0}", id), new serverUtils.ParameterInfo { description = "Minimum end-tidal CO2 level." });
-        serverUtils.RegisterServerValue(string.Format("crewetco2max{0}", id), new serverUtils.ParameterInfo { description = "Maximum end-tidal CO2 level." });
-        serverUtils.RegisterServerValue(string.Format("crewetco2pattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for end-tidal CO2 graph." });
-        serverUtils.RegisterServerValue(string.Format("crewheartpattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for heartrate graph." });
-        serverUtils.RegisterServerValue(string.Format("crewheartrate{0}", id), new serverUtils.ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1." });
-        serverUtils.RegisterServerValue(string.Format("crewheartstrengthmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)." });
-        serverUtils.RegisterServerValue(string.Format("crewheartstrengthmax{0}", id), new serverUtils.ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)." });
-        serverUtils.RegisterServerValue(string.Format("crewmonitorleds{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether LEDs are on in the Medical bay monitor screen." });
-        serverUtils.RegisterServerValue(string.Format("crewmonitorgraphs{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether graphs are on in the Medical bay monitor screen." });
-        serverUtils.RegisterServerValue(string.Format("crewpapmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum pulmonary arterial pressure." });
-        serverUtils.RegisterServerValue(string.Format("crewpapmax{0}", id), new serverUtils.ParameterInfo { description = "Maximum pulmonary arterial pressure." });
-        serverUtils.RegisterServerValue(string.Format("crewrespirationrate{0}", id), new serverUtils.ParameterInfo { description = "Current resipiration rate for crew member 1" });
-        serverUtils.RegisterServerValue(string.Format("crewspo2min{0}", id), new serverUtils.ParameterInfo { description = "Minimum Oxygen saturation level." });
-        serverUtils.RegisterServerValue(string.Format("crewspo2max{0}", id), new serverUtils.ParameterInfo { description = "Maximum Oxygen saturation level." });
-        serverUtils.RegisterServerValue(string.Format("crewspo2pattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph." });
-        serverUtils.RegisterServerValue(string.Format("crewphoto{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Display crew photo?" });
-        serverUtils.RegisterServerValue(string.Format("crewoffline{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Crew member is offline?" });
-
     }
 
 
@@ -504,6 +497,33 @@ public class crewData : NetworkBehaviour
         // Successfully parsed key into components.
         return true;
     }
+
+    /** Register server values for a given crew member. */
+    private void RegisterCrewParams(int id)
+    {
+        // Register crew dynamic server parameters.
+        serverUtils.RegisterServerValue(string.Format("crewabpmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum ambulatory blood pressure." });
+        serverUtils.RegisterServerValue(string.Format("crewabpmax{0}", id), new serverUtils.ParameterInfo { maxValue = 200, description = "Maximum ambulatory blood pressure." });
+        serverUtils.RegisterServerValue(string.Format("crewbodytemp{0}", id), new serverUtils.ParameterInfo { description = "Current body temperaturefor crew member 1." });
+        serverUtils.RegisterServerValue(string.Format("crewetco2min{0}", id), new serverUtils.ParameterInfo { description = "Minimum end-tidal CO2 level." });
+        serverUtils.RegisterServerValue(string.Format("crewetco2max{0}", id), new serverUtils.ParameterInfo { description = "Maximum end-tidal CO2 level." });
+        serverUtils.RegisterServerValue(string.Format("crewetco2pattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for end-tidal CO2 graph." });
+        serverUtils.RegisterServerValue(string.Format("crewheartpattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for heartrate graph." });
+        serverUtils.RegisterServerValue(string.Format("crewheartrate{0}", id), new serverUtils.ParameterInfo { maxValue = 200, description = "Current heartrate for crew member 1." });
+        serverUtils.RegisterServerValue(string.Format("crewheartstrengthmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum amplitude of heartrate signal (y axis)." });
+        serverUtils.RegisterServerValue(string.Format("crewheartstrengthmax{0}", id), new serverUtils.ParameterInfo { description = "Maximum amplitude of heartrate signal (y axis)." });
+        serverUtils.RegisterServerValue(string.Format("crewmonitorleds{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether LEDs are on in the Medical bay monitor screen." });
+        serverUtils.RegisterServerValue(string.Format("crewmonitorgraphs{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Whether graphs are on in the Medical bay monitor screen." });
+        serverUtils.RegisterServerValue(string.Format("crewpapmin{0}", id), new serverUtils.ParameterInfo { description = "Minimum pulmonary arterial pressure." });
+        serverUtils.RegisterServerValue(string.Format("crewpapmax{0}", id), new serverUtils.ParameterInfo { description = "Maximum pulmonary arterial pressure." });
+        serverUtils.RegisterServerValue(string.Format("crewrespirationrate{0}", id), new serverUtils.ParameterInfo { description = "Current resipiration rate for crew member 1" });
+        serverUtils.RegisterServerValue(string.Format("crewspo2min{0}", id), new serverUtils.ParameterInfo { description = "Minimum Oxygen saturation level." });
+        serverUtils.RegisterServerValue(string.Format("crewspo2max{0}", id), new serverUtils.ParameterInfo { description = "Maximum Oxygen saturation level." });
+        serverUtils.RegisterServerValue(string.Format("crewspo2pattern{0}", id), new serverUtils.ParameterInfo { maxValue = 5, description = "Pattern to use for oxygen saturation graph." });
+        serverUtils.RegisterServerValue(string.Format("crewphoto{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Display crew photo?" });
+        serverUtils.RegisterServerValue(string.Format("crewoffline{0}", id), new serverUtils.ParameterInfo { maxValue = 1, type = serverUtils.ParameterType.Bool, description = "Crew member is offline?" });
+    }
+
 
 }
 

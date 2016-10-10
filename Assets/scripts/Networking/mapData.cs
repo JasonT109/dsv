@@ -222,6 +222,13 @@ public class mapData : NetworkBehaviour
     public class SyncListLines : SyncListStruct<Line> { };
 
 
+    // Members
+    // ------------------------------------------------------------
+
+    /** Number of registered lines. */
+    private int _registeredLineCount;
+
+
     // Unity Methods
     // ------------------------------------------------------------
 
@@ -235,6 +242,16 @@ public class mapData : NetworkBehaviour
         // Default to top-down map in gliders / evac ship.
         if (serverUtils.IsGlider())
             mapTopDown = true;
+    }
+
+    /** Update. */
+    private void Update()
+    {
+        while (LineCount > _registeredLineCount)
+        {
+            _registeredLineCount++;
+            RegisterLineParams(_registeredLineCount);
+        }
     }
 
     #endregion
@@ -262,10 +279,6 @@ public class mapData : NetworkBehaviour
         // Add line to the synchronized list.
         Lines.Add(line);
         LinePercentages.Add(100f);
-
-        // Register line dynamic server parameters.
-        serverUtils.RegisterServerValue(string.Format("maplinepercent{0}", id), 
-            new serverUtils.ParameterInfo { description = "Progress percentage for a line on the map." });
     }
 
     /** Remove the last line (if possible). */
@@ -510,6 +523,15 @@ public class mapData : NetworkBehaviour
         // Successfully parsed key into components.
         return true;
     }
+
+    /** Client callback when a map line is added. */
+    private void RegisterLineParams(int id)
+    {
+        // Register line dynamic server parameters.
+        serverUtils.RegisterServerValue(string.Format("maplinepercent{0}", id),
+            new serverUtils.ParameterInfo { description = "Progress percentage for a line on the map." });
+    }
+
 
 
 }
