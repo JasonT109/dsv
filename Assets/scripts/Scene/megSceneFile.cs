@@ -124,6 +124,7 @@ namespace Meg.Scene
             json.AddField("map", SaveMap());
             json.AddField("movements", SaveMovements());
             json.AddField("events", SaveEvents());
+            json.AddField("crew", SaveCrew());
 
             if (serverUtils.IsDcc())
                 json.AddField("dcc", SaveDcc());
@@ -190,6 +191,12 @@ namespace Meg.Scene
             return new JSONObject();
         }
 
+        /** Save state of crew members to JSON. */
+        private JSONObject SaveCrew()
+        {
+            return serverUtils.CrewData.Save();
+        }
+
         /** Save state of the DCC screens to JSON. */
         private JSONObject SaveDcc()
         {
@@ -217,6 +224,10 @@ namespace Meg.Scene
             var movements = json.GetField("movements");
             if (movements)
                 LoadMovements(movements);
+
+            var crew = json.GetField("crew");
+            if (crew)
+                LoadCrew(crew);
 
             var dcc = json.GetField("dcc");
             if (dcc)
@@ -262,6 +273,12 @@ namespace Meg.Scene
                 file.Clear();
                 file.Load(json);
             }
+        }
+
+        /** Load crew state from JSON. */
+        private void LoadCrew(JSONObject json)
+        {
+            serverUtils.CrewData.Load(json);
         }
 
         /** Load state of the DCC screens from JSON. */
