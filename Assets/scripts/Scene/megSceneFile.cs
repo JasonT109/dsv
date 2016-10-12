@@ -105,13 +105,13 @@ namespace Meg.Scene
         /** Load state from JSON. */
         public void Load(JSONObject json)
         {
-            // Perform bulk of loading on the server.
-            serverUtils.PostLoadSceneState(json);
-
             // Load events locally.
             var events = json.GetField("events");
             if (events)
                 LoadEvents(events);
+
+            // Perform bulk of loading on the server.
+            serverUtils.PostLoadSceneState(json);
         }
 
         /** Save state to JSON. */

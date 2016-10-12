@@ -74,7 +74,7 @@ public class serverPlayer : NetworkBehaviour
         if (isServer)
             ServerLoadSceneState(json);
         else if (isClient)
-            CmdLoadSceneState(json.Print(true));
+            CmdLoadSceneState(Compression.CompressJson(json));
     }
 
     /** Set a numeric data value on the server. */
@@ -559,12 +559,14 @@ public class serverPlayer : NetworkBehaviour
 
     /** Command to load scene state on the server. */
     [Command]
-    public void CmdLoadSceneState(string state)
+    public void CmdLoadSceneState(byte[] state)
     {
         try
         {
-            var json = new JSONObject(state);
+            Debug.Log(string.Format("Loading compressed scene state: {0} bytes", state.Length));
+            var json = Compression.DecompressJson(state);
             ServerLoadSceneState(json);
+            Debug.Log("Loaded scene state OK.");
         }
         catch (Exception ex)
         {
