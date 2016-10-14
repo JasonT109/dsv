@@ -44,6 +44,9 @@ public class DCCWindow : MonoBehaviour
 
     public float lastCloseTime;
 
+    private float scaleVelocity = 1f;
+    private float _windowWidth;
+    private float _windowHeight;
     private Vector3 toPosition;
     private Vector3 fromPosition;
     private Vector2 toScale;
@@ -226,6 +229,8 @@ public class DCCWindow : MonoBehaviour
                     lastBucketManager.highlightedBucket = null;
             }
         }
+
+        scaleVelocity = gesture.DeltaScale;
     }
 
     /** Sets up data for sending content offscreen. */
@@ -290,10 +295,20 @@ public class DCCWindow : MonoBehaviour
             window = GetComponent<graphicsDCCWindowSize>();
         if (!screenManager)
             screenManager = ObjectFinder.Find<DCCScreenManager>();
+
+        _windowWidth = window.windowWidth;
+        _windowHeight = window.windowHeight;
+
     }
 
 	void Update()
     {
+        /* Window scaling */
+        window.windowWidth = Mathf.Clamp(window.windowWidth * scaleVelocity, window.initWidth * window.minWindowScale, window.initWidth * window.maxWindowScale);
+        window.windowHeight = Mathf.Clamp(window.windowHeight * scaleVelocity, window.initHeight * window.minWindowScale, window.initHeight * window.maxWindowScale);
+        scaleVelocity = 1;
+        gameObject.transform.localScale = window.initScale;
+
         if (isLerping)
         {
             lerpTimer += Time.deltaTime;

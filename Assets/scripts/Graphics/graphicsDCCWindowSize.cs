@@ -14,6 +14,15 @@ public class graphicsDCCWindowSize : MonoBehaviour
     [Header("Size:")]
     public float windowWidth = 190f;
     public float windowHeight = 106.875f;
+    public float minWindowScale = 0.2f;
+    public float maxWindowScale = 2.0f;
+
+    [HideInInspector]
+    public float initWidth;
+    [HideInInspector]
+    public float initHeight;
+    [HideInInspector]
+    public Vector3 initScale;
 
     [Header("Content Offsets:")]
     public Vector2 verticalOffsetRange = new Vector2(0f, 0f);
@@ -118,6 +127,10 @@ public class graphicsDCCWindowSize : MonoBehaviour
 
     void Awake ()
     {
+        initHeight = windowHeight;
+        initWidth = windowWidth;
+        initScale = gameObject.transform.localScale;
+
         slicer = transform.GetComponent<graphicsSlicedMesh>();
         titleBarSlicer = titleBar.GetComponent<graphicsSlicedMesh>();
 
