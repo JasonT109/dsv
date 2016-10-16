@@ -119,6 +119,7 @@ public class debugFileListUi : MonoBehaviour
 
             var entry = GetEntry(_entries.Count);
             entry.FileInfo = f;
+            entry.Selected = false;
 
             _entries.Add(entry);
         }

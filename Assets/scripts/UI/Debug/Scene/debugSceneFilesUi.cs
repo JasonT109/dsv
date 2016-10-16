@@ -202,6 +202,7 @@ public class debugSceneFilesUi : MonoBehaviour
             return;
 
         Location = SceneFolderLocation.Archives;
+        Scenes.SelectedEntry = null;
         Scenes.Folder = ArchiveFolder;
         FoldersTitle.text = "SCENES (ARCHIVED)";
     }
@@ -212,6 +213,7 @@ public class debugSceneFilesUi : MonoBehaviour
             return;
 
         Location = SceneFolderLocation.Local;
+        Scenes.SelectedEntry = null;
         Scenes.Folder = LocalFolder;
         FoldersTitle.text = "SCENES";
     }
