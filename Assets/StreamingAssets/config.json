@@ -6,7 +6,7 @@
 		
 		"auto-save-folder" : "C:/Meg/",
 		"auto-save-format" : "{auto-save-folder}/Scene_{1:000}/{5}/{0}_Scene_{1:000}_{2:000}_{3:000}_UTC_{4:yyyy.MM.dd}_{4:HH.mm.ss.f}{5}.json",
-		"auto-save-enabled" : true,
+		"auto-save-enabled" : false,
 
 		"comms-channel-pilot" : "PILOT",
 		"comms-channel-port" : "PORT STATION",
