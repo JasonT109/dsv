@@ -30,8 +30,14 @@ public class debugFileEntryUi : MonoBehaviour
                 label = label.ToUpper();
 
             Toggle.GetComponentInChildren<Text>().text = label;
+
+            if (DateText)
+                DateText.text = string.Format("{0}", _info.LastWriteTime);
         }
     }
+
+    /** Date/time label. */
+    public Text DateText;
 
     /** Whether entry is selected. */
     public bool Selected

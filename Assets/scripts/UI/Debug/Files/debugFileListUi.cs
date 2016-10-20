@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.Events;
 
@@ -112,7 +113,9 @@ public class debugFileListUi : MonoBehaviour
     {
         RemoveEntries();
 
-        foreach (var f in info)
+        var sorted = info.OrderBy(f => f.LastAccessTimeUtc).ToArray();
+
+        foreach (var f in sorted)
         {
             if (!Regex.IsMatch(f.FullName, Filter))
                 continue;
