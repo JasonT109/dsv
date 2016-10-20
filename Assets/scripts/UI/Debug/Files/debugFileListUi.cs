@@ -35,6 +35,16 @@ public class debugFileListUi : MonoBehaviour
     /** Optional folder path to start in. */
     public string InitialFolder;
 
+    /** File listing sort order. */
+    public FileSortOrder SortOrder = FileSortOrder.Name;
+
+    /** Possible file listing sort orders. */
+    public enum FileSortOrder
+    {
+        Name,
+        DateTime
+    }
+
 
     // Members
     // ------------------------------------------------------------
@@ -113,7 +123,9 @@ public class debugFileListUi : MonoBehaviour
     {
         RemoveEntries();
 
-        var sorted = info.OrderBy(f => f.LastAccessTimeUtc).ToArray();
+        var sorted = info;
+        if (SortOrder == FileSortOrder.DateTime)
+            sorted = info.OrderBy(f => f.LastAccessTimeUtc).ToArray();
 
         foreach (var f in sorted)
         {
