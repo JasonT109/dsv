@@ -1,7 +1,7 @@
 {
 	"metadata":{
-		"utc":"2016/10/05 03:51:45.0",
-		"scene":200,
+		"utc":"2016/10/25 07:09:21.4",
+		"scene":202,
 		"shot":1,
 		"take":1,
 		"playervessel":1,
@@ -189,6 +189,7 @@
 		"maplayertemperatures":1,
 		"mapmode":1,
 		"mapscale":250,
+		"mapsmoothtime":0.1,
 		"maptopdown":0,
 		"mapuseoldindicators":1,
 		"maxwildlife":0,
@@ -201,9 +202,9 @@
 		"megspeed":1,
 		"megturnspeed":0.5,
 		"minspeed":-18,
-		"motionbasepitch":-0.004471213,
-		"motionbaseyaw":-10,
-		"motionbaseroll":-1.703639E-06,
+		"motionbasepitch":0,
+		"motionbaseyaw":0,
+		"motionbaseroll":0,
 		"motioncomport":0,
 		"motionsafety":1,
 		"motionhazard":0,
@@ -233,7 +234,7 @@
 		"oxygentank2":100,
 		"oxygentank3":100,
 		"pilotbuttonenabled":0,
-		"pitchangle":-0.004471212,
+		"pitchangle":-0.004471213,
 		"pitchspeed":150,
 		"playervessel":1,
 		"playervesselname":-1,
@@ -254,7 +255,7 @@
 		"reserveoxygentank4":100,
 		"reserveoxygentank5":100,
 		"reserveoxygentank6":100,
-		"rollangle":3.555031E-06,
+		"rollangle":-3.275159E-06,
 		"rollspeed":100,
 		"rovstate":-1,
 		"rovcamerastate":0,
@@ -263,8 +264,9 @@
 		"rovlightport":0,
 		"stabiliserspeed":20,
 		"motionstabiliserkicker":0.3,
+		"seismicerror":1,
 		"stabiliserstability":30,
-		"scene":200,
+		"scene":202,
 		"screenglitchamount":0,
 		"screenglitchautodecay":1,
 		"screenglitchautodecaytime":0.25,
@@ -360,7 +362,7 @@
 		"xpos":-717.2871,
 		"yawangle":344.1495,
 		"yawspeed":200,
-		"zpos":-5546.356,
+		"zpos":-5546.357,
 		"crewabpmin1":82,
 		"crewabpmax1":125,
 		"crewbodytemp1":36.5,
@@ -380,6 +382,7 @@
 		"crewspo2max1":98,
 		"crewspo2pattern1":0,
 		"crewphoto1":1,
+		"crewoffline1":0,
 		"crewabpmin2":82,
 		"crewabpmax2":125,
 		"crewbodytemp2":36.5,
@@ -399,6 +402,7 @@
 		"crewspo2max2":98,
 		"crewspo2pattern2":0,
 		"crewphoto2":1,
+		"crewoffline2":0,
 		"crewabpmin3":82,
 		"crewabpmax3":125,
 		"crewbodytemp3":36.5,
@@ -418,6 +422,7 @@
 		"crewspo2max3":98,
 		"crewspo2pattern3":0,
 		"crewphoto3":1,
+		"crewoffline3":0,
 		"crewabpmin4":82,
 		"crewabpmax4":125,
 		"crewbodytemp4":36.5,
@@ -437,6 +442,7 @@
 		"crewspo2max4":98,
 		"crewspo2pattern4":0,
 		"crewphoto4":1,
+		"crewoffline4":0,
 		"crewabpmin5":82,
 		"crewabpmax5":125,
 		"crewbodytemp5":36.5,
@@ -456,6 +462,7 @@
 		"crewspo2max5":98,
 		"crewspo2pattern5":0,
 		"crewphoto5":1,
+		"crewoffline5":0,
 		"vessel1visible":0,
 		"vessel1onmap":0,
 		"vessel1onsonar":0,
@@ -530,6 +537,12 @@
 		"intercept6posz":8200,
 		"intercept6depth":8200,
 		"intercept6velocity":0,
+		"maplinepercent1":0,
+		"maplinepercent2":0,
+		"maplinepercent3":0,
+		"maplinepercent4":0,
+		"maplinepercent5":0,
+		"maplinepercent6":0,
 		"vessel7vis":0,
 		"vessel7visible":0,
 		"vessel7onmap":0,
@@ -673,13 +686,7 @@
 		"v14posy":1.462294,
 		"v14posz":1000,
 		"v14depth":1000,
-		"v14velocity":0.033819,
-		"maplinepercent1":0,
-		"maplinepercent2":0,
-		"maplinepercent3":0,
-		"maplinepercent4":0,
-		"maplinepercent5":0,
-		"maplinepercent6":0
+		"v14velocity":0.033819
 	},
 	"vessels":{
 		"PlayerVessel":1,
@@ -687,6 +694,7 @@
 			{
 				"Id":1,
 				"Name":"Sub 2",
+				"Description":"",
 				"Position":[
 					-0.7172871,
 					-5.546357,
@@ -732,6 +740,7 @@
 			{
 				"Id":2,
 				"Name":"Sub 1",
+				"Description":"",
 				"Position":[
 					-0.07773621,
 					4.003794,
@@ -777,6 +786,7 @@
 			{
 				"Id":3,
 				"Name":"Glider 1",
+				"Description":"",
 				"Position":[
 					-7.475268,
 					1.437667,
@@ -822,6 +832,7 @@
 			{
 				"Id":4,
 				"Name":"Glider 2",
+				"Description":"",
 				"Position":[
 					-7.475321,
 					1.434398,
@@ -867,6 +878,7 @@
 			{
 				"Id":5,
 				"Name":"Meg",
+				"Description":"",
 				"Position":[
 					-7.408838,
 					1.526982,
@@ -912,6 +924,7 @@
 			{
 				"Id":6,
 				"Name":"Target",
+				"Description":"",
 				"Position":[
 					2.109217,
 					3.780289,
@@ -957,6 +970,7 @@
 			{
 				"Id":7,
 				"Name":"",
+				"Description":"",
 				"Position":[
 					-0.5986628,
 					-0.342477,
@@ -1002,6 +1016,7 @@
 			{
 				"Id":8,
 				"Name":"",
+				"Description":"",
 				"Position":[
 					-0.7111268,
 					-0.3402137,
@@ -1047,6 +1062,7 @@
 			{
 				"Id":9,
 				"Name":"TAG",
+				"Description":"",
 				"Position":[
 					-0.6678102,
 					-0.2439312,
@@ -1092,6 +1108,7 @@
 			{
 				"Id":10,
 				"Name":"MANA ONE",
+				"Description":"",
 				"Position":[
 					5.908972,
 					-1.397823,
@@ -1137,6 +1154,7 @@
 			{
 				"Id":11,
 				"Name":"MORRIS",
+				"Description":"",
 				"Position":[
 					-3.605316,
 					-0.4432264,
@@ -1182,6 +1200,7 @@
 			{
 				"Id":12,
 				"Name":"GPS ID: 1A5HA2",
+				"Description":"",
 				"Position":[
 					-6.408337,
 					0.7474096,
@@ -1227,6 +1246,7 @@
 			{
 				"Id":13,
 				"Name":"INTERCEPT POINT",
+				"Description":"",
 				"Position":[
 					-7.60752,
 					1.503576,
@@ -1272,6 +1292,7 @@
 			{
 				"Id":14,
 				"Name":"EVAC",
+				"Description":"",
 				"Position":[
 					-7.467436,
 					1.462294,
@@ -1624,9 +1645,9 @@
 	},
 	"events":{
 		"metadata":{
-			"utc":"05/10/16 03:51:45.0",
-			"startedTimestamp":"05/10/16 02:33:55.8",
-			"stoppedTimestamp":"05/10/16 02:43:21.3"
+			"utc":"25/10/16 07:09:21.4",
+			"startedTimestamp":"01/01/01 12:00:00.0",
+			"stoppedTimestamp":"01/01/01 12:00:00.0"
 		},
 		"groups":[
 			{
@@ -2022,6 +2043,147 @@
 					}
 				],
 				"hotKey":"8"
+			}
+		]
+	},
+	"crew":{
+		"Crew":[
+			{
+				"Id":1,
+				"Name":"Carter Lewis",
+				"HeartRate":86,
+				"BodyTemp":36.5,
+				"HeartStrengthMin":0,
+				"HeartStrengthMax":100,
+				"HeartPattern":0,
+				"RespirationRate":20,
+				"ETCO2Min":0,
+				"ETCO2Max":38,
+				"ETCO2Pattern":0,
+				"SPO2Min":0,
+				"SPO2Max":98,
+				"SPO2Pattern":0,
+				"ABPMin":82,
+				"ABPMax":125,
+				"PAPMin":10,
+				"PAPMax":26,
+				"MonitorLeds":true,
+				"MonitorGraphs":true,
+				"Photo":true,
+				"Offline":false
+			},
+			{
+				"Id":2,
+				"Name":"Lori Taylor",
+				"HeartRate":86,
+				"BodyTemp":36.5,
+				"HeartStrengthMin":0,
+				"HeartStrengthMax":100,
+				"HeartPattern":0,
+				"RespirationRate":20,
+				"ETCO2Min":0,
+				"ETCO2Max":38,
+				"ETCO2Pattern":0,
+				"SPO2Min":0,
+				"SPO2Max":98,
+				"SPO2Pattern":0,
+				"ABPMin":82,
+				"ABPMax":125,
+				"PAPMin":10,
+				"PAPMax":26,
+				"MonitorLeds":true,
+				"MonitorGraphs":true,
+				"Photo":true,
+				"Offline":false
+			},
+			{
+				"Id":3,
+				"Name":"Toshi Ishida",
+				"HeartRate":86,
+				"BodyTemp":36.5,
+				"HeartStrengthMin":0,
+				"HeartStrengthMax":100,
+				"HeartPattern":0,
+				"RespirationRate":20,
+				"ETCO2Min":0,
+				"ETCO2Max":38,
+				"ETCO2Pattern":0,
+				"SPO2Min":0,
+				"SPO2Max":98,
+				"SPO2Pattern":0,
+				"ABPMin":82,
+				"ABPMax":125,
+				"PAPMin":10,
+				"PAPMax":26,
+				"MonitorLeds":true,
+				"MonitorGraphs":true,
+				"Photo":true,
+				"Offline":false
+			},
+			{
+				"Id":4,
+				"Name":"Suyin Zhang",
+				"HeartRate":86,
+				"BodyTemp":36.5,
+				"HeartStrengthMin":0,
+				"HeartStrengthMax":100,
+				"HeartPattern":0,
+				"RespirationRate":20,
+				"ETCO2Min":0,
+				"ETCO2Max":38,
+				"ETCO2Pattern":0,
+				"SPO2Min":0,
+				"SPO2Max":98,
+				"SPO2Pattern":0,
+				"ABPMin":82,
+				"ABPMax":125,
+				"PAPMin":10,
+				"PAPMax":26,
+				"MonitorLeds":true,
+				"MonitorGraphs":true,
+				"Photo":true,
+				"Offline":false
+			},
+			{
+				"Id":5,
+				"Name":"Jonas Taylor",
+				"HeartRate":86,
+				"BodyTemp":36.5,
+				"HeartStrengthMin":0,
+				"HeartStrengthMax":100,
+				"HeartPattern":0,
+				"RespirationRate":20,
+				"ETCO2Min":0,
+				"ETCO2Max":38,
+				"ETCO2Pattern":0,
+				"SPO2Min":0,
+				"SPO2Max":98,
+				"SPO2Pattern":0,
+				"ABPMin":82,
+				"ABPMax":125,
+				"PAPMin":10,
+				"PAPMax":26,
+				"MonitorLeds":true,
+				"MonitorGraphs":true,
+				"Photo":true,
+				"Offline":false
+			}
+		]
+	},
+	"dcc":{
+		"Stations":[
+			{
+				"Id":0,
+				"Screen3":"none",
+				"Screen4":"none",
+				"Screen5":"none",
+				"Quad0":"lifesupport",
+				"Quad1":"instruments",
+				"Quad2":"thrusters",
+				"Quad3":"diagnostics",
+				"Quad4":"none",
+				"QuadFullScreen":0,
+				"QuadCycle":0
 			}
 		]
 	}
