@@ -96,6 +96,9 @@ public class debugSceneFilesUi : MonoBehaviour
     /** The current scene folder name. */
     private string _sceneName;
 
+    /** Whether UI is being updated. */
+    private bool _updating;
+
 
     // Unity Methods
     // ------------------------------------------------------------
@@ -191,31 +194,49 @@ public class debugSceneFilesUi : MonoBehaviour
     /** Update the UI elements. */
     private void UpdateUi()
     {
+        _updating = true;
+
         LoadButton.interactable = Files.SelectedEntry != null;
         LocalFolderToggle.isOn = Location == SceneFolderLocation.Local;
         ArchiveFolderToggle.isOn = Location == SceneFolderLocation.Archives;
+
+        _updating = false;
     }
 
     private void OnArchiveFolderClicked(bool value)
     {
-        if (!value)
+        if (!value || _updating)
             return;
 
         Location = SceneFolderLocation.Archives;
-        Scenes.SelectedEntry = null;
-        Scenes.Folder = ArchiveFolder;
-        FoldersTitle.text = "SCENES (ARCHIVED)";
+        UpdateLocationFolder();
     }
 
     private void OnLocalFolderClicked(bool value)
     {
-        if (!value)
+        if (!value || _updating)
             return;
 
         Location = SceneFolderLocation.Local;
+        UpdateLocationFolder();
+    }
+
+    private void UpdateLocationFolder()
+    {
         Scenes.SelectedEntry = null;
-        Scenes.Folder = LocalFolder;
-        FoldersTitle.text = "SCENES";
+
+        switch (Location)
+        {
+            case SceneFolderLocation.Archives:
+                Scenes.Folder = ArchiveFolder;
+                FoldersTitle.text = "SCENES (ARCHIVED)";
+                break;
+
+            case SceneFolderLocation.Local:
+                Scenes.Folder = LocalFolder;
+                FoldersTitle.text = "SCENES (LOCAL)";
+                break;
+        }
     }
 
 
