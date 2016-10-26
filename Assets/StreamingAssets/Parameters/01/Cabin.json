@@ -1,0 +1,37 @@
+{
+	"groups":[
+		{
+			"id":"CABIN",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"cabinHumidity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"cabinOxygen"
+				},
+				{
+					"type":"Value",
+					"serverParam":"cabinTemp"
+				},
+				{
+					"type":"Value",
+					"serverParam":"Co2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"scrubbedCo2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"scrubbedHumidity"
+				},
+				{
+					"type":"Value",
+					"serverParam":"scrubbedOxygen"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,50 @@
+{
+	"groups":[
+		{
+			"id":"MAIN OXYGEN TANKS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"oxygenTank1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"oxygenTank2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"oxygenTank3"
+				}
+			]
+		},
+		{
+			"id":"RESERVE OXYGEN TANKS",
+			"parameters":[
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank1"
+				},
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank2"
+				},
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank3"
+				},
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank4"
+				},
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank5"
+				},
+				{
+					"type":"Value",
+					"serverParam":"reserveOxygenTank6"
+				}
+			]
+		}
+	]
+}
